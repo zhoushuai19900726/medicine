@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.Serializable;
@@ -19,7 +18,6 @@ import java.util.List;
  * @version V1.0
  * @date 2020年3月18日
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
 @TableName("shop_seller")
 public class ShopSellerEntity extends BaseEntity implements Serializable {

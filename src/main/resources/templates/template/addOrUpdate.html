@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+</head>
+<body>
+<div class="panel panel-default" shiro:hasPermission="seller:add">
+    <div class="panel-heading title"></div>
+    <div class="layui-card-body">
+        <form class="layui-form" action="" lay-filter="sellerForm" id="sellerForm" style="width: 100%;">
+            <input name="id" hidden/>
+            <div class="layui-form-item">
+                <label class="layui-form-label">商家名称</label>
+                <div class="layui-input-block">
+                    <input name="sellerName" placeholder="请输入商家名称" lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item" id="area-picker">
+                <div class="layui-form-label">商家地址</div>
+                <div class="layui-input-inline" style="width: 28%;">
+                    <select name="province" class="province-selector" data-value="" lay-verify="required" lay-filter="province-1" lay-search>
+                        <option value="">请选择省</option>
+                    </select>
+                </div>
+                <div class="layui-input-inline" style="width: 28%;">
+                    <select name="city" class="city-selector" data-value="" lay-verify="required" lay-filter="city-1" lay-search>
+                        <option value="">请选择市</option>
+                    </select>
+                </div>
+                <div class="layui-input-inline" style="width: 28%;">
+                    <select name="county" class="county-selector" data-value="" lay-verify="required" lay-filter="county-1" lay-search>
+                        <option value="">请选择区</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <input name="address" placeholder="请输入详细地址" lay-verify="required" autocomplete="off" class="layui-input">
+                    <input name="sellerAddress" hidden/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">联系方式</label>
+                <div class="layui-input-block">
+                    <input name="contactNumber" placeholder="请输入联系方式(手机号)" lay-verify="required|phone" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">开馆状态</label>
+                <div class="layui-input-block">
+                    <input type="checkbox" name="statusStr" lay-skin="switch" lay-text="开馆|闭馆">
+                </div>
+            </div>
+            <input type="submit" lay-filter="submitBtnForAdd" id="submitBtnForAdd" lay-submit="" hidden/>
+            <input type="submit" lay-filter="submitBtnForUpdate" id="submitBtnForUpdate" lay-submit="" hidden/>
+        </form>
+    </div>
+</div>
+<script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/js/lay-config.js(v=2.0.0)}" charset="utf-8"></script>
+<script>
+    //获取token
+    var token = CoreUtil.getData("access_token");
+    //地址栏转义token中的#号
+    var tokenQuery = token.replace("#", "%23");
+    var $ = jQuery = layui.jquery;
+    layui.use(['layer', 'form', 'layarea'], function () {
+        var layer = layui.layer,
+            form = layui.form,
+            layarea = layui.layarea;
+        layarea.render({
+            elem: '#area-picker',
+            change: function (res) {
+                // 选择结果
+                // console.log(res);
+            }
+        });
+        // 表单提交
+        form.on('submit(submitBtnForAdd)', function (data) {
+            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
+            CoreUtil.sendPost("/seller/add", data.field, function (res) {
+                if (res.code == 0) {
+                    // 刷新父页面列表
+                    parent.layui.table.reload('showTable');
+                    // 提示
+                    layer.open({
+                        content: '<i class="layui-icon layui-icon-face-smile" style="color: green;"></i> 保存成功'
+                        , btn: ['继续添加', '返回列表']
+                        , yes: function (index, layero) {
+                            // 清空表单 （“sellerForm”是表单的id）
+                            $("#sellerForm")[0].reset();
+                            layarea.render({
+                                elem: '#area-picker',
+                                data: {
+                                    province: '山东省',
+                                    city: '济南市',
+                                    county: '高新区'
+                                }
+                            });
+                            form.render();
+                            layer.close(index);
+                        }, btn2: function (index, layero) {
+                            //按钮【按钮二】的回调
+                            var parentIndex = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(parentIndex);
+                            //return false 开启该代码可禁止点击该按钮关闭
+                        }, cancel: function () {
+                            //右上角关闭回调
+                            var parentIndex = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(parentIndex);
+                            //return false 开启该代码可禁止点击该按钮关闭
+                        }
+                    });
+                } else {
+                    layer.msg(res.msg);
+                }
+            });
+            //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            return false;
+        });
+        form.on('submit(submitBtnForUpdate)', function (data) {
+            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
+            CoreUtil.sendPut("/seller/update", data.field, function (res) {
+                if (res.code == 0) {
+                    // 刷新父页面列表
+                    parent.layui.table.reload('showTable');
+                    parent.layer.msg("修改成功");
+                    var parentIndex = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(parentIndex);
+                } else {
+                    layer.msg(res.msg);
+                }
+            });
+            //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            return false;
+        });
+    });
+    /**
+     * 父级页面控制子页面提交表单
+     */
+    function saveTemplate(submitBtn) {
+        $("#" + submitBtn).click();
+    }
+    /**
+     * 父级页面控制子页面填充
+     */
+    function assignment(data) {
+        var form = layui.form,
+            layarea = layui.layarea;
+        // 表单赋值
+        form.val("sellerForm", {
+            "id": data.id,
+            "sellerName": data.sellerName,
+            "address": data.address,
+            "contactNumber": data.contactNumber
+        });
+        // 地址三级联动
+        layarea.render({
+            elem: '#area-picker',
+            data: {
+                province: data.province,
+                city: data.city,
+                county: data.county
+            }
+        });
+        // 开关状态开关
+        $("input[type='checkbox'][name='statusStr']").prop("checked", data.status == 1);
+        form.render("checkbox");
+    }
+</script>
+</body>
+</html>

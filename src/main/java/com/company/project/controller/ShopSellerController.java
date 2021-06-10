@@ -30,6 +30,7 @@ import java.util.List;
  */
 @Api(tags = "商家管理")
 @Controller
+@RequestMapping("/")
 public class ShopSellerController extends BaseController {
 
     @Resource
