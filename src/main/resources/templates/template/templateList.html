@@ -58,8 +58,14 @@
         <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="del" shiro:hasPermission="shopTemplate:delete"><i class="layui-icon">&#xe640;</i>删除</a>
     </script>
     <script type="text/html" id="switchTpl">
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="specList" shiro:hasPermission="shopTemplate:update"><i class="layui-icon">&#xe60f;</i>规格列表({{d.specNum}})</a>
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="paraList" shiro:hasPermission="shopTemplate:update"><i class="layui-icon">&#xe60f;</i>参数列表({{d.paraNum}})</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="specList" shiro:hasPermission="shopTemplate:update">
+            <i class="layui-icon">&#xe60f;</i>规格列表
+            <span class="layui-badge layui-bg-cyan" style="float: right; margin-right: -5px; height: 20px; line-height: 22px;">{{d.specNum}}</span>
+        </a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="paraList" shiro:hasPermission="shopTemplate:update">
+            <i class="layui-icon">&#xe60f;</i>参数列表
+            <span class="layui-badge layui-bg-cyan" style="float: right; margin-right: -5px; height: 20px; line-height: 22px;">{{d.paraNum}}</span>
+        </a>
     </script>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
@@ -150,11 +156,11 @@
                         type: 2,
                         content: '../index/shopTemplate/addOrUpdate',
                         btn: ['提交保存', '取消'],
-                        area: ['60%', '60%'],
+                        area: ['30%', '40%'],
                         scrollbar: false,
                         yes: function (index, layero) {
                             // 得到iframe页的窗口对象并调用子页面方法
-                            window[layero.find('iframe')[0]['name']].saveSeller("submitBtnForAdd");
+                            window[layero.find('iframe')[0]['name']].saveTemplate("submitBtnForAdd");
                         }
                     });
                     break;
@@ -178,7 +184,7 @@
                         type: 2,
                         content: '../index/shopTemplate/addOrUpdate',
                         btn: ['提交保存', '取消'],
-                        area: ['60%', '60%'],
+                        area: ['30%', '40%'],
                         scrollbar: false,
                         yes: function (index, layero) {
                             // 得到iframe页的窗口对象并调用子页面方法
@@ -191,10 +197,42 @@
                     });
                     break;
                 case 'specList':
-                    alert('specList');
+                    var specListIndex = layer.open({
+                        type: 2,
+                        title: '模板设置',
+                        id: 'specList',
+                        offset: 'r',
+                        anim: 5,
+                        maxmin: true,
+                        area: ['50%', '100%'],//宽高不影响最大化
+                        content: "../index/shopTemplate/templateConfig",//地址
+                        zIndex: layer.zIndex,
+                        success: function (layero, index) {
+                            // 置顶当前窗口
+                            layer.setTop(layero);
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            window[layero.find('iframe')[0]['name']].assignment(data, 1);
+                        }
+                    });
                     break;
                 case 'paraList':
-                    alert('paraList');
+                    var specListIndex = layer.open({
+                        type: 2,
+                        title: '模板设置',
+                        id: 'specList',
+                        offset: 'r',
+                        anim: 5,
+                        maxmin: true,
+                        area: ['50%', '100%'],//宽高不影响最大化
+                        content: "../index/shopTemplate/templateConfig",//地址
+                        zIndex: layer.zIndex,
+                        success: function (layero, index) {
+                            // 置顶当前窗口
+                            layer.setTop(layero);
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            window[layero.find('iframe')[0]['name']].assignment(data, 2);
+                        }
+                    });
                     break;
             }
         });

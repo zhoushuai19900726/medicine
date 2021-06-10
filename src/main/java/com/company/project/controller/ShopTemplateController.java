@@ -50,6 +50,12 @@ public class ShopTemplateController extends BaseController {
         return "template/addOrUpdate";
     }
 
+    @ApiOperation(value = "跳转进入模板设置页面")
+    @GetMapping("/index/shopTemplate/templateConfig")
+    public String templateConfig() {
+        return "template/templateConfig";
+    }
+
     @ApiOperation(value = "新增")
     @PostMapping("shopTemplate/add")
     @RequiresPermissions("shopTemplate:add")
