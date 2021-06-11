@@ -97,6 +97,8 @@
                 if (res.code == 0) {
                     // 刷新父页面列表
                     parent.layui.table.reload('specTable');
+                    // TODO 刷新父页面的父页面列表
+
                     // 提示
                     layer.open({
                         content: '<i class="layui-icon layui-icon-face-smile" style="color: green;"></i> 保存成功'
