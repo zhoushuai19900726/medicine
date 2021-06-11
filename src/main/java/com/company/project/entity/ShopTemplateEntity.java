@@ -1,9 +1,6 @@
 package com.company.project.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.*;
 import com.company.project.entity.BaseEntity;
 
 
@@ -71,7 +68,7 @@ public class ShopTemplateEntity extends BaseEntity implements Serializable {
 	private Date updateTime;
 
 	@TableField(fill = FieldFill.INSERT)
-	// @TableLogic // 打开注释后进行物理删除
+	@TableLogic // 注释后进行物理删除
 	private Integer deleted;
 
 

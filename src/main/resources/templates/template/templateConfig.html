@@ -16,7 +16,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">模板ID</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="id" class="layui-input" readonly/>
+                            <input type="text" name="id" id="templateId" class="layui-input" readonly/>
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -37,18 +37,19 @@
                             <input type="text" class="layui-input" name="createTime" readonly/>
                         </div>
                     </div>
-                    <div class="layui-inline" style="float: right;">
-                        <button class="layui-btn layui-btn-primary" lay-submit lay-filter="data-back-btn"><i class="layui-icon">&#xe65a;</i> 返 回</button>
-                    </div>
                 </div>
             </form>
         </blockquote>
     </div>
-    <div class="layui-card-body">
+    <div class="layui-card-body" style="padding: 0;">
         <div class="layui-tab layui-tab-brief">
             <ul class="layui-tab-title">
                 <li class="layui-this" id="specLi">规格设置</li>
                 <li id="paraLi">参数设置</li>
+                <li style="float: right;">
+                    <button class="layui-btn layui-btn-primary" lay-submit lay-filter="data-back-btn"><i class="layui-icon">&#xe65a;</i> 返 回</button>
+                    <button class="layui-btn layui-btn-primary" lay-submit lay-filter="data-refresh-btn"><i class="layui-icon">&#xe669;</i> 刷 新</button>
+                </li>
             </ul>
             <div class="layui-tab-content">
                 <!-- 规格列表 -->
@@ -82,11 +83,12 @@
     //地址栏转义token中的#号
     var tokenQuery = token.replace("#", "%23");
     var $ = jQuery = layui.jquery;
-    var tableIns1;
+    var layer, table, form;
+    var specTableIns;
     layui.use(['table', 'layer', 'form'], function () {
-        var layer = layui.layer,
-            table = layui.table,
-            form = layui.form;
+        layer = layui.layer;
+        table = layui.table;
+        form = layui.form;
         // 返回
         form.on('submit(data-back-btn)', function (data) {
             var parentIndex = parent.layer.getFrameIndex(window.name);
@@ -94,16 +96,30 @@
             //阻止表单跳转。如果需要表单跳转，去掉这段即可。
             return false;
         });
-        /**
-         * 加载规格table
-         */
-        tableIns1 = table.render({
+        // 刷新 // TODO 刷新参数table
+        form.on('submit(data-refresh-btn)', function (data) {
+            specTableIns.reload();
+
+
+            //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            return false;
+        });
+    });
+
+    /**
+     * 加载规格Table
+     */
+    function loadSpecTable() {
+        specTableIns = table.render({
             elem: '#specTable'
             , contentType: 'application/json'
             , headers: {"authorization": token}
             , page: true //开启分页
-            , url: '/shopTemplate/listByPage' //数据接口
+            , url: '/shopTemplate/specListByPage' //数据接口
             , method: 'POST'
+            , where: {
+                "templateId": $("#templateId").val()
+            }
             , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
                 return {
                     "code": res.code, //解析接口状态
@@ -117,68 +133,112 @@
                     {type: 'checkbox', fixed: 'left'},
                     {width: 100, field: 'id', title: '规格ID'},
                     {width: 150, field: 'name', title: '规格名称', edit: 'text'},
-                    {field: 'name', title: '可选值列表', edit: 'text'},
-                    {width: 100, field: 'name', title: '排序', edit: 'text'},
+                    {field: 'options', title: '可选值列表', edit: 'text'},
+                    {width: 100, field: 'seq', title: '排序', edit: 'text'},
                     {width: 150, toolbar: "#specTool", title: '操作'}
                 ]
             ]
             , toolbar: '#specToolbar'
         });
-        // // 表单提交
-        // form.on('submit(submitBtnForAdd)', function (data) {
-        //     // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
-        //     CoreUtil.sendPost("/shopTemplate/add", data.field, function (res) {
-        //         if (res.code == 0) {
-        //             // 刷新父页面列表
-        //             parent.layui.table.reload('showTable');
-        //             // 提示
-        //             layer.open({
-        //                 content: '<i class="layui-icon layui-icon-face-smile" style="color: green;"></i> 保存成功'
-        //                 , btn: ['继续添加', '返回列表']
-        //                 , yes: function (index, layero) {
-        //                     // 清空表单 （“shopTemplateForm”是表单的id）
-        //                     $("#shopTemplateForm")[0].reset();
-        //                     form.render();
-        //                     layer.close(index);
-        //                 }, btn2: function (index, layero) {
-        //                     //按钮【按钮二】的回调
-        //                     var parentIndex = parent.layer.getFrameIndex(window.name);
-        //                     parent.layer.close(parentIndex);
-        //                     //return false 开启该代码可禁止点击该按钮关闭
-        //                 }, cancel: function () {
-        //                     //右上角关闭回调
-        //                     var parentIndex = parent.layer.getFrameIndex(window.name);
-        //                     parent.layer.close(parentIndex);
-        //                     //return false 开启该代码可禁止点击该按钮关闭
-        //                 }
-        //             });
-        //         } else {
-        //             layer.msg(res.msg);
-        //         }
-        //     });
-        //     //阻止表单跳转。如果需要表单跳转，去掉这段即可。
-        //     return false;
-        // });
-        // form.on('submit(submitBtnForUpdate)', function (data) {
-        //     // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
-        //     CoreUtil.sendPut("/shopTemplate/update", data.field, function (res) {
-        //         if (res.code == 0) {
-        //             // 刷新父页面列表
-        //             parent.layui.table.reload('showTable');
-        //             parent.layer.msg("修改成功");
-        //             var parentIndex = parent.layer.getFrameIndex(window.name);
-        //             parent.layer.close(parentIndex);
-        //         } else {
-        //             layer.msg(res.msg);
-        //         }
-        //     });
-        //     //阻止表单跳转。如果需要表单跳转，去掉这段即可。
-        //     return false;
-        // });
-    });
+
+        /**
+         * 表头工具
+         */
+        table.on('toolbar(specTable)', function (obj) {
+            switch (obj.event) {
+                case 'batchDeleted':
+                    var checkStatus = table.checkStatus(obj.config.id);
+                    var data = checkStatus.data;
+                    if (data.length == 0) {
+                        layer.msg("请选择要批量删除的列");
+                    } else {
+                        var ids = [];
+                        $(data).each(function (index, item) {
+                            ids.push(item.id);
+                        });
+                        tipDialog(ids);
+                    }
+                    break;
+                case 'add':
+                    layer.open({
+                        id: 'spec_add', //设定一个id，防止重复弹出
+                        title: '<i class="layui-icon">&#xe653;</i> 新增规格',
+                        type: 2,
+                        content: '../../index/shopTemplate/addOrUpdateSpec',
+                        btn: ['提交保存', '取消'],
+                        area: ['50%', '70%'],
+                        scrollbar: false,
+                        yes: function (index, layero) {
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            window[layero.find('iframe')[0]['name']].saveSpec("submitBtnForAdd");
+                        },
+                        success: function (layero, index) {
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            var data = {};
+                            data.templateId = $("#templateId").val();
+                            window[layero.find('iframe')[0]['name']].assignment(data);
+                        }
+                    });
+                    break;
+            }
+        });
+
+        /**
+         * 列操作
+         */
+        table.on('tool(specTable)', function (obj) {
+            var data = obj.data;
+            switch (obj.event) {
+                case 'del':
+                    var ids = [];
+                    ids.push(data.id);
+                    tipDialog(ids);
+                    break;
+                case 'edit':
+                    layer.open({
+                        id: 'spec_update', //设定一个id，防止重复弹出
+                        title: '<i class="layui-icon">&#xe653;</i> 编辑规格',
+                        type: 2,
+                        content: '../../index/shopTemplate/addOrUpdateSpec',
+                        btn: ['提交保存', '取消'],
+                        area: ['50%', '70%'],
+                        scrollbar: false,
+                        yes: function (index, layero) {
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            window[layero.find('iframe')[0]['name']].saveSpec("submitBtnForUpdate");
+                        },
+                        success: function (layero, index) {
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            window[layero.find('iframe')[0]['name']].assignment(data);
+                        }
+                    });
+                    break;
+            }
+        });
+
+        /**
+         * 删除
+         */
+        var tipDialog = function (ids) {
+            layer.confirm('确定要删除么?', {icon: 3, title: '提示'}, function (index) {
+                CoreUtil.sendDelete("/shopTemplate/deleteSpec", ids, function (res) {
+                    if (res.code == 0) {
+                        //如果设定了yes回调，需进行手工关闭
+                        layer.close(index);
+                        layer.msg(res.msg, {time: 500}, function () {
+                            specTableIns.reload();
+                        });
+                    } else {
+                        layer.msg(res.msg);
+                    }
+                });
+            });
+        };
+    }
 
     /**
      * 父级页面控制子页面填充
+     * type 1规格 2参数
      */
     function assignment(data, type) {
         var form = layui.form;
@@ -203,6 +263,8 @@
                 $("#paraDiv").addClass("layui-show");
                 break;
         }
+        // 加载规格table
+        loadSpecTable();
     }
 </script>
 </body>

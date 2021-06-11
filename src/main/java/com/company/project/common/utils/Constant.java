@@ -26,7 +26,7 @@ public class Constant {
     /**
      * 未删除值
      */
-    public static final Integer DATA_NOT_DELETED = 1;
+    public static final Integer DATA_NOT_DELETED = 0;
 
     /**
      * 数据库类型

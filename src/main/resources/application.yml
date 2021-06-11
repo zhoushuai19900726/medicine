@@ -39,9 +39,9 @@ mybatis-plus:
   mapper-locations: classpath:mapper/${project.database}/**/*.xml,classpath:mapper/*.xml
   global-config:
     db-config:
-      logic-delete-value: 0
-      logic-not-delete-value: 1
-      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+#      logic-delete-field: deleted
 
 #使用代码生成模块时 指定要生成的表存在于哪种数据库，可选值有【mysql、oracle、sqlServer】
 project:
