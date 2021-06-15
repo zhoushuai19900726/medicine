@@ -4,7 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.company.project.common.aop.annotation.DataScope;
 import com.company.project.common.aop.annotation.LogAnnotation;
+import com.company.project.common.utils.NumberConstants;
+import com.company.project.entity.ShopParaEntity;
 import com.company.project.entity.ShopSpecEntity;
+import com.company.project.service.ShopParaService;
 import com.company.project.service.ShopSpecService;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang.StringUtils;
@@ -18,7 +21,6 @@ import io.swagger.annotations.ApiParam;
 import java.util.List;
 
 import com.company.project.common.utils.DataResult;
-
 import com.company.project.entity.ShopTemplateEntity;
 import com.company.project.service.ShopTemplateService;
 
@@ -42,6 +44,9 @@ public class ShopTemplateController extends BaseController {
 
     @Resource
     private ShopSpecService shopSpecService;
+
+    @Resource
+    private ShopParaService shopParaService;
 
     // *******************************************************************************************模板*******************************************************************************************  //
 
@@ -125,9 +130,10 @@ public class ShopTemplateController extends BaseController {
     @LogAnnotation(title = "商品规格", action = "新增规格")
     @ResponseBody
     public DataResult addSpec(@RequestBody ShopSpecEntity shopSpecEntity) {
+        // 保存规格
         shopSpecService.save(shopSpecEntity);
-        // TODO 更新模板中规格数量
-
+        // 更新模板中规格数量
+        shopSpecService.updateSpecificationQuantityInTemplate(shopSpecEntity.getTemplateId());
         return DataResult.success();
     }
 
@@ -137,9 +143,12 @@ public class ShopTemplateController extends BaseController {
     @LogAnnotation(title = "商品规格", action = "删除规格")
     @ResponseBody
     public DataResult deleteSpec(@RequestBody @ApiParam(value = "id集合") List<String> ids) {
+        // 查询规格
+        ShopSpecEntity shopSpecEntity = shopSpecService.getById(ids.get(NumberConstants.ZERO));
+        // 删除规格
         shopSpecService.removeByIds(ids);
-        // TODO 更新模板中规格数量
-
+        // 更新模板中规格数量
+        shopSpecService.updateSpecificationQuantityInTemplate(shopSpecEntity.getTemplateId());
         return DataResult.success();
     }
 
@@ -170,9 +179,64 @@ public class ShopTemplateController extends BaseController {
 
     // *******************************************************************************************参数*******************************************************************************************  //
 
+    @ApiOperation(value = "跳转进入新增/编辑参数页面")
+    @GetMapping("/index/shopTemplate/addOrUpdatePara")
+    public String addOrUpdatePara() {
+        return "template/addOrUpdatePara";
+    }
 
+    @ApiOperation(value = "新增")
+    @PostMapping("shopTemplate/addPara")
+    @RequiresPermissions("shopTemplate:add")
+    @LogAnnotation(title = "商品参数", action = "新增参数")
+    @ResponseBody
+    public DataResult addPara(@RequestBody ShopParaEntity shopParaEntity) {
+        // 保存参数
+        shopParaService.save(shopParaEntity);
+        // 更新模板中参数数量
+        shopParaService.updateParametersQuantityInTemplate(shopParaEntity.getTemplateId());
+        return DataResult.success();
+    }
 
+    @ApiOperation(value = "删除")
+    @DeleteMapping("shopTemplate/deletePara")
+    @RequiresPermissions("shopTemplate:delete")
+    @LogAnnotation(title = "商品参数", action = "删除参数")
+    @ResponseBody
+    public DataResult deletePara(@RequestBody @ApiParam(value = "id集合") List<String> ids) {
+        // 查询参数
+        ShopParaEntity shopParaEntity = shopParaService.getById(ids.get(NumberConstants.ZERO));
+        // 删除规格
+        shopParaService.removeByIds(ids);
+        // 更新模板中规格数量
+        shopParaService.updateParametersQuantityInTemplate(shopParaEntity.getTemplateId());
+        return DataResult.success();
+    }
 
+    @ApiOperation(value = "更新")
+    @PutMapping("shopTemplate/updatePara")
+    @RequiresPermissions("shopTemplate:update")
+    @LogAnnotation(title = "商品参数", action = "更新参数")
+    @ResponseBody
+    public DataResult updatePara(@RequestBody ShopParaEntity shopParaEntity) {
+        return DataResult.success(shopParaService.updateById(shopParaEntity));
+    }
+
+    @ApiOperation(value = "查询参数分页数据")
+    @PostMapping("shopTemplate/paraListByPage")
+    @RequiresPermissions("shopTemplate:list")
+    @LogAnnotation(title = "商品模板", action = "查询参数分页数据")
+    @DataScope
+    @ResponseBody
+    public DataResult findParaListByPage(@RequestBody ShopParaEntity shopParaEntity) {
+        // 分页初始化
+        Page<ShopParaEntity> page = new Page<>(shopParaEntity.getPage(), shopParaEntity.getLimit());
+        // 查询条件
+        LambdaQueryWrapper<ShopParaEntity> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper.eq(StringUtils.isNotBlank(shopParaEntity.getTemplateId()), ShopParaEntity::getTemplateId, shopParaEntity.getTemplateId()).orderByAsc(ShopParaEntity::getSeq);
+        // 封装数据权限 - 执行查询 - 响应前端
+        return DataResult.success(shopParaService.page(page, encapsulationDataRights(shopParaEntity, queryWrapper, ShopParaEntity::getCreateId)));
+    }
 
 
 }

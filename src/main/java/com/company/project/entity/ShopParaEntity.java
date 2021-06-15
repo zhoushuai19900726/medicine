@@ -1,6 +1,7 @@
 package com.company.project.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.company.project.entity.BaseEntity;
 
 
 import java.io.Serializable;
@@ -9,19 +10,20 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 商品规格
+ * 商品参数
  *
  * @author zhoushuai
  * @email zhoushuai_0726@163.com
- * @date 2021-06-11 10:11:20
+ * @date 2021-06-15 11:26:57
  */
 @Data
-@TableName("shop_spec")
-public class ShopSpecEntity extends BaseEntity implements Serializable {
+@TableName("shop_para")
+public class ShopParaEntity extends BaseEntity implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     /**
-     * ID
+     * id
      */
     @TableId("id")
     private String id;
@@ -33,7 +35,7 @@ public class ShopSpecEntity extends BaseEntity implements Serializable {
     private String name;
 
     /**
-     * 规格选项
+     * 选项
      */
     @TableField("options")
     private String options;
