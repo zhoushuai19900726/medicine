@@ -37,6 +37,6 @@ spring:
 file:
   #文件上传目录 绝对路径 末尾请加 /
   path: F:/files/ #windows
-  #path: /data/files/ #linux
+#  path: /Users/zhoushuai/Downloads/uploadFile #linux
   #文件预览、下载的url, 末尾请勿加 /
   url: http://localhost:8080/files

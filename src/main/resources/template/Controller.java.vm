@@ -2,6 +2,8 @@ package ${package}.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.company.project.common.aop.annotation.DataScope;
+import com.company.project.common.aop.annotation.LogAnnotation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -28,14 +30,12 @@ import ${package}.service.${className}Service;
  */
 @Controller
 @RequestMapping("/")
-public class ${className}Controller {
+public class ${className}Controller extends BaseController {
     @Autowired
     private ${className}Service ${classname}Service;
 
 
-    /**
-    * 跳转到页面
-    */
+    @ApiOperation(value = "跳转到列表页面")
     @GetMapping("/index/${classname}")
     public String ${classname}() {
         return "${classNameLower}/list";
@@ -44,6 +44,7 @@ public class ${className}Controller {
     @ApiOperation(value = "新增")
     @PostMapping("${classname}/add")
     @RequiresPermissions("${classname}:add")
+    @LogAnnotation(title = "${comments}", action = "新增")
     @ResponseBody
     public DataResult add(@RequestBody ${className}Entity ${classname}){
         ${classname}Service.save(${classname});
@@ -53,6 +54,7 @@ public class ${className}Controller {
     @ApiOperation(value = "删除")
     @DeleteMapping("${classname}/delete")
     @RequiresPermissions("${classname}:delete")
+    @LogAnnotation(title = "${comments}", action = "删除")
     @ResponseBody
     public DataResult delete(@RequestBody @ApiParam(value = "id集合") List<String> ids){
         ${classname}Service.removeByIds(ids);
@@ -62,6 +64,7 @@ public class ${className}Controller {
     @ApiOperation(value = "更新")
     @PutMapping("${classname}/update")
     @RequiresPermissions("${classname}:update")
+    @LogAnnotation(title = "${comments}", action = "更新")
     @ResponseBody
     public DataResult update(@RequestBody ${className}Entity ${classname}){
         ${classname}Service.updateById(${classname});
@@ -71,14 +74,19 @@ public class ${className}Controller {
     @ApiOperation(value = "查询分页数据")
     @PostMapping("${classname}/listByPage")
     @RequiresPermissions("${classname}:list")
+    @LogAnnotation(title = "${comments}", action = "查询分页数据")
+    @DataScope
     @ResponseBody
     public DataResult findListByPage(@RequestBody ${className}Entity ${classname}){
-        Page page = new Page(${classname}.getPage(), ${classname}.getLimit());
+        // 分页初始化
+        Page<${className}Entity> page = new Page<>(${classname}.getPage(), ${classname}.getLimit());
+        // 查询条件
         LambdaQueryWrapper<${className}Entity> queryWrapper = Wrappers.lambdaQuery();
-        //查询条件示例
-        //queryWrapper.eq(${className}Entity::getId, ${classname}.getId());
-        IPage<${className}Entity> iPage = ${classname}Service.page(page, queryWrapper);
-        return DataResult.success(iPage);
+//        queryWrapper
+//                .eq(StringUtils.isNotBlank(${classname}.getId()), ${className}Entity::getId, ${classname}.getId())
+//                .orderByDesc(${className}Entity::getCreateTime);
+        // 封装数据权限 - 执行查询 - 封装用户 - 响应前端
+        return DataResult.success(encapsulationUser(${classname}Service.page(page, encapsulationDataRights(${classname}, queryWrapper, ${className}Entity::getCreateId))));
     }
 
 }
