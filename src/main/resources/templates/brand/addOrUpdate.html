@@ -17,19 +17,19 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">品牌名称</label>
                 <div class="layui-input-block">
-                    <input name="name" placeholder="请输入品牌名称" lay-verify="required" autocomplete="off" class="layui-input">
+                    <input name="name" placeholder="请输入品牌名称" lay-verify="required" autocomplete="off" class="layui-input" onblur="makeInitials(this.value)"/>
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">首字母</label>
                 <div class="layui-input-block">
-                    <input name="letter" placeholder="请输入首字母" lay-verify="required" autocomplete="off" class="layui-input">
+                    <input name="letter" placeholder="请输入首字母" lay-verify="required" autocomplete="off" class="layui-input"/>
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">品牌排序</label>
                 <div class="layui-input-block">
-                    <input name="seq" placeholder="请输入品牌排序" lay-verify="required" autocomplete="off" class="layui-input">
+                    <input name="seq" placeholder="请输入品牌排序" lay-verify="required" autocomplete="off" class="layui-input"/>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -47,6 +47,7 @@
 <script th:src="@{/layui2.0/lib/jq-module/zyupload/jquery.min.js}" charset="utf-8"></script>
 <script th:src="@{/layui2.0/lib/jq-module/zyupload/jquery-migrate.js}" charset="utf-8"></script>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/js/makePy.min.js}" charset="utf-8"></script>
 <script th:src="@{/layui2.0/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
 <script th:src="@{/layui2.0/lib/jq-module/zyupload/zyupload-1.0.0.min.js}" charset="utf-8"></script>
 <script>
@@ -54,6 +55,9 @@
     var token = CoreUtil.getData("access_token");
     //地址栏转义token中的#号
     var tokenQuery = token.replace("#", "%23");
+
+    // TODO 1.上传回显问题
+
 
     $(function () {
         // 初始化插件
@@ -77,6 +81,11 @@
                 console.info(selectFiles);
                 console.info("还没上传的全部文件：");
                 console.info(allFiles);
+
+                var finalAllFiles = [];
+                finalAllFiles.push(selectFiles);
+                allFiles = finalAllFiles;
+
             },
             onDelete: function (file, files) {
                 // 删除一个文件的回调方法 file:当前删除的文件  files:删除之后的文件
@@ -163,6 +172,17 @@
             return false;
         });
     });
+
+    function makeInitials(name) {
+        var letter;
+        if(name){
+            var allInitials = wf.makePy(name);
+            letter = String(allInitials).substr(0, 1).toUpperCase();
+        } else {
+            letter = "";
+        }
+        $("#brandForm input[name='letter']").val(letter);
+    }
 
     /**
      * 父级页面控制子页面提交表单
