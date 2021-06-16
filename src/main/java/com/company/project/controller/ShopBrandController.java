@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.company.project.common.aop.annotation.DataScope;
 import com.company.project.common.aop.annotation.LogAnnotation;
+import com.company.project.common.utils.PinYinUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+
 import java.util.List;
+
 import com.company.project.common.utils.DataResult;
 
 import com.company.project.entity.ShopBrandEntity;
@@ -40,7 +43,7 @@ public class ShopBrandController extends BaseController {
     @GetMapping("/index/shopBrand")
     public String shopBrand() {
         return "brand/brandList";
-        }
+    }
 
     @ApiOperation(value = "跳转进入新增/编辑页面")
     @GetMapping("/index/shopBrand/addOrUpdate")
@@ -53,7 +56,10 @@ public class ShopBrandController extends BaseController {
     @RequiresPermissions("shopBrand:add")
     @LogAnnotation(title = "商品品牌", action = "新增品牌")
     @ResponseBody
-    public DataResult add(@RequestBody ShopBrandEntity shopBrand){
+    public DataResult add(@RequestBody ShopBrandEntity shopBrand) {
+        if (StringUtils.isNotBlank(shopBrand.getName()) && StringUtils.isBlank(shopBrand.getLetter())) {
+            shopBrand.setLetter(PinYinUtils.getUpperStr(shopBrand.getName()));
+        }
         return DataResult.success(shopBrandService.save(shopBrand));
     }
 
@@ -62,7 +68,7 @@ public class ShopBrandController extends BaseController {
     @RequiresPermissions("shopBrand:delete")
     @LogAnnotation(title = "商品品牌", action = "删除品牌")
     @ResponseBody
-    public DataResult delete(@RequestBody @ApiParam(value = "id集合") List<String> ids){
+    public DataResult delete(@RequestBody @ApiParam(value = "id集合") List<String> ids) {
         return DataResult.success(shopBrandService.removeByIds(ids));
     }
 
@@ -71,7 +77,10 @@ public class ShopBrandController extends BaseController {
     @RequiresPermissions("shopBrand:update")
     @LogAnnotation(title = "商品品牌", action = "更新品牌")
     @ResponseBody
-    public DataResult update(@RequestBody ShopBrandEntity shopBrand){
+    public DataResult update(@RequestBody ShopBrandEntity shopBrand) {
+        if (StringUtils.isNotBlank(shopBrand.getName()) && StringUtils.isBlank(shopBrand.getLetter())) {
+            shopBrand.setLetter(PinYinUtils.getFirstUpperStr(shopBrand.getName()));
+        }
         return DataResult.success(shopBrandService.updateById(shopBrand));
     }
 
@@ -81,7 +90,7 @@ public class ShopBrandController extends BaseController {
     @LogAnnotation(title = "商品品牌", action = "查询分页数据")
     @DataScope
     @ResponseBody
-    public DataResult findListByPage(@RequestBody ShopBrandEntity shopBrand){
+    public DataResult findListByPage(@RequestBody ShopBrandEntity shopBrand) {
         // 分页初始化
         Page<ShopBrandEntity> page = new Page<>(shopBrand.getPage(), shopBrand.getLimit());
         // 查询条件

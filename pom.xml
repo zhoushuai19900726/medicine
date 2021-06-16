@@ -120,6 +120,15 @@
             <artifactId>thymeleaf-extras-shiro</artifactId>
             <version>${thymeleaf-shiro.version}</version>
         </dependency>
+
+        <!-- 汉字转拼音 -->
+        <dependency>
+            <groupId>com.belerweb</groupId>
+            <artifactId>pinyin4j</artifactId>
+            <version>2.5.0</version>
+        </dependency>
+
+
         <!--数据库持久化 及 插件依赖-->
         <dependency>
             <groupId>com.baomidou</groupId>

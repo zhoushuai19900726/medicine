@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.company.project.common.aop.annotation.DataScope;
 import com.company.project.common.aop.annotation.LogAnnotation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -19,6 +19,7 @@ import com.company.project.common.utils.DataResult;
 import ${package}.entity.${className}Entity;
 import ${package}.service.${className}Service;
 
+import javax.annotation.Resource;
 
 
 /**
@@ -31,7 +32,8 @@ import ${package}.service.${className}Service;
 @Controller
 @RequestMapping("/")
 public class ${className}Controller extends BaseController {
-    @Autowired
+
+    @Resource
     private ${className}Service ${classname}Service;
 
 
@@ -41,14 +43,19 @@ public class ${className}Controller extends BaseController {
         return "${classNameLower}/list";
         }
 
+    @ApiOperation(value = "跳转进入新增/编辑页面")
+    @GetMapping("/index/${classname}/addOrUpdate")
+    public String addOrUpdate() {
+        return "${classNameLower}/addOrUpdate";
+    }
+
     @ApiOperation(value = "新增")
     @PostMapping("${classname}/add")
     @RequiresPermissions("${classname}:add")
     @LogAnnotation(title = "${comments}", action = "新增")
     @ResponseBody
     public DataResult add(@RequestBody ${className}Entity ${classname}){
-        ${classname}Service.save(${classname});
-        return DataResult.success();
+        return DataResult.success(${classname}Service.save(${classname}));
     }
 
     @ApiOperation(value = "删除")
@@ -57,8 +64,7 @@ public class ${className}Controller extends BaseController {
     @LogAnnotation(title = "${comments}", action = "删除")
     @ResponseBody
     public DataResult delete(@RequestBody @ApiParam(value = "id集合") List<String> ids){
-        ${classname}Service.removeByIds(ids);
-        return DataResult.success();
+        return DataResult.success(${classname}Service.removeByIds(ids));
     }
 
     @ApiOperation(value = "更新")
@@ -67,8 +73,7 @@ public class ${className}Controller extends BaseController {
     @LogAnnotation(title = "${comments}", action = "更新")
     @ResponseBody
     public DataResult update(@RequestBody ${className}Entity ${classname}){
-        ${classname}Service.updateById(${classname});
-        return DataResult.success();
+        return DataResult.success(${classname}Service.updateById(${classname}));
     }
 
     @ApiOperation(value = "查询分页数据")
@@ -82,9 +87,9 @@ public class ${className}Controller extends BaseController {
         Page<${className}Entity> page = new Page<>(${classname}.getPage(), ${classname}.getLimit());
         // 查询条件
         LambdaQueryWrapper<${className}Entity> queryWrapper = Wrappers.lambdaQuery();
-//        queryWrapper
-//                .eq(StringUtils.isNotBlank(${classname}.getId()), ${className}Entity::getId, ${classname}.getId())
-//                .orderByDesc(${className}Entity::getCreateTime);
+        queryWrapper
+                .eq(StringUtils.isNotBlank(${classname}.getId()), ${className}Entity::getId, ${classname}.getId())
+                .orderByDesc(${className}Entity::getCreateTime);
         // 封装数据权限 - 执行查询 - 封装用户 - 响应前端
         return DataResult.success(encapsulationUser(${classname}Service.page(page, encapsulationDataRights(${classname}, queryWrapper, ${className}Entity::getCreateId))));
     }

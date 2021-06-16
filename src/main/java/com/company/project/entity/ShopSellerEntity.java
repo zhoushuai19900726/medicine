@@ -1,6 +1,7 @@
 package com.company.project.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.company.project.common.utils.DelimiterConstants;
 import lombok.Data;
 import org.apache.commons.lang.StringUtils;
 
@@ -46,7 +47,7 @@ public class ShopSellerEntity extends BaseEntity implements Serializable {
     private String contactNumber;
 
     @TableField("status")
-    private Integer status = 0;
+    private Integer status;
     // 页面参数封装
     @TableField(exist = false)
     private String statusStr;
@@ -82,8 +83,12 @@ public class ShopSellerEntity extends BaseEntity implements Serializable {
 
     public void setStatusStr(String statusStr) {
         this.statusStr = statusStr;
-        if (StringUtils.isNotBlank(statusStr) && StringUtils.equals(statusStr, "on")) {
-            this.status = 1;
+        if (StringUtils.isNotBlank(statusStr)) {
+            if(StringUtils.equals(statusStr, DelimiterConstants.ON)){
+                this.status = 1;
+            } else if (StringUtils.equals(statusStr, DelimiterConstants.OFF)){
+                this.status = 0;
+            }
         }
     }
 

@@ -42,11 +42,11 @@ public class DelimiterConstants {
     public static final String GREATER = ">";
     public static final String LESS_EQUAL = "<=";
     public static final String EQUAL = "=";
-    public static final String ZERO_STR = "0";
-    public static final String ONE_STR = "1";
-    public static final String MINUS_ONE_STR = "-1";
     public static final String EMPTY_STR = "";
     public static final String NULL_STR = "null";
+
+    public static final String ON = "on";
+    public static final String OFF = "off";
 
     public static final String ENCODE = "UTF-8";
     public static final String ENCODE_GBK = "GBK";

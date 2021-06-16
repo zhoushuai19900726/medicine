@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+</head>
+<body>
+
+
+<div class="layuimini-container">
+    <div class="layuimini-main" shiro:hasPermission="shopCategory:list">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 5px 5px 5px 5px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">分类ID</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="id" autocomplete="off" placeholder="请输入分类ID" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">分类名称</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="name" autocomplete="off" placeholder="请输入分类名称" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline" style="float: right;">
+                            <button class="layui-btn layui-btn-primary" lay-submit lay-filter="data-back-btn"><i class="layui-icon">&#xe65a;</i> 返 回</button>
+                            <button class="layui-btn layui-btn-primary" lay-submit lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
+                            <button class="layui-btn" id="export"><i class="layui-icon">&#xe67d;</i> 导 出</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+    </div>
+    <table class="layui-table" id="showTable" lay-filter="showTable"></table>
+    <script type="text/html" id="toolbar">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add" shiro:hasPermission="shopCategory:add"><i class="layui-icon">&#xe61f;</i>新增三级分类</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="batchDeleted" shiro:hasPermission="shopCategory:delete"><i class="layui-icon">&#xe640;</i>批量删除</button>
+        </div>
+    </script>
+    <script type="text/html" id="configTool">
+        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="transferGoods" shiro:hasPermission="shopCategory:update"><i class="layui-icon">&#xe9aa;</i>转移商品</a>
+    </script>
+    <script type="text/html" id="tool">
+        <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit" shiro:hasPermission="shopCategory:update"><i class="layui-icon">&#xe642;</i>编辑</a>
+        <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="del" shiro:hasPermission="shopCategory:delete"><i class="layui-icon">&#xe640;</i>删除</a>
+    </script>
+    <script type="text/html" id="isShowSwitchTpl">
+        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="是|否" lay-filter="isShowSwitch" {{d.isShow== 1 ? 'checked' : ''}}/>
+    </script>
+    <script type="text/html" id="isMenuSwitchTpl">
+        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="是|否" lay-filter="isMenuSwitch" {{d.isMenu== 1 ? 'checked' : ''}}/>
+    </script>
+</div>
+<script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/layui/layui.all.js}" charset="utf-8"></script>
+</body>
+</html>
+<script>
+    //获取token
+    var token = CoreUtil.getData("access_token");
+    //地址栏转义token中的#号
+    var tokenQuery = token.replace("#", "%23");
+    var tableIns1;
+    var table, form, layer, util;
+    var $ = jQuery = layui.jquery;
+    layui.use(['table', 'layer', 'util'], function () {
+        table = layui.table;
+        form = layui.form;
+        layer = layui.layer;
+        util = layui.util;
+    });
+
+    function loadTable(parentId, grandParentId, templateId) {
+        //加载table TODO 商品数量
+        tableIns1 = table.render({
+            elem: '#showTable'
+            , contentType: 'application/json'
+            , headers: {"authorization": token}
+            , page: true //开启分页
+            , url: '/shopCategory/listByPage' //数据接口
+            , method: 'POST'
+            , where: {"parentId": parentId}
+            , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": CoreUtil.isEmpty(res.data) ? 0 : res.data.total, //解析数据长度
+                    "data": CoreUtil.isEmpty(res.data) ? null : res.data.records //解析数据列表
+                }
+            }
+            , cols: [
+                [
+                    {type: 'checkbox', fixed: 'left'},
+                    {width: 120, field: 'id', title: 'ID', sort: true},
+                    {width: 150, field: 'name', title: '分类名称', edit: 'text'},
+                    {width: 80, field: 'level', title: '级别'},
+                    {width: 120, field: 'goodsNum', title: '商品数量', sort: true},
+                    {width: 100, field: 'isShow', title: '是否显示', templet: '#isShowSwitchTpl'},
+                    {width: 100, field: 'isMenu', title: '是否导航', templet: '#isMenuSwitchTpl'},
+                    {align: 'center', width: 80, field: 'seq', title: '排序', sort: true},
+                    {width: 100, field: 'createName', title: '创建人'},
+                    {width: 120, align: 'center', toolbar: "#configTool", title: '设置', fixed: 'right'},
+                    {width: 150, toolbar: "#tool", title: '操作', fixed: 'right'}
+                ]
+            ]
+            , toolbar: '#toolbar'
+        });
+
+
+        //表头工具
+        table.on('toolbar(showTable)', function (obj) {
+            switch (obj.event) {
+                case 'batchDeleted':
+                    var checkStatus = table.checkStatus(obj.config.id);
+                    var data = checkStatus.data;
+                    if (data.length == 0) {
+                        layer.msg("请选择要批量删除的列");
+                    } else {
+                        var ids = [];
+                        $(data).each(function (index, item) {
+                            ids.push(item.id);
+                        });
+                        tipDialog(ids);
+                    }
+                    break;
+                case 'add':
+                    layer.open({
+                        id: 'shopCategory_add', //设定一个id，防止重复弹出
+                        title: '<i class="layui-icon">&#xe653;</i> 新增三级商品分类',
+                        type: 2,
+                        content: '../index/shopCategory/addOrUpdate3/' + grandParentId,
+                        btn: ['提交保存', '取消'],
+                        area: ['70%', '70%'],
+                        scrollbar: false,
+                        yes: function (index, layero) {
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            window[layero.find('iframe')[0]['name']].saveShopCategory("submitBtnForAdd");
+                        },
+                        success: function (layero, index) {
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            var subordinateData = {};
+                            subordinateData.parentId = parentId;
+                            subordinateData.grandParentId = grandParentId;
+                            subordinateData.templateId = templateId;
+                            subordinateData.isShow = 1;
+                            subordinateData.isMenu = 1;
+                            window[layero.find('iframe')[0]['name']].assignment(subordinateData);
+                        }
+                    });
+                    break;
+            }
+        });
+        //列操作
+        table.on('tool(showTable)', function (obj) {
+            var data = obj.data;
+            switch (obj.event) {
+                case 'del':
+                    var ids = [];
+                    ids.push(data.id);
+                    tipDialog(ids);
+                    break;
+                case 'edit':
+                    layer.open({
+                        id: 'shopCategory_update', //设定一个id，防止重复弹出
+                        title: '<i class="layui-icon">&#xe653;</i> 编辑三级商品分类',
+                        type: 2,
+                        content: '../index/shopCategory/addOrUpdate2',
+                        btn: ['提交保存', '取消'],
+                        area: ['50%', '70%'],
+                        scrollbar: false,
+                        yes: function (index, layero) {
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            window[layero.find('iframe')[0]['name']].saveShopCategory("submitBtnForUpdate");
+                        },
+                        success: function (layero, index) {
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            window[layero.find('iframe')[0]['name']].assignment(data);
+                        }
+                    });
+                    break;
+                case 'transferGoods':
+                    // TODO 转移商品
+
+                    break;
+            }
+        });
+        /**
+         * 监听单元格编辑
+         */
+        table.on('edit(showTable)', function (obj) {
+            var value = obj.value //得到修改后的值
+                , data = obj.data //得到所在行所有键值
+                , field = obj.field; //得到字段
+            var shopCategory = {};
+            shopCategory.id = data.id;
+            shopCategory[field] = util.escape(value);
+            CoreUtil.sendPut("/shopCategory/update", shopCategory, function (res) {
+                if (res.code != 0) {
+                    layer.msg(res.msg);
+                }
+            });
+        });
+        /**
+         * 监听table内开关操作
+         */
+        form.on('switch(isShowSwitch)', function (obj) {
+            // console.log(obj)
+            var shopCategory = {};
+            shopCategory.id = this.value;
+            shopCategory.isShow = obj.elem.checked ? 1 : 0;
+            CoreUtil.sendPut("/shopCategory/update", shopCategory, function (res) {
+                if (res.code == 0) {
+                    layer.tips(obj.elem.checked ? "开启成功" : "关闭成功", obj.othis);
+                    tableIns1.reload();
+                } else {
+                    layer.msg(res.msg);
+                }
+            });
+        });
+        /**
+         * 监听table内开关操作
+         */
+        form.on('switch(isMenuSwitch)', function (obj) {
+            // console.log(obj)
+            var shopCategory = {};
+            shopCategory.id = this.value;
+            shopCategory.isMenu = obj.elem.checked ? 1 : 0;
+            CoreUtil.sendPut("/shopCategory/update", shopCategory, function (res) {
+                if (res.code == 0) {
+                    layer.tips(obj.elem.checked ? "开启成功" : "关闭成功", obj.othis);
+                    tableIns1.reload();
+                } else {
+                    layer.msg(res.msg);
+                }
+            });
+        });
+        //导出
+        $('#export').on('click', function () {
+            //原先分页limit
+            var exportParams = {
+                limit: 10000,
+                key: $("#key").val()
+            };
+            CoreUtil.sendPost("/shopCategory/listByPage", exportParams, function (res) {
+                //初始化渲染数据
+                if (res.data != null && res.data.records != null) {
+                    table.exportFile(tableIns1.config.id, res.data.records, 'xls');
+                }
+            });
+        });
+
+        //删除
+        var tipDialog = function (ids) {
+            layer.open({
+                content: "确定要删除么?",
+                yes: function (index, layero) {
+                    layer.close(index); //如果设定了yes回调，需进行手工关闭
+                    CoreUtil.sendDelete("/shopCategory/delete", ids, function (res) {
+                        layer.msg(res.msg, {time: 1000}, function () {
+                            search();
+                        });
+                    });
+                }
+            });
+        };
+
+        /**
+         * 执行查询
+         */
+        form.on('submit(data-search-btn)', function (data) {
+            // 查询条件
+            var where = data.field;
+            where.parentId  = parentId;
+            // 刷新table
+            tableIns1.reload({
+                where: where,
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                done: function () {
+                    // 清空查询条件缓存
+                    this.where = {parentId: parentId};
+                }
+            });
+            return false;
+        });
+        /**
+         * 执行返回
+         */
+        form.on('submit(data-back-btn)', function (data) {
+            var parentIndex = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(parentIndex);
+            return false;
+        });
+    }
+
+    /**
+     * 父级页面控制子页面填充
+     */
+    function assignment(parentId, grandParentId, templateId) {
+        loadTable(parentId, grandParentId, templateId);
+    }
+
+</script>

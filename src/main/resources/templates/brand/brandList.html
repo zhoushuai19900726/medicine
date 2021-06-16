@@ -203,7 +203,9 @@
             shopBrand.id = data.id;
             shopBrand[field] = util.escape(value);
             CoreUtil.sendPut("/shopBrand/update", shopBrand, function (res) {
-                if (res.code != 0) {
+                if (res.code == 0) {
+                    tableIns1.reload();
+                } else {
                     layer.msg(res.msg);
                 }
             });

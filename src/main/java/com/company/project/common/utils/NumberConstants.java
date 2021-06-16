@@ -52,4 +52,8 @@ public class NumberConstants {
     public static final Integer FIVE_THOUSAND_I = 5000;
     public static final Integer TEN_THOUSAND_I = 10000;
     public static final Integer FIFTY_THOUSAND_I = 50000;
+
+    public static final String ZERO_STR = "0";
+    public static final String ONE_STR = "1";
+    public static final String MINUS_ONE_STR = "-1";
 }

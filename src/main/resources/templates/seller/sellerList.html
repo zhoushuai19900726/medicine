@@ -258,6 +258,7 @@
             CoreUtil.sendPut("/seller/update", seller, function (res) {
                 if (res.code == 0) {
                     layer.tips(obj.elem.checked ? "开馆成功" : "闭馆成功", obj.othis);
+                    tableIns1.reload();
                 } else {
                     layer.msg(res.msg);
                 }

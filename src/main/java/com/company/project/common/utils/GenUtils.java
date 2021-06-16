@@ -38,7 +38,7 @@ public class GenUtils {
         templates.add("template/Controller.java.vm");
         templates.add("template/menu.sql.vm");
         templates.add("template/list.html.vm");
-
+        templates.add("template/addOrUpdate.html.vm");
         return templates;
     }
 
@@ -224,6 +224,10 @@ public class GenUtils {
 
         if (template.contains("list.html.vm")) {
             return "main" + File.separator + "resources" + File.separator + "templates" + File.separator + className.toLowerCase() + File.separator + "list" + ".html";
+        }
+
+        if (template.contains("addOrUpdate.html.vm")) {
+            return "main" + File.separator + "resources" + File.separator + "templates" + File.separator + className.toLowerCase() + File.separator + "addOrUpdate" + ".html";
         }
 
         return null;
