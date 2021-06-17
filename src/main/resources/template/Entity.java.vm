@@ -1,9 +1,7 @@
 package ${package}.entity;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.company.project.entity.BaseEntity;
+import com.baomidou.mybatisplus.annotation.*;
 
 
     #if(${hasBigDecimal})
@@ -34,7 +32,33 @@ public class ${className}Entity extends BaseEntity implements Serializable {
             @TableId("$column.columnName")
             private $column.attrType $column.attrname;
         #end
-        #if($column.columnName != $pk.columnName)
+        #if($column.columnName == "create_id")
+            @TableField(fill = FieldFill.INSERT)
+            private String createId;
+            @TableField(exist = false)
+            private String createName;
+        #elseif($column.columnName == "create_time")
+            @TableField(fill = FieldFill.INSERT)
+            private Date createTime;
+            // 查询条件
+            @TableField(exist = false)
+            private String createStartTime;
+            // 查询条件
+            @TableField(exist = false)
+            private String createEndTime;
+        #elseif($column.columnName == "update_id")
+            @TableField(fill = FieldFill.INSERT_UPDATE)
+            private String updateId;
+            @TableField(exist = false)
+            private String updateName;
+        #elseif($column.columnName == "update_time")
+            @TableField(fill = FieldFill.INSERT_UPDATE)
+            private Date updateTime;
+        #elseif($column.columnName == "deleted")
+            @TableField(fill = FieldFill.INSERT)
+            @TableLogic // 注释后进行物理删除
+            private Integer deleted;
+        #elseif($column.columnName != $pk.columnName)
             @TableField("$column.columnName")
             private $column.attrType $column.attrname;
         #end

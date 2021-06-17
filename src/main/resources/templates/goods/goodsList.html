@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main" shiro:hasPermission="goods:list">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 5px 5px 5px 5px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">商品ID</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="id" autocomplete="off" placeholder="请输入商品ID" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">商品货号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="sn" autocomplete="off" placeholder="请输入商品货号" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">商品名称</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="name" autocomplete="off" placeholder="请输入商品名称" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">商品品牌</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="id" autocomplete="off" placeholder="请输入商品ID" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">商家主体</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="id" autocomplete="off" placeholder="请输入商品ID" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">商品分类</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="id" autocomplete="off" placeholder="请输入商品ID" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">商品状态</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="name" autocomplete="off" placeholder="请输入商品名称" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">审核状态</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="name" autocomplete="off" placeholder="请输入商品名称" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline" style="float: right;">
+                            <button class="layui-btn layui-btn-primary" lay-submit lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
+                            <button class="layui-btn" id="export"><i class="layui-icon">&#xe67d;</i> 导 出</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+    </div>
+    <table class="layui-table" id="showTable" lay-filter="showTable" lay-size="sm"></table>
+    <script type="text/html" id="toolbar">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add" shiro:hasPermission="goods:add"><i class="layui-icon">&#xe61f;</i>发布商品</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="goods:delete"><i class="layui-icon">&#xe640;</i>批量删除</button>
+        </div>
+    </script>
+    <script type="text/html" id="tool">
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="detail" shiro:hasPermission="goods:list"><i class="layui-icon">&#xe615;</i>查看详情</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="edit" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe642;</i>编辑商品</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="del" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe658;</i>设为推荐</a>
+        <br/>
+        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="goods:update"><i class="layui-icon">&#x1007;</i>商品停售</a>
+        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="goods:delete"><i class="layui-icon">&#xe640;</i>删除商品</a>
+    </script>
+    <script type="text/html" id="goodsDetailTpl">
+        <table class="layui-table" lay-even="" lay-skin="nob">
+            <tbody>
+            <tr>
+                <td><img src="{{d.image}}" style="width: 60px; height: 60px;"/></td>
+                <td style="padding-left: 2px;">
+                    <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan" style="margin-left: -5px;">名称</span> {{ d.name }}</span>
+                    <br/>
+                    <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan" style="margin-left: -5px;">商家</span> {{ d.sellerName }}</span>
+                    <br/>
+                    <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan" style="margin-left: -5px;">品牌</span> {{ d.brandName }}</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </script>
+    <script type="text/html" id="categoryTpl">
+        <span class="layui-badge-rim">{{ d.category1Name }}</span>
+        <br/>
+        <span class="layui-badge-rim">{{ d.category2Name }}</span>
+        <span class="layui-badge-rim">{{ d.category3Name }}</span>
+    </script>
+    <script type="text/html" id="stockTpl">
+        <div style="width: 100%;" class="layui-badge-rim">{{ d.saleNum }}</div>
+        <br/>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>查看库存</a>
+    </script>
+    <script type="text/html" id="saleTpl">
+        <div style="width: 100%;" class="layui-badge-rim">{{ d.saleNum }}</div>
+        <br/>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>查看订单</a>
+    </script>
+    <script type="text/html" id="evaluationTpl">
+        <div style="width: 100%;" class="layui-badge-rim">{{ d.commentNum }}</div>
+        <br/>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>查看评价</a>
+    </script>
+    <script type="text/html" id="isMarketableTpl">
+        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="上架|下架" lay-filter="isMarketableStr" {{d.isMarketable== 1 ? 'checked' : ''}}/>
+        <br/>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>上架记录</a>
+    </script>
+    <script type="text/html" id="isEnableSpecTpl">
+        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="启用|关闭" lay-filter="isEnableSpecStr" {{d.isEnableSpec== 1 ? 'checked' : ''}}/>
+        <br/>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>规格记录</a>
+    </script>
+    <script type="text/html" id="statusTpl">
+        <div style="width: 100%;" class="layui-badge {{d.status == 0 ? 'layui-bg-orange' : d.status == 1 ? 'layui-bg-green' : 'layui-bg-red'}}">{{d.status == 0 ? '待审核' : d.status == 1 ? '审核通过' : '审核未通过'}}</div>
+        <br/>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>审核详情</a>
+    </script>
+</div>
+<script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/layui/layui.all.js}" charset="utf-8"></script>
+</body>
+</html>
+<script>
+    //获取token
+    var token = CoreUtil.getData("access_token");
+    //地址栏转义token中的#号
+    var tokenQuery = token.replace("#", "%23");
+    var tableIns1;
+    var $ = jQuery = layui.jquery;
+    layui.use(['table', 'layer', 'laydate'], function () {
+        var table = layui.table;
+        var form = layui.form;
+        var layer = layui.layer;
+        var laydate = layui.laydate;
+        /**
+         * 日期时间选择器
+         */
+        laydate.render({
+            elem: '#createStartTime'
+            , type: 'datetime'
+        });
+        /**
+         * 日期时间选择器
+         */
+        laydate.render({
+            elem: '#createEndTime'
+            , type: 'datetime'
+        });
+        //加载table
+        tableIns1 = table.render({
+            elem: '#showTable'
+            , contentType: 'application/json'
+            , headers: {"authorization": token}
+            , page: true //开启分页
+            , url: '/goods/listByPage' //数据接口
+            , method: 'POST'
+            , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": CoreUtil.isEmpty(res.data) ? 0 : res.data.total, //解析数据长度
+                    "data": CoreUtil.isEmpty(res.data) ? null : res.data.records //解析数据列表
+                }
+            }
+            , cols: [
+                [
+                    {type: 'checkbox'},
+                    {align: 'center', width: 80, field: 'id', title: 'ID', sort: true},
+                    {align: 'center', width: 100, field: 'sn', title: '商品货号', edit: 'text'},
+                    {width: 300, title: '商品信息', templet: '#goodsDetailTpl'},
+                    {width: 150, field: 'category', title: '分类', templet: '#categoryTpl'},
+                    {align: 'center', width: 110, field: 'stock', title: '库存', sort: true, templet: '#stockTpl'},
+                    {align: 'center', width: 110, field: 'saleNum', title: '销量', sort: true, templet: '#saleTpl'},
+                    {align: 'center', width: 110, field: 'commentNum', title: '评论数', sort: true, templet: '#evaluationTpl'},
+                    {align: 'center', width: 110, field: 'isMarketable', title: '上架状态', templet: '#isMarketableTpl'},
+                    {align: 'center', width: 110, field: 'isEnableSpec', title: '启用规格', templet: '#isEnableSpecTpl'},
+                    {align: 'center', width: 110, field: 'status', title: '审核状态', templet: '#statusTpl'},
+                    {minWidth: 290, toolbar: "#tool", title: '操作'}
+                ]
+            ]
+            , toolbar: '#toolbar'
+            , done: function (res, curr, count) {
+                $('.layui-table-cell').css({'height': 'auto'});
+            }
+        });
+
+
+        //表头工具
+        table.on('toolbar(showTable)', function (obj) {
+            switch (obj.event) {
+                case 'batchDeleted':
+                    var checkStatus = table.checkStatus(obj.config.id);
+                    var data = checkStatus.data;
+                    if (data.length == 0) {
+                        layer.msg("请选择要批量删除的列");
+                    } else {
+                        var ids = [];
+                        $(data).each(function (index, item) {
+                            ids.push(item.id);
+                        });
+                        tipDialog(ids);
+                    }
+                    break;
+                case 'add':
+                    layer.open({
+                        id: 'shopSpu_add', //设定一个id，防止重复弹出
+                        title: '<i class="layui-icon">&#xe653;</i> 新增商品SPU',
+                        type: 2,
+                        content: '../index/goods/addOrUpdate',
+                        btn: ['提交保存', '取消'],
+                        area: ['60%', '85%'],
+                        scrollbar: false,
+                        yes: function (index, layero) {
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            window[layero.find('iframe')[0]['name']].saveShopSpu("submitBtnForAdd");
+                        }
+                    });
+                    break;
+            }
+        });
+        //列操作
+        table.on('tool(showTable)', function (obj) {
+            var data = obj.data;
+            switch (obj.event) {
+                case 'del':
+                    var ids = [];
+                    ids.push(data.id);
+                    tipDialog(ids);
+                    break;
+                case 'edit':
+                    layer.open({
+                        id: 'shopSpu_update', //设定一个id，防止重复弹出
+                        title: '<i class="layui-icon">&#xe653;</i> 编辑商品SPU',
+                        type: 2,
+                        content: '../index/goods/addOrUpdate',
+                        btn: ['提交保存', '取消'],
+                        area: ['60%', '85%'],
+                        scrollbar: false,
+                        yes: function (index, layero) {
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            window[layero.find('iframe')[0]['name']].saveShopSpu("submitBtnForUpdate");
+                        },
+                        success: function (layero, index) {
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            window[layero.find('iframe')[0]['name']].assignment(data);
+                        }
+                    });
+                    break;
+            }
+        });
+
+        //导出
+        $('#export').on('click', function () {
+            //原先分页limit
+            var exportParams = {
+                limit: 10000,
+                key: $("#key").val()
+            };
+            CoreUtil.sendPost("/goods/listByPage", exportParams, function (res) {
+                //初始化渲染数据
+                if (res.data != null && res.data.records != null) {
+                    table.exportFile(tableIns1.config.id, res.data.records, 'xls');
+                }
+            });
+        });
+
+        //删除
+        var tipDialog = function (ids) {
+            layer.open({
+                content: "确定要删除么?",
+                yes: function (index, layero) {
+                    layer.close(index); //如果设定了yes回调，需进行手工关闭
+                    CoreUtil.sendDelete("/goods/delete", ids, function (res) {
+                        layer.msg(res.msg, {time: 1000}, function () {
+                            search();
+                        });
+                    });
+                }
+            });
+        };
+
+        /**
+         * 执行查询
+         */
+        form.on('submit(data-search-btn)', function (data) {
+            // 查询条件
+            var where = data.field;
+            // 刷新table
+            tableIns1.reload({
+                where: where,
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                done: function () {
+                    // 清空查询条件缓存
+                    this.where = {};
+                    $('.layui-table-cell').css({'height': 'auto'});
+                }
+            });
+            return false;
+        });
+
+    });
+</script>
