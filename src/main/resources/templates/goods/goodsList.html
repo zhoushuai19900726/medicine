@@ -35,35 +35,70 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label">商品品牌</label>
+                            <label class="layui-form-label">商品标题</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="id" autocomplete="off" placeholder="请输入商品ID" class="layui-input">
+                                <input type="text" name="caption" autocomplete="off" placeholder="请输入商品标题" class="layui-input">
                             </div>
                         </div>
                     </div>
                     <div class="layui-form-item">
                         <div class="layui-inline">
-                            <label class="layui-form-label">商家主体</label>
+                            <label class="layui-form-label">运营商家</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="id" autocomplete="off" placeholder="请输入商品ID" class="layui-input">
+                                <select name="sellerId" lay-search th:with="sellerList=${@sellerService.list()}">
+                                    <option value="">请选择运营商家</option>
+                                    <option th:each="seller : ${sellerList}" th:text="${seller.sellerName}" th:value="${seller.id}"></option>
+                                </select>
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label">商品分类</label>
+                            <label class="layui-form-label">商品品牌</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="id" autocomplete="off" placeholder="请输入商品ID" class="layui-input">
+                                <select name="brandId" lay-search th:with="brandList=${@shopBrandService.list()}">
+                                    <option value="">请选择商品品牌</option>
+                                    <option th:each="brand : ${brandList}" th:text="${brand.name}" th:value="${brand.id}"></option>
+                                </select>
                             </div>
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">商品状态</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="name" autocomplete="off" placeholder="请输入商品名称" class="layui-input">
+                                <select name="isMarketable" th:with="goodsStatusList=${@commonController.findAllGoodsStatus()}">
+                                    <option value="">请选择商品状态</option>
+                                    <option th:each="goodsStatus : ${goodsStatusList}" th:text="${goodsStatus.des}" th:value="${goodsStatus.type}"></option>
+                                </select>
                             </div>
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">审核状态</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="name" autocomplete="off" placeholder="请输入商品名称" class="layui-input">
+                                <select name="status" th:with="goodsExamineStatusList=${@commonController.findAllGoodsExamineStatus()}">
+                                    <option value="">请选择审核状态</option>
+                                    <option th:each="goodsExamineStatus : ${goodsExamineStatusList}" th:text="${goodsExamineStatus.des}" th:value="${goodsExamineStatus.type}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">商品分类</label>
+                            <div class="layui-input-inline">
+                                <select name="category1Id" lay-search th:with="categoryList=${@shopCategoryService.findSubordinateCategoryList('0')}">
+                                    <option value="">请选择一级分类</option>
+                                    <option th:each="category : ${categoryList}" th:text="${category.name}" th:value="${category.id}"></option>
+                                </select>
+                            </div>
+                            <div class="layui-input-inline">
+                                <select name="category2Id" lay-search th:with="categoryList=${@shopCategoryService.findSubordinateCategoryList('0')}">
+                                    <option value="">请选择二级分类</option>
+                                    <option th:each="category : ${categoryList}" th:text="${category.name}" th:value="${category.id}"></option>
+                                </select>
+                            </div>
+                            <div class="layui-input-inline">
+                                <select name="category3Id" lay-search th:with="categoryList=${@shopCategoryService.findSubordinateCategoryList('0')}">
+                                    <option value="">请选择三级分类</option>
+                                    <option th:each="category : ${categoryList}" th:text="${category.name}" th:value="${category.id}"></option>
+                                </select>
                             </div>
                         </div>
                         <div class="layui-inline" style="float: right;">
@@ -85,16 +120,22 @@
     <script type="text/html" id="tool">
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="detail" shiro:hasPermission="goods:list"><i class="layui-icon">&#xe615;</i>查看详情</a>
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="edit" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe642;</i>编辑商品</a>
+        <!-- TODO 设置推荐 -->
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="del" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe658;</i>设为推荐</a>
         <br/>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="del" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe9aa;</i>转移商品</a>
+        {{# if(d.isMarketable == 2){ }}
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="del" shiro:hasPermission="goods:update"><i class="layui-icon">&#x1007;</i>取消停售</a>
+        {{# }else { }}
         <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="goods:update"><i class="layui-icon">&#x1007;</i>商品停售</a>
+        {{# } }}
         <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="goods:delete"><i class="layui-icon">&#xe640;</i>删除商品</a>
     </script>
     <script type="text/html" id="goodsDetailTpl">
         <table class="layui-table" lay-even="" lay-skin="nob">
             <tbody>
             <tr>
-                <td><img src="{{d.image}}" style="width: 60px; height: 60px;"/></td>
+                <td><img src="{{d.image}}" style="width: 60px; height: 60px;" title="{{ d.caption }}"/></td>
                 <td style="padding-left: 2px;">
                     <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan" style="margin-left: -5px;">名称</span> {{ d.name }}</span>
                     <br/>
@@ -128,17 +169,23 @@
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>查看评价</a>
     </script>
     <script type="text/html" id="isMarketableTpl">
-        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="上架|下架" lay-filter="isMarketableStr" {{d.isMarketable== 1 ? 'checked' : ''}}/>
+        {{# if(d.isMarketable == 2){ }}
+        <div style="width: 100%;" class="layui-badge layui-bg-red">停售中...</div>
+        {{# }else { }}
+        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="上架|下架 " lay-filter="isMarketableStr" {{d.isMarketable== 1 ? 'checked' : ''}}/>
+        {{# } }}
         <br/>
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>上架记录</a>
     </script>
     <script type="text/html" id="isEnableSpecTpl">
         <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="启用|关闭" lay-filter="isEnableSpecStr" {{d.isEnableSpec== 1 ? 'checked' : ''}}/>
         <br/>
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>规格记录</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>规格详情</a>
     </script>
     <script type="text/html" id="statusTpl">
-        <div style="width: 100%;" class="layui-badge {{d.status == 0 ? 'layui-bg-orange' : d.status == 1 ? 'layui-bg-green' : 'layui-bg-red'}}">{{d.status == 0 ? '待审核' : d.status == 1 ? '审核通过' : '审核未通过'}}</div>
+        <div style="width: 100%;" class="layui-badge {{d.status == 0 ? 'layui-bg-orange' : d.status == 1 ? 'layui-bg-green' : 'layui-bg-red'}}">{{d.status == 0 ? '待审核' : d.status == 1 ? '审核通过' :
+            '审核未通过'}}
+        </div>
         <br/>
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>审核详情</a>
     </script>
@@ -199,7 +246,7 @@
                     {align: 'center', width: 110, field: 'stock', title: '库存', sort: true, templet: '#stockTpl'},
                     {align: 'center', width: 110, field: 'saleNum', title: '销量', sort: true, templet: '#saleTpl'},
                     {align: 'center', width: 110, field: 'commentNum', title: '评论数', sort: true, templet: '#evaluationTpl'},
-                    {align: 'center', width: 110, field: 'isMarketable', title: '上架状态', templet: '#isMarketableTpl'},
+                    {align: 'center', width: 110, field: 'isMarketable', title: '商品状态', templet: '#isMarketableTpl'},
                     {align: 'center', width: 110, field: 'isEnableSpec', title: '启用规格', templet: '#isEnableSpecTpl'},
                     {align: 'center', width: 110, field: 'status', title: '审核状态', templet: '#statusTpl'},
                     {minWidth: 290, toolbar: "#tool", title: '操作'}
