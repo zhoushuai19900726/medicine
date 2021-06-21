@@ -172,6 +172,7 @@
 <script th:src="@{/js/xm-select.js}" charset="utf-8"></script>
 <script th:src="@{/js/xm-select-utils.js}" charset="utf-8"></script>
 <script th:src="@{/layui/layui.all.js}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/js/lay-config.js(v=2.0.0)}" charset="utf-8"></script>
 </body>
 </html>
 <script>
@@ -181,11 +182,13 @@
     var tokenQuery = token.replace("#", "%23");
     var tableIns1;
     var $ = jQuery = layui.jquery;
-    layui.use(['table', 'layer', 'laydate'], function () {
+    layui.use(['table', 'layer', 'laydate', 'util', 'miniTab'], function () {
         var table = layui.table;
         var form = layui.form;
         var layer = layui.layer;
         var laydate = layui.laydate;
+        var util = layui.util;
+        var miniTab = layui.miniTab;
         /**
          * 下拉列表
          */
@@ -252,8 +255,6 @@
                 $('.layui-table-cell').css({'height': 'auto'});
             }
         });
-
-
         //表头工具
         table.on('toolbar(showTable)', function (obj) {
             switch (obj.event) {
@@ -271,19 +272,10 @@
                     }
                     break;
                 case 'add':
-                    layer.open({
-                        id: 'shopSpu_add', //设定一个id，防止重复弹出
-                        title: '<i class="layui-icon">&#xe653;</i> 新增商品SPU',
-                        type: 2,
-                        content: '../index/goods/addOrUpdate',
-                        btn: ['提交保存', '取消'],
-                        area: ['60%', '85%'],
-                        scrollbar: false,
-                        yes: function (index, layero) {
-                            // 得到iframe页的窗口对象并调用子页面方法
-                            window[layero.find('iframe')[0]['name']].saveShopSpu("submitBtnForAdd");
-                        }
-                    });
+                    var options = {};
+                    options.href = "/index/shopSpu/releaseProduct";
+                    options.title = "发布商品";
+                    miniTab.openNewTabByIframe(options);
                     break;
             }
         });
@@ -297,27 +289,30 @@
                     tipDialog(ids);
                     break;
                 case 'edit':
-                    layer.open({
-                        id: 'shopSpu_update', //设定一个id，防止重复弹出
-                        title: '<i class="layui-icon">&#xe653;</i> 编辑商品SPU',
-                        type: 2,
-                        content: '../index/goods/addOrUpdate',
-                        btn: ['提交保存', '取消'],
-                        area: ['60%', '85%'],
-                        scrollbar: false,
-                        yes: function (index, layero) {
-                            // 得到iframe页的窗口对象并调用子页面方法
-                            window[layero.find('iframe')[0]['name']].saveShopSpu("submitBtnForUpdate");
-                        },
-                        success: function (layero, index) {
-                            // 得到iframe页的窗口对象并调用子页面方法
-                            window[layero.find('iframe')[0]['name']].assignment(data);
-                        }
-                    });
+                    // TODO 编辑商品
+
+
                     break;
             }
         });
-
+        /**
+         * 监听单元格编辑
+         */
+        table.on('edit(showTable)', function (obj) {
+            var value = obj.value //得到修改后的值
+                , data = obj.data //得到所在行所有键值
+                , field = obj.field; //得到字段
+            var shopSpu = {};
+            shopSpu.id = data.id;
+            shopSpu[field] = util.escape(value);
+            CoreUtil.sendPut("/goods/update", shopSpu, function (res) {
+                if (res.code == 0) {
+                    tableIns1.reload();
+                } else {
+                    layer.msg(res.msg);
+                }
+            });
+        });
         //导出
         $('#export').on('click', function () {
             //原先分页limit
