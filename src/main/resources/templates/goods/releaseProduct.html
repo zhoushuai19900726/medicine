@@ -203,7 +203,7 @@
                 [
                     {type: 'radio'},
                     {width: 120, field: 'id', title: '分类编号', sort: true},
-                    {field: 'name', title: '分类名称'},
+                    {field: 'name', title: '分类名称', edit: 'text'},
                 ]
             ]
             , toolbar: '#toolbar1'
@@ -248,7 +248,7 @@
                 [
                     {type: 'radio'},
                     {width: 120, field: 'id', title: '分类编号', sort: true},
-                    {field: 'name', title: '分类名称'},
+                    {field: 'name', title: '分类名称', edit: 'text'},
                 ]
             ]
             , data: []
@@ -288,13 +288,17 @@
                 [
                     {type: 'radio'},
                     {width: 120, field: 'id', title: '分类编号', sort: true},
-                    {field: 'name', title: '分类名称'},
+                    {field: 'name', title: '分类名称', edit: 'text'},
                 ]
             ]
             , data: []
             , toolbar: '#toolbar3'
             , defaultToolbar: []
         });
+
+
+
+        // TODO 分类单元格编辑
 
 
     });
