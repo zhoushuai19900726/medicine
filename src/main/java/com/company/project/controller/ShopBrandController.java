@@ -84,6 +84,15 @@ public class ShopBrandController extends BaseController {
         return DataResult.success(shopBrandService.updateById(shopBrand));
     }
 
+    @ApiOperation(value = "查询全部")
+    @GetMapping("/shopBrand/listByAll")
+    @RequiresPermissions("shopBrand:list")
+    @LogAnnotation(title = "商品品牌", action = "查询全部")
+    @ResponseBody
+    public DataResult findListByAll() {
+        return DataResult.success(shopBrandService.list());
+    }
+
     @ApiOperation(value = "查询分页数据")
     @PostMapping("shopBrand/listByPage")
     @RequiresPermissions("shopBrand:list")

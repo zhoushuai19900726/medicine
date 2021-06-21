@@ -27,6 +27,14 @@ public class ShopSellerEntity extends BaseEntity implements Serializable {
 
     @TableField("seller_name")
     private String sellerName;
+    @TableField(exist = false)
+    private String name;
+
+    // 前端下拉列表渲染数据使用
+    public void setSellerName(String sellerName) {
+        this.sellerName = sellerName;
+        this.name = sellerName;
+    }
 
     @TableField("seller_address")
     private String sellerAddress;
@@ -84,9 +92,9 @@ public class ShopSellerEntity extends BaseEntity implements Serializable {
     public void setStatusStr(String statusStr) {
         this.statusStr = statusStr;
         if (StringUtils.isNotBlank(statusStr)) {
-            if(StringUtils.equals(statusStr, DelimiterConstants.ON)){
+            if (StringUtils.equals(statusStr, DelimiterConstants.ON)) {
                 this.status = 1;
-            } else if (StringUtils.equals(statusStr, DelimiterConstants.OFF)){
+            } else if (StringUtils.equals(statusStr, DelimiterConstants.OFF)) {
                 this.status = 0;
             }
         }

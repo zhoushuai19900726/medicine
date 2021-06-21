@@ -1,6 +1,7 @@
 package com.company.project.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.company.project.common.utils.DelimiterConstants;
 import com.company.project.entity.BaseEntity;
 
 
@@ -41,6 +42,8 @@ public class ShopSpuEntity extends BaseEntity implements Serializable {
     @TableField("seller_id")
     private String sellerId;
     @TableField(exist = false)
+    private String sellerIdListStr = DelimiterConstants.EMPTY_STR;
+    @TableField(exist = false)
     private String sellerName;
 
     /**
@@ -60,6 +63,8 @@ public class ShopSpuEntity extends BaseEntity implements Serializable {
      */
     @TableField("brand_id")
     private String brandId;
+    @TableField(exist = false)
+    private String brandIdListStr = DelimiterConstants.EMPTY_STR;
     @TableField(exist = false)
     private String brandName;
 
@@ -84,6 +89,8 @@ public class ShopSpuEntity extends BaseEntity implements Serializable {
      */
     @TableField("category3_id")
     private String category3Id;
+    @TableField(exist = false)
+    private String category3IdListStr = DelimiterConstants.EMPTY_STR;
     @TableField(exist = false)
     private String category3Name;
 
@@ -152,6 +159,8 @@ public class ShopSpuEntity extends BaseEntity implements Serializable {
      */
     @TableField("is_marketable")
     private String isMarketable;
+    @TableField(exist = false)
+    private String isMarketableListStr = DelimiterConstants.EMPTY_STR;
 
     /**
      * 是否启用规格
@@ -164,6 +173,8 @@ public class ShopSpuEntity extends BaseEntity implements Serializable {
      */
     @TableField("status")
     private String status;
+    @TableField(exist = false)
+    private String statusListStr = DelimiterConstants.EMPTY_STR;
 
     /**
      *

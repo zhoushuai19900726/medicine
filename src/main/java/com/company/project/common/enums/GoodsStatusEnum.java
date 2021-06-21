@@ -1,7 +1,11 @@
 package com.company.project.common.enums;
 
 import com.company.project.common.utils.DelimiterConstants;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /***
@@ -56,6 +60,18 @@ public enum GoodsStatusEnum {
 
     public String getDes() {
         return des;
+    }
+
+    public static List<Map<String, Object>> toList() {
+        List<Map<String, Object>> list = Lists.newArrayList();
+        Map<String, Object> map;
+        for (GoodsStatusEnum goodsStatusEnum : GoodsStatusEnum.values()) {
+            map = Maps.newHashMap();
+            map.put("id", goodsStatusEnum.getType());
+            map.put("name", goodsStatusEnum.getDes());
+            list.add(map);
+        }
+        return list;
     }
 
 }

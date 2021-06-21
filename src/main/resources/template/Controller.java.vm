@@ -76,6 +76,15 @@ public class ${className}Controller extends BaseController {
         return DataResult.success(${classname}Service.updateById(${classname}));
     }
 
+    @ApiOperation(value = "查询全部")
+    @GetMapping("${classname}/listByAll")
+    @RequiresPermissions("${classname}:list")
+    @LogAnnotation(title = "${comments}", action = "查询全部")
+    @ResponseBody
+    public DataResult findListByAll() {
+        return DataResult.success(${classname}Service.list());
+    }
+
     @ApiOperation(value = "查询分页数据")
     @PostMapping("${classname}/listByPage")
     @RequiresPermissions("${classname}:list")

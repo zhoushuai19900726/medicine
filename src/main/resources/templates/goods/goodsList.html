@@ -6,6 +6,11 @@
     <title>Title</title>
     <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
     <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <style>
+        form .layui-input-inline {
+            width: 240px !important;
+        }
+    </style>
 </head>
 <body>
 <div class="layuimini-container">
@@ -45,37 +50,25 @@
                         <div class="layui-inline">
                             <label class="layui-form-label">运营商家</label>
                             <div class="layui-input-inline">
-                                <select name="sellerId" lay-search th:with="sellerList=${@sellerService.list()}">
-                                    <option value="">请选择运营商家</option>
-                                    <option th:each="seller : ${sellerList}" th:text="${seller.sellerName}" th:value="${seller.id}"></option>
-                                </select>
+                                <div id="sellerIdListStr" class="xm-select-demo"></div>
                             </div>
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">商品品牌</label>
                             <div class="layui-input-inline">
-                                <select name="brandId" lay-search th:with="brandList=${@shopBrandService.list()}">
-                                    <option value="">请选择商品品牌</option>
-                                    <option th:each="brand : ${brandList}" th:text="${brand.name}" th:value="${brand.id}"></option>
-                                </select>
+                                <div id="brandIdListStr" class="xm-select-demo"></div>
                             </div>
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">商品状态</label>
                             <div class="layui-input-inline">
-                                <select name="isMarketable" th:with="goodsStatusList=${@commonController.findAllGoodsStatus()}">
-                                    <option value="">请选择商品状态</option>
-                                    <option th:each="goodsStatus : ${goodsStatusList}" th:text="${goodsStatus.des}" th:value="${goodsStatus.type}"></option>
-                                </select>
+                                <div id="isMarketableListStr" class="xm-select-demo"></div>
                             </div>
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">审核状态</label>
                             <div class="layui-input-inline">
-                                <select name="status" th:with="goodsExamineStatusList=${@commonController.findAllGoodsExamineStatus()}">
-                                    <option value="">请选择审核状态</option>
-                                    <option th:each="goodsExamineStatus : ${goodsExamineStatusList}" th:text="${goodsExamineStatus.des}" th:value="${goodsExamineStatus.type}"></option>
-                                </select>
+                                <div id="statusListStr" class="xm-select-demo"></div>
                             </div>
                         </div>
                     </div>
@@ -83,25 +76,10 @@
                         <div class="layui-inline">
                             <label class="layui-form-label">商品分类</label>
                             <div class="layui-input-inline">
-                                <select name="category1Id" lay-search th:with="categoryList=${@shopCategoryService.findSubordinateCategoryList('0')}">
-                                    <option value="">请选择一级分类</option>
-                                    <option th:each="category : ${categoryList}" th:text="${category.name}" th:value="${category.id}"></option>
-                                </select>
-                            </div>
-                            <div class="layui-input-inline">
-                                <select name="category2Id" lay-search th:with="categoryList=${@shopCategoryService.findSubordinateCategoryList('0')}">
-                                    <option value="">请选择二级分类</option>
-                                    <option th:each="category : ${categoryList}" th:text="${category.name}" th:value="${category.id}"></option>
-                                </select>
-                            </div>
-                            <div class="layui-input-inline">
-                                <select name="category3Id" lay-search th:with="categoryList=${@shopCategoryService.findSubordinateCategoryList('0')}">
-                                    <option value="">请选择三级分类</option>
-                                    <option th:each="category : ${categoryList}" th:text="${category.name}" th:value="${category.id}"></option>
-                                </select>
+                                <div id="category3IdListStr" class="xm-select-demo"></div>
                             </div>
                         </div>
-                        <div class="layui-inline" style="float: right;">
+                        <div class="layui-inline">
                             <button class="layui-btn layui-btn-primary" lay-submit lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
                             <button class="layui-btn" id="export"><i class="layui-icon">&#xe67d;</i> 导 出</button>
                         </div>
@@ -191,6 +169,8 @@
     </script>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/js/xm-select.js}" charset="utf-8"></script>
+<script th:src="@{/js/xm-select-utils.js}" charset="utf-8"></script>
 <script th:src="@{/layui/layui.all.js}" charset="utf-8"></script>
 </body>
 </html>
@@ -206,6 +186,21 @@
         var form = layui.form;
         var layer = layui.layer;
         var laydate = layui.laydate;
+        /**
+         * 下拉列表
+         */
+        setSelectData([
+            {demoId : "sellerIdListStr", title: "运营商家", url: "/seller/listByAll"},
+            {demoId : "brandIdListStr", title: "商品品牌", url: "/shopBrand/listByAll"},
+            {demoId : "isMarketableListStr", title: "商品状态", url: "/common/findAllGoodsStatus"},
+            {demoId : "statusListStr", title: "审核状态", url: "/common/findAllGoodsExamineStatus"},
+        ]);
+        /**
+         * 级联下拉列表
+         */
+        setCascaderSelectData([
+            {demoId : "category3IdListStr", title: "商品分类", url: "/shopCategory/listByAll"},
+        ]);
         /**
          * 日期时间选择器
          */
@@ -346,7 +341,7 @@
                     layer.close(index); //如果设定了yes回调，需进行手工关闭
                     CoreUtil.sendDelete("/goods/delete", ids, function (res) {
                         layer.msg(res.msg, {time: 1000}, function () {
-                            search();
+                            tableIns1.reload();
                         });
                     });
                 }
@@ -373,6 +368,5 @@
             });
             return false;
         });
-
     });
 </script>

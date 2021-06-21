@@ -16,5 +16,7 @@ public interface ShopCategoryService extends IService<ShopCategoryEntity> {
 
     List<ShopCategoryEntity> findSubordinateCategoryList(String parentId);
 
+    List<ShopCategoryEntity> listByAll();
+
 }
 

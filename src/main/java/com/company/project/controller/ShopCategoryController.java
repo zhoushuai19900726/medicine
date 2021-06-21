@@ -115,6 +115,24 @@ public class ShopCategoryController extends BaseController {
         return DataResult.success(shopCategoryService.updateById(shopCategory));
     }
 
+    @ApiOperation(value = "查询下级分类")
+    @GetMapping("shopCategory/findSubordinateCategoryList/{parentId}")
+    @RequiresPermissions("shopCategory:list")
+    @LogAnnotation(title = "商品分类", action = "查询下级分类")
+    @ResponseBody
+    public DataResult findSubordinateCategoryList(@PathVariable("parentId") String parentId) {
+        return DataResult.success(shopCategoryService.findSubordinateCategoryList(parentId));
+    }
+
+    @ApiOperation(value = "查询所有分类")
+    @GetMapping("shopCategory/listByAll")
+    @RequiresPermissions("shopCategory:list")
+    @LogAnnotation(title = "商品分类", action = "查询所有分类")
+    @ResponseBody
+    public DataResult listByAll() {
+        return DataResult.success(shopCategoryService.listByAll());
+    }
+
     @ApiOperation(value = "查询分页数据")
     @PostMapping("shopCategory/listByPage")
     @RequiresPermissions("shopCategory:list")

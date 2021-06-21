@@ -75,6 +75,15 @@ public class ShopSellerController extends BaseController {
         return DataResult.success(sellerService.updateById(shopSeller));
     }
 
+    @ApiOperation(value = "查询全部")
+    @GetMapping("/seller/listByAll")
+    @RequiresPermissions("seller:list")
+    @LogAnnotation(title = "商家管理", action = "查询全部")
+    @ResponseBody
+    public DataResult findListByAll() {
+        return DataResult.success(sellerService.list());
+    }
+
     @ApiOperation(value = "查询分页数据")
     @PostMapping("/seller/listByPage")
     @RequiresPermissions("seller:list")

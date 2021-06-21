@@ -8,6 +8,7 @@ import com.company.project.entity.BaseEntity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import lombok.Data;
 import org.apache.commons.lang.StringUtils;
@@ -137,6 +138,9 @@ public class ShopCategoryEntity extends BaseEntity implements Serializable {
     @TableField(fill = FieldFill.INSERT)
     @TableLogic // 注释后进行物理删除
     private Integer deleted;
+
+    @TableField(exist = false)
+    private List<ShopCategoryEntity> children;
 
 
 }

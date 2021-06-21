@@ -9,6 +9,7 @@ import com.company.project.entity.ShopBrandEntity;
 import com.company.project.entity.ShopCategoryEntity;
 import com.company.project.entity.ShopSellerEntity;
 import com.company.project.service.*;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
@@ -112,6 +113,20 @@ public class ShopSpuController extends BaseController {
         LambdaQueryWrapper<ShopSpuEntity> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper
                 .eq(StringUtils.isNotBlank(shopSpu.getId()), ShopSpuEntity::getId, shopSpu.getId())
+                .eq(StringUtils.isNotBlank(shopSpu.getSn()), ShopSpuEntity::getSn, shopSpu.getSn())
+                .like(StringUtils.isNotBlank(shopSpu.getName()), ShopSpuEntity::getName, shopSpu.getName())
+                .eq(StringUtils.isNotBlank(shopSpu.getSellerId()), ShopSpuEntity::getSellerId, shopSpu.getSellerId())
+                .in(StringUtils.isNotBlank(shopSpu.getSellerIdListStr()), ShopSpuEntity::getSellerId, Splitter.on(DelimiterConstants.COMMA).omitEmptyStrings().trimResults().splitToList(shopSpu.getSellerIdListStr()))
+                .eq(StringUtils.isNotBlank(shopSpu.getBrandId()), ShopSpuEntity::getBrandId, shopSpu.getBrandId())
+                .in(StringUtils.isNotBlank(shopSpu.getBrandIdListStr()), ShopSpuEntity::getBrandId, Splitter.on(DelimiterConstants.COMMA).omitEmptyStrings().trimResults().splitToList(shopSpu.getBrandIdListStr()))
+                .eq(StringUtils.isNotBlank(shopSpu.getIsMarketable()), ShopSpuEntity::getIsMarketable, shopSpu.getIsMarketable())
+                .in(StringUtils.isNotBlank(shopSpu.getIsMarketableListStr()), ShopSpuEntity::getIsMarketable, Splitter.on(DelimiterConstants.COMMA).omitEmptyStrings().trimResults().splitToList(shopSpu.getIsMarketableListStr()))
+                .eq(StringUtils.isNotBlank(shopSpu.getStatus()), ShopSpuEntity::getStatus, shopSpu.getStatus())
+                .in(StringUtils.isNotBlank(shopSpu.getStatusListStr()), ShopSpuEntity::getStatus, Splitter.on(DelimiterConstants.COMMA).omitEmptyStrings().trimResults().splitToList(shopSpu.getStatusListStr()))
+                .eq(StringUtils.isNotBlank(shopSpu.getCategory1Id()), ShopSpuEntity::getCategory1Id, shopSpu.getCategory1Id())
+                .eq(StringUtils.isNotBlank(shopSpu.getCategory2Id()), ShopSpuEntity::getCategory2Id, shopSpu.getCategory2Id())
+                .eq(StringUtils.isNotBlank(shopSpu.getCategory3Id()), ShopSpuEntity::getCategory3Id, shopSpu.getCategory3Id())
+                .in(StringUtils.isNotBlank(shopSpu.getCategory3IdListStr()), ShopSpuEntity::getCategory3Id, Splitter.on(DelimiterConstants.COMMA).omitEmptyStrings().trimResults().splitToList(shopSpu.getCategory3IdListStr()))
                 .orderByDesc(ShopSpuEntity::getCreateTime);
         // 封装数据权限 - 执行查询
         IPage<ShopSpuEntity> iPage = shopSpuService.page(page, encapsulationDataRights(shopSpu, queryWrapper, ShopSpuEntity::getCreateId));
@@ -122,7 +137,6 @@ public class ShopSpuController extends BaseController {
             Map<String, String> shopCategoryEntityMap = Maps.newHashMap();
             Map<String, String> shopSellerEntityMap = Maps.newHashMap();
             Map<String, String> shopBrandEntityMap = Maps.newHashMap();
-
             //  提分类ID集合
             Set<String> categoryIdSet = Sets.newHashSet();
             categoryIdSet.addAll(shopSpuEntityList.stream().map(ShopSpuEntity::getCategory1Id).collect(Collectors.toList()));
@@ -164,7 +178,6 @@ public class ShopSpuController extends BaseController {
                 shopSpuEntity.setSellerName(shopSellerEntityMap.getOrDefault(shopSpuEntity.getSellerId(), DelimiterConstants.EMPTY_STR));
                 shopSpuEntity.setBrandName(shopBrandEntityMap.getOrDefault(shopSpuEntity.getBrandId(), DelimiterConstants.EMPTY_STR));
             });
-
         }
         // 封装数据权限 - 执行查询 - 封装用户 - 响应前端
         return DataResult.success(encapsulationUser(iPage));
