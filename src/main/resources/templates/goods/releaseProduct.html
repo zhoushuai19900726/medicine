@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
     <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
 </head>
 <body>
@@ -15,10 +16,15 @@
             <div carousel-item>
                 <div>
                     <form class="layui-form" style="margin: 0 auto;">
-                        <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 选择商品分类</blockquote>
+                        <blockquote class="layui-elem-quote">
+                            <i class="layui-icon">&#xe653;</i> 选择商品分类
+                            <span class="layui-breadcrumb" lay-separator=" > " style="float: right;">
+                                <a href="javascript:;" name="a_category1"></a>
+                                <a href="javascript:;" name="a_category2"></a>
+                                <a href="javascript:;" name="a_category3"></a>
+                            </span>
+                        </blockquote>
                         <blockquote class="layui-elem-quote layui-quote-nm">
-
-
                             <div class="layui-row">
                                 <div class="layui-col-md4">
                                     <div class="layui-card">
@@ -40,9 +46,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!--<div class="layui-col-md1" style="line-height: 500px; text-align: center;">
-                                    <a class="layui-btn layui-btn-primary layui-border-black"><i class="layui-icon">&#xe65b;</i></a>
-                                </div>-->
                                 <div class="layui-col-md4">
                                     <div class="layui-card">
                                         <div class="layui-card-header">
@@ -54,32 +57,95 @@
                                     </div>
                                 </div>
                             </div>
-
-
                         </blockquote>
-
-
-                        <hr/>
                         <div class="layui-form-item">
                             <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formStep" style="float: right;">下一步, 填写商品信息</button>
                         </div>
-
                     </form>
                 </div>
 
 
                 <div>
                     <form class="layui-form" style="margin: 0 auto;">
+                        <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 商品基本信息</blockquote>
+                        <blockquote class="layui-elem-quote layui-quote-nm">
+                            <div class="layui-form-item">
+                                <table class="layui-table" lay-size="sm">
+                                    <colgroup>
+                                        <col width="100">
+                                        <col width="500">
+                                        <col width="100">
+                                        <col width="500">
+                                    </colgroup>
+                                    <tbody>
+                                    <tr>
+                                        <td>商品分类</td>
+                                        <td colspan="3">
+                                            <div class="layui-breadcrumb" lay-separator=" > " style="padding-top: 8px; float: left;">
+                                                <a href="javascript:;" name="a_category1"></a>
+                                                <a href="javascript:;" name="a_category2"></a>
+                                                <a href="javascript:;" name="a_category3"></a>
+                                            </div>
+                                            <div style="padding-left: 10px; padding-top: 8px; float: left; cursor: pointer;">
+                                                <i class="fa fa-edit" style="color: #1E9FFF;" id="editCategory">编辑</i>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>商品名称</td>
+                                        <td><input type="text" name="name" lay-verify="required" autocomplete="off"  placeholder="请输入商品名称" lay class="layui-input"/></td>
+                                        <td rowspan="2">商品介绍</td>
+                                        <td rowspan="2">
+                                            <textarea placeholder="请输入商品介绍" class="layui-textarea"></textarea>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>商品标题</td>
+                                        <td><input type="text" name="caption" lay-verify="required" autocomplete="off" placeholder="请输入商品标题" class="layui-input"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>运营商家</td>
+                                        <td><input type="text" name="caption" lay-verify="required" autocomplete="off" placeholder="请输入商品标题" class="layui-input"/></td>
+                                        <td>商品品牌</td>
+                                        <td><input type="text" name="caption" lay-verify="required" autocomplete="off" placeholder="请输入商品标题" class="layui-input"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>商品状态</td>
+                                        <td><input type="text" name="caption" lay-verify="required" autocomplete="off" placeholder="请输入商品标题" class="layui-input"/></td>
+                                        <td>运费模板</td>
+                                        <td><input type="text" name="caption" autocomplete="off" placeholder="请输入商品标题" class="layui-input"/></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
 
 
-                        <hr/>
+                            </div>
+                        </blockquote>
+
+
+                        <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 商品库存规格</blockquote>
+                        <blockquote class="layui-elem-quote layui-quote-nm">
+
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">商品货号</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">服务保证</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="sn" autocomplete="off" placeholder="请输入商品货号" class="layui-input">
+                                </div>
+                            </div>
+
+
+                        </blockquote>
+
+
                         <div class="layui-form-item">
-                            <div class="layui-inline">
-                                <button type="button" class="layui-btn layui-btn-warm pre">上一步, 选择商品分类</button>
-                            </div>
-                            <div class="layui-inline">
-                                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formStep2">下一步, 填写商品属性</button>
-                            </div>
+                            <button type="button" class="layui-btn layui-btn-warm pre" style="float: left;">上一步, 选择商品分类</button>
+                            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formStep2" style="float: right;">下一步, 填写商品属性</button>
                         </div>
                     </form>
                 </div>
@@ -139,14 +205,12 @@
     var tokenQuery = token.replace("#", "%23");
     var tableIns1, tableIns2, tableIns3;
     var $ = jQuery = layui.jquery;
-    layui.use(['form', 'table', 'layer', 'step'], function () {
+    layui.use(['form', 'table', 'layer', 'step', 'util'], function () {
         var form = layui.form;
         var table = layui.table;
         var layer = layui.layer;
         var step = layui.step;
-        var laypage = layui.laypage;
-
-
+        var util = layui.util;
         step.render({
             elem: '#stepForm',
             filter: 'stepForm',
@@ -161,24 +225,28 @@
                 title: '填写商品属性'
             }]
         });
-
-
         form.on('submit(formStep)', function (data) {
-            step.next('#stepForm');
+            var checkStatus = table.checkStatus('showTable3');
+            if (checkStatus.data.length <= 0) {
+                layer.msg('请选择商品分类', {icon: 5});
+            } else {
+                step.next('#stepForm');
+            }
             return false;
         });
-
         form.on('submit(formStep2)', function (data) {
             step.next('#stepForm');
             return false;
         });
-
         $('.pre').click(function () {
             step.pre('#stepForm');
         });
-
         $('.next').click(function () {
             step.next('#stepForm');
+        });
+        // 编辑分类
+        $("#editCategory").click(function () {
+            step.pre('#stepForm');
         });
 
         //加载一级分类table
@@ -186,7 +254,7 @@
             elem: '#showTable1'
             , contentType: 'application/json'
             , headers: {"authorization": token}
-            , height: 480
+            , height: 490
             , page: true //开启分页
             , url: '/shopCategory/listByPage' //数据接口
             , where: {parentId: '0'}
@@ -208,8 +276,14 @@
             ]
             , toolbar: '#toolbar1'
             , defaultToolbar: []
+            , done: function (res, curr, count) {
+                $(".layui-table-view[lay-id='showTable1'] .layui-table-body tr[data-index='0'] .layui-form-radio").click();
+            }
         });
         table.on('radio(showTable1)', function (obj) { //test 是 table 标签对应的 lay-filter 属性
+            $("a[name='a_category1']").html(obj.data.name);
+            $("a[name='a_category2']").html("");
+            $("a[name='a_category3']").html("");
             tableIns2.reload({
                     url: '/shopCategory/listByPage', //数据接口
                     where: {parentId: obj.data.id},
@@ -224,14 +298,12 @@
                 }
             );
         });
-
-
         //加载二级分类table
         tableIns2 = table.render({
             elem: '#showTable2'
             , contentType: 'application/json'
             , headers: {"authorization": token}
-            , height: 480
+            , height: 490
             , page: true //开启分页
             // , url: '/shopCategory/listByPage' //数据接口
             // , where: {parentId: '-1'}
@@ -254,8 +326,13 @@
             , data: []
             , toolbar: '#toolbar2'
             , defaultToolbar: []
+            , done: function (res, curr, count) {
+                $(".layui-table-view[lay-id='showTable2'] .layui-table-body tr[data-index='0'] .layui-form-radio").click();
+            }
         });
         table.on('radio(showTable2)', function (obj) { //test 是 table 标签对应的 lay-filter 属性
+            $("a[name='a_category2']").html(obj.data.name);
+            $("a[name='a_category3']").html("");
             tableIns3.reload({
                     url: '/shopCategory/listByPage', //数据接口
                     where: {parentId: obj.data.id},
@@ -265,13 +342,12 @@
                 }
             );
         });
-
         //加载三级分类table
         tableIns3 = table.render({
             elem: '#showTable3'
             , contentType: 'application/json'
             , headers: {"authorization": token}
-            , height: 480
+            , height: 490
             , page: true //开启分页
             // , url: '/shopCategory/listByPage' //数据接口
             // , where: {parentId: '-1'}
@@ -294,12 +370,61 @@
             , data: []
             , toolbar: '#toolbar3'
             , defaultToolbar: []
+            , done: function (res, curr, count) {
+                $(".layui-table-view[lay-id='showTable3'] .layui-table-body tr[data-index='0'] .layui-form-radio").click();
+            }
         });
-
-
-
-        // TODO 分类单元格编辑
-
+        table.on('radio(showTable3)', function (obj) { //test 是 table 标签对应的 lay-filter 属性
+            $("a[name='a_category3']").html(obj.data.name);
+        });
+        /**
+         * 监听单元格编辑
+         */
+        table.on('edit(showTable1)', function (obj) {
+            var value = obj.value //得到修改后的值
+                , data = obj.data //得到所在行所有键值
+                , field = obj.field; //得到字段
+            var shopCategory = {};
+            shopCategory.id = data.id;
+            shopCategory[field] = util.escape(value);
+            CoreUtil.sendPut("/shopCategory/update", shopCategory, function (res) {
+                if (res.code != 0) {
+                    layer.msg(res.msg);
+                }
+            });
+        });
+        /**
+         * 监听单元格编辑
+         */
+        table.on('edit(showTable2)', function (obj) {
+            var value = obj.value //得到修改后的值
+                , data = obj.data //得到所在行所有键值
+                , field = obj.field; //得到字段
+            var shopCategory = {};
+            shopCategory.id = data.id;
+            shopCategory[field] = util.escape(value);
+            CoreUtil.sendPut("/shopCategory/update", shopCategory, function (res) {
+                if (res.code != 0) {
+                    layer.msg(res.msg);
+                }
+            });
+        });
+        /**
+         * 监听单元格编辑
+         */
+        table.on('edit(showTable3)', function (obj) {
+            var value = obj.value //得到修改后的值
+                , data = obj.data //得到所在行所有键值
+                , field = obj.field; //得到字段
+            var shopCategory = {};
+            shopCategory.id = data.id;
+            shopCategory[field] = util.escape(value);
+            CoreUtil.sendPut("/shopCategory/update", shopCategory, function (res) {
+                if (res.code != 0) {
+                    layer.msg(res.msg);
+                }
+            });
+        });
 
     });
 
