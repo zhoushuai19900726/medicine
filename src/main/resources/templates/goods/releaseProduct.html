@@ -18,7 +18,7 @@
                     <form class="layui-form" style="margin: 0 auto;">
                         <blockquote class="layui-elem-quote">
                             <i class="layui-icon">&#xe653;</i> 选择商品分类
-                            <span class="layui-breadcrumb" lay-separator=" > " style="float: right;">
+                            <span class="layui-breadcrumb" lay-separator=" <i class='layui-icon'>&#xe602;</i> " style="float: right;">
                                 <a href="javascript:;" name="a_category1"></a>
                                 <a href="javascript:;" name="a_category2"></a>
                                 <a href="javascript:;" name="a_category3"></a>
@@ -59,7 +59,7 @@
                             </div>
                         </blockquote>
                         <div class="layui-form-item">
-                            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formStep" style="float: right;">下一步, 填写商品信息</button>
+                            <button class="layui-btn layui-btn-primary layui-border-blue" lay-submit lay-filter="formStep" style="float: right;">下一步, 填写商品信息 <i class="fa fa-share"></i></button>
                         </div>
                     </form>
                 </div>
@@ -81,13 +81,13 @@
                                     <tr>
                                         <td>商品分类</td>
                                         <td colspan="3">
-                                            <div class="layui-breadcrumb" lay-separator=" > " style="padding-top: 8px; float: left;">
+                                            <div class="layui-breadcrumb" lay-separator=" <i class='layui-icon'>&#xe602;</i> " style="padding-top: 8px; float: left;">
                                                 <a href="javascript:;" name="a_category1"></a>
                                                 <a href="javascript:;" name="a_category2"></a>
                                                 <a href="javascript:;" name="a_category3"></a>
                                             </div>
-                                            <div style="padding-left: 10px; padding-top: 8px; float: left; cursor: pointer;">
-                                                <i class="fa fa-edit" style="color: #1E9FFF;" id="editCategory">编辑</i>
+                                            <div style="padding-left: 20px; padding-top: 9px; float: left; cursor: pointer;">
+                                                <i class="fa fa-edit" style="font-size: 14px; color: #1E9FFF;" id="editCategory">编辑</i>
                                             </div>
                                         </td>
                                     </tr>
@@ -144,8 +144,8 @@
 
 
                         <div class="layui-form-item">
-                            <button type="button" class="layui-btn layui-btn-warm pre" style="float: left;">上一步, 选择商品分类</button>
-                            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formStep2" style="float: right;">下一步, 填写商品属性</button>
+                            <button type="button" class="layui-btn layui-btn-primary layui-border-black pre" style="float: left;"><i class="fa fa-reply"></i> 上一步, 选择商品分类</button>
+                            <button class="layui-btn layui-btn-primary layui-border-blue" lay-submit lay-filter="formStep2" style="float: right;">下一步, 填写商品属性 <i class="fa fa-share"></i></button>
                         </div>
                     </form>
                 </div>
@@ -158,10 +158,10 @@
                         <hr/>
                         <div class="layui-form-item">
                             <div class="layui-inline">
-                                <button type="button" class="layui-btn layui-btn-warm pre">上一步, 填写商品信息</button>
+                                <button type="button" class="layui-btn layui-btn-primary layui-border-black pre"><i class="fa fa-reply"></i> 上一步, 填写商品信息</button>
                             </div>
                             <div class="layui-inline">
-                                <button class="layui-btn layui-btn-primary">提交审核</button>
+                                <button class="layui-btn layui-btn-primary layui-border-blue"><i class="fa fa-send"></i>  提交审核</button>
                             </div>
                         </div>
 
