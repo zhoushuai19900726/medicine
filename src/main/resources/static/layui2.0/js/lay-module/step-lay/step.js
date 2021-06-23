@@ -63,13 +63,13 @@
             if (!param.stepWidth) {
                 param.stepWidth = '400px';
             }
-
+            param.index = param.initStep - 1;
             // 渲染轮播图
             carousel.render(param);
 
             // 渲染步骤条
             var stepItems = param.stepItems;
-            renderDom(param.elem, stepItems, 0);
+            renderDom(param.elem, stepItems, param.initStep - 1);
             $('.lay-step').css('width', param.stepWidth);
 
             //监听轮播切换事件

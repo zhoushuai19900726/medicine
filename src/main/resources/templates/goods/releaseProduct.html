@@ -244,6 +244,7 @@
             width: '100%', //设置容器宽度
             stepWidth: '800px',
             height: '800px',
+            initStep: 3,// 初始化显示索引
             stepItems: [{
                 title: '选择商品分类'
             }, {
@@ -547,7 +548,7 @@
             'SPU_SN': function (value, item) {
                 var checkResult = 'SPU商品货号已存在';
                 CoreUtil.sendSyncPut("/goods/findOneByUnique/" + value.trim(), null, function (res) {
-                    if(res.data == null){
+                    if(!res.data){
                         checkResult = '';
                     }
                 });
