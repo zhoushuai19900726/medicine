@@ -18,7 +18,7 @@
                     <form class="layui-form" style="margin: 0 auto;">
                         <blockquote class="layui-elem-quote">
                             <i class="layui-icon">&#xe653;</i> 选择商品分类
-                            <span class="layui-breadcrumb" lay-separator=" <i class='layui-icon'>&#xe602;</i> " style="float: right;">
+                            <span class="layui-breadcrumb" lay-separator="<i class='layui-icon'>&#xe602;</i>" style="float: right;">
                                 <a href="javascript:;" name="a_category1"></a>
                                 <a href="javascript:;" name="a_category2"></a>
                                 <a href="javascript:;" name="a_category3"></a>
@@ -81,12 +81,12 @@
                                     <tr>
                                         <td class="required">商品分类</td>
                                         <td colspan="3">
-                                            <div class="layui-breadcrumb" lay-separator=" <i class='layui-icon'>&#xe602;</i> " style="padding-top: 8px; float: left;">
+                                            <div class="layui-breadcrumb" lay-separator="<i class='layui-icon'>&#xe602;</i>" style="padding-top: 8px; float: left;">
                                                 <a href="javascript:;" name="a_category1"></a>
                                                 <a href="javascript:;" name="a_category2"></a>
                                                 <a href="javascript:;" name="a_category3"></a>
                                             </div>
-                                            <div style="padding-left: 20px; padding-top: 9px; float: left; cursor: pointer;">
+                                            <div style="padding-left: 20px; padding-top: 10px; float: left; cursor: pointer;">
                                                 <i class="fa fa-edit" style="font-size: 14px; color: #1E9FFF;" id="editCategory">编辑</i>
                                             </div>
                                         </td>
@@ -129,8 +129,8 @@
                                         <td>运费模板</td>
                                         <td>
                                             <select name="" lay-search <!--th:with="brandList=${@shopBrandService.list()}"-->>
-                                                <option value="">请选择运费模板</option>
-                                                <!--<option th:each="brand : ${brandList}" th:text="${brand.name}" th:value="${brand.id}"></option>-->
+                                            <option value="">请选择运费模板</option>
+                                            <!--<option th:each="brand : ${brandList}" th:text="${brand.name}" th:value="${brand.id}"></option>-->
                                             </select>
                                         </td>
                                     </tr>
@@ -154,7 +154,7 @@
                                 <tbody>
                                 <tr>
                                     <td class="required">商品货号</td>
-                                    <td><input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" lay class="layui-input"/></td>
+                                    <td><input type="text" name="sn" lay-verify="required|SPU_SN" autocomplete="off" placeholder="请输入商品货号" lay class="layui-input"/></td>
                                 </tr>
                                 <tr>
                                     <td>服务保证</td>
@@ -275,7 +275,6 @@
         $("#editCategory").click(function () {
             step.pre('#stepForm');
         });
-
         //加载一级分类table
         tableIns1 = table.render({
             elem: '#showTable1'
@@ -541,7 +540,20 @@
                 layer.msg(res.msg);
             });
         });
-
+        /**
+         * 自定义表单验证
+         */
+        form.verify({
+            'SPU_SN': function (value, item) {
+                var checkResult = 'SPU商品货号已存在';
+                CoreUtil.sendSyncPut("/goods/findOneByUnique/" + value.trim(), null, function (res) {
+                    if(res.data == null){
+                        checkResult = '';
+                    }
+                });
+                return checkResult
+            }
+        })
     });
 
 </script>

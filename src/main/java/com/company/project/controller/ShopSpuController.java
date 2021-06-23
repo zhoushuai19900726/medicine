@@ -106,6 +106,15 @@ public class ShopSpuController extends BaseController {
         return shopSpuService.updateShopSpuEntityById(shopSpu);
     }
 
+    @ApiOperation(value = "根据唯一索引查询")
+    @PutMapping("goods/findOneByUnique/{sn}")
+    @RequiresPermissions("goods:update")
+    @LogAnnotation(title = "根据SPU商品货号查询", action = "查询")
+    @ResponseBody
+    public DataResult findOneByUnique(@PathVariable("sn") String sn) {
+        return DataResult.success(shopSpuService.getOne(Wrappers.<ShopSpuEntity>lambdaQuery().eq(ShopSpuEntity::getSn, sn)));
+    }
+
     @ApiOperation(value = "查询分页数据")
     @PostMapping("goods/listByPage")
     @RequiresPermissions("goods:list")

@@ -103,5 +103,67 @@ var CoreUtil = (function () {
     }
 
 
+
+    /*GET*/
+    coreUtil.sendSyncGet = function (url, params, ft) {
+        this.sendSyncAJAX(url, params, ft, "GET")
+    }
+
+    /*POST*/
+    coreUtil.sendSyncPost = function (url, params, ft) {
+        this.sendSyncAJAX(url, JSON.stringify(params), ft, "POST")
+    }
+    /*PUT*/
+    coreUtil.sendSyncPut = function (url, params, ft) {
+        this.sendSyncAJAX(url, JSON.stringify(params), ft, "PUT")
+    }
+    /*DELETE*/
+    coreUtil.sendSyncDelete = function (url, params, ft) {
+        this.sendSyncAJAX(url, JSON.stringify(params), ft, "DELETE")
+    }
+
+
+    /*ajax*/
+    coreUtil.sendSyncAJAX = function (url, params, ft, method) {
+        var loadIndex = top.layer.load(0, {shade: false});
+        $.ajax({
+            url: url,
+            cache: false,
+            async: false,
+            data: params,
+            type: method,
+            contentType: 'application/json; charset=UTF-8',
+            dataType: "json",
+            beforeSend: function (request) {
+                request.setRequestHeader("authorization", CoreUtil.getData("access_token"));
+            },
+            success: function (res) {
+                top.layer.close(loadIndex);
+                if (res.code == 0) {
+                    if (ft != null && ft != undefined) {
+                        ft(res);
+                    }
+                } else if (res.code == 401001) { //凭证过期重新登录
+                    layer.msg("凭证过期请重新登录", {time: 2000}, function () {
+                        top.window.location.href = "/index/login"
+                    })
+                } else if (res.code == 401008) { //凭证过期重新登录
+                    layer.msg("抱歉！您暂无权限", {time: 2000})
+                } else {
+                    layer.msg(res.msg);
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                top.layer.close(loadIndex);
+                if (XMLHttpRequest.status == 404) {
+                    top.window.location.href = "/index/404";
+                } else {
+                    layer.msg("服务器好像除了点问题！请稍后试试");
+                }
+            }
+        })
+    }
+
+
     return coreUtil;
 })(CoreUtil, window);
