@@ -105,15 +105,34 @@
                                     </tr>
                                     <tr>
                                         <td class="required">运营商家</td>
-                                        <td><input type="text" name="caption" lay-verify="required" autocomplete="off" placeholder="请输入商品标题" class="layui-input"/></td>
+                                        <td>
+                                            <select name="sellerId" lay-search lay-verify="required" th:with="sellerList=${@sellerService.list()}">
+                                                <option value="">请选择运营商家</option>
+                                                <option th:each="seller : ${sellerList}" th:text="${seller.sellerName}" th:value="${seller.id}"></option>
+                                            </select>
+                                        </td>
                                         <td class="required">商品品牌</td>
-                                        <td><input type="text" name="caption" lay-verify="required" autocomplete="off" placeholder="请输入商品标题" class="layui-input"/></td>
+                                        <td>
+                                            <select name="brandId" lay-search lay-verify="required" th:with="brandList=${@shopBrandService.list()}">
+                                                <option value="">请选择商品品牌</option>
+                                                <option th:each="brand : ${brandList}" th:text="${brand.name}" th:value="${brand.id}"></option>
+                                            </select>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td class="required">商品状态</td>
-                                        <td><input type="text" name="caption" lay-verify="required" autocomplete="off" placeholder="请输入商品标题" class="layui-input"/></td>
+                                        <td>
+                                            <select name="isMarketable" lay-search lay-verify="required" th:with="dataResult=${@commonController.findAllGoodsStatus()}">
+                                                <option th:each="map : ${dataResult.getData()}" th:text="${map.get('name')}" th:value="${map.get('id')}"></option>
+                                            </select>
+                                        </td>
                                         <td>运费模板</td>
-                                        <td><input type="text" name="caption" autocomplete="off" placeholder="请输入商品标题" class="layui-input"/></td>
+                                        <td>
+                                            <select name="" lay-search <!--th:with="brandList=${@shopBrandService.list()}"-->>
+                                                <option value="">请选择运费模板</option>
+                                                <!--<option th:each="brand : ${brandList}" th:text="${brand.name}" th:value="${brand.id}"></option>-->
+                                            </select>
+                                        </td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -491,9 +510,7 @@
             shopCategory.id = data.id;
             shopCategory[field] = util.escape(value);
             CoreUtil.sendPut("/shopCategory/update", shopCategory, function (res) {
-                if (res.code != 0) {
-                    layer.msg(res.msg);
-                }
+                layer.msg(res.msg);
             });
         });
         /**
@@ -507,9 +524,7 @@
             shopCategory.id = data.id;
             shopCategory[field] = util.escape(value);
             CoreUtil.sendPut("/shopCategory/update", shopCategory, function (res) {
-                if (res.code != 0) {
-                    layer.msg(res.msg);
-                }
+                layer.msg(res.msg);
             });
         });
         /**
@@ -523,9 +538,7 @@
             shopCategory.id = data.id;
             shopCategory[field] = util.escape(value);
             CoreUtil.sendPut("/shopCategory/update", shopCategory, function (res) {
-                if (res.code != 0) {
-                    layer.msg(res.msg);
-                }
+                layer.msg(res.msg);
             });
         });
 

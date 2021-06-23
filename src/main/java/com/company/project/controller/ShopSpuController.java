@@ -85,7 +85,7 @@ public class ShopSpuController extends BaseController {
     @LogAnnotation(title = "商品SPU", action = "新增")
     @ResponseBody
     public DataResult add(@RequestBody ShopSpuEntity shopSpu) {
-        return DataResult.success(shopSpuService.save(shopSpu));
+        return shopSpuService.saveShopSpuEntity(shopSpu);
     }
 
     @ApiOperation(value = "删除")
@@ -103,7 +103,7 @@ public class ShopSpuController extends BaseController {
     @LogAnnotation(title = "商品SPU", action = "更新")
     @ResponseBody
     public DataResult update(@RequestBody ShopSpuEntity shopSpu) {
-        return DataResult.success(shopSpuService.updateById(shopSpu));
+        return shopSpuService.updateShopSpuEntityById(shopSpu);
     }
 
     @ApiOperation(value = "查询分页数据")

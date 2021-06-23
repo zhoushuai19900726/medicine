@@ -182,6 +182,21 @@
             }
         });
 
+        /**
+         * 监听单元格编辑
+         */
+        table.on('edit(showTable)', function (obj) {
+            var value = obj.value //得到修改后的值
+                    , data = obj.data //得到所在行所有键值
+                    , field = obj.field; //得到字段
+            var para = {};
+            para.id = data.id;
+            para[field] = util.escape(value);
+            CoreUtil.sendPut("/${classname}/update", para, function (res) {
+                tableIns1.reload();
+            });
+        });
+
         //导出
         $('#export').on('click', function () {
             //原先分页limit
@@ -204,7 +219,7 @@
                 yes: function (index, layero) {
                     layer.close(index); //如果设定了yes回调，需进行手工关闭
                     CoreUtil.sendDelete("/${classname}/delete", ids, function (res) {
-                        layer.msg(res.msg, {time: 1000}, function () {
+                        layer.msg(res.msg, {time: 500}, function () {
                             tableIns1.reload();
                         });
                     });

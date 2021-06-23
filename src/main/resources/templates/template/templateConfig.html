@@ -237,9 +237,7 @@
             shopSpecEntity.id = data.id;
             shopSpecEntity[field] = util.escape(value);
             CoreUtil.sendPut("/shopTemplate/updateSpec", shopSpecEntity, function (res) {
-                if (res.code != 0) {
-                    layer.msg(res.msg);
-                }
+
             });
         });
 
@@ -249,17 +247,11 @@
         var tipDialog = function (ids) {
             layer.confirm('确定要删除么?', {icon: 3, title: '提示'}, function (index) {
                 CoreUtil.sendDelete("/shopTemplate/deleteSpec", ids, function (res) {
-                    if (res.code == 0) {
-                        //如果设定了yes回调，需进行手工关闭
-                        layer.close(index);
-                        layer.msg(res.msg, {time: 500}, function () {
-                            specTableIns.reload();
-                        });
-                        // 刷新父页面列表
-                        parent.layui.table.reload('showTable');
-                    } else {
-                        layer.msg(res.msg);
-                    }
+                    layer.msg(res.msg, {time: 500}, function () {
+                        specTableIns.reload();
+                    });
+                    // 刷新父页面列表
+                    parent.layui.table.reload('showTable');
                 });
             });
         };
@@ -386,9 +378,7 @@
             shopParaEntity.id = data.id;
             shopParaEntity[field] = util.escape(value);
             CoreUtil.sendPut("/shopTemplate/updatePara", shopParaEntity, function (res) {
-                if (res.code != 0) {
-                    layer.msg(res.msg);
-                }
+
             });
         });
 
@@ -398,17 +388,11 @@
         var tipDialog = function (ids) {
             layer.confirm('确定要删除么?', {icon: 3, title: '提示'}, function (index) {
                 CoreUtil.sendDelete("/shopTemplate/deletePara", ids, function (res) {
-                    if (res.code == 0) {
-                        //如果设定了yes回调，需进行手工关闭
-                        layer.close(index);
-                        layer.msg(res.msg, {time: 500}, function () {
-                            paraTableIns.reload();
-                        });
-                        // 刷新父页面列表
-                        parent.layui.table.reload('showTable');
-                    } else {
-                        layer.msg(res.msg);
-                    }
+                    layer.msg(res.msg, {time: 500}, function () {
+                        paraTableIns.reload();
+                    });
+                    // 刷新父页面列表
+                    parent.layui.table.reload('showTable');
                 });
             });
         };

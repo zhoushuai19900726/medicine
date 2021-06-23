@@ -261,9 +261,7 @@
             shopCategory.id = data.id;
             shopCategory[field] = util.escape(value);
             CoreUtil.sendPut("/shopCategory/update", shopCategory, function (res) {
-                if (res.code != 0) {
-                    layer.msg(res.msg);
-                }
+
             });
         });
         /**
@@ -275,12 +273,8 @@
             shopCategory.id = this.value;
             shopCategory.isShow = obj.elem.checked ? 1 : 0;
             CoreUtil.sendPut("/shopCategory/update", shopCategory, function (res) {
-                if (res.code == 0) {
-                    layer.tips(obj.elem.checked ? "开启成功" : "关闭成功", obj.othis);
-                    tableIns1.reload();
-                } else {
-                    layer.msg(res.msg);
-                }
+                layer.tips(obj.elem.checked ? "开启成功" : "关闭成功", obj.othis);
+                tableIns1.reload();
             });
         });
         /**
@@ -292,12 +286,8 @@
             shopCategory.id = this.value;
             shopCategory.isMenu = obj.elem.checked ? 1 : 0;
             CoreUtil.sendPut("/shopCategory/update", shopCategory, function (res) {
-                if (res.code == 0) {
-                    layer.tips(obj.elem.checked ? "开启成功" : "关闭成功", obj.othis);
-                    tableIns1.reload();
-                } else {
-                    layer.msg(res.msg);
-                }
+                layer.tips(obj.elem.checked ? "开启成功" : "关闭成功", obj.othis);
+                tableIns1.reload();
             });
         });
         //导出
@@ -322,7 +312,7 @@
                 yes: function (index, layero) {
                     layer.close(index); //如果设定了yes回调，需进行手工关闭
                     CoreUtil.sendDelete("/shopCategory/delete", ids, function (res) {
-                        layer.msg(res.msg, {time: 1000}, function () {
+                        layer.msg(res.msg, {time: 500}, function () {
                             tableIns1.reload();
                         });
                     });

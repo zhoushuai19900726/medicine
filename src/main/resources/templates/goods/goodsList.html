@@ -193,16 +193,16 @@
          * 下拉列表
          */
         setSelectData([
-            {demoId : "sellerIdListStr", title: "运营商家", url: "/seller/listByAll"},
-            {demoId : "brandIdListStr", title: "商品品牌", url: "/shopBrand/listByAll"},
-            {demoId : "isMarketableListStr", title: "商品状态", url: "/common/findAllGoodsStatus"},
-            {demoId : "statusListStr", title: "审核状态", url: "/common/findAllGoodsExamineStatus"},
+            {demoId: "sellerIdListStr", title: "运营商家", url: "/seller/listByAll"},
+            {demoId: "brandIdListStr", title: "商品品牌", url: "/shopBrand/listByAll"},
+            {demoId: "isMarketableListStr", title: "商品状态", url: "/common/findAllGoodsStatus"},
+            {demoId: "statusListStr", title: "审核状态", url: "/common/findAllGoodsExamineStatus"},
         ]);
         /**
          * 级联下拉列表
          */
         setCascaderSelectData([
-            {demoId : "category3IdListStr", title: "商品分类", url: "/shopCategory/listByAll"},
+            {demoId: "category3IdListStr", title: "商品分类", url: "/shopCategory/listByAll"},
         ]);
         /**
          * 日期时间选择器
@@ -306,11 +306,7 @@
             shopSpu.id = data.id;
             shopSpu[field] = util.escape(value);
             CoreUtil.sendPut("/goods/update", shopSpu, function (res) {
-                if (res.code == 0) {
-                    tableIns1.reload();
-                } else {
-                    layer.msg(res.msg);
-                }
+                tableIns1.reload();
             });
         });
         //导出
@@ -335,7 +331,7 @@
                 yes: function (index, layero) {
                     layer.close(index); //如果设定了yes回调，需进行手工关闭
                     CoreUtil.sendDelete("/goods/delete", ids, function (res) {
-                        layer.msg(res.msg, {time: 1000}, function () {
+                        layer.msg(res.msg, {time: 500}, function () {
                             tableIns1.reload();
                         });
                     });
