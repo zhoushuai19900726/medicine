@@ -14,13 +14,13 @@
         <form class="layui-form" action="" lay-filter="sellerForm" id="sellerForm" style="width: 100%;">
             <input name="id" hidden/>
             <div class="layui-form-item">
-                <label class="layui-form-label">商家名称</label>
+                <label class="layui-form-label required">商家名称</label>
                 <div class="layui-input-block">
                     <input name="sellerName" placeholder="请输入商家名称" lay-verify="required" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item" id="area-picker">
-                <div class="layui-form-label">商家地址</div>
+                <div class="layui-form-label required">商家地址</div>
                 <div class="layui-input-inline" style="width: 28%;">
                     <select name="province" class="province-selector" data-value="" lay-verify="required" lay-filter="province-1" lay-search>
                         <option value="">请选择省</option>
@@ -44,13 +44,13 @@
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">联系方式</label>
+                <label class="layui-form-label required">联系方式</label>
                 <div class="layui-input-block">
                     <input name="contactNumber" placeholder="请输入联系方式(手机号)" lay-verify="required|phone" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">开馆状态</label>
+                <label class="layui-form-label required">开馆状态</label>
                 <div class="layui-input-block">
                     <input type="checkbox" name="statusStr" lay-skin="switch" lay-text="开馆|闭馆">
                 </div>

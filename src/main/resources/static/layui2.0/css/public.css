@@ -25,6 +25,12 @@ body {
     right: 5px;
 }
 
+/**必填红点 */
+.required:before {
+    content: '* ';
+    color: red;
+}
+
 .layuimini-form > .layui-form-item > .layui-form-label {
     width: 120px !important;
 }

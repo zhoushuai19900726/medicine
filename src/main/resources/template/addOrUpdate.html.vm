@@ -17,7 +17,7 @@
                     <input name="${column.attrname}" hidden/>
                 #else
                     <div class="layui-form-item">
-                        <label class="layui-form-label">${column.comments}</label>
+                        <label class="layui-form-label required">${column.comments}</label>
                         <div class="layui-input-inline">
                             <input type="text" name="${column.attrname}" placeholder="请输入${column.comments}" autocomplete="off" class="layui-input">
                         </div>

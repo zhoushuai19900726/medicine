@@ -79,7 +79,7 @@
                                     </colgroup>
                                     <tbody>
                                     <tr>
-                                        <td>商品分类</td>
+                                        <td class="required">商品分类</td>
                                         <td colspan="3">
                                             <div class="layui-breadcrumb" lay-separator=" <i class='layui-icon'>&#xe602;</i> " style="padding-top: 8px; float: left;">
                                                 <a href="javascript:;" name="a_category1"></a>
@@ -92,25 +92,25 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>商品名称</td>
-                                        <td><input type="text" name="name" lay-verify="required" autocomplete="off"  placeholder="请输入商品名称" lay class="layui-input"/></td>
+                                        <td class="required">商品名称</td>
+                                        <td><input type="text" name="name" lay-verify="required" autocomplete="off" placeholder="请输入商品名称" lay class="layui-input"/></td>
                                         <td rowspan="2">商品介绍</td>
                                         <td rowspan="2">
                                             <textarea placeholder="请输入商品介绍" class="layui-textarea"></textarea>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>商品标题</td>
+                                        <td class="required">商品标题</td>
                                         <td><input type="text" name="caption" lay-verify="required" autocomplete="off" placeholder="请输入商品标题" class="layui-input"/></td>
                                     </tr>
                                     <tr>
-                                        <td>运营商家</td>
+                                        <td class="required">运营商家</td>
                                         <td><input type="text" name="caption" lay-verify="required" autocomplete="off" placeholder="请输入商品标题" class="layui-input"/></td>
-                                        <td>商品品牌</td>
+                                        <td class="required">商品品牌</td>
                                         <td><input type="text" name="caption" lay-verify="required" autocomplete="off" placeholder="请输入商品标题" class="layui-input"/></td>
                                     </tr>
                                     <tr>
-                                        <td>商品状态</td>
+                                        <td class="required">商品状态</td>
                                         <td><input type="text" name="caption" lay-verify="required" autocomplete="off" placeholder="请输入商品标题" class="layui-input"/></td>
                                         <td>运费模板</td>
                                         <td><input type="text" name="caption" autocomplete="off" placeholder="请输入商品标题" class="layui-input"/></td>
@@ -126,19 +126,27 @@
                         <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 商品库存规格</blockquote>
                         <blockquote class="layui-elem-quote layui-quote-nm">
 
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">商品货号</label>
-                                <div class="layui-input-block">
-                                    <input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" class="layui-input">
-                                </div>
-                            </div>
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">服务保证</label>
-                                <div class="layui-input-block">
-                                    <input type="text" name="sn" autocomplete="off" placeholder="请输入商品货号" class="layui-input">
-                                </div>
-                            </div>
 
+                            <table class="layui-table" lay-size="sm">
+                                <colgroup>
+                                    <col width="100">
+                                    <col width="1100">
+                                </colgroup>
+                                <tbody>
+                                <tr>
+                                    <td class="required">商品货号</td>
+                                    <td><input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" lay class="layui-input"/></td>
+                                </tr>
+                                <tr>
+                                    <td>服务保证</td>
+                                    <td>
+                                        <input type="checkbox" name="like[write]" title="无忧退货" checked>
+                                        <input type="checkbox" name="like[read]" title="快速退款" checked>
+                                        <input type="checkbox" name="like[dai]" title="免费包邮">
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
 
                         </blockquote>
 
@@ -161,7 +169,7 @@
                                 <button type="button" class="layui-btn layui-btn-primary layui-border-black pre"><i class="fa fa-reply"></i> 上一步, 填写商品信息</button>
                             </div>
                             <div class="layui-inline">
-                                <button class="layui-btn layui-btn-primary layui-border-blue"><i class="fa fa-send"></i>  提交审核</button>
+                                <button class="layui-btn layui-btn-primary layui-border-blue"><i class="fa fa-send"></i> 提交审核</button>
                             </div>
                         </div>
 
@@ -179,17 +187,17 @@
 </div>
 <script type="text/html" id="toolbar1">
     <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-primary layui-border-green layui-btn-sm" lay-event="add" shiro:hasPermission="shopCategory:add"><i class="layui-icon">&#xe61f;</i> 新增一级分类</button>
+        <a class="layui-btn layui-btn-primary layui-border-green layui-btn-sm" lay-event="add" shiro:hasPermission="shopCategory:add"><i class="layui-icon">&#xe61f;</i> 新增一级分类</a>
     </div>
 </script>
 <script type="text/html" id="toolbar2">
     <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-primary layui-border-green layui-btn-sm" lay-event="add" shiro:hasPermission="shopCategory:add"><i class="layui-icon">&#xe61f;</i> 新增二级分类</button>
+        <a class="layui-btn layui-btn-primary layui-border-green layui-btn-sm" lay-event="add" shiro:hasPermission="shopCategory:add"><i class="layui-icon">&#xe61f;</i> 新增二级分类</a>
     </div>
 </script>
 <script type="text/html" id="toolbar3">
     <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-primary layui-border-green layui-btn-sm" lay-event="add" shiro:hasPermission="shopCategory:add"><i class="layui-icon">&#xe61f;</i> 新增三级分类</button>
+        <a class="layui-btn layui-btn-primary layui-border-green layui-btn-sm" lay-event="add" shiro:hasPermission="shopCategory:add"><i class="layui-icon">&#xe61f;</i> 新增三级分类</a>
     </div>
 </script>
 </div>
@@ -298,6 +306,30 @@
                 }
             );
         });
+        //表头工具
+        table.on('toolbar(showTable1)', function (obj) {
+            switch (obj.event) {
+                case 'add':
+                    layer.open({
+                        id: 'shopCategory_add1', //设定一个id，防止重复弹出
+                        title: '<i class="layui-icon">&#xe653;</i> 新增一级商品分类',
+                        type: 2,
+                        content: '../../index/shopCategory/addOrUpdate',
+                        btn: ['提交保存', '取消'],
+                        area: ['50%', '70%'],
+                        scrollbar: false,
+                        yes: function (index, layero) {
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            window[layero.find('iframe')[0]['name']].saveShopCategory("submitBtnForAdd");
+                        },
+                        end: function () {
+                            // 刷新table
+                            table.reload('showTable1');
+                        }
+                    });
+                    break;
+            }
+        });
         //加载二级分类table
         tableIns2 = table.render({
             elem: '#showTable2'
@@ -342,6 +374,41 @@
                 }
             );
         });
+        //表头工具
+        table.on('toolbar(showTable2)', function (obj) {
+            switch (obj.event) {
+                case 'add':
+                    // 已选中一级分类
+                    var checkStatus = table.checkStatus('showTable1');
+                    layer.open({
+                        id: 'shopCategory_add2', //设定一个id，防止重复弹出
+                        title: '<i class="layui-icon">&#xe653;</i> 新增二级商品分类',
+                        type: 2,
+                        content: '../../index/shopCategory/addOrUpdate2',
+                        btn: ['提交保存', '取消'],
+                        area: ['50%', '70%'],
+                        scrollbar: false,
+                        yes: function (index, layero) {
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            window[layero.find('iframe')[0]['name']].saveShopCategory("submitBtnForAdd");
+                        },
+                        end: function () {
+                            // 刷新table
+                            table.reload('showTable2');
+                        },
+                        success: function (layero, index) {
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            var subordinateData = {};
+                            subordinateData.parentId = checkStatus.data[0].id;
+                            subordinateData.templateId = checkStatus.data[0].templateId;
+                            subordinateData.isShow = 1;
+                            subordinateData.isMenu = 1;
+                            window[layero.find('iframe')[0]['name']].assignment(subordinateData);
+                        }
+                    });
+                    break;
+            }
+        });
         //加载三级分类table
         tableIns3 = table.render({
             elem: '#showTable3'
@@ -376,6 +443,42 @@
         });
         table.on('radio(showTable3)', function (obj) { //test 是 table 标签对应的 lay-filter 属性
             $("a[name='a_category3']").html(obj.data.name);
+        });
+        //表头工具
+        table.on('toolbar(showTable3)', function (obj) {
+            switch (obj.event) {
+                case 'add':
+                    // 已选中二级分类
+                    var checkStatus = table.checkStatus('showTable2');
+                    layer.open({
+                        id: 'shopCategory_add3', //设定一个id，防止重复弹出
+                        title: '<i class="layui-icon">&#xe653;</i> 新增三级商品分类',
+                        type: 2,
+                        content: '../../index/shopCategory/addOrUpdate3/' + checkStatus.data[0].parentId,
+                        btn: ['提交保存', '取消'],
+                        area: ['70%', '70%'],
+                        scrollbar: false,
+                        yes: function (index, layero) {
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            window[layero.find('iframe')[0]['name']].saveShopCategory("submitBtnForAdd");
+                        },
+                        end: function () {
+                            // 刷新table
+                            table.reload('showTable3');
+                        },
+                        success: function (layero, index) {
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            var subordinateData = {};
+                            subordinateData.parentId = checkStatus.data[0].id;
+                            subordinateData.grandParentId = checkStatus.data[0].parentId;
+                            subordinateData.templateId = checkStatus.data[0].templateId;
+                            subordinateData.isShow = 1;
+                            subordinateData.isMenu = 1;
+                            window[layero.find('iframe')[0]['name']].assignment(subordinateData);
+                        }
+                    });
+                    break;
+            }
         });
         /**
          * 监听单元格编辑
