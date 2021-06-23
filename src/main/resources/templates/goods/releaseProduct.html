@@ -136,16 +136,12 @@
                                     </tr>
                                     </tbody>
                                 </table>
-
-
                             </div>
                         </blockquote>
 
 
                         <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 商品库存规格</blockquote>
                         <blockquote class="layui-elem-quote layui-quote-nm">
-
-
                             <table class="layui-table" lay-size="sm">
                                 <colgroup>
                                     <col width="100">
@@ -154,7 +150,7 @@
                                 <tbody>
                                 <tr>
                                     <td class="required">商品货号</td>
-                                    <td><input type="text" name="sn" lay-verify="required|SPU_SN" autocomplete="off" placeholder="请输入商品货号" lay class="layui-input"/></td>
+                                    <td><input type="text" name="sn" lay-verify="required|SPU_SN" autocomplete="off" placeholder="请输入商品货号" class="layui-input"/></td>
                                 </tr>
                                 <tr>
                                     <td>服务保证</td>
@@ -166,7 +162,6 @@
                                 </tr>
                                 </tbody>
                             </table>
-
                         </blockquote>
 
 
@@ -180,9 +175,141 @@
 
                 <div>
                     <form class="layui-form" style="margin: 0 auto;">
+                        <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 商品属性</blockquote>
+                        <blockquote class="layui-elem-quote layui-quote-nm">
+                            <table class="layui-table" lay-size="sm">
+                                <colgroup>
+                                    <col width="100">
+                                    <col width="600">
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>规格参数组</th>
+                                    <th><span class="layui-badge layui-bg-green">大家电 / 生活电器</span></th>
+                                </tr>
+                                </thead>
+                                </tbody>
+                            </table>
+
+                            <fieldset class="table-search-fieldset">
+                                <legend><i class="fa fa-cogs" style="color: red;"><b> 商品规格</b></i></legend>
+                                <div class="layui-field-box">
+                                    <table class="layui-table" lay-size="sm">
+                                        <colgroup>
+                                            <col width="100">
+                                            <col width="600">
+                                        </colgroup>
+                                        <tbody>
+                                        <tr>
+                                            <td>尺码</td>
+                                            <td>
+                                                <input type="checkbox" name="like[write]" title="M" checked>
+                                                <input type="checkbox" name="like[read]" title="X" checked>
+                                                <input type="checkbox" name="like[dai]" title="XL">
+                                                <input type="checkbox" name="like[dai]" title="2XL">
+                                                <input type="checkbox" name="like[dai]" title="3XL">
+                                                <input type="checkbox" name="like[dai]" title="4XL">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>颜色</td>
+                                            <td>
+                                                <input type="checkbox" name="like[write]" title="黑色" checked>
+                                                <input type="checkbox" name="like[read]" title="白色" checked>
+                                                <input type="checkbox" name="like[dai]" title="红色">
+                                                <input type="checkbox" name="like[dai]" title="粉色">
+                                                <input type="checkbox" name="like[dai]" title="绿色">
+                                                <input type="checkbox" name="like[dai]" title="蓝色">
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </fieldset>
 
 
-                        <hr/>
+                            <table class="layui-table" lay-size="sm">
+                                <colgroup>
+                                    <col width="100">
+                                    <col width="100">
+                                    <col width="100">
+                                    <col width="100">
+                                    <col width="100">
+                                    <col width="100">
+                                    <col width="100">
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>尺码</th>
+                                    <th>颜色</th>
+                                    <th class="required">销售价格</th>
+                                    <th class="required">商品库存</th>
+                                    <th class="required">库存预警值</th>
+                                    <th class="required">SKU编号</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>M</td>
+                                    <td>黑色</td>
+                                    <td><input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" class="layui-input"/></td>
+                                    <td><input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" class="layui-input"/></td>
+                                    <td><input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" class="layui-input"/></td>
+                                    <td><input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" class="layui-input"/></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>M</td>
+                                    <td>黑色</td>
+                                    <td><input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" class="layui-input"/></td>
+                                    <td><input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" class="layui-input"/></td>
+                                    <td><input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" class="layui-input"/></td>
+                                    <td><input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" class="layui-input"/></td>
+                                    <td></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </blockquote>
+                        <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 商品参数</blockquote>
+                        <blockquote class="layui-elem-quote layui-quote-nm">
+                            <table class="layui-table" lay-size="sm">
+                                <colgroup>
+                                    <col width="100">
+                                    <col width="600">
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>参数类型</th>
+                                    <th>录入参数</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td class="required">上市年份</td>
+                                    <td><input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" class="layui-input"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="required">主材含量</td>
+                                    <td><input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" class="layui-input"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="required">适用对象</td>
+                                    <td><input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" class="layui-input"/></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </blockquote>
+                        <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 商品相册</blockquote>
+                        <blockquote class="layui-elem-quote layui-quote-nm">
+
+
+
+
+                        </blockquote>
+
+
+
                         <div class="layui-form-item">
                             <div class="layui-inline">
                                 <button type="button" class="layui-btn layui-btn-primary layui-border-black pre"><i class="fa fa-reply"></i> 上一步, 填写商品信息</button>
@@ -242,8 +369,8 @@
             elem: '#stepForm',
             filter: 'stepForm',
             width: '100%', //设置容器宽度
-            stepWidth: '800px',
-            height: '800px',
+            stepWidth: '1000px',
+            height: '1000px',
             initStep: 3,// 初始化显示索引
             stepItems: [{
                 title: '选择商品分类'
@@ -298,7 +425,7 @@
                 [
                     {type: 'radio'},
                     {width: 120, field: 'id', title: '分类编号', sort: true},
-                    {field: 'name', title: '分类名称', edit: 'text'},
+                    {minWidth: 220, field: 'name', title: '分类名称', edit: 'text'},
                 ]
             ]
             , toolbar: '#toolbar1'
@@ -371,7 +498,7 @@
                 [
                     {type: 'radio'},
                     {width: 120, field: 'id', title: '分类编号', sort: true},
-                    {field: 'name', title: '分类名称', edit: 'text'},
+                    {minWidth: 220, field: 'name', title: '分类名称', edit: 'text'},
                 ]
             ]
             , data: []
@@ -450,7 +577,7 @@
                 [
                     {type: 'radio'},
                     {width: 120, field: 'id', title: '分类编号', sort: true},
-                    {field: 'name', title: '分类名称', edit: 'text'},
+                    {minWidth: 220, field: 'name', title: '分类名称', edit: 'text'},
                 ]
             ]
             , data: []
@@ -510,7 +637,7 @@
             shopCategory.id = data.id;
             shopCategory[field] = util.escape(value);
             CoreUtil.sendPut("/shopCategory/update", shopCategory, function (res) {
-                layer.msg(res.msg);
+
             });
         });
         /**
@@ -524,7 +651,7 @@
             shopCategory.id = data.id;
             shopCategory[field] = util.escape(value);
             CoreUtil.sendPut("/shopCategory/update", shopCategory, function (res) {
-                layer.msg(res.msg);
+
             });
         });
         /**
@@ -538,7 +665,7 @@
             shopCategory.id = data.id;
             shopCategory[field] = util.escape(value);
             CoreUtil.sendPut("/shopCategory/update", shopCategory, function (res) {
-                layer.msg(res.msg);
+
             });
         });
         /**
@@ -548,7 +675,7 @@
             'SPU_SN': function (value, item) {
                 var checkResult = 'SPU商品货号已存在';
                 CoreUtil.sendSyncPut("/goods/findOneByUnique/" + value.trim(), null, function (res) {
-                    if(!res.data){
+                    if (!res.data) {
                         checkResult = '';
                     }
                 });
