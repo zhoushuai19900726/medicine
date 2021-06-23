@@ -10,11 +10,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.company.project.mapper.ShopSpuMapper;
 import com.company.project.entity.ShopSpuEntity;
 import com.company.project.service.ShopSpuService;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Objects;
 
-
+@Transactional
 @Service("shopSpuService")
 public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity> implements ShopSpuService {
 
@@ -34,6 +35,11 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
         if (Objects.nonNull(queryResult)) {
             return DataResult.fail(BusinessResponseCode.SPU_SN_REPEATED_EXISTENCE.getMsg());
         }
+
+
+        shopSpuMapper.insert(shopSpuEntity);
+
+
 
 
         return DataResult.success(shopSpuEntity);
