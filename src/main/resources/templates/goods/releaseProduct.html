@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/jq-module/zyupload/zyupload-1.0.0.min.css}" media="all">
     <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
     <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
 </head>
@@ -304,25 +305,44 @@
                         <blockquote class="layui-elem-quote layui-quote-nm">
 
 
+                            <div id="zyupload" class="zyupload"></div>
+
+                        </blockquote>
+
+                        <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 详情描述</blockquote>
+                        <blockquote class="layui-elem-quote layui-quote-nm">
+
+
+                            <a class="layui-btn layui-btn-primary layui-border-green layui-btn-xs"><i class="fa fa-image"> 从图库选择</i></a>
+                            <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs"><i class="fa fa-question-circle"> 移动端上传说明</i></a>
+
+
+                            <div class="layui-tab layui-tab-card">
+                                <ul class="layui-tab-title">
+                                    <li class="layui-this">移动端详情</li>
+                                    <li>电脑端详情</li>
+                                </ul>
+                                <div class="layui-tab-content">
+                                    <div class="layui-tab-item layui-show">
+                                        <textarea id="mobileEditor" style="display: none;">移动端详情</textarea>
+                                    </div>
+                                    <div class="layui-tab-item">
+                                        <textarea id="pcEditor" style="display: none;">电脑端详情</textarea>
+                                    </div>
+                                </div>
+                            </div>
 
 
                         </blockquote>
 
-
-
                         <div class="layui-form-item">
-                            <div class="layui-inline">
-                                <button type="button" class="layui-btn layui-btn-primary layui-border-black pre"><i class="fa fa-reply"></i> 上一步, 填写商品信息</button>
-                            </div>
-                            <div class="layui-inline">
-                                <button class="layui-btn layui-btn-primary layui-border-blue"><i class="fa fa-send"></i> 提交审核</button>
-                            </div>
+                            <button type="button" class="layui-btn layui-btn-primary layui-border-black pre" style="float: left;"><i class="fa fa-reply"></i> 上一步, 填写商品信息</button>
+                            <button class="layui-btn layui-btn-primary layui-border-blue" lay-submit lay-filter="submitExamine" style="float: right;"><i class="fa fa-send"></i> 提交审核</button>
                         </div>
 
 
                     </form>
                 </div>
-
 
             </div>
 
@@ -347,9 +367,12 @@
     </div>
 </script>
 </div>
+<script th:src="@{/layui2.0/lib/jq-module/zyupload/jquery.min.js}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/lib/jq-module/zyupload/jquery-migrate.js}" charset="utf-8"></script>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
 <script th:src="@{/layui2.0/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
 <script th:src="@{/layui2.0/js/lay-config.js(v=2.0.0)}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/lib/jq-module/zyupload/zyupload-1.0.0.min.js}" charset="utf-8"></script>
 </body>
 </html>
 <script>
@@ -358,19 +381,20 @@
     //地址栏转义token中的#号
     var tokenQuery = token.replace("#", "%23");
     var tableIns1, tableIns2, tableIns3;
-    var $ = jQuery = layui.jquery;
-    layui.use(['form', 'table', 'layer', 'step', 'util'], function () {
+
+    layui.use(['form', 'table', 'layer', 'step', 'util', 'layedit'], function () {
         var form = layui.form;
         var table = layui.table;
         var layer = layui.layer;
         var step = layui.step;
         var util = layui.util;
+        var layedit = layui.layedit;
         step.render({
             elem: '#stepForm',
             filter: 'stepForm',
             width: '100%', //设置容器宽度
             stepWidth: '1000px',
-            height: '1000px',
+            height: '3000px',
             initStep: 3,// 初始化显示索引
             stepItems: [{
                 title: '选择商品分类'
@@ -681,7 +705,77 @@
                 });
                 return checkResult
             }
-        })
+        });
+
+        // 初始化插件
+        $("#zyupload").zyUpload({
+            width: "100%",                 // 宽度
+            height: "330px",                 // 高度
+            itemWidth: "140px",                 // 文件项的宽度
+            itemHeight: "140px",              // 文件项的高度
+            url: '/sysFiles/upload?authorization=' + tokenQuery,  // 上传文件的路径
+            fileType: ["jpg", "png", "jpeg", "ico", "icon", "bmp"],// 上传文件的类型
+            fileSize: 51200000,                // 上传文件的大小
+            multiple: true,                    // 是否可以多个文件上传
+            dragDrop: true,                    // 是否可以拖动上传文件
+            tailor: true,                    // 是否可以裁剪图片
+            del: true,                    // 是否可以删除文件
+            finishDel: false,  				  // 是否在上传文件完成后删除预览
+            /* 外部获得的回调接口 */
+            onSelect: function (selectFiles, allFiles) {    // 选择文件的回调方法  selectFile:当前选中的文件  allFiles:还没上传的全部文件
+                console.info("当前选择了以下文件：");
+                console.info(selectFiles);
+                // TODO 动态改变高度
+                // TODO 初始化默认显示一张图
+
+            },
+            onDelete: function (file, files) {              // 删除一个文件的回调方法 file:当前删除的文件  files:删除之后的文件
+                console.info("当前删除了此文件：");
+                console.info(file.name);
+            },
+            onSuccess: function (file, response) {          // 文件上传成功的回调方法
+                console.info("此文件上传成功：");
+                console.info(file.name);
+                console.info("此文件上传到服务器地址：");
+                console.info(response);
+                $("#uploadInf").append("上传成功，文件地址是：" + response + "<br/>");
+            },
+            onFailure: function (file, response) {          // 文件上传失败的回调方法
+                console.info("此文件上传失败：");
+                console.info(file.name);
+            },
+            onComplete: function (response) {           	  // 上传完成的回调方法
+                console.info("文件上传完成");
+                console.info(response);
+            }
+        });
+
+        // 文本编辑器
+        // layedit.set({
+        //     uploadImage: {
+        //         url: '' //接口url
+        //         ,type: '' //默认post
+        //     }
+        // });
+
+        // {
+        //     "code": 0 //0表示成功，其它失败
+        //     ,"msg": "" //提示信息 //一般上传失败后返回
+        //     ,"data": {
+        //     "src": "图片路径"
+        //         ,"title": "图片名称" //可选
+        // }
+        // }
+        // 建立mobile编辑器
+        layedit.build('mobileEditor', {
+            height: 500 //设置编辑器高度
+        });
+        // 建立pc编辑器
+        layedit.build('pcEditor', {
+            height: 500 //设置编辑器高度
+        });
+
     });
+
 
 </script>
