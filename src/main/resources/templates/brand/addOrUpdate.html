@@ -205,7 +205,7 @@
      * @param image
      */
     function initImage(image) {
-        $("#preview div[class='add_upload'] div[class='uploadImg'] img[class='upload_image']").attr("src", image);
+        if (image) $("#preview div[class='add_upload'] div[class='uploadImg'] img[class='upload_image']").attr("src", image);
     }
 </script>
 </body>
