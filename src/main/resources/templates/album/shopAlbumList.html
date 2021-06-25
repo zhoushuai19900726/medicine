@@ -10,7 +10,7 @@
 </head>
 <body>
 <div class="layuimini-container">
-    <div class="layuimini-main" shiro:hasPermission="${classname}:list">
+    <div class="layuimini-main" shiro:hasPermission="shopAlbum:list">
 
         <fieldset class="table-search-fieldset">
             <legend>搜索信息</legend>
@@ -18,15 +18,15 @@
                 <form class="layui-form layui-form-pane" action="">
                     <div class="layui-form-item">
                         <div class="layui-inline">
-                            <label class="layui-form-label">${comments}ID</label>
+                            <label class="layui-form-label">相册ID</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="id" autocomplete="off" placeholder="请输入${comments}ID" class="layui-input">
+                                <input type="text" name="id" autocomplete="off" placeholder="请输入相册ID" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label">${comments}名称</label>
+                            <label class="layui-form-label">相册名称</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="name" autocomplete="off" placeholder="请输入${comments}名称" class="layui-input">
+                                <input type="text" name="name" autocomplete="off" placeholder="请输入相册名称" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline">
@@ -50,13 +50,17 @@
     <table class="layui-table" id="showTable" lay-filter="showTable"></table>
     <script type="text/html" id="toolbar">
         <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add" shiro:hasPermission="${classname}:add"><i class="layui-icon">&#xe61f;</i>新增${comments}</button>
-            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="${classname}:delete"><i class="layui-icon">&#xe640;</i>批量删除</button>
+            <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add" shiro:hasPermission="shopAlbum:add"><i class="layui-icon">&#xe61f;</i>新增相册</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopAlbum:delete"><i class="layui-icon">&#xe640;</i>批量删除</button>
         </div>
     </script>
     <script type="text/html" id="tool">
-        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit" shiro:hasPermission="${classname}:update"><i class="layui-icon">&#xe642;</i>编辑</a>
-        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" shiro:hasPermission="${classname}:delete"><i class="layui-icon">&#xe640;</i>删除</a>
+        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="detail" shiro:hasPermission="shopAlbum:list"><i class="layui-icon">&#xe615;</i>相册</a>
+        <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="edit" shiro:hasPermission="shopAlbum:update"><i class="layui-icon">&#xe642;</i>编辑</a>
+        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" shiro:hasPermission="shopAlbum:delete"><i class="layui-icon">&#xe640;</i>删除</a>
+    </script>
+    <script type="text/html" id="imgTpl">
+        <img src="{{ d.image }}" style="width: 50px; height: 50px;"/>
     </script>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
@@ -96,7 +100,7 @@
             , contentType: 'application/json'
             , headers: {"authorization": token}
             , page: true //开启分页
-            , url: '/${classname}/listByPage' //数据接口
+            , url: '/shopAlbum/listByPage' //数据接口
             , method: 'POST'
             , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
                 return {
@@ -109,10 +113,13 @@
             , cols: [
                 [
                     {type: 'checkbox', fixed: 'left'},
-                    #foreach($column in $columns)
-                        {field: '${column.attrname}', title: '${column.comments}', sort: true},
-                    #end
-                    {width: 150, toolbar: "#tool", title: '操作'}
+                    {width: 100, field: 'id', title: '相册ID', sort: true},
+                    {field: 'name', title: '相册名称', edit: 'text'},
+                    {field: 'image', title: '相册封面', templet: '#imgTpl'},
+                    {width: 120, field: 'pictureCount', title: '图片数量'},
+                    {width: 80, field: 'seq', title: '排序', sort: true, edit: 'text'},
+                    {width: 300, field: 'remark', title: '描述', edit: 'text'},
+                    {width: 250, toolbar: "#tool", title: '操作'}
                 ]
             ]
             , toolbar: '#toolbar'
@@ -137,16 +144,16 @@
                     break;
                 case 'add':
                     layer.open({
-                        id: '${classname}_add', //设定一个id，防止重复弹出
-                        title: '<i class="layui-icon">&#xe653;</i> 新增${comments}',
+                        id: 'shopAlbum_add', //设定一个id，防止重复弹出
+                        title: '<i class="layui-icon">&#xe653;</i> 新增相册',
                         type: 2,
-                        content: '../index/${classname}/addOrUpdate',
+                        content: '../index/shopAlbum/addOrUpdate',
                         btn: ['提交保存', '取消'],
                         area: ['60%', '85%'],
                         scrollbar: false,
                         yes: function (index, layero) {
                             // 得到iframe页的窗口对象并调用子页面方法
-                            window[layero.find('iframe')[0]['name']].save${className}("submitBtnForAdd");
+                            window[layero.find('iframe')[0]['name']].saveShopAlbum("submitBtnForAdd");
                         }
                     });
                     break;
@@ -163,18 +170,37 @@
                     break;
                 case 'edit':
                     layer.open({
-                        id: '${classname}_update', //设定一个id，防止重复弹出
-                        title: '<i class="layui-icon">&#xe653;</i> 编辑${comments}',
+                        id: 'shopAlbum_update', //设定一个id，防止重复弹出
+                        title: '<i class="layui-icon">&#xe653;</i> 编辑相册',
                         type: 2,
-                        content: '../index/${classname}/addOrUpdate',
+                        content: '../index/shopAlbum/addOrUpdate',
                         btn: ['提交保存', '取消'],
                         area: ['60%', '85%'],
                         scrollbar: false,
                         yes: function (index, layero) {
                             // 得到iframe页的窗口对象并调用子页面方法
-                            window[layero.find('iframe')[0]['name']].save${className}("submitBtnForUpdate");
+                            window[layero.find('iframe')[0]['name']].saveShopAlbum("submitBtnForUpdate");
                         },
                         success: function (layero, index) {
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            window[layero.find('iframe')[0]['name']].assignment(data);
+                        }
+                    });
+                    break;
+                case 'detail':
+                    layer.open({
+                        type: 2,
+                        title: '<i class="layui-icon">&#xe634;</i> ' + data.name,
+                        id: 'galleryList',
+                        offset: 'r',
+                        anim: 5,
+                        maxmin: true,
+                        area: ['930px', '100%'],//宽高不影响最大化
+                        content: "../index/shopAlbum/shopAlbumGallery",//地址
+                        zIndex: layer.zIndex,
+                        success: function (layero, index) {
+                            // 置顶当前窗口
+                            layer.setTop(layero);
                             // 得到iframe页的窗口对象并调用子页面方法
                             window[layero.find('iframe')[0]['name']].assignment(data);
                         }
@@ -188,12 +214,12 @@
          */
         table.on('edit(showTable)', function (obj) {
             var value = obj.value //得到修改后的值
-                    , data = obj.data //得到所在行所有键值
-                    , field = obj.field; //得到字段
+                , data = obj.data //得到所在行所有键值
+                , field = obj.field; //得到字段
             var para = {};
             para.id = data.id;
             para[field] = util.escape(value);
-            CoreUtil.sendPut("/${classname}/update", para, function (res) {
+            CoreUtil.sendPut("/shopAlbum/update", para, function (res) {
                 tableIns1.reload();
             });
         });
@@ -205,7 +231,7 @@
                 limit: 10000,
                 key: $("#key").val()
             };
-            CoreUtil.sendPost("/${classname}/listByPage", exportParams, function (res) {
+            CoreUtil.sendPost("/shopAlbum/listByPage", exportParams, function (res) {
                 //初始化渲染数据
                 if (res.data != null && res.data.records != null) {
                     table.exportFile(tableIns1.config.id, res.data.records, 'xls');
@@ -219,7 +245,7 @@
                 content: "确定要删除么?",
                 yes: function (index, layero) {
                     layer.close(index); //如果设定了yes回调，需进行手工关闭
-                    CoreUtil.sendDelete("/${classname}/delete", ids, function (res) {
+                    CoreUtil.sendDelete("/shopAlbum/delete", ids, function (res) {
                         layer.msg(res.msg, {time: 500}, function () {
                             tableIns1.reload();
                         });

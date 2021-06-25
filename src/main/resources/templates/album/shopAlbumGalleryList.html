@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main" shiro:hasPermission="shopAlbum:list">
+        <form class="layui-form" action="" lay-filter="shopAlbumGalleryForm" id="shopAlbumGalleryForm" style="width: 100%;">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    <div class="layui-btn-group">
+                        <button type="button" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit lay-filter="uploadPictures"><i class="layui-icon">&#xe67c;</i>上传图片</button>
+                        <button type="button" class="layui-btn layui-btn-warm layui-btn-sm" lay-submit lay-filter="batchTransfer"><i class="layui-icon">&#xe67d;</i>批量转移</button>
+                        <button type="button" class="layui-btn layui-btn-danger layui-btn-sm" lay-submit lay-filter="batchDelete"><i class="layui-icon">&#xe640;</i>批量删除</button>
+                    </div>
+                </div>
+                <div class="layui-card-body" style="height: 500px;">
+                    <div class="layui-form-item" id="imageList"></div>
+                </div>
+            </div>
+            <div id="laypage" style="text-align: right;"></div>
+        </form>
+    </div>
+    <!-- 模板DIV -->
+    <div id="imgTpl" hidden>
+        <div class="layui-inline">
+            <div class="layui-card" style="background-color: #1d07070a;">
+                <div class="layui-card-body">
+                    <img id="" src="" style="width: 165px; height: 165px;"/>
+                </div>
+                <div class="layui-card-header">
+                    <a class="layui-btn layui-btn-primary layui-border-orange layui-btn-xs" shiro:hasPermission="shopAlbum:update"><i class="layui-icon">&#xe67d;</i>转移相册</a>
+                    <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" shiro:hasPermission="shopAlbum:delete"><i class="layui-icon">&#xe640;</i>删除图片</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="noDataTpl" hidden>
+        <div class="layui-input-block" style="text-align: center; margin-top: 30%;">
+            <a href=''><i class='layui-icon' style='color: #ff1f40;'>&#xe69c;</i> 相册里没有图片, 快去上传图片吧~!【点击上传】</a>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/layui/layui.all.js}" charset="utf-8"></script>
+</body>
+</html>
+<script>
+    //获取token
+    var token = CoreUtil.getData("access_token");
+    //地址栏转义token中的#号
+    var tokenQuery = token.replace("#", "%23");
+    var page = 1; //设置首页页码
+    var limit = 8;  //设置一页显示的条数
+    var total = 0;    //总条数
+    var $ = jQuery = layui.jquery;
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form;
+        var layer = layui.layer;
+
+        form.on('submit(uploadPictures)', function (data) {
+            alert(1);
+            // console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
+            // console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
+            // console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
+        form.on('submit(batchTransfer)', function (data) {
+            alert(2);
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
+        form.on('submit(batchDelete)', function (data) {
+            alert(3);
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
+
+    });
+
+
+    function loadData(albumId) {
+        var params = {
+            "page": page,
+            "limit": limit,
+            "albumId": albumId
+        };
+        $.ajax({
+            type: "post",
+            url: "/shopAlbumGallery/findDetailListByPage",//对应controller的URL
+            async: false,
+            dataType: 'json',
+            contentType: 'application/json; charset=UTF-8',
+            data: JSON.stringify(params),
+            beforeSend: function (request) {
+                request.setRequestHeader("authorization", token);
+            },
+            success: function (ret) {
+                // 设置总条数
+                total = ret.data.total;
+                var data = ret.data.records;
+                var html = "";
+                $(data).each(function (index, item) {
+                    $("#imgTpl img").attr("id", item.id).attr("src", item.image);
+                    html += $("#imgTpl").html();
+                });
+                if(!html){
+                    html += $("#noDataTpl").html();
+                }
+                $("#imageList").empty().append(html);
+            }
+        });
+    }
+
+
+    function getPage(albumId) {
+        layui.use('laypage', function () {
+            var laypage = layui.laypage;
+            //执行一个laypage实例
+            laypage.render({
+                elem: 'laypage'
+                , count: total //数据总数，从服务端得到
+                , limit: limit
+                , groups: 3
+                , first: '首页'
+                , last: '尾页'
+                , layout: ['prev', 'page', 'next', 'count', 'skip', 'refresh']
+                , jump: function (obj, first) {
+                    // 改变当前页码
+                    page = obj.curr;
+                    limit = obj.limit;
+                    //首次不执行
+                    if (!first) {
+                        //do something
+                        loadData(albumId)  //加载数据
+                    }
+                }
+            });
+
+        });
+    }
+
+    /**
+     * 父级页面控制子页面填充
+     */
+    function assignment(data) {
+        // 请求数据
+        loadData(data.id);
+        // 分页操作
+        getPage(data.id);
+    }
+
+</script>

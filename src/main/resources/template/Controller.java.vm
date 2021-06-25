@@ -37,7 +37,7 @@ public class ${className}Controller extends BaseController {
     private ${className}Service ${classname}Service;
 
 
-    @ApiOperation(value = "跳转到列表页面")
+    @ApiOperation(value = "跳转到${comments}列表页面")
     @GetMapping("/index/${classname}")
     public String ${classname}() {
         return "${classNameLower}/list";
