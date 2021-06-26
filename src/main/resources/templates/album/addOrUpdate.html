@@ -97,7 +97,7 @@
                 // console.info(file.name);
                 // console.info("此文件上传到服务器地址：");
                 // console.info(response);
-                $("#uploadInf").append("<p>上传成功，文件地址是：" + response + "</p>");
+                // $("#uploadInf").append("<p>上传成功，文件地址是：" + response + "</p>");
                 response = JSON.parse(response);
                 $("#image").val(response.data.src);
             },
@@ -105,7 +105,7 @@
                 // 文件上传失败的回调方法
                 // console.info("此文件上传失败：");
                 // console.info(file.name);
-                $("#uploadInf").append("<p>上传失败，文件地址是：" + response + "</p>");
+                // $("#uploadInf").append("<p>上传失败，文件地址是：" + response + "</p>");
             },
             onComplete: function (response) {
                 // 上传完成的回调方法

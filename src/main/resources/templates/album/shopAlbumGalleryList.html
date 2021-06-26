@@ -7,6 +7,16 @@
     <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
     <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
     <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <style>
+        .layui-layer-page .layui-layer-content {
+            overflow: visible !important;
+        }
+        .imgSeq{
+            position: absolute;
+            right: -10px;
+            top: 0;
+        }
+    </style>
 </head>
 <body>
 <div class="layuimini-container">
@@ -15,7 +25,7 @@
             <div class="layui-card">
                 <div class="layui-card-header">
                     <div class="layui-btn-group">
-                        <button type="button" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit lay-filter="uploadPictures"><i class="layui-icon">&#xe67c;</i>上传图片</button>
+                        <button type="button" class="layui-btn layui-btn-normal layui-btn-sm" id="uploadPictures"><i class="layui-icon">&#xe67c;</i>上传图片</button>
                         <button type="button" class="layui-btn layui-btn-warm layui-btn-sm" lay-submit lay-filter="batchTransfer"><i class="layui-icon">&#xe67d;</i>批量转移</button>
                         <button type="button" class="layui-btn layui-btn-danger layui-btn-sm" lay-submit lay-filter="batchDelete"><i class="layui-icon">&#xe640;</i>批量删除</button>
                     </div>
@@ -30,21 +40,32 @@
     <!-- 模板DIV -->
     <div id="imgTpl" hidden>
         <div class="layui-inline">
-            <div class="layui-card" style="background-color: #1d07070a;">
+            <div class="layui-card" style="background-color: #1d07070a; margin-top: 10px;">
+                <span class="layui-badge layui-bg-green imgSeq">1</span>
                 <div class="layui-card-body">
-                    <img id="" src="" style="width: 165px; height: 165px;"/>
+                    <img name="image" style="width: 165px; height: 165px; cursor: pointer;"/>
                 </div>
                 <div class="layui-card-header">
-                    <a class="layui-btn layui-btn-primary layui-border-orange layui-btn-xs" shiro:hasPermission="shopAlbum:update"><i class="layui-icon">&#xe67d;</i>转移相册</a>
-                    <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" shiro:hasPermission="shopAlbum:delete"><i class="layui-icon">&#xe640;</i>删除图片</a>
+                    <a name="transfer" class="layui-btn layui-btn-primary layui-border-orange layui-btn-xs" shiro:hasPermission="shopAlbum:update"><i class="layui-icon">&#xe67d;</i>转移相册</a>
+                    <a name="delete" class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" shiro:hasPermission="shopAlbum:delete"><i class="layui-icon">&#xe640;</i>删除图片</a>
                 </div>
             </div>
         </div>
     </div>
     <div id="noDataTpl" hidden>
         <div class="layui-input-block" style="text-align: center; margin-top: 30%;">
-            <a href=''><i class='layui-icon' style='color: #ff1f40;'>&#xe69c;</i> 相册里没有图片, 快去上传图片吧~!【点击上传】</a>
+            <a href='javascript: $("#uploadPictures").click();'><i class='layui-icon' style='color: #ff1f40;'>&#xe69c;</i> 相册里没有图片, 快去上传图片吧~!【点击上传】</a>
         </div>
+    </div>
+    <div id="transferTpl" hidden>
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <select name="albumId" lay-search lay-verify="required" th:with="albumList=${@shopAlbumService.list()}">
+                    <option value="">请选择相册</option>
+                    <option th:each="album : ${albumList}" th:text="${album.name}" th:value="${album.id}"></option>
+                </select>
+            </div>
+        </form>
     </div>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
@@ -62,15 +83,7 @@
     var $ = jQuery = layui.jquery;
     layui.use(['form', 'layer'], function () {
         var form = layui.form;
-        var layer = layui.layer;
 
-        form.on('submit(uploadPictures)', function (data) {
-            alert(1);
-            // console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
-            // console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
-            // console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
-            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
-        });
         form.on('submit(batchTransfer)', function (data) {
             alert(2);
             return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
@@ -103,15 +116,26 @@
                 // 设置总条数
                 total = ret.data.total;
                 var data = ret.data.records;
+                if (data.length == 0 && page > 1) {
+                    page -= 1;
+                    loadData(albumId);
+                    return;
+                }
                 var html = "";
                 $(data).each(function (index, item) {
-                    $("#imgTpl img").attr("id", item.id).attr("src", item.image);
+                    $("#imgTpl img[name='image']").attr("id", item.id).attr("src", item.image).attr("title", item.name);
+                    $("#imgTpl a[name='transfer']").attr("id", item.id);
+                    $("#imgTpl a[name='delete']").attr("id", item.id);
                     html += $("#imgTpl").html();
                 });
-                if(!html){
+                if (!html) {
                     html += $("#noDataTpl").html();
                 }
                 $("#imageList").empty().append(html);
+                // 绑定删除操作
+                deletePictures(albumId);
+                // 绑定转移操作
+                transferPictures(albumId);
             }
         });
     }
@@ -125,6 +149,7 @@
                 elem: 'laypage'
                 , count: total //数据总数，从服务端得到
                 , limit: limit
+                , curr: page
                 , groups: 3
                 , first: '首页'
                 , last: '尾页'
@@ -144,6 +169,87 @@
         });
     }
 
+    function uploadPictures(albumId) {
+        layui.use('upload', function () {
+            var upload = layui.upload;
+            // 上传图片
+            upload.render({
+                elem: '#uploadPictures' //绑定元素
+                , url: '/sysFiles/upload?authorization=' + tokenQuery  // 上传文件的路径
+                , accept: 'images'
+                , acceptMime: 'images/jpg, images/png'
+                , done: function (res) {
+                    //上传完毕回调
+                    if (res.data) {
+                        var para = {};
+                        para.name = res.data.fileName;
+                        para.albumId = albumId;
+                        para.image = res.data.src;
+                        para.seq = 0;
+                        CoreUtil.sendPost("/shopAlbum/addDetail", para, function (res) {
+                            loadData(albumId);
+                            getPage(albumId);
+                            layer.msg("上传成功");
+                        });
+                    }
+                }
+                , error: function () {
+                    //请求异常回调
+                }
+            });
+
+        });
+    }
+
+    function deletePictures(albumId) {
+        var layer = layui.layer;
+        $("a[name='delete']").click(function () {
+            var that = $(this);
+            layer.confirm('确定要删除么?', {icon: 3, title: '提示'}, function (index) {
+                var ids = [];
+                ids.push($(that).attr("id"));
+                CoreUtil.sendDelete("/shopAlbum/deleteDetail", ids, function (res) {
+                    loadData(albumId);
+                    getPage(albumId);
+                    layer.close(layer.index);
+                });
+            });
+        });
+    }
+
+    function transferPictures(albumId) {
+        var layer = layui.layer;
+        var form = layui.form;
+        $("a[name='transfer']").click(function () {
+            var id = $(this).attr("id");
+            layer.open({
+                id: 'transferPictures'
+                , type: 1
+                , title: '转移相册'
+                , content: $('#transferTpl')
+                , area: ['50%', '150px']
+                , btn: ['确定', '取消']
+                , yes: function (index, layero) {
+                    var newAlbumId = $("select[name='albumId']").val();
+                    if (newAlbumId != albumId) {
+                        var param = {};
+                        param.id = id;
+                        param.albumId = newAlbumId;
+                        CoreUtil.sendPut("/shopAlbum/updateDetail", param, function (res) {
+                            loadData(albumId);
+                            getPage(albumId);
+                            layer.close(index);
+                        });
+                    }
+                }
+                , success: function (layero, index) {
+                    // 重新渲染弹层中的下拉选择框select
+                    form.render('select');
+                }
+            });
+        });
+    }
+
     /**
      * 父级页面控制子页面填充
      */
@@ -152,6 +258,8 @@
         loadData(data.id);
         // 分页操作
         getPage(data.id);
+        // 上传操作
+        uploadPictures(data.id);
     }
 
 </script>

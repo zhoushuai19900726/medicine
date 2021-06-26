@@ -62,6 +62,8 @@ public class ShopAlbumController extends BaseController {
         return "album/addOrUpdate";
     }
 
+    // =========================================================================== 相册 ===========================================================================  //
+
     @ApiOperation(value = "新增")
     @PostMapping("shopAlbum/add")
     @RequiresPermissions("shopAlbum:add")
@@ -115,6 +117,37 @@ public class ShopAlbumController extends BaseController {
         // 封装数据权限 - 执行查询 - 封装用户 - 响应前端
         return DataResult.success(encapsulationUser(shopAlbumService.page(page, encapsulationDataRights(shopAlbum, queryWrapper, ShopAlbumEntity::getCreateId))));
     }
+
+
+    // =========================================================================== 相册图片 ===========================================================================  //
+
+    @ApiOperation(value = "新增")
+    @PostMapping("shopAlbum/addDetail")
+    @RequiresPermissions("shopAlbum:add")
+    @LogAnnotation(title = "相册图片", action = "新增")
+    @ResponseBody
+    public DataResult addDetail(@RequestBody ShopAlbumGalleryEntity shopAlbumGallery) {
+        return DataResult.success(shopAlbumGalleryService.save(shopAlbumGallery));
+    }
+
+    @ApiOperation(value = "删除")
+    @DeleteMapping("shopAlbum/deleteDetail")
+    @RequiresPermissions("shopAlbum:delete")
+    @LogAnnotation(title = "相册图片", action = "删除")
+    @ResponseBody
+    public DataResult deleteDetail(@RequestBody @ApiParam(value = "id集合") List<String> ids) {
+        return DataResult.success(shopAlbumGalleryService.removeByIds(ids));
+    }
+
+    @ApiOperation(value = "更新")
+    @PutMapping("shopAlbum/updateDetail")
+    @RequiresPermissions("shopAlbum:update")
+    @LogAnnotation(title = "相册图片", action = "更新")
+    @ResponseBody
+    public DataResult updateDetail(@RequestBody ShopAlbumGalleryEntity shopAlbumGallery) {
+        return DataResult.success(shopAlbumGalleryService.updateById(shopAlbumGallery));
+    }
+
 
     @ApiOperation(value = "查询分页数据")
     @PostMapping("shopAlbumGallery/findDetailListByPage")

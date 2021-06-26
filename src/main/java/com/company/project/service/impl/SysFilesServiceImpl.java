@@ -61,6 +61,7 @@ public class SysFilesServiceImpl extends ServiceImpl<SysFilesMapper, SysFilesEnt
             this.save(sysFilesEntity);
             Map<String, String> resultMap = new HashMap<>();
             resultMap.put("src", url);
+            resultMap.put("fileName", fileName);
             return DataResult.success(resultMap);
         } catch (Exception e) {
             throw new BusinessException("上传文件失败");
