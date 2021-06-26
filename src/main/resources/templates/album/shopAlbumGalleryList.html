@@ -11,10 +11,24 @@
         .layui-layer-page .layui-layer-content {
             overflow: visible !important;
         }
-        .imgSeq{
+
+        .imgSeq {
             position: absolute;
-            right: -10px;
-            top: 0;
+            right: -8px;
+            top: 2px;
+        }
+
+        .imageCard {
+            background-color: #1d07070a;
+            margin-top: 10px;
+        }
+
+        .cardBorder {
+            border: solid 2px green;
+        }
+
+        .hiden {
+            display: none;
         }
     </style>
 </head>
@@ -40,8 +54,8 @@
     <!-- 模板DIV -->
     <div id="imgTpl" hidden>
         <div class="layui-inline">
-            <div class="layui-card" style="background-color: #1d07070a; margin-top: 10px;">
-                <span class="layui-badge layui-bg-green imgSeq">1</span>
+            <div class="layui-card imageCard">
+                <div class="layui-badge layui-bg-green imgSeq hiden">0</div>
                 <div class="layui-card-body">
                     <img name="image" style="width: 165px; height: 165px; cursor: pointer;"/>
                 </div>
@@ -81,19 +95,6 @@
     var limit = 8;  //设置一页显示的条数
     var total = 0;    //总条数
     var $ = jQuery = layui.jquery;
-    layui.use(['form', 'layer'], function () {
-        var form = layui.form;
-
-        form.on('submit(batchTransfer)', function (data) {
-            alert(2);
-            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
-        });
-        form.on('submit(batchDelete)', function (data) {
-            alert(3);
-            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
-        });
-
-    });
 
 
     function loadData(albumId) {
@@ -126,6 +127,16 @@
                     $("#imgTpl img[name='image']").attr("id", item.id).attr("src", item.image).attr("title", item.name);
                     $("#imgTpl a[name='transfer']").attr("id", item.id);
                     $("#imgTpl a[name='delete']").attr("id", item.id);
+                    var parentObj = $("#imgTpl img[name='image']").parent().parent();
+                    if (selectImgMap.has(item.id)) {
+                        $(parentObj).addClass("cardBorder");
+                        $("#imgTpl img[name='image']").parent().prev().html(selectImgMap.get(item.id));
+                        $("#imgTpl img[name='image']").parent().prev().removeClass("hiden");
+                    } else {
+                        $(parentObj).removeClass("cardBorder");
+                        $("#imgTpl img[name='image']").parent().prev().html("");
+                        $("#imgTpl img[name='image']").parent().prev().addClass("hiden");
+                    }
                     html += $("#imgTpl").html();
                 });
                 if (!html) {
@@ -136,7 +147,44 @@
                 deletePictures(albumId);
                 // 绑定转移操作
                 transferPictures(albumId);
+                // 绑定图片点击操作
+                clickImg();
             }
+        });
+    }
+
+    var selectImgMap = new Map();
+
+    function clickImg() {
+        $("img[name='image']").click(function () {
+            var parentObj = $(this).parent().parent();
+            var id = $(this).attr("id");
+            if ($(parentObj).hasClass("cardBorder")) {
+                $(parentObj).removeClass("cardBorder");
+                selectImgMap.delete(id);
+                serializeMap();
+                $(this).parent().prev().html("");
+                $(this).parent().prev().addClass("hiden");
+                $("img[name='image']").each(function (index, item) {
+                    if ($(item).parent().parent().hasClass("cardBorder")) {
+                        $(item).parent().prev().html(selectImgMap.get($(item).attr("id")));
+                    }
+                });
+            } else {
+                $(parentObj).addClass("cardBorder");
+                selectImgMap.set(id, 0);
+                serializeMap();
+                $(this).parent().prev().html(selectImgMap.get(id));
+                $(this).parent().prev().removeClass("hiden");
+            }
+        });
+    }
+
+    function serializeMap() {
+        var i = 1;
+        selectImgMap.forEach(function (value, key, map) {
+            map.set(key, i);
+            i++;
         });
     }
 
@@ -240,6 +288,8 @@
                             getPage(albumId);
                             layer.close(index);
                         });
+                    } else {
+                        layer.msg("无法转移到当前相册，请选择其他相册。");
                     }
                 }
                 , success: function (layero, index) {
@@ -247,6 +297,70 @@
                     form.render('select');
                 }
             });
+        });
+    }
+
+    function batchTransferPictures(albumId) {
+        var layer = layui.layer;
+        var form = layui.form;
+        form.on('submit(batchTransfer)', function (data) {
+            var idList = [...selectImgMap.keys()];
+            if (idList.length > 0) {
+                layer.open({
+                    id: 'transferPictures'
+                    , type: 1
+                    , title: '转移相册'
+                    , content: $('#transferTpl')
+                    , area: ['50%', '150px']
+                    , btn: ['确定', '取消']
+                    , yes: function (index, layero) {
+                        var newAlbumId = $("select[name='albumId']").val();
+                        if (!newAlbumId) {
+                            layer.msg("请选择目标相册。");
+                            return;
+                        }
+                        if (newAlbumId != albumId) {
+                            var param = {};
+                            param.idList = idList;
+                            param.albumId = newAlbumId;
+                            CoreUtil.sendPut("/shopAlbum/batchUpdateDetail", param, function (res) {
+                                loadData(albumId);
+                                getPage(albumId);
+                                layer.close(index);
+                            });
+                        } else {
+                            layer.msg("无法转移到当前相册，请选择其他相册。");
+                        }
+                    }
+                    , success: function (layero, index) {
+                        // 重新渲染弹层中的下拉选择框select
+                        form.render('select');
+                    }
+                });
+            } else {
+                layer.msg("请选择图片。");
+            }
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
+    }
+
+    function batchDeletePictures(albumId) {
+        var layer = layui.layer;
+        var form = layui.form;
+        form.on('submit(batchDelete)', function (data) {
+            var ids = [...selectImgMap.keys()];
+            if (ids.length > 0) {
+                layer.confirm('确定要删除么?', {icon: 3, title: '提示'}, function (index) {
+                    CoreUtil.sendDelete("/shopAlbum/deleteDetail", ids, function (res) {
+                        loadData(albumId);
+                        getPage(albumId);
+                        layer.close(layer.index);
+                    });
+                });
+            } else {
+                layer.msg("请选择图片。");
+            }
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
         });
     }
 
@@ -258,8 +372,12 @@
         loadData(data.id);
         // 分页操作
         getPage(data.id);
-        // 上传操作
+        // 上传图片操作
         uploadPictures(data.id);
+        // 批量转移操作
+        batchTransferPictures(data.id);
+        // 批量删除操作
+        batchDeletePictures(data.id);
     }
 
 </script>

@@ -1,11 +1,15 @@
 package com.company.project.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.company.project.common.aop.annotation.DataScope;
 import com.company.project.common.aop.annotation.LogAnnotation;
+import com.company.project.common.exception.code.BaseResponseCode;
+import com.company.project.common.exception.code.BusinessResponseCode;
 import com.company.project.entity.ShopAlbumGalleryEntity;
 import com.company.project.service.ShopAlbumGalleryService;
+import com.google.common.collect.Lists;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -148,6 +152,19 @@ public class ShopAlbumController extends BaseController {
         return DataResult.success(shopAlbumGalleryService.updateById(shopAlbumGallery));
     }
 
+    @ApiOperation(value = "批量更新")
+    @PutMapping("shopAlbum/batchUpdateDetail")
+    @RequiresPermissions("shopAlbum:update")
+    @LogAnnotation(title = "相册图片", action = "批量更新")
+    @ResponseBody
+    public DataResult batchUpdateDetail(@RequestBody ShopAlbumGalleryEntity shopAlbumGallery) {
+        if(CollectionUtils.isEmpty(shopAlbumGallery.getIdList())){
+            return DataResult.fail(BaseResponseCode.OPERATION_ERRO.getMsg());
+        }
+        List<ShopAlbumGalleryEntity> shopAlbumGalleryEntityList = Lists.newArrayList();
+        shopAlbumGallery.getIdList().forEach(id -> shopAlbumGalleryEntityList.add(new ShopAlbumGalleryEntity(id, shopAlbumGallery.getAlbumId())));
+        return DataResult.success(shopAlbumGalleryService.updateBatchById(shopAlbumGalleryEntityList));
+    }
 
     @ApiOperation(value = "查询分页数据")
     @PostMapping("shopAlbumGallery/findDetailListByPage")

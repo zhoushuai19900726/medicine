@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import lombok.Data;
 
@@ -27,6 +28,8 @@ public class ShopAlbumGalleryEntity extends BaseEntity implements Serializable {
      */
     @TableId("id")
     private String id;
+    @TableField(exist = false)
+    private List<String> idList;
 
     /**
      * 图片名称
@@ -93,5 +96,11 @@ public class ShopAlbumGalleryEntity extends BaseEntity implements Serializable {
     @TableLogic // 注释后进行物理删除
     private Integer deleted;
 
+    public ShopAlbumGalleryEntity() {
+    }
 
+    public ShopAlbumGalleryEntity(String id, String albumId) {
+        this.id = id;
+        this.albumId = albumId;
+    }
 }
