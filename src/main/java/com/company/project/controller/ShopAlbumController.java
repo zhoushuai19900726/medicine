@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.company.project.common.aop.annotation.DataScope;
 import com.company.project.common.aop.annotation.LogAnnotation;
 import com.company.project.common.exception.code.BaseResponseCode;
-import com.company.project.common.exception.code.BusinessResponseCode;
 import com.company.project.entity.ShopAlbumGalleryEntity;
 import com.company.project.service.ShopAlbumGalleryService;
 import com.google.common.collect.Lists;
@@ -58,6 +57,12 @@ public class ShopAlbumController extends BaseController {
     @GetMapping("/index/shopAlbum/shopAlbumGallery")
     public String shopAlbumGallery() {
         return "album/shopAlbumGalleryList";
+    }
+
+    @ApiOperation(value = "跳转到选择图库列表页面")
+    @GetMapping("/index/shopAlbum/chooseAlbumGallery")
+    public String chooseAlbumGallery() {
+        return "album/chooseAlbumGalleryList";
     }
 
     @ApiOperation(value = "跳转进入新增/编辑页面")

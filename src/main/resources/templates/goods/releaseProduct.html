@@ -313,7 +313,7 @@
                         <blockquote class="layui-elem-quote layui-quote-nm">
 
 
-                            <a class="layui-btn layui-btn-primary layui-border-green layui-btn-xs"><i class="fa fa-image"> 从图库选择</i></a>
+                            <a class="layui-btn layui-btn-primary layui-border-green layui-btn-xs" onclick="chooseAlbumGallery()"><i class="fa fa-image"> 从图库选择</i></a>
                             <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs"><i class="fa fa-question-circle"> 移动端上传说明</i></a>
 
 
@@ -775,7 +775,26 @@
             height: 500 //设置编辑器高度
         });
 
+
     });
 
 
+    function chooseAlbumGallery() {
+        var layer = layui.layer;
+        layer.open({
+            type: 2,
+            title: '<i class="layui-icon">&#xe64a;</i> 选择图片',
+            id: 'chooseGalleryList',
+            offset: 'r',
+            anim: 5,
+            maxmin: true,
+            area: ['1000px', '100%'],//宽高不影响最大化
+            content: "../../index/shopAlbum/chooseAlbumGallery",//地址
+            zIndex: layer.zIndex,
+            success: function (layero, index) {
+                // 置顶当前窗口
+                layer.setTop(layero);
+            }
+        });
+    }
 </script>
