@@ -22,6 +22,7 @@ import io.swagger.annotations.ApiParam;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.company.project.common.utils.DataResult;
@@ -115,6 +116,22 @@ public class ShopCategoryController extends BaseController {
         return DataResult.success(shopCategoryService.updateById(shopCategory));
     }
 
+    @ApiOperation(value = "根据ID查询分类")
+    @GetMapping("shopCategory/findById/{id}")
+    @RequiresPermissions("shopCategory:list")
+    @LogAnnotation(title = "商品分类", action = "根据ID查询分类")
+    @ResponseBody
+    public DataResult findById(@PathVariable("id") String id) {
+        ShopCategoryEntity shopCategoryEntity = shopCategoryService.getById(id);
+        if(Objects.nonNull(shopCategoryEntity)){
+            ShopTemplateEntity shopTemplateEntity = shopTemplateService.getById(shopCategoryEntity.getTemplateId());
+            if(Objects.nonNull(shopTemplateEntity)){
+                shopCategoryEntity.setTemplateName(shopTemplateEntity.getName());
+            }
+        }
+        return DataResult.success(shopCategoryEntity);
+    }
+
     @ApiOperation(value = "查询下级分类")
     @GetMapping("shopCategory/findSubordinateCategoryList/{parentId}")
     @RequiresPermissions("shopCategory:list")
@@ -153,14 +170,14 @@ public class ShopCategoryController extends BaseController {
         IPage<ShopCategoryEntity> iPage = shopCategoryService.page(page, encapsulationDataRights(shopCategory, queryWrapper, ShopCategoryEntity::getCreateId));
         // 封装模板名称
         List<ShopCategoryEntity> shopCategoryEntityList = iPage.getRecords();
-        if(CollectionUtils.isNotEmpty(shopCategoryEntityList)){
+        if (CollectionUtils.isNotEmpty(shopCategoryEntityList)) {
             //  提取模板ID集合
             List<String> templateIdList = shopCategoryEntityList.stream().map(ShopCategoryEntity::getTemplateId).collect(Collectors.toList());
             // 查询模板集合
             List<ShopTemplateEntity> shopTemplateEntityList = shopTemplateService.listByIds(templateIdList);
-            if(CollectionUtils.isNotEmpty(shopTemplateEntityList)){
+            if (CollectionUtils.isNotEmpty(shopTemplateEntityList)) {
                 // 封装模板名称
-                Map<String, String> shopTemplateEntityMap = shopTemplateEntityList.stream().collect(Collectors.toMap(ShopTemplateEntity::getId, ShopTemplateEntity::getName,(k1, k2)->k1));
+                Map<String, String> shopTemplateEntityMap = shopTemplateEntityList.stream().collect(Collectors.toMap(ShopTemplateEntity::getId, ShopTemplateEntity::getName, (k1, k2) -> k1));
                 shopCategoryEntityList.forEach(shopCategoryEntity -> shopCategoryEntity.setTemplateName(shopTemplateEntityMap.getOrDefault(shopCategoryEntity.getTemplateId(), DelimiterConstants.EMPTY_STR)));
             }
         }

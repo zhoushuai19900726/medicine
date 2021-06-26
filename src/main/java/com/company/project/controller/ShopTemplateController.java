@@ -177,6 +177,20 @@ public class ShopTemplateController extends BaseController {
         return DataResult.success(shopSpecService.page(page, encapsulationDataRights(shopSpecEntity, queryWrapper, ShopSpecEntity::getCreateId)));
     }
 
+    @ApiOperation(value = "查询所有规格数据")
+    @PostMapping("shopTemplate/findAllSpecList")
+    @RequiresPermissions("shopTemplate:list")
+    @LogAnnotation(title = "商品模板", action = "查询所有规格数据")
+    @DataScope
+    @ResponseBody
+    public DataResult findAllSpecList(@RequestBody ShopSpecEntity shopSpecEntity) {
+        // 查询条件
+        LambdaQueryWrapper<ShopSpecEntity> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper.eq(StringUtils.isNotBlank(shopSpecEntity.getTemplateId()), ShopSpecEntity::getTemplateId, shopSpecEntity.getTemplateId()).orderByAsc(ShopSpecEntity::getSeq);
+        // 封装数据权限 - 执行查询 - 响应前端
+        return DataResult.success(shopSpecService.list(encapsulationDataRights(shopSpecEntity, queryWrapper, ShopSpecEntity::getCreateId)));
+    }
+
     // *******************************************************************************************参数*******************************************************************************************  //
 
     @ApiOperation(value = "跳转进入新增/编辑参数页面")

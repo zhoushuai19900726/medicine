@@ -186,45 +186,19 @@
                                 <thead>
                                 <tr>
                                     <th>规格参数组</th>
-                                    <th><span class="layui-badge layui-bg-green">大家电 / 生活电器</span></th>
+                                    <th>
+                                        <span class="layui-badge layui-bg-green" id="templateName"></span>
+                                        <input id="templateId" hidden/>
+                                    </th>
                                 </tr>
                                 </thead>
                                 </tbody>
                             </table>
 
-                            <fieldset class="table-search-fieldset">
+                            <fieldset class="table-search-fieldset" style="padding: 0 10px 5px 10px;">
                                 <legend><i class="fa fa-cogs" style="color: red;"><b> 商品规格</b></i></legend>
-                                <div class="layui-field-box">
-                                    <table class="layui-table" lay-size="sm">
-                                        <colgroup>
-                                            <col width="100">
-                                            <col width="600">
-                                        </colgroup>
-                                        <tbody>
-                                        <tr>
-                                            <td>尺码</td>
-                                            <td>
-                                                <input type="checkbox" name="like[write]" title="M" checked>
-                                                <input type="checkbox" name="like[read]" title="X" checked>
-                                                <input type="checkbox" name="like[dai]" title="XL">
-                                                <input type="checkbox" name="like[dai]" title="2XL">
-                                                <input type="checkbox" name="like[dai]" title="3XL">
-                                                <input type="checkbox" name="like[dai]" title="4XL">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>颜色</td>
-                                            <td>
-                                                <input type="checkbox" name="like[write]" title="黑色" checked>
-                                                <input type="checkbox" name="like[read]" title="白色" checked>
-                                                <input type="checkbox" name="like[dai]" title="红色">
-                                                <input type="checkbox" name="like[dai]" title="粉色">
-                                                <input type="checkbox" name="like[dai]" title="绿色">
-                                                <input type="checkbox" name="like[dai]" title="蓝色">
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
+                                <div class="layui-field-box" style="padding: 0;">
+                                    <table class="layui-table" lay-size="sm" lay-filter="specTable" id="specTable" style="margin: 0;"></table>
                                 </div>
                             </fieldset>
 
@@ -366,6 +340,11 @@
         <a class="layui-btn layui-btn-primary layui-border-green layui-btn-sm" lay-event="add" shiro:hasPermission="shopCategory:add"><i class="layui-icon">&#xe61f;</i> 新增三级分类</a>
     </div>
 </script>
+<script type="text/html" id="specOptions">
+    {{# layui.each(d.options.split(','), function(index, item){     }}
+    <input type="checkbox" name="like[write]" title="{{ item }}">
+    {{# });  }}
+</script>
 </div>
 <script th:src="@{/layui2.0/lib/jq-module/zyupload/jquery.min.js}" charset="utf-8"></script>
 <script th:src="@{/layui2.0/lib/jq-module/zyupload/jquery-migrate.js}" charset="utf-8"></script>
@@ -404,6 +383,7 @@
                 title: '填写商品属性'
             }]
         });
+
         form.on('submit(formStep)', function (data) {
             var checkStatus = table.checkStatus('showTable3');
             if (checkStatus.data.length <= 0) {
@@ -414,6 +394,7 @@
             return false;
         });
         form.on('submit(formStep2)', function (data) {
+
             step.next('#stepForm');
             return false;
         });
@@ -458,7 +439,8 @@
                 $(".layui-table-view[lay-id='showTable1'] .layui-table-body tr[data-index='0'] .layui-form-radio").click();
             }
         });
-        table.on('radio(showTable1)', function (obj) { //test 是 table 标签对应的 lay-filter 属性
+        table.on('radio(showTable1)', function (obj) {
+            // test 是 table 标签对应的 lay-filter 属性
             $("a[name='a_category1']").html(obj.data.name);
             $("a[name='a_category2']").html("");
             $("a[name='a_category3']").html("");
@@ -532,7 +514,8 @@
                 $(".layui-table-view[lay-id='showTable2'] .layui-table-body tr[data-index='0'] .layui-form-radio").click();
             }
         });
-        table.on('radio(showTable2)', function (obj) { //test 是 table 标签对应的 lay-filter 属性
+        table.on('radio(showTable2)', function (obj) {
+            // test 是 table 标签对应的 lay-filter 属性
             $("a[name='a_category2']").html(obj.data.name);
             $("a[name='a_category3']").html("");
             tableIns3.reload({
@@ -611,8 +594,20 @@
                 $(".layui-table-view[lay-id='showTable3'] .layui-table-body tr[data-index='0'] .layui-form-radio").click();
             }
         });
-        table.on('radio(showTable3)', function (obj) { //test 是 table 标签对应的 lay-filter 属性
+        table.on('radio(showTable3)', function (obj) {
+            // test 是 table 标签对应的 lay-filter 属性
             $("a[name='a_category3']").html(obj.data.name);
+            CoreUtil.sendGet("/shopCategory/findById/" + obj.data.id, null, function (res) {
+                if (res.data) {
+                    $("#templateId").val(res.data.templateId);
+                    $("#templateName").html(res.data.templateName);
+                    // TODO 渲染规格参数
+                    renderingSpecTable(res.data.templateId);
+
+                }
+            });
+
+
         });
         //表头工具
         table.on('toolbar(showTable3)', function (obj) {
@@ -796,5 +791,38 @@
                 layer.setTop(layero);
             }
         });
+    }
+
+    function renderingSpecTable(templateId) {
+        layui.use(['table', 'layer'], function () {
+            var table = layui.table;
+            var layer = layui.layer;
+            table.render({
+                elem: '#specTable'
+                , contentType: 'application/json'
+                , headers: {"authorization": token}
+                , page: false //开启分页
+                , url: '/shopTemplate/findAllSpecList' //数据接口
+                , method: 'POST'
+                , where: {
+                    "templateId": templateId
+                }
+                , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                    return {
+                        "code": res.code, //解析接口状态
+                        "msg": res.msg, //解析提示文本
+                        "data": CoreUtil.isEmpty(res.data) ? null : res.data //解析数据列表
+                    }
+                }
+                , cols: [
+                    [
+                        {width: 150, field: 'name', title: '规格名称'},
+                        {field: 'options', title: '可选值列表', templet: '#specOptions'},
+                    ]
+                ]
+            });
+        });
+
+
     }
 </script>

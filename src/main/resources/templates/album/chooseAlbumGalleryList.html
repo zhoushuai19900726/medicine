@@ -310,7 +310,7 @@
                             layer.close(index);
                         });
                     } else {
-                        layer.msg("无法转移到当前相册，请选择其他相册。");
+                        layer.msg("无法转移到当前相册，请选择其他相册。", {icon: 5});
                     }
                 }
                 , success: function (layero, index) {
@@ -337,7 +337,7 @@
                     , yes: function (index, layero) {
                         var newAlbumId = $("select[name='albumId']").val();
                         if (!newAlbumId) {
-                            layer.msg("请选择目标相册。");
+                            layer.msg("请选择目标相册。", {icon: 5});
                             return;
                         }
                         if (newAlbumId != albumId) {
@@ -350,7 +350,7 @@
                                 layer.close(index);
                             });
                         } else {
-                            layer.msg("无法转移到当前相册，请选择其他相册。");
+                            layer.msg('无法转移到当前相册，请选择其他相册。', {icon: 5});
                         }
                     }
                     , success: function (layero, index) {
@@ -359,7 +359,7 @@
                     }
                 });
             } else {
-                layer.msg("请选择图片。");
+                layer.msg('请选择图片。', {icon: 5});
             }
             return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
         });
@@ -379,7 +379,7 @@
                     });
                 });
             } else {
-                layer.msg("请选择图片。");
+                layer.msg('请选择图片。', {icon: 5});
             }
             return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
         });
