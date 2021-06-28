@@ -443,7 +443,7 @@
             width: '100%', //设置容器宽度
             stepWidth: '1000px',
             height: '3000px',
-            initStep: 3,// 初始化显示索引
+            initStep: 1,// 初始化显示索引
             stepItems: [{
                 title: '选择商品分类'
             }, {
@@ -479,7 +479,8 @@
         });
         //加载一级分类table
         tableIns1 = table.render({
-            elem: '#showTable1'
+            id: 'showTable1'
+            , elem: '#showTable1'
             , contentType: 'application/json'
             , headers: {"authorization": token}
             , height: 490
@@ -553,7 +554,8 @@
         });
         //加载二级分类table
         tableIns2 = table.render({
-            elem: '#showTable2'
+            id: 'showTable2'
+            , elem: '#showTable2'
             , contentType: 'application/json'
             , headers: {"authorization": token}
             , height: 490
@@ -633,7 +635,8 @@
         });
         //加载三级分类table
         tableIns3 = table.render({
-            elem: '#showTable3'
+            id: 'showTable3'
+            , elem: '#showTable3'
             , contentType: 'application/json'
             , headers: {"authorization": token}
             , height: 490
@@ -671,8 +674,8 @@
                     $("#templateId").val(res.data.templateId);
                     $("#templateName").html(res.data.templateName);
                     // 渲染规格
-                    renderingSpecTable(res.data.templateId);
-                    // 渲染参数
+                    // renderingSpecTable(res.data.templateId);
+                    // // 渲染参数
                     renderingParaTable(res.data.templateId);
                 }
             });
@@ -897,7 +900,8 @@
             var table = layui.table;
             var layer = layui.layer;
             table.render({
-                elem: '#specTable'
+                id: 'specTable'
+                , elem: '#specTable'
                 // , size: 'sm' //小尺寸的表格
                 , contentType: 'application/json'
                 , headers: {"authorization": token}
@@ -935,7 +939,8 @@
             var table = layui.table;
             var layer = layui.layer;
             table.render({
-                elem: '#paraTable'
+                id: 'paraTable'
+                , elem: '#paraTable'
                 // , size: 'sm' //小尺寸的表格
                 , contentType: 'application/json'
                 , headers: {"authorization": token}
@@ -1005,7 +1010,8 @@
             );
             cols.push(keyTempArray);
             table.render({
-                elem: '#deploySpecTable'
+                id: 'deploySpecTable'
+                , elem: '#deploySpecTable'
                 // , size: 'sm' //小尺寸的表格
                 , limit: Number.MAX_VALUE // 数据表格默认全部显示
                 , cols: cols
