@@ -32,7 +32,7 @@
                                             <blockquote class="layui-elem-quote layui-quote-nm"><i class="layui-icon">&#xe62a;</i> 一级商品分类</blockquote>
                                         </div>
                                         <div class="layui-card-body">
-                                            <table class="layui-table" id="showTable1" lay-filter="showTable1" lay-size="sm"></table>
+                                            <table class="layui-table" id="showTable1" lay-filter="showTable1"></table>
                                         </div>
                                     </div>
                                 </div>
@@ -42,7 +42,7 @@
                                             <blockquote class="layui-elem-quote layui-quote-nm"><i class="layui-icon">&#xe62a;</i> 二级商品分类</blockquote>
                                         </div>
                                         <div class="layui-card-body">
-                                            <table class="layui-table" id="showTable2" lay-filter="showTable2" lay-size="sm"></table>
+                                            <table class="layui-table" id="showTable2" lay-filter="showTable2"></table>
                                         </div>
                                     </div>
                                 </div>
@@ -52,7 +52,7 @@
                                             <blockquote class="layui-elem-quote layui-quote-nm"><i class="layui-icon">&#xe62a;</i> 三级商品分类</blockquote>
                                         </div>
                                         <div class="layui-card-body">
-                                            <table class="layui-table" id="showTable3" lay-filter="showTable3" lay-size="sm"></table>
+                                            <table class="layui-table" id="showTable3" lay-filter="showTable3"></table>
                                         </div>
                                     </div>
                                 </div>
@@ -403,16 +403,16 @@
     <button class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="upload" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe67c;</i>上传图片</button>
 </script>
 <script type="text/html" id="specPriceTpl">
-    <input type="text" name="specPrice" autocomplete="off" placeholder="请输入销售价格" class="layui-input" style="width: 150px;"/>
+    <input type="text" name="specPrice" autocomplete="off" placeholder="请输入销售价格" class="layui-input" style="width: 150px; margin-left: -15px; margin-top: -5px;"/>
 </script>
 <script type="text/html" id="specInventoryTpl">
-    <input type="text" name="specInventory" autocomplete="off" placeholder="请输入商品库存" class="layui-input" style="width: 150px;"/>
+    <input type="text" name="specInventory" autocomplete="off" placeholder="请输入商品库存" class="layui-input" style="width: 150px; margin-left: -15px; margin-top: -5px;"/>
 </script>
 <script type="text/html" id="specWarningTpl">
-    <input type="text" name="specWarning" autocomplete="off" placeholder="请输入库存预警值" class="layui-input" style="width: 150px;"/>
+    <input type="text" name="specWarning" autocomplete="off" placeholder="请输入库存预警值" class="layui-input" style="width: 150px; margin-left: -15px; margin-top: -5px;"/>
 </script>
 <script type="text/html" id="specSkuTpl">
-    <input type="text" name="specSku" autocomplete="off" placeholder="请输入SKU编号" class="layui-input" style="width: 150px;"/>
+    <input type="text" name="specSku" autocomplete="off" placeholder="请输入SKU编号" class="layui-input" style="width: 150px; margin-left: -15px; margin-top: -5px;"/>
 </script>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
@@ -674,7 +674,7 @@
                     $("#templateId").val(res.data.templateId);
                     $("#templateName").html(res.data.templateName);
                     // 渲染规格
-                    // renderingSpecTable(res.data.templateId);
+                    renderingSpecTable(res.data.templateId);
                     // // 渲染参数
                     renderingParaTable(res.data.templateId);
                 }
@@ -941,7 +941,6 @@
             table.render({
                 id: 'paraTable'
                 , elem: '#paraTable'
-                // , size: 'sm' //小尺寸的表格
                 , contentType: 'application/json'
                 , headers: {"authorization": token}
                 , page: false //开启分页
@@ -963,12 +962,6 @@
                         {field: 'options', title: '录入参数', templet: '#paraOptions'},
                     ]
                 ]
-                , done: function (res, curr, count) {
-                    //数据渲染完的回调。
-                    //由于layui 设置了超出隐藏，所以这里改变下，以兼容操作按钮的下拉菜单
-                    $("#paraTable .layui-table-body, .layui-table-box, .layui-table-cell").css('overflow', 'visible');
-                    // $("#paraTable .layui-table-body, .layui-table-box, .layui-table-cell .layui-form-select").css('margin-top', '-10px').css('margin-left', '-15px');
-                }
             });
         });
     }
@@ -1016,12 +1009,6 @@
                 , limit: Number.MAX_VALUE // 数据表格默认全部显示
                 , cols: cols
                 , data: datas
-                , done: function (res, curr, count) {
-                    //数据渲染完的回调。
-                    //由于layui 设置了超出隐藏，所以这里改变下，以兼容操作按钮的下拉菜单
-                    $("#paraTable .layui-table-body, .layui-table-box, .layui-table-cell").css('overflow', 'visible');
-                    $("#paraTable .layui-table-body, .layui-table-box, .layui-table-cell input[type='text']").css('margin-top', '-10px').css('margin-left', '-15px');
-                }
             });
         });
     }
