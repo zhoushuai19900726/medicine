@@ -252,5 +252,19 @@ public class ShopTemplateController extends BaseController {
         return DataResult.success(shopParaService.page(page, encapsulationDataRights(shopParaEntity, queryWrapper, ShopParaEntity::getCreateId)));
     }
 
+    @ApiOperation(value = "查询所有参数数据")
+    @PostMapping("shopTemplate/findAllParaList")
+    @RequiresPermissions("shopTemplate:list")
+    @LogAnnotation(title = "商品模板", action = "查询所有参数数据")
+    @DataScope
+    @ResponseBody
+    public DataResult findAllParaList(@RequestBody ShopParaEntity shopParaEntity) {
+        // 查询条件
+        LambdaQueryWrapper<ShopParaEntity> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper.eq(StringUtils.isNotBlank(shopParaEntity.getTemplateId()), ShopParaEntity::getTemplateId, shopParaEntity.getTemplateId()).orderByAsc(ShopParaEntity::getSeq);
+        // 封装数据权限 - 执行查询 - 响应前端
+        return DataResult.success(shopParaService.list(encapsulationDataRights(shopParaEntity, queryWrapper, ShopParaEntity::getCreateId)));
+    }
+
 
 }

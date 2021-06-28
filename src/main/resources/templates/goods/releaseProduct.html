@@ -197,83 +197,18 @@
 
                             <fieldset class="table-search-fieldset" style="padding: 0 10px 5px 10px;">
                                 <legend><i class="fa fa-cogs" style="color: red;"><b> 商品规格</b></i></legend>
-                                <div class="layui-field-box" style="padding: 0;">
-                                    <table class="layui-table" lay-size="sm" lay-filter="specTable" id="specTable" style="margin: 0;"></table>
+                                <div class="layui-field-box">
+                                    <table class="layui-table" lay-filter="specTable" id="specTable" style="margin-top: -10px;"></table>
+                                </div>
+                                <div class="layui-field-box">
+                                    <table class="layui-table" lay-filter="deploySpecTable" id="deploySpecTable" style="margin-top: -10px;"></table>
                                 </div>
                             </fieldset>
 
-
-                            <table class="layui-table" lay-size="sm">
-                                <colgroup>
-                                    <col width="100">
-                                    <col width="100">
-                                    <col width="100">
-                                    <col width="100">
-                                    <col width="100">
-                                    <col width="100">
-                                    <col width="100">
-                                </colgroup>
-                                <thead>
-                                <tr>
-                                    <th>尺码</th>
-                                    <th>颜色</th>
-                                    <th class="required">销售价格</th>
-                                    <th class="required">商品库存</th>
-                                    <th class="required">库存预警值</th>
-                                    <th class="required">SKU编号</th>
-                                    <th>操作</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>M</td>
-                                    <td>黑色</td>
-                                    <td><input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" class="layui-input"/></td>
-                                    <td><input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" class="layui-input"/></td>
-                                    <td><input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" class="layui-input"/></td>
-                                    <td><input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" class="layui-input"/></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>M</td>
-                                    <td>黑色</td>
-                                    <td><input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" class="layui-input"/></td>
-                                    <td><input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" class="layui-input"/></td>
-                                    <td><input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" class="layui-input"/></td>
-                                    <td><input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" class="layui-input"/></td>
-                                    <td></td>
-                                </tr>
-                                </tbody>
-                            </table>
                         </blockquote>
                         <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 商品参数</blockquote>
                         <blockquote class="layui-elem-quote layui-quote-nm">
-                            <table class="layui-table" lay-size="sm">
-                                <colgroup>
-                                    <col width="100">
-                                    <col width="600">
-                                </colgroup>
-                                <thead>
-                                <tr>
-                                    <th>参数类型</th>
-                                    <th>录入参数</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td class="required">上市年份</td>
-                                    <td><input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" class="layui-input"/></td>
-                                </tr>
-                                <tr>
-                                    <td class="required">主材含量</td>
-                                    <td><input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" class="layui-input"/></td>
-                                </tr>
-                                <tr>
-                                    <td class="required">适用对象</td>
-                                    <td><input type="text" name="sn" lay-verify="required" autocomplete="off" placeholder="请输入商品货号" class="layui-input"/></td>
-                                </tr>
-                                </tbody>
-                            </table>
+                            <table class="layui-table" lay-filter="paraTable" id="paraTable"></table>
                         </blockquote>
                         <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 商品相册</blockquote>
                         <blockquote class="layui-elem-quote layui-quote-nm">
@@ -342,8 +277,29 @@
 </script>
 <script type="text/html" id="specOptions">
     {{# layui.each(d.options.split(','), function(index, item){     }}
-    <input type="checkbox" name="like[write]" title="{{ item }}">
+    <input type="checkbox" title="{{ item }}" spec="{{ d.name }}" lay-filter="specOption"/>
     {{# });  }}
+</script>
+<script type="text/html" id="paraOptions">
+    {{# layui.each(d.options.split(','), function(index, item){     }}
+    <input type="checkbox" name="paraOption" title="{{ item }}"/>
+    {{# });  }}
+</script>
+<script type="text/html" id="deploySpecTool">
+    <button class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除规格</button>
+    <button class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="upload" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe67c;</i>上传图片</button>
+</script>
+<script type="text/html" id="specPriceTpl">
+    <input type="text" name="specPrice" autocomplete="off" placeholder="请输入销售价格" class="layui-input" style="width: 150px;"/>
+</script>
+<script type="text/html" id="specInventoryTpl">
+    <input type="text" name="specInventory" autocomplete="off" placeholder="请输入商品库存" class="layui-input" style="width: 150px;"/>
+</script>
+<script type="text/html" id="specWarningTpl">
+    <input type="text" name="specWarning" autocomplete="off" placeholder="请输入库存预警值" class="layui-input" style="width: 150px;"/>
+</script>
+<script type="text/html" id="specSkuTpl">
+    <input type="text" name="specSku" autocomplete="off" placeholder="请输入SKU编号" class="layui-input" style="width: 150px;"/>
 </script>
 </div>
 <script th:src="@{/layui2.0/lib/jq-module/zyupload/jquery.min.js}" charset="utf-8"></script>
@@ -360,7 +316,7 @@
     //地址栏转义token中的#号
     var tokenQuery = token.replace("#", "%23");
     var tableIns1, tableIns2, tableIns3;
-
+    var deploySpecMap = new Map();
     layui.use(['form', 'table', 'layer', 'step', 'util', 'layedit'], function () {
         var form = layui.form;
         var table = layui.table;
@@ -601,9 +557,10 @@
                 if (res.data) {
                     $("#templateId").val(res.data.templateId);
                     $("#templateName").html(res.data.templateName);
-                    // TODO 渲染规格参数
+                    // 渲染规格
                     renderingSpecTable(res.data.templateId);
-
+                    // 渲染参数
+                    renderingParaTable(res.data.templateId);
                 }
             });
 
@@ -702,6 +659,34 @@
             }
         });
 
+        /**
+         * 监听规格复选框
+         */
+        form.on('checkbox(specOption)', function (data) {
+            var spec = $(data.elem).attr("spec");
+            var specValue = $(data.elem).attr("title");
+            if (deploySpecMap.has(spec)) {
+                var specValueList = deploySpecMap.get(spec);
+                // 判断当前多选框是选中还是取消选中
+                if (data.elem.checked) {
+                    specValueList.push(specValue);
+                } else {
+                    var newSpecValueList = specValueList.filter((item) => {
+                        return item != specValue;
+                    });
+                    if (newSpecValueList.length > 0) {
+                        deploySpecMap.set(spec, newSpecValueList);
+                    } else {
+                        deploySpecMap.delete(spec);
+                    }
+                }
+            } else {
+                deploySpecMap.set(spec, [specValue])
+            }
+            deploySpecTable();
+        });
+
+
         // 初始化插件
         $("#zyupload").zyUpload({
             width: "100%",                 // 宽度
@@ -799,6 +784,7 @@
             var layer = layui.layer;
             table.render({
                 elem: '#specTable'
+                // , size: 'sm' //小尺寸的表格
                 , contentType: 'application/json'
                 , headers: {"authorization": token}
                 , page: false //开启分页
@@ -816,13 +802,109 @@
                 }
                 , cols: [
                     [
-                        {width: 150, field: 'name', title: '规格名称'},
+                        {width: 80, title: '序号', fixed: 'left', type: 'numbers'},
+                        {align: 'center', width: 150, field: 'name', title: '规格名称'},
                         {field: 'options', title: '可选值列表', templet: '#specOptions'},
                     ]
                 ]
+                , done: function (res, curr, count) {
+                    deploySpecTable();
+                }
             });
         });
 
 
     }
+
+    function renderingParaTable(templateId) {
+        layui.use(['table', 'layer'], function () {
+            var table = layui.table;
+            var layer = layui.layer;
+            table.render({
+                elem: '#paraTable'
+                // , size: 'sm' //小尺寸的表格
+                , contentType: 'application/json'
+                , headers: {"authorization": token}
+                , page: false //开启分页
+                , url: '/shopTemplate/findAllParaList' //数据接口
+                , method: 'POST'
+                , where: {
+                    "templateId": templateId
+                }
+                , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                    return {
+                        "code": res.code, //解析接口状态
+                        "msg": res.msg, //解析提示文本
+                        "data": CoreUtil.isEmpty(res.data) ? null : res.data //解析数据列表
+                    }
+                }
+                , cols: [
+                    [
+                        {width: 150, field: 'name', title: '参数类型'},
+                        {field: 'options', title: '录入参数', templet: '#paraOptions'},
+                    ]
+                ]
+                , done: function (res, curr, count) {
+                    //数据渲染完的回调。
+                    //由于layui 设置了超出隐藏，所以这里改变下，以兼容操作按钮的下拉菜单
+                    $("#paraTable .layui-table-body, .layui-table-box, .layui-table-cell").css('overflow', 'visible');
+                    // $("#paraTable .layui-table-body, .layui-table-box, .layui-table-cell .layui-form-select").css('margin-top', '-10px').css('margin-left', '-15px');
+                }
+            });
+        });
+    }
+
+    function deploySpecTable() {
+        layui.use(['table', 'layer'], function () {
+            var table = layui.table;
+            var layer = layui.layer;
+            var cols = [];
+            var datas = [];
+            var keyTempArray = [];
+            var valueTempArray = [];
+            keyTempArray.push(
+                {width: 80, title: '序号', fixed: 'left', type: 'numbers'}
+            );
+            deploySpecMap.forEach(function (v, k, map) {
+                keyTempArray.push({field: k, title: k});
+                valueTempArray.push(v);
+            });
+            //  笛卡尔积结果
+            var calcDescartes = CoreUtil.calcDescartes(valueTempArray);
+            $(calcDescartes).each(function (index, arr) {
+                arr = Array.isArray(arr) ? arr : [arr];
+                var data = {};
+                $(arr).each(function (i, item) {
+                    data[keyTempArray[i + 1].field] = item;
+                });
+                datas.push(data);
+            });
+            if (datas.length < 1) {
+                datas.push({});
+            }
+            keyTempArray.push(
+                {width: 150, title: '<i style="color: red;">*</i> 销售价格', fixed: 'right', templet: '#specPriceTpl'},
+                {width: 150, title: '<i style="color: red;">*</i> 商品库存', fixed: 'right', templet: '#specInventoryTpl'},
+                {width: 150, title: '<i style="color: red;">*</i> 库存预警值', fixed: 'right', templet: '#specWarningTpl'},
+                {width: 150, title: '<i style="color: red;">*</i> SKU编号', fixed: 'right', templet: '#specSkuTpl'},
+                {width: 200, title: '操作', fixed: 'right', toolbar: "#deploySpecTool"}
+            );
+            cols.push(keyTempArray);
+            table.render({
+                elem: '#deploySpecTable'
+                // , size: 'sm' //小尺寸的表格
+                , limit: Number.MAX_VALUE // 数据表格默认全部显示
+                , cols: cols
+                , data: datas
+                , done: function (res, curr, count) {
+                    //数据渲染完的回调。
+                    //由于layui 设置了超出隐藏，所以这里改变下，以兼容操作按钮的下拉菜单
+                    $("#paraTable .layui-table-body, .layui-table-box, .layui-table-cell").css('overflow', 'visible');
+                    $("#paraTable .layui-table-body, .layui-table-box, .layui-table-cell input[type='text']").css('margin-top', '-10px').css('margin-left', '-15px');
+                }
+            });
+        });
+    }
+
+
 </script>
