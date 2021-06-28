@@ -171,6 +171,18 @@ public class ShopAlbumController extends BaseController {
         return DataResult.success(shopAlbumGalleryService.updateBatchById(shopAlbumGalleryEntityList));
     }
 
+    @ApiOperation(value = "根据ID集合查询")
+    @PostMapping("shopAlbum/findDetailListByIdList")
+    @RequiresPermissions("shopAlbum:update")
+    @LogAnnotation(title = "相册图片", action = "根据ID集合查询")
+    @ResponseBody
+    public DataResult findDetailListByIdList(@RequestBody @ApiParam(value = "id集合") List<String> ids) {
+        if(CollectionUtils.isEmpty(ids)){
+            return DataResult.fail(BaseResponseCode.OPERATION_ERRO.getMsg());
+        }
+        return DataResult.success(shopAlbumGalleryService.getBaseMapper().selectBatchIds(ids));
+    }
+
     @ApiOperation(value = "查询分页数据")
     @PostMapping("shopAlbumGallery/findDetailListByPage")
     @RequiresPermissions("shopAlbum:list")

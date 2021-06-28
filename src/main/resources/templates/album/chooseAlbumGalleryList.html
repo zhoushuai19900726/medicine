@@ -118,6 +118,13 @@
     var total = 0;    //总条数
     var $ = jQuery = layui.jquery;
 
+    layui.use(['form', 'layer'], function () {
+        var layer = layui.layer;
+        var form = layui.form;
+        // 默认1点就第一个相册
+        $("#albumMenu ul li").eq(1).click();
+    });
+
     function loadData(albumId) {
         var params = {
             "page": page,
