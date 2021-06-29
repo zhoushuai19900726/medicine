@@ -840,7 +840,7 @@
                 var image = $(this).val();
                 if (image) images.push(image);
             });
-            if(images.length > 0){
+            if (images.length > 0) {
                 shopSpuEntity.image = images[0];
                 shopSpuEntity.images = images.join(",");
             }
@@ -849,7 +849,7 @@
             $("input[type=checkbox][name='serviceGuarantee']:checked").each(function () {
                 saleService.push($(this).attr("title"));
             });
-            if(saleService.length > 0){
+            if (saleService.length > 0) {
                 shopSpuEntity.saleService = saleService.join(",");
             }
             // 规格列表
@@ -894,7 +894,7 @@
                         shopSkuEntity[d] = $($(data[d])[0]).attr("value");
                     }
                 });
-                if(specFlag){
+                if (specFlag) {
                     shopSkuEntity.spec = JSON.stringify(spec);
                     // 商家ID
                     shopSkuEntity.sellerId = shopSpuEntity.sellerId;
@@ -911,7 +911,7 @@
                     shopSkuEntityList.push(shopSkuEntity);
                 }
             });
-            if(shopSkuEntityList.length > 0){
+            if (shopSkuEntityList.length > 0) {
                 shopSpuEntity.shopSkuEntityList = shopSkuEntityList;
                 // TODO 执行提交审核
                 // CoreUtil.sendPost("/goods/add", shopSpuEntity, function (res) {
@@ -1107,14 +1107,14 @@
                 switch (obj.event) {
                     case 'del':
                         var Data = table.cache["deploySpecTable"];
-                        if (obj.tr.data('index') == 0) {
+                        if (Data.length < 2) {
                             layer.msg("至少保留一个SKU", {icon: 5});
                         } else {
                             //根据索引删除当前行
                             Data.splice(obj.tr.data('index'), 1);
-                            deploySpecTable.reload({
-                                data: Data
-                            });
+                            deploySpecTable.reload({data: Data});
+                            // TODO 同步商品规格可选值列表复选框
+
                         }
                         break;
                     case 'upload':
