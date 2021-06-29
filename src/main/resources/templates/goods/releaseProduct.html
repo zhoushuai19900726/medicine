@@ -953,12 +953,13 @@
                     CoreUtil.sendPost("/shopAlbum/findDetailListByIdList", idList, function (res) {
                         switch (type) {
                             case 1:
+                                //  商品相册
                                 var parentObj = $(ele).parent().parent().next();
                                 $(parentObj).find("input[name='images']").attr("value", res.data[0].image);
                                 $(parentObj).find("img").attr("src", res.data[0].image);
                                 break;
                             case 2:
-                                // TODO 选择图片
+                                // TODO 详情描述
 
                                 break;
                         }
