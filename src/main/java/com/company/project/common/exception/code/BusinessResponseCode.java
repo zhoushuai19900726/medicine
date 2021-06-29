@@ -14,6 +14,8 @@ public enum BusinessResponseCode implements ResponseCodeInterface {
      */
     SPU_SN_REPEATED_EXISTENCE(900001, "SPU商品货号已存在"),
     SKU_SN_REPEATED_EXISTENCE(900002, "SKU商品货号已存在"),
+    SKU_NULL(900003, "请至少维护一个SKU"),
+    SKU_REPEAT(900004, "SKU商品货号重复"),
 
     /**
      * 错误码 - **模块

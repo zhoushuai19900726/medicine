@@ -101,6 +101,12 @@ public class ShopSkuEntity extends BaseEntity implements Serializable {
     private String categoryName;
 
     /**
+     * 品牌ID
+     */
+    @TableField("brand_id")
+    private String brandId;
+
+    /**
      * 品牌名称
      */
     @TableField("brand_name")
