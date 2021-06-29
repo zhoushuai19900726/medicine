@@ -2,6 +2,7 @@ package com.company.project.controller;
 
 import com.company.project.common.enums.GoodsExamineStatusEnum;
 import com.company.project.common.enums.GoodsStatusEnum;
+import com.company.project.common.enums.ServiceGuaranteeEnum;
 import com.company.project.common.utils.DataResult;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -36,6 +37,14 @@ public class CommonController {
     @ResponseBody
     public DataResult findAllGoodsExamineStatus() {
         return DataResult.success(GoodsExamineStatusEnum.toList());
+    }
+
+    @ApiOperation(value = "查询所有商品服务保证")
+    @GetMapping("findAllServiceGuarantee")
+    @RequiresPermissions("goods:list")
+    @ResponseBody
+    public DataResult findAllServiceGuarantee() {
+        return DataResult.success(ServiceGuaranteeEnum.toList());
     }
 
 }

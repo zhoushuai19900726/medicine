@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.company.project.common.exception.code.BaseResponseCode;
 import com.company.project.common.exception.code.BusinessResponseCode;
 import com.company.project.common.utils.DataResult;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
@@ -49,7 +50,7 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
     public DataResult updateShopSpuEntityById(ShopSpuEntity shopSpuEntity) {
         // 校验SPU商品货号
         ShopSpuEntity queryResult = shopSpuMapper.selectOne(Wrappers.<ShopSpuEntity>lambdaQuery().eq(ShopSpuEntity::getSn, shopSpuEntity.getSn()));
-        if (Objects.nonNull(queryResult)) {
+        if (Objects.nonNull(queryResult) && !StringUtils.equals(queryResult.getId(), shopSpuEntity.getId())) {
             return DataResult.fail(BusinessResponseCode.SPU_SN_REPEATED_EXISTENCE.getMsg());
         }
 

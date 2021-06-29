@@ -7,6 +7,13 @@
     <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
     <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
     <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <style>
+        .tableInput {
+            width: 150px;
+            margin-left: -15px;
+            margin-top: -5px;
+        }
+    </style>
 </head>
 <body>
 <div class="layuimini-container">
@@ -64,7 +71,7 @@
                     </form>
                 </div>
                 <div>
-                    <form class="layui-form" style="margin: 0 auto;">
+                    <form class="layui-form" style="margin: 0 auto;" lay-filter="shopSpuEntity">
                         <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 商品基本信息</blockquote>
                         <blockquote class="layui-elem-quote layui-quote-nm">
                             <div class="layui-form-item">
@@ -94,7 +101,7 @@
                                         <td><input type="text" name="name" lay-verify="required" autocomplete="off" placeholder="请输入商品名称" lay class="layui-input"/></td>
                                         <td rowspan="2">商品介绍</td>
                                         <td rowspan="2">
-                                            <textarea placeholder="请输入商品介绍" class="layui-textarea"></textarea>
+                                            <textarea name="introduction" placeholder="请输入商品介绍" class="layui-textarea"></textarea>
                                         </td>
                                     </tr>
                                     <tr>
@@ -126,9 +133,8 @@
                                         </td>
                                         <td>运费模板</td>
                                         <td>
-                                            <select name="" lay-search <!--th:with="brandList=${@shopBrandService.list()}"-->>
-                                            <option value="">请选择运费模板</option>
-                                            <!--<option th:each="brand : ${brandList}" th:text="${brand.name}" th:value="${brand.id}"></option>-->
+                                            <select name="freightId" lay-search>
+                                                <option value="">请选择运费模板</option>
                                             </select>
                                         </td>
                                     </tr>
@@ -151,9 +157,9 @@
                                 <tr>
                                     <td>服务保证</td>
                                     <td>
-                                        <input type="checkbox" name="like[write]" title="无忧退货" checked>
-                                        <input type="checkbox" name="like[read]" title="快速退款" checked>
-                                        <input type="checkbox" name="like[dai]" title="免费包邮">
+                                        <div th:with="dataResult=${@commonController.findAllServiceGuarantee()}">
+                                            <input type="checkbox" name="serviceGuarantee" th:each="map : ${dataResult.getData()}" th:title="${map.get('name')}"/>
+                                        </div>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -330,15 +336,10 @@
                                 </div>
                             </div>
                         </blockquote>
-
                         <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 详情描述</blockquote>
                         <blockquote class="layui-elem-quote layui-quote-nm">
-
-
                             <a class="layui-btn layui-btn-primary layui-border-green layui-btn-xs" onclick="chooseAlbumGallery(this, 2)"><i class="fa fa-image"> 从图库选择</i></a>
                             <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs"><i class="fa fa-question-circle"> 移动端上传说明</i></a>
-
-
                             <div class="layui-tab layui-tab-card">
                                 <ul class="layui-tab-title">
                                     <li class="layui-this">移动端详情</li>
@@ -353,24 +354,15 @@
                                     </div>
                                 </div>
                             </div>
-
-
                         </blockquote>
-
                         <div class="layui-form-item">
                             <button type="button" class="layui-btn layui-btn-primary layui-border-black pre" style="float: left;"><i class="fa fa-reply"></i> 上一步, 填写商品信息</button>
                             <button class="layui-btn layui-btn-primary layui-border-blue" lay-submit lay-filter="submitExamine" style="float: right;"><i class="fa fa-send"></i> 提交审核</button>
                         </div>
-
-
                     </form>
                 </div>
-
             </div>
-
-
         </div>
-
     </div>
 </div>
 <script type="text/html" id="toolbar1">
@@ -395,24 +387,16 @@
 </script>
 <script type="text/html" id="paraOptions">
     {{# layui.each(d.options.split(','), function(index, item){     }}
-    <input type="checkbox" name="paraOption" title="{{ item }}"/>
+    <input type="checkbox" name="paraOption" param="{{ d.name }}" title="{{ item }}"/>
     {{# });  }}
 </script>
 <script type="text/html" id="deploySpecTool">
     <button class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除规格</button>
     <button class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="upload" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe67c;</i>上传图片</button>
 </script>
-<script type="text/html" id="specPriceTpl">
-    <input type="text" name="specPrice" autocomplete="off" placeholder="请输入销售价格" class="layui-input" style="width: 150px; margin-left: -15px; margin-top: -5px;"/>
-</script>
-<script type="text/html" id="specInventoryTpl">
-    <input type="text" name="specInventory" autocomplete="off" placeholder="请输入商品库存" class="layui-input" style="width: 150px; margin-left: -15px; margin-top: -5px;"/>
-</script>
-<script type="text/html" id="specWarningTpl">
-    <input type="text" name="specWarning" autocomplete="off" placeholder="请输入库存预警值" class="layui-input" style="width: 150px; margin-left: -15px; margin-top: -5px;"/>
-</script>
-<script type="text/html" id="specSkuTpl">
-    <input type="text" name="specSku" autocomplete="off" placeholder="请输入SKU编号" class="layui-input" style="width: 150px; margin-left: -15px; margin-top: -5px;"/>
+<script type="text/html" id="deploySpecImageTool">
+    <input name="specImage" hidden/>
+    <img th:src="@{/images/uploadfile.jpeg}" style="width: 30px; height: 30px;"/>
 </script>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
@@ -443,7 +427,7 @@
             width: '100%', //设置容器宽度
             stepWidth: '1000px',
             height: '3000px',
-            initStep: 1,// 初始化显示索引
+            initStep: 3,// 初始化显示索引
             stepItems: [{
                 title: '选择商品分类'
             }, {
@@ -463,7 +447,6 @@
             return false;
         });
         form.on('submit(formStep2)', function (data) {
-
             step.next('#stepForm');
             return false;
         });
@@ -838,6 +821,75 @@
         });
 
 
+        // 表单提交 - 提交审核
+        form.on('submit(submitExamine)', function (data) {
+            // 商品SPU信息
+            var shopSpuEntity = form.val("shopSpuEntity");
+            // 商品一级分类
+            shopSpuEntity.category1Id = table.checkStatus('showTable1').data[0].id;
+            // 商品二级分类
+            shopSpuEntity.category2Id = table.checkStatus('showTable2').data[0].id;
+            // 商品三级分类
+            shopSpuEntity.category3Id = table.checkStatus('showTable3').data[0].id;
+            // 模板ID
+            shopSpuEntity.templateId = $("#templateId").val();
+            // 图片列表
+            var images = [];
+            $("input[name='images']").each(function () {
+                var image = $(this).val();
+                if (image) images.push(image);
+            });
+            shopSpuEntity.image = images[0];
+            shopSpuEntity.images = images.join(",");
+            // 售后服务
+            var saleService = [];
+            $("input[type=checkbox][name='serviceGuarantee']:checked").each(function () {
+                saleService.push($(this).attr("title"));
+            });
+            shopSpuEntity.saleService = saleService.join(",");
+            // 规格列表
+            var specItems = Object.create(null);
+            deploySpecMap.forEach(function (v, k, map) {
+                specItems[k] = v;
+            });
+            shopSpuEntity.specItems = JSON.stringify(specItems);
+            // 参数列表
+            var paraItems = Object.create(null);
+            var paraItemsMap = new Map();
+            $("input[type=checkbox][name='paraOption']:checked").each(function () {
+                var param = $(this).attr("param");
+                var value = $(this).attr("title");
+                if (paraItemsMap.has(param)) {
+                    paraItemsMap.get(param).push(value);
+                } else {
+                    paraItemsMap.set(param, [value]);
+                }
+            });
+            paraItemsMap.forEach(function (v, k, map) {
+                paraItems[k] = v;
+            });
+            shopSpuEntity.paraItems = JSON.stringify(paraItems);
+            // 审核状态
+            shopSpuEntity.status = 0;
+            // 商品SKU信息
+            // var shopSkuEntityList = [];
+            // deploySpecMap
+            // $("#deploySpecTable ")
+            var shopSkuEntityList = layui.table.cache["deploySpecTable"];
+
+
+            console.log(shopSkuEntityList)
+
+
+
+
+
+
+            //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            return false;
+        });
+
+
     });
 
 
@@ -969,7 +1021,6 @@
     function deploySpecTable() {
         layui.use(['table', 'layer'], function () {
             var table = layui.table;
-            var layer = layui.layer;
             var cols = [];
             var datas = [];
             var keyTempArray = [];
@@ -989,23 +1040,27 @@
                 $(arr).each(function (i, item) {
                     data[keyTempArray[i + 1].field] = item;
                 });
+                data['specPrice'] = "<input type=\"text\" name=\"specPrice\" autocomplete=\"off\" placeholder=\"请输入销售价格\" class=\"layui-input tableInput\"/>";
+                data['specInventory'] = "<input type=\"text\" name=\"specInventory\" autocomplete=\"off\" placeholder=\"请输入商品库存\" class=\"layui-input tableInput\"/>";
+                data['specWarning'] = "<input type=\"text\" name=\"specWarning\" autocomplete=\"off\" placeholder=\"请输入库存预警值\" class=\"layui-input tableInput\"/>";
+                data['specSku'] = "<input type=\"text\" name=\"specSku\" autocomplete=\"off\" placeholder=\"请输入SKU编号\" class=\"layui-input tableInput\"/>";
                 datas.push(data);
             });
             if (datas.length < 1) {
                 datas.push({});
             }
             keyTempArray.push(
-                {width: 150, title: '<i style="color: red;">*</i> 销售价格', fixed: 'right', templet: '#specPriceTpl'},
-                {width: 150, title: '<i style="color: red;">*</i> 商品库存', fixed: 'right', templet: '#specInventoryTpl'},
-                {width: 150, title: '<i style="color: red;">*</i> 库存预警值', fixed: 'right', templet: '#specWarningTpl'},
-                {width: 150, title: '<i style="color: red;">*</i> SKU编号', fixed: 'right', templet: '#specSkuTpl'},
-                {width: 200, title: '操作', fixed: 'right', toolbar: "#deploySpecTool"}
+                {width: 150, field: 'specPrice', title: '<i style="color: red;">*</i> 销售价格', fixed: 'right'},
+                {width: 150, field: 'specInventory', title: '<i style="color: red;">*</i> 商品库存', fixed: 'right'},
+                {width: 150, field: 'specWarning', title: '<i style="color: red;">*</i> 库存预警值', fixed: 'right'},
+                {width: 150, field: 'specSku', title: '<i style="color: red;">*</i> SKU编号', fixed: 'right'},
+                {width: 200, title: '操作', fixed: 'right', toolbar: "#deploySpecTool"},
+                {align: 'center', width: 80, title: '图片', fixed: 'right', toolbar: "#deploySpecImageTool"}
             );
             cols.push(keyTempArray);
             table.render({
                 id: 'deploySpecTable'
                 , elem: '#deploySpecTable'
-                // , size: 'sm' //小尺寸的表格
                 , limit: Number.MAX_VALUE // 数据表格默认全部显示
                 , cols: cols
                 , data: datas
