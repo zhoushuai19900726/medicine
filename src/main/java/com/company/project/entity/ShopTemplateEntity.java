@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 商品模板
@@ -16,6 +17,7 @@ import lombok.Data;
  * @email zhoushuai_0726@163.com
  * @date 2021-06-10 11:02:07
  */
+@Accessors(chain = true)
 @Data
 @TableName("shop_template")
 public class ShopTemplateEntity extends BaseEntity implements Serializable {
@@ -71,5 +73,6 @@ public class ShopTemplateEntity extends BaseEntity implements Serializable {
 	@TableLogic // 注释后进行物理删除
 	private Integer deleted;
 
-
+	public ShopTemplateEntity() {
+	}
 }

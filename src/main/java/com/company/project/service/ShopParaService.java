@@ -1,7 +1,10 @@
 package com.company.project.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.company.project.common.utils.DataResult;
 import com.company.project.entity.ShopParaEntity;
+
+import java.util.List;
 
 /**
  * 商品参数
@@ -12,10 +15,10 @@ import com.company.project.entity.ShopParaEntity;
  */
 public interface ShopParaService extends IService<ShopParaEntity> {
 
-    /**
-     * 更新模板中参数数量
-     * @param templateId
-     */
-    void updateParametersQuantityInTemplate(String templateId);
+    DataResult saveShopParaEntity(ShopParaEntity shopParaEntity);
+
+    DataResult removeShopParaEntityByIds(List<String> ids);
+
+    DataResult updateShopParaEntityById(ShopParaEntity shopParaEntity);
 }
 

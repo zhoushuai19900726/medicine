@@ -235,6 +235,7 @@
                 , field = obj.field; //得到字段
             var shopSpecEntity = {};
             shopSpecEntity.id = data.id;
+            shopSpecEntity.templateId = $("#templateId").val();
             shopSpecEntity[field] = util.escape(value);
             CoreUtil.sendPut("/shopTemplate/updateSpec", shopSpecEntity, function (res) {
 
@@ -376,6 +377,7 @@
                 , field = obj.field; //得到字段
             var shopParaEntity = {};
             shopParaEntity.id = data.id;
+            shopParaEntity.templateId = $("#templateId").val();
             shopParaEntity[field] = util.escape(value);
             CoreUtil.sendPut("/shopTemplate/updatePara", shopParaEntity, function (res) {
 

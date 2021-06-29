@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 商品SPU
@@ -18,6 +19,7 @@ import lombok.Data;
  * @email zhoushuai_0726@163.com
  * @date 2021-06-17 10:25:25
  */
+@Accessors(chain = true)
 @Data
 @TableName("shop_spu")
 public class ShopSpuEntity extends BaseEntity implements Serializable {

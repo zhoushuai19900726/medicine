@@ -1,7 +1,10 @@
 package com.company.project.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.company.project.common.utils.DataResult;
 import com.company.project.entity.ShopSpecEntity;
+
+import java.util.List;
 
 /**
  *
@@ -12,11 +15,10 @@ import com.company.project.entity.ShopSpecEntity;
  */
 public interface ShopSpecService extends IService<ShopSpecEntity> {
 
-    /**
-     * 更新模板中规格数量
-     * @param templateId
-     */
-    void updateSpecificationQuantityInTemplate(String templateId);
+    DataResult saveShopSpecEntity(ShopSpecEntity shopSpecEntity);
 
+    DataResult removeShopSpecEntityByIds(List<String> ids);
+
+    DataResult updateShopSpecEntityById(ShopSpecEntity shopSpecEntity);
 }
 

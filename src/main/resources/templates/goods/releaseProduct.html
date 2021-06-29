@@ -387,7 +387,7 @@
 </script>
 <script type="text/html" id="specOptions">
     {{# layui.each(d.options.split(','), function(index, item){     }}
-    <input type="checkbox" title="{{ item }}" spec="{{ d.name }}" lay-filter="specOption"/>
+    <input type="checkbox" title="{{ item }}" spec="{{ d.name }}" spec-id="{{ d.id }}" lay-filter="specOption"/>
     {{# });  }}
 </script>
 <script type="text/html" id="paraOptions">
@@ -396,8 +396,8 @@
     {{# });  }}
 </script>
 <script type="text/html" id="deploySpecTool">
-    <button class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除规格</button>
-    <button class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="upload"><i class="layui-icon">&#xe67c;</i>上传图片</button>
+    <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除规格</a>
+    <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="upload"><i class="layui-icon">&#xe67c;</i>上传图片</a>
 </script>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
@@ -428,7 +428,7 @@
             width: '90%', //设置容器宽度
             stepWidth: '1000px',
             height: '3000px',
-            initStep: 1,// 初始化显示索引
+            initStep: 3,// 初始化显示索引
             stepItems: [{
                 title: '选择商品分类'
             }, {
@@ -840,14 +840,18 @@
                 var image = $(this).val();
                 if (image) images.push(image);
             });
-            shopSpuEntity.image = images[0];
-            shopSpuEntity.images = images.join(",");
+            if(images.length > 0){
+                shopSpuEntity.image = images[0];
+                shopSpuEntity.images = images.join(",");
+            }
             // 售后服务
             var saleService = [];
             $("input[type=checkbox][name='serviceGuarantee']:checked").each(function () {
                 saleService.push($(this).attr("title"));
             });
-            shopSpuEntity.saleService = saleService.join(",");
+            if(saleService.length > 0){
+                shopSpuEntity.saleService = saleService.join(",");
+            }
             // 规格列表
             var specItems = Object.create(null);
             deploySpecMap.forEach(function (v, k, map) {
@@ -880,34 +884,42 @@
                 // sku规格
                 var spec = {};
                 var skuName = shopSpuEntity.name;
+                var specFlag = false;
                 $(Object.keys(data)).each(function (i, d) {
                     if (deploySpecMap.has(d)) {
+                        specFlag = true;
                         spec[d] = data[d];
                         skuName += " " + data[d];
                     } else if (d != 'LAY_TABLE_INDEX') {
                         shopSkuEntity[d] = $($(data[d])[0]).attr("value");
                     }
                 });
-                shopSkuEntity.spec = JSON.stringify(spec);
-                // 商家ID
-                shopSkuEntity.sellerId = shopSpuEntity.sellerId;
-                // SKU名称
-                shopSkuEntity.name = skuName;
-                // 商品图片列表
-                shopSkuEntity.images = shopSpuEntity.images;
-                // 类目ID
-                shopSkuEntity.categoryId = shopSpuEntity.category3Id;
-                shopSkuEntity.categoryName = $("a[name='a_category3']").html();
-                // 类目ID
-                shopSkuEntity.brandId = shopSpuEntity.brandId;
-                shopSkuEntity.brandName = $("select[name='brandId']:selected").text();
-                shopSkuEntityList.push(shopSkuEntity);
+                if(specFlag){
+                    shopSkuEntity.spec = JSON.stringify(spec);
+                    // 商家ID
+                    shopSkuEntity.sellerId = shopSpuEntity.sellerId;
+                    // SKU名称
+                    shopSkuEntity.name = skuName;
+                    // 商品图片列表
+                    shopSkuEntity.images = shopSpuEntity.images;
+                    // 类目ID
+                    shopSkuEntity.categoryId = shopSpuEntity.category3Id;
+                    shopSkuEntity.categoryName = $("a[name='a_category3']").html();
+                    // 类目ID
+                    shopSkuEntity.brandId = shopSpuEntity.brandId;
+                    shopSkuEntity.brandName = $("select[name='brandId']:selected").text();
+                    shopSkuEntityList.push(shopSkuEntity);
+                }
             });
-            shopSpuEntity.shopSkuEntityList = shopSkuEntityList;
-            // TODO 执行提交审核
-            // CoreUtil.sendPost("/goods/add", shopSpuEntity, function (res) {
-            //
-            // });
+            if(shopSkuEntityList.length > 0){
+                shopSpuEntity.shopSkuEntityList = shopSkuEntityList;
+                // TODO 执行提交审核
+                // CoreUtil.sendPost("/goods/add", shopSpuEntity, function (res) {
+                //
+                // });
+            } else {
+                layer.msg("请至少维护一个SKU", {icon: 5});
+            }
             //阻止表单跳转。如果需要表单跳转，去掉这段即可。
             return false;
         });
@@ -1041,6 +1053,7 @@
     function deploySpecTable() {
         layui.use(['table', 'layer'], function () {
             var table = layui.table;
+            var layer = layui.layer;
             var cols = [];
             var datas = [];
             var keyTempArray = [];
@@ -1093,15 +1106,16 @@
                 var data = obj.data;
                 switch (obj.event) {
                     case 'del':
-                        // // data.id
-                        // var Data = table.cache["deploySpecTable"];
-                        // if (obj.tr.data('index') != 0) {
-                        //     Data.splice(obj.tr.data('index'), 1)//根据索引删除当前行
-                        //     deploySpecTable.reload({
-                        //         data: Data
-                        //     });
-                        // }
-
+                        var Data = table.cache["deploySpecTable"];
+                        if (obj.tr.data('index') == 0) {
+                            layer.msg("至少保留一个SKU", {icon: 5});
+                        } else {
+                            //根据索引删除当前行
+                            Data.splice(obj.tr.data('index'), 1);
+                            deploySpecTable.reload({
+                                data: Data
+                            });
+                        }
                         break;
                     case 'upload':
                         // TODO 上传图片
@@ -1121,7 +1135,7 @@
             $(input).val(value);
         }
         $(input).attr("value", value);
-        layui.table.cache["deploySpecTable"][index][$(input).attr('name')] = $(input)[0];
+        layui.table.cache["deploySpecTable"][index][$(input).attr('name')] = $(input).parent().html();
     }
 
 </script>

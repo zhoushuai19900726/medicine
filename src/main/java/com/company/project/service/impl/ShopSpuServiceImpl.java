@@ -43,15 +43,15 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
     @Override
     public DataResult saveShopSpuEntity(ShopSpuEntity shopSpuEntity) {
         // 校验SPU商品货号
-        ShopSpuEntity queryResult = shopSpuMapper.selectOne(Wrappers.<ShopSpuEntity>lambdaQuery().eq(ShopSpuEntity::getSn, shopSpuEntity.getSn()));
-        if (Objects.nonNull(queryResult)) {
+        List<ShopSpuEntity> queryShopSpuEntityListResult = shopSpuMapper.selectList(Wrappers.<ShopSpuEntity>lambdaQuery().eq(ShopSpuEntity::getSn, shopSpuEntity.getSn()));
+        if (CollectionUtils.isNotEmpty(queryShopSpuEntityListResult)) {
             return DataResult.fail(BusinessResponseCode.SPU_SN_REPEATED_EXISTENCE.getMsg());
         }
+        // 校验SKU商品货号
         List<ShopSkuEntity> shopSkuEntityList = shopSpuEntity.getShopSkuEntityList();
         if (CollectionUtils.isEmpty(shopSkuEntityList)) {
             return DataResult.fail(BusinessResponseCode.SKU_NULL.getMsg());
         }
-        // 校验SKU商品货号
         List<String> skuSnList = shopSkuEntityList.stream().map(ShopSkuEntity::getSn).filter(StringUtils::isNotBlank).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(skuSnList)) {
             return DataResult.fail(BusinessResponseCode.SKU_NULL.getMsg());
@@ -66,18 +66,15 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
         // 保存SPU
         shopSpuMapper.insert(shopSpuEntity);
         // 保存SKU
-        shopSkuEntityList.forEach(shopSkuEntity -> {
-            shopSkuEntity.setSpuId(shopSpuEntity.getId());
-            shopSkuMapper.insert(shopSkuEntity);
-        });
+        shopSkuEntityList.forEach(shopSkuEntity -> shopSkuMapper.insert(shopSkuEntity.setSpuId(shopSpuEntity.getId())));
         return DataResult.success(shopSpuEntity);
     }
 
     @Override
     public DataResult updateShopSpuEntityById(ShopSpuEntity shopSpuEntity) {
         // 校验SPU商品货号
-        ShopSpuEntity queryResult = shopSpuMapper.selectOne(Wrappers.<ShopSpuEntity>lambdaQuery().eq(ShopSpuEntity::getSn, shopSpuEntity.getSn()));
-        if (Objects.nonNull(queryResult) && !StringUtils.equals(queryResult.getId(), shopSpuEntity.getId())) {
+        List<ShopSpuEntity> queryShopSpuEntityListResult = shopSpuMapper.selectList(Wrappers.<ShopSpuEntity>lambdaQuery().eq(ShopSpuEntity::getSn, shopSpuEntity.getSn()).ne(ShopSpuEntity::getId, shopSpuEntity.getId()));
+        if (CollectionUtils.isNotEmpty(queryShopSpuEntityListResult)) {
             return DataResult.fail(BusinessResponseCode.SPU_SN_REPEATED_EXISTENCE.getMsg());
         }
 

@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 商品SKU
@@ -16,6 +17,7 @@ import lombok.Data;
  * @email zhoushuai_0726@163.com
  * @date 2021-06-17 10:25:18
  */
+@Accessors(chain = true)
 @Data
 @TableName("shop_sku")
 public class ShopSkuEntity extends BaseEntity implements Serializable {

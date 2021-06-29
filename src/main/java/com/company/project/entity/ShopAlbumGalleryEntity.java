@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 相册图片
@@ -17,6 +18,7 @@ import lombok.Data;
  * @email zhoushuai_0726@163.com
  * @date 2021-06-25 16:17:09
  */
+@Accessors(chain = true)
 @Data
 @TableName("shop_album_gallery")
 public class ShopAlbumGalleryEntity extends BaseEntity implements Serializable {

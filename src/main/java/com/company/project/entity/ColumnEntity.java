@@ -1,6 +1,7 @@
 package com.company.project.entity;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 代码生成 列属性
@@ -9,6 +10,7 @@ import lombok.Data;
  * @version V1.0
  * @date 2020年3月18日
  */
+@Accessors(chain = true)
 @Data
 public class ColumnEntity {
     /**

@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 相册
@@ -16,6 +17,7 @@ import lombok.Data;
  * @email zhoushuai_0726@163.com
  * @date 2021-06-25 14:17:03
  */
+@Accessors(chain = true)
 @Data
 @TableName("shop_album")
 public class ShopAlbumEntity extends BaseEntity implements Serializable {

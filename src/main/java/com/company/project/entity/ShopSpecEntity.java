@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 商品规格
@@ -15,6 +16,7 @@ import lombok.Data;
  * @email zhoushuai_0726@163.com
  * @date 2021-06-11 10:11:20
  */
+@Accessors(chain = true)
 @Data
 @TableName("shop_spec")
 public class ShopSpecEntity extends BaseEntity implements Serializable {

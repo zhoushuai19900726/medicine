@@ -3,6 +3,7 @@ package com.company.project.entity;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
  * @version V1.0
  * @date 2020年3月18日
  */
+@Accessors(chain = true)
 @Data
 public class BaseEntity {
     @JSONField(serialize = false)

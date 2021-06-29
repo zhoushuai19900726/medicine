@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.company.project.common.aop.annotation.DataScope;
 import com.company.project.common.aop.annotation.LogAnnotation;
-import com.company.project.common.utils.NumberConstants;
 import com.company.project.entity.ShopParaEntity;
 import com.company.project.entity.ShopSpecEntity;
 import com.company.project.service.ShopParaService;
@@ -130,11 +129,7 @@ public class ShopTemplateController extends BaseController {
     @LogAnnotation(title = "商品规格", action = "新增规格")
     @ResponseBody
     public DataResult addSpec(@RequestBody ShopSpecEntity shopSpecEntity) {
-        // 保存规格
-        shopSpecService.save(shopSpecEntity);
-        // 更新模板中规格数量
-        shopSpecService.updateSpecificationQuantityInTemplate(shopSpecEntity.getTemplateId());
-        return DataResult.success();
+        return shopSpecService.saveShopSpecEntity(shopSpecEntity);
     }
 
     @ApiOperation(value = "删除")
@@ -143,13 +138,7 @@ public class ShopTemplateController extends BaseController {
     @LogAnnotation(title = "商品规格", action = "删除规格")
     @ResponseBody
     public DataResult deleteSpec(@RequestBody @ApiParam(value = "id集合") List<String> ids) {
-        // 查询规格
-        ShopSpecEntity shopSpecEntity = shopSpecService.getById(ids.get(NumberConstants.ZERO));
-        // 删除规格
-        shopSpecService.removeByIds(ids);
-        // 更新模板中规格数量
-        shopSpecService.updateSpecificationQuantityInTemplate(shopSpecEntity.getTemplateId());
-        return DataResult.success();
+        return shopSpecService.removeShopSpecEntityByIds(ids);
     }
 
     @ApiOperation(value = "更新")
@@ -158,7 +147,7 @@ public class ShopTemplateController extends BaseController {
     @LogAnnotation(title = "商品规格", action = "更新规格")
     @ResponseBody
     public DataResult updateSpec(@RequestBody ShopSpecEntity shopSpecEntity) {
-        return DataResult.success(shopSpecService.updateById(shopSpecEntity));
+        return shopSpecService.updateShopSpecEntityById(shopSpecEntity);
     }
 
     @ApiOperation(value = "查询规格分页数据")
@@ -205,11 +194,7 @@ public class ShopTemplateController extends BaseController {
     @LogAnnotation(title = "商品参数", action = "新增参数")
     @ResponseBody
     public DataResult addPara(@RequestBody ShopParaEntity shopParaEntity) {
-        // 保存参数
-        shopParaService.save(shopParaEntity);
-        // 更新模板中参数数量
-        shopParaService.updateParametersQuantityInTemplate(shopParaEntity.getTemplateId());
-        return DataResult.success();
+        return shopParaService.saveShopParaEntity(shopParaEntity);
     }
 
     @ApiOperation(value = "删除")
@@ -218,13 +203,7 @@ public class ShopTemplateController extends BaseController {
     @LogAnnotation(title = "商品参数", action = "删除参数")
     @ResponseBody
     public DataResult deletePara(@RequestBody @ApiParam(value = "id集合") List<String> ids) {
-        // 查询参数
-        ShopParaEntity shopParaEntity = shopParaService.getById(ids.get(NumberConstants.ZERO));
-        // 删除规格
-        shopParaService.removeByIds(ids);
-        // 更新模板中规格数量
-        shopParaService.updateParametersQuantityInTemplate(shopParaEntity.getTemplateId());
-        return DataResult.success();
+        return shopParaService.removeShopParaEntityByIds(ids);
     }
 
     @ApiOperation(value = "更新")
@@ -233,7 +212,7 @@ public class ShopTemplateController extends BaseController {
     @LogAnnotation(title = "商品参数", action = "更新参数")
     @ResponseBody
     public DataResult updatePara(@RequestBody ShopParaEntity shopParaEntity) {
-        return DataResult.success(shopParaService.updateById(shopParaEntity));
+        return shopParaService.updateShopParaEntityById(shopParaEntity);
     }
 
     @ApiOperation(value = "查询参数分页数据")
