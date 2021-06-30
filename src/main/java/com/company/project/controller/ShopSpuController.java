@@ -71,6 +71,12 @@ public class ShopSpuController extends BaseController {
         return "goods/releaseProduct";
     }
 
+    @ApiOperation(value = "跳转进入商品详情页面")
+    @GetMapping("/index/shopSpu/detail")
+    public String detail() {
+        return "goods/goodsDetail";
+    }
+
     @ApiOperation(value = "跳转进入审核页面")
     @GetMapping("/index/shopSpu/auditList")
     public String addOrUpdate() {

@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <link rel="stylesheet" th:href="@{/css/goodsDetail/Shopping.css}"/>
+
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main" shiro:hasPermission="goods:list">
+        <ul class="layui-nav layui-bg-blue" lay-bar="disabled" lay-filter="layui-nav">
+            <li class="layui-nav-item layui-this"><a href="javascript:;" data-id="basicCommodityInformation">商品信息预览</a></li>
+            <li class="layui-nav-item"><a href="javascript:;" data-id="afterSalesService">商品售后服务</a></li>
+            <li class="layui-nav-item"><a href="javascript:;" data-id="commodityAttributes">商品属性</a></li>
+            <li class="layui-nav-item"><a href="javascript:;" data-id="commodityParameters">商品参数</a></li>
+            <li class="layui-nav-item"><a href="javascript:;" data-id="productAlbum">商品相册</a></li>
+            <li class="layui-nav-item"><a href="javascript:;" data-id="detailedDescription">详情描述</a></li>
+        </ul>
+        <div class="layui-tab layui-tab-brief">
+            <ul class="layui-tab-title" hidden>
+                <li id="basicCommodityInformation"></li>
+                <li id="afterSalesService"></li>
+                <li id="commodityAttributes"></li>
+                <li id="commodityParameters"></li>
+                <li id="productAlbum"></li>
+                <li id="detailedDescription"></li>
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+
+
+                    <div class="wrap">
+                        <div class="smallImg imgBox">
+                            <img src="http://localhost:8080/files/20210626/2ddf74b505f34eae819946504799344d.jpeg" alt="chothes" style="width: 400px;  height: 400px;"/>
+                            <div id="shadow">
+                                <table border="1px" width="100px" height="100px">
+                                    <tr>
+                                        <td class="td_top td_left"></td>
+                                        <td class="td_top"></td>
+                                        <td class="td_top"></td>
+                                        <td class="td_top"></td>
+                                        <td class="td_top"></td>
+                                        <td class="td_top"></td>
+                                        <td class="td_top"></td>
+                                        <td class="td_top"></td>
+                                        <td class="td_top"></td>
+                                        <td class="td_top"></td>
+                                        <td class="td_top"></td>
+                                        <td class="td_top"></td>
+                                        <td class="td_top"></td>
+                                        <td class="td_top"></td>
+                                        <td class="td_top"></td>
+                                        <td class="td_top"></td>
+                                        <td class="td_top"></td>
+                                        <td class="td_top"></td>
+                                        <td class="td_top"></td>
+                                        <td class="td_top td_right"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="td_left"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="td_right"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="td_left"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="td_right"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="td_left"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="td_right"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="td_left"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="td_right"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="td_left"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="td_right"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="td_left"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="td_right"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="td_left"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="td_right"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="td_left"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="td_right"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="td_left"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="td_right"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="td_left"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="td_right"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="td_left"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="td_right"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="td_left"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="td_right"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="td_left"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="td_right"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="td_left"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="td_right"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="td_left"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="td_right"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="td_left"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="td_right"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="td_left"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="td_right"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="td_left"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="td_right"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="td_left"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="td_right"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="td_left td_bottom"></td>
+                                        <td class="td_bottom"></td>
+                                        <td class="td_bottom"></td>
+                                        <td class="td_bottom"></td>
+                                        <td class="td_bottom"></td>
+                                        <td class="td_bottom"></td>
+                                        <td class="td_bottom"></td>
+                                        <td class="td_bottom"></td>
+                                        <td class="td_bottom"></td>
+                                        <td class="td_bottom"></td>
+                                        <td class="td_bottom"></td>
+                                        <td class="td_bottom"></td>
+                                        <td class="td_bottom"></td>
+                                        <td class="td_bottom"></td>
+                                        <td class="td_bottom"></td>
+                                        <td class="td_bottom"></td>
+                                        <td class="td_bottom"></td>
+                                        <td class="td_bottom"></td>
+                                        <td class="td_bottom"></td>
+                                        <td class="td_right td_bottom"></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="bigImg imgBox">
+                            <img src="http://localhost:8080/files/20210626/2ddf74b505f34eae819946504799344d.jpeg" width="800" height="800" alt="chothes"/>
+                        </div>
+                    </div>
+                    <div id="div_box-right">
+                        <div id="div_box-right-1">
+                            <span id="div_box-right-1-span_1">网红同款潮流纯棉印花T恤男宽松百搭帅气原宿风半截袖百搭上衣服</span>
+                            <span id="div_box-right-1-span_2">收藏加购，闪电发货！</span>
+                        </div>
+                        <div id="div_box-right-2">
+                            <span id="div_box-right-2-span_1">价格</span>
+                            <span id="div_box-right-2-span_2"><span style="font-weight: 200;">￥</span>69.00</span>
+                        </div>
+                        <div id="div_box-right-3">
+                            <span id="div_box-right-3-span_1">运费模板</span>
+                            <span id="div_box-right-3-span_2"><a href="#"> - </a></span>
+                        </div>
+                        <div id="div_box-right-4">
+                            <div id="div_box-right-4-div-1"><a href="#"><span>累计评价<span style="color: #ff0036;font-weight: 700;">76</span></span></a><span
+                                    style="font-size: 20px;font-weight: 100;position: absolute;margin-left:89px;">|</span></div>
+                            <div id="div_box-right-4-div-2"><a href="#"><span>送天猫积分<span style="color: green;font-weight: 700;">34</span></span></a></div>
+                        </div>
+                        <div id="div_box-right-5">
+                            <span>尺码</span>
+                            <div id="div_box-right-5-div-1">S</div>
+                            <div id="div_box-right-5-div-2">M</div>
+                            <div id="div_box-right-5-div-3">L</div>
+                            <div id="div_box-right-5-div-4">XL</div>
+                            <div id="div_box-right-5-div-5">2XL</div>
+                        </div>
+                        <div id="div_box-right-6">
+                            <span>颜色</span>
+                            <div id="div_box-right-6-div-1"><img src="img/yanse1.jpg" width="38px" height="38px"/></div>
+                            <div id="div_box-right-6-div-2"><img src="img/yanse2.jpg" width="38px" height="38px"/></div>
+                            <div id="div_box-right-6-div-3"><img src="img/yanse3.jpg" width="38px" height="38px"/></div>
+                            <div id="div_box-right-6-div-4"><img src="img/yanse4.jpg" width="38px" height="38px"/></div>
+                            <div id="div_box-right-6-div-5"><img src="img/yanse5.jpg" width="38px" height="38px"/></div>
+                            <div id="div_box-right-6-div-6"><img src="img/yanse6.jpg" width="38px" height="38px"/></div>
+                            <div id="div_box-right-6-div-7"><img src="img/yanse7.jpg" width="38px" height="38px"/></div>
+                            <div id="div_box-right-6-div-8"><img src="img/yanse8.jpg" width="38px" height="38px"/></div>
+                        </div>
+                        <div id="div_box-right-7" onselectstart="return false;">
+                            <span>库存</span>
+                            <div id="div_box-right-7-div-1">1</div>
+                            <span style="position: absolute;left: 0;color: #838383;line-height: 43px;font-size: 12px;margin-left: 170px;float: left;">件</span>
+                        </div>
+                    </div>
+                    <div id="div_box-bottom">
+                        <div id="div_box-bottom-left">
+                            <div id="div_box-bottom-left-div-1"><img src="http://localhost:8080/files/20210626/2ddf74b505f34eae819946504799344d.jpeg" width="55px" height="55px"/></div>
+                            <div id="div_box-bottom-left-div-2"><img src="http://localhost:8080/files/20210626/2ddf74b505f34eae819946504799344d.jpeg" width="55px" height="55px"/></div>
+                            <div id="div_box-bottom-left-div-3"><img src="http://localhost:8080/files/20210626/2ddf74b505f34eae819946504799344d.jpeg" width="55px" height="55px"/></div>
+                            <div id="div_box-bottom-left-div-4"><img src="http://localhost:8080/files/20210626/2ddf74b505f34eae819946504799344d.jpeg" width="55px" height="55px"/></div>
+                            <div id="div_box-bottom-left-div-5"><img src="http://localhost:8080/files/20210626/2ddf74b505f34eae819946504799344d.jpeg" width="55px" height="55px"/></div>
+                        </div>
+                        <div id="div_box-bottom-right">
+                            <span id="div_box-bottom-right-span-1">服务承诺</span>
+                            <span id="div_box-bottom-right-span-2">正品保证</span>
+                            <span id="div_box-bottom-right-span-3">极速退款</span>
+                            <span id="div_box-bottom-right-span-7">检测到您当前处于非安全网络环境，部分商品信息可能不准确，请在交易支付页面再次确认商品价格信息。</span>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="layui-tab-item">2</div>
+                <div class="layui-tab-item">3</div>
+                <div class="layui-tab-item">4</div>
+                <div class="layui-tab-item">5</div>
+                <div class="layui-tab-item">6</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/js/xm-select.js}" charset="utf-8"></script>
+<script th:src="@{/js/xm-select-utils.js}" charset="utf-8"></script>
+<script th:src="@{/layui/layui.all.js}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/js/lay-config.js(v=2.0.0)}" charset="utf-8"></script>
+
+<script th:src="@{/js/goodsDetail/Shopping.js}"></script>
+<script type="text/javascript" th:src="@{/js/goodsDetail/DressSize.js}"></script>
+<script type="text/javascript" th:src="@{/js/goodsDetail/DressColor.js}"></script>
+<script type="text/javascript" th:src="@{/js/goodsDetail/NumberOfClothes.js}"></script>
+<script type="text/javascript" th:src="@{/js/goodsDetail/DressStyle.js}"></script>
+
+</body>
+</html>
+<script>
+    //获取token
+    var token = CoreUtil.getData("access_token");
+    //地址栏转义token中的#号
+    var tokenQuery = token.replace("#", "%23");
+    var tableIns1;
+    var $ = jQuery = layui.jquery;
+    layui.use(['table', 'layer', 'laydate', 'util', 'element'], function () {
+        var table = layui.table;
+        var form = layui.form;
+        var layer = layui.layer;
+        var laydate = layui.laydate;
+        var util = layui.util;
+        var element = layui.element;
+
+
+        element.on('nav(layui-nav)', function (elem) {
+            console.log(elem.text()); //得到当前点击的DOM对象
+            console.log($(elem).attr("data-id")); //得到当前点击的DOM对象
+            $("#" + $(elem).attr("data-id")).click();
+        });
+
+
+    });
+</script>

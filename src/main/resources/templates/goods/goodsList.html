@@ -239,7 +239,7 @@
                     {type: 'checkbox'},
                     {align: 'center', width: 80, field: 'id', title: 'ID', sort: true},
                     {align: 'center', width: 100, field: 'sn', title: '商品货号', edit: 'text'},
-                    {width: 300, title: '商品信息', templet: '#goodsDetailTpl'},
+                    {title: '商品信息', templet: '#goodsDetailTpl'},
                     {width: 150, field: 'category', title: '分类', templet: '#categoryTpl'},
                     {align: 'center', width: 110, field: 'stock', title: '库存', sort: true, templet: '#stockTpl'},
                     {align: 'center', width: 110, field: 'saleNum', title: '销量', sort: true, templet: '#saleTpl'},
@@ -247,7 +247,7 @@
                     {align: 'center', width: 110, field: 'isMarketable', title: '商品状态', templet: '#isMarketableTpl'},
                     {align: 'center', width: 110, field: 'isEnableSpec', title: '启用规格', templet: '#isEnableSpecTpl'},
                     {align: 'center', width: 110, field: 'status', title: '审核状态', templet: '#statusTpl'},
-                    {minWidth: 290, toolbar: "#tool", title: '操作'}
+                    {width: 290, toolbar: "#tool", title: '操作'}
                 ]
             ]
             , toolbar: '#toolbar'
@@ -287,6 +287,25 @@
                     var ids = [];
                     ids.push(data.id);
                     tipDialog(ids);
+                    break;
+                case 'detail':
+                    // 商品详情
+                    layer.open({
+                        type: 2,
+                        title: '<i class="layui-icon">&#xe62a;</i> 商品详情',
+                        id: 'goodsDetail',
+                        scrollbar: false,
+                        offset: 'r',
+                        anim: 5,
+                        maxmin: true,
+                        area: ['1000px', '100%'],//宽高不影响最大化
+                        content: "../../index/shopSpu/detail",//地址
+                        zIndex: layer.zIndex,
+                        success: function (layero, index) {
+                            // 置顶当前窗口
+                            layer.setTop(layero);
+                        }
+                    });
                     break;
                 case 'edit':
                     // TODO 编辑商品

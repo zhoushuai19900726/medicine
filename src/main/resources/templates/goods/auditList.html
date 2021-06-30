@@ -97,17 +97,11 @@
     </script>
     <script type="text/html" id="tool">
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="detail" shiro:hasPermission="goods:list"><i class="layui-icon">&#xe615;</i>查看详情</a>
-        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="edit" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe642;</i>编辑商品</a>
         <!-- TODO 设置推荐 -->
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="del" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe658;</i>设为推荐</a>
         <br/>
-        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="del" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe9aa;</i>转移商品</a>
-        {{# if(d.isMarketable == 2){ }}
-        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="del" shiro:hasPermission="goods:update"><i class="layui-icon">&#x1007;</i>取消停售</a>
-        {{# }else { }}
-        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="goods:update"><i class="layui-icon">&#x1007;</i>商品停售</a>
-        {{# } }}
-        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="goods:delete"><i class="layui-icon">&#xe640;</i>删除商品</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="edit" shiro:hasPermission="goods:update"><i class="layui-icon">&#x1005;</i>审核通过</a>
+        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="goods:delete"><i class="layui-icon">&#x1007;</i>审核驳回</a>
     </script>
     <script type="text/html" id="goodsDetailTpl">
         <table class="layui-table" lay-even="" lay-skin="nob">
@@ -242,7 +236,7 @@
                     {type: 'checkbox'},
                     {align: 'center', width: 80, field: 'id', title: 'ID', sort: true},
                     {align: 'center', width: 100, field: 'sn', title: '商品货号', edit: 'text'},
-                    {width: 300, title: '商品信息', templet: '#goodsDetailTpl'},
+                    {title: '商品信息', templet: '#goodsDetailTpl'},
                     {width: 150, field: 'category', title: '分类', templet: '#categoryTpl'},
                     {align: 'center', width: 110, field: 'stock', title: '库存', sort: true, templet: '#stockTpl'},
                     {align: 'center', width: 110, field: 'saleNum', title: '销量', sort: true, templet: '#saleTpl'},
@@ -250,7 +244,7 @@
                     {align: 'center', width: 110, field: 'isMarketable', title: '商品状态', templet: '#isMarketableTpl'},
                     {align: 'center', width: 110, field: 'isEnableSpec', title: '启用规格', templet: '#isEnableSpecTpl'},
                     {align: 'center', width: 110, field: 'status', title: '审核状态', templet: '#statusTpl'},
-                    {minWidth: 290, toolbar: "#tool", title: '操作'}
+                    {width: 200, toolbar: "#tool", title: '操作'}
                 ]
             ]
             , toolbar: '#toolbar'
