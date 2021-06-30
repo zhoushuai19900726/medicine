@@ -179,6 +179,18 @@ var CoreUtil = (function () {
         });
     }
 
+    coreUtil.subSet = function (arr1, arr2) {
+        var set1 = new Set(arr1);
+        var set2 = new Set(arr2);
+        var subset = [];
+        for (let item of set1) {
+            if (!set2.has(item)) {
+                subset.push(item);
+            }
+        }
+        return subset;
+    };
+
 
     return coreUtil;
 })(CoreUtil, window);

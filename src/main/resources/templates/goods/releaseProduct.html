@@ -913,6 +913,10 @@
             });
             if (shopSkuEntityList.length > 0) {
                 shopSpuEntity.shopSkuEntityList = shopSkuEntityList;
+
+                console.log(shopSpuEntity)
+                console.log(shopSkuEntityList)
+
                 // TODO 执行提交审核
                 // CoreUtil.sendPost("/goods/add", shopSpuEntity, function (res) {
                 //
@@ -1054,7 +1058,7 @@
     function deploySpecTable() {
         layui.use(['table', 'layer'], function () {
             var table = layui.table;
-            var layer = layui.layer;
+            // var layer = layui.layer;
             var cols = [];
             var datas = [];
             var keyTempArray = [];
@@ -1081,9 +1085,6 @@
                 data['image'] = "<input name=\"image\" hidden/><img src=\"/images/uploadfile.jpeg\" style=\"width: 30px; height: 30px;\"/>";
                 datas.push(data);
             });
-            if (datas.length < 1) {
-                datas.push({});
-            }
             keyTempArray.push(
                 {width: 150, field: 'price', title: '<i style="color: red;">*</i> 销售价格', fixed: 'right'},
                 {width: 150, field: 'num', title: '<i style="color: red;">*</i> 商品库存', fixed: 'right'},
@@ -1101,22 +1102,47 @@
                 , cols: cols
                 , data: datas
             });
-
             //列操作
             table.on('tool(deploySpecTable)', function (obj) {
-                var data = obj.data;
+                // var delData = obj.data;
+                var form = layui.form;
                 switch (obj.event) {
                     case 'del':
                         var Data = table.cache["deploySpecTable"];
-                        if (Data.length < 2) {
-                            layer.msg("至少保留一个SKU", {icon: 5});
-                        } else {
-                            //根据索引删除当前行
-                            Data.splice(obj.tr.data('index'), 1);
-                            deploySpecTable.reload({data: Data});
-                            // TODO 同步商品规格可选值列表复选框
-
-                        }
+                        // 根据索引删除当前行
+                        Data.splice(obj.tr.data('index'), 1);
+                        deploySpecTable.reload({data: Data});
+                        // 删除后剩余的规格
+                        var surplusSpecMap = new Map();
+                        // 同步商品规格可选值列表复选框
+                        $(Data).each(function (index, data) {
+                            $(Object.keys(data)).each(function (i, d) {
+                                if (deploySpecMap.has(d)) {
+                                    if (surplusSpecMap.has(d)) {
+                                        var specValueList = surplusSpecMap.get(d);
+                                        specValueList.add(data[d]);
+                                    } else {
+                                        surplusSpecMap.set(d, new Set().add(data[d]));
+                                    }
+                                }
+                            });
+                        });
+                        deploySpecMap.forEach(function (v, k, map) {
+                            if (surplusSpecMap.has(k)) {
+                                var originalSpecList = deploySpecMap.get(k);
+                                var surplusSpecList = surplusSpecMap.get(k);
+                                // 差集
+                                var result = CoreUtil.subSet(originalSpecList, surplusSpecList);
+                                // 全部取消选中
+                                $("input[spec='" + k + "'][type='checkbox'][title='" + result[0] + "']").prop("checked", false);
+                                deploySpecMap.set(k, Array.from(surplusSpecList));
+                            } else {
+                                // 全部取消选中
+                                $("input[spec='" + k + "'][type='checkbox']").prop("checked", false);
+                                deploySpecMap.delete(k);
+                            }
+                        });
+                        form.render('checkbox');
                         break;
                     case 'upload':
                         // TODO 上传图片
@@ -1128,7 +1154,6 @@
         });
     }
 
-    // TODO 删除规格时 清table缓存
     function resetInputValue(input, index) {
         var value = $(input).val();
         if (!value) {
