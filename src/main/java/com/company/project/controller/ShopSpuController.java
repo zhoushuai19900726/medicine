@@ -5,9 +5,8 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.company.project.common.aop.annotation.DataScope;
 import com.company.project.common.aop.annotation.LogAnnotation;
 import com.company.project.common.utils.DelimiterConstants;
-import com.company.project.entity.ShopBrandEntity;
-import com.company.project.entity.ShopCategoryEntity;
-import com.company.project.entity.ShopSellerEntity;
+import com.company.project.common.utils.NumberConstants;
+import com.company.project.entity.*;
 import com.company.project.service.*;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
@@ -25,12 +24,11 @@ import io.swagger.annotations.ApiParam;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.company.project.common.utils.DataResult;
-
-import com.company.project.entity.ShopSpuEntity;
 
 import javax.annotation.Resource;
 
@@ -196,6 +194,28 @@ public class ShopSpuController extends BaseController {
         }
         // 封装数据权限 - 执行查询 - 封装用户 - 响应前端
         return DataResult.success(encapsulationUser(iPage));
+    }
+
+    @ApiOperation(value = "根据商家生成唯一商品货号")
+    @GetMapping("goods/getUniqueSnBySeller/{sellerId}")
+    @RequiresPermissions("goods:update")
+    @LogAnnotation(title = "根据商家生成唯一商品货号", action = "查询")
+    @ResponseBody
+    public DataResult getUniqueSnBySeller(@PathVariable("sellerId") String sellerId) {
+        // 根据店铺id查找店铺发布了多少个商品
+        Integer n = shopSpuService.getBaseMapper().selectCount(Wrappers.<ShopSpuEntity>lambdaQuery().eq(ShopSpuEntity::getSellerId, sellerId));
+        int a = NumberConstants.ZERO;
+        String serialNo;
+        while(true){
+            a++;
+            String total = String.format("%04d", n + a);
+            serialNo = DelimiterConstants.PREFIX + total;
+            ShopSpuEntity shopSpuEntity = shopSpuService.getOne(Wrappers.<ShopSpuEntity>lambdaQuery().eq(ShopSpuEntity::getSn, serialNo));
+            if(Objects.isNull(shopSpuEntity)){
+                break;
+            }
+        }
+        return DataResult.success(serialNo);
     }
 
 }

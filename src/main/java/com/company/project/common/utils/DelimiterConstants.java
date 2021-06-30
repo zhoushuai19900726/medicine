@@ -45,6 +45,8 @@ public class DelimiterConstants {
     public static final String EMPTY_STR = "";
     public static final String NULL_STR = "null";
 
+    public static final String PREFIX = "SC";
+
     public static final String ON = "on";
     public static final String OFF = "off";
 

@@ -98,28 +98,22 @@
                                     </tr>
                                     <tr>
                                         <td class="required">商品名称</td>
-                                        <td><input type="text" name="name" lay-verify="required" autocomplete="off" placeholder="请输入商品名称" lay class="layui-input" value="1"/></td>
-                                        <td rowspan="2">商品介绍</td>
-                                        <td rowspan="2">
-                                            <textarea name="introduction" placeholder="请输入商品介绍" class="layui-textarea"></textarea>
-                                        </td>
-                                    </tr>
-                                    <tr>
+                                        <td><input type="text" name="name" lay-verify="required" autocomplete="off" placeholder="请输入商品名称" lay class="layui-input"/></td>
                                         <td class="required">商品标题</td>
-                                        <td><input type="text" name="caption" lay-verify="required" autocomplete="off" placeholder="请输入商品标题" class="layui-input" value="1"/></td>
+                                        <td><input type="text" name="caption" lay-verify="required" autocomplete="off" placeholder="请输入商品标题" class="layui-input"/></td>
                                     </tr>
                                     <tr>
                                         <td class="required">运营商家</td>
                                         <td>
-                                            <select name="sellerId" lay-search lay-verify="required" th:with="sellerList=${@sellerService.list()}">
-                                                <!--<option value="">请选择运营商家</option>-->
+                                            <select name="sellerId" lay-filter="sellerId" lay-search lay-verify="required" th:with="sellerList=${@sellerService.list()}">
+                                                <option value="">请选择运营商家</option>
                                                 <option th:each="seller : ${sellerList}" th:text="${seller.sellerName}" th:value="${seller.id}"></option>
                                             </select>
                                         </td>
                                         <td class="required">商品品牌</td>
                                         <td>
                                             <select name="brandId" lay-search lay-verify="required" th:with="brandList=${@shopBrandService.list()}">
-                                                <!--<option value="">请选择商品品牌</option>-->
+                                                <option value="">请选择商品品牌</option>
                                                 <option th:each="brand : ${brandList}" th:text="${brand.name}" th:value="${brand.id}"></option>
                                             </select>
                                         </td>
@@ -138,6 +132,12 @@
                                             </select>
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td>商品介绍</td>
+                                        <td colspan="3">
+                                            <textarea name="introduction" placeholder="请输入商品介绍" class="layui-textarea" style="height:132px;"></textarea>
+                                        </td>
+                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -152,7 +152,9 @@
                                 <tbody>
                                 <tr>
                                     <td class="required">商品货号</td>
-                                    <td><input type="text" name="sn" lay-verify="required|SPU_SN" autocomplete="off" placeholder="请输入商品货号" class="layui-input" value="1"/></td>
+                                    <td>
+                                        <input type="text" name="sn" lay-verify="required|SPU_SN" autocomplete="off" placeholder="请输入商品货号" class="layui-input"/>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>服务保证</td>
@@ -324,7 +326,7 @@
             filter: 'stepForm',
             width: '90%', //设置容器宽度
             stepWidth: '1000px',
-            height: '3000px',
+            height: '800px',
             initStep: 1,// 初始化显示索引
             stepItems: [{
                 title: '选择商品分类'
@@ -345,10 +347,12 @@
             return false;
         });
         form.on('submit(formStep2)', function (data) {
+            resetHeight();
             step.next('#stepForm');
             return false;
         });
         $('.pre').click(function () {
+            resetHeightBack();
             step.pre('#stepForm');
         });
         $('.next').click(function () {
@@ -640,6 +644,20 @@
             });
         });
         /**
+         * 监听商家下拉列表
+         */
+        form.on('select(sellerId)', function (data) {
+            var serialNo;
+            if (data.value) {
+                CoreUtil.sendSyncGet("/goods/getUniqueSnBySeller/" + data.value, null, function (res) {
+                    serialNo = res.data;
+                });
+            } else {
+                serialNo = "";
+            }
+            form.val("shopSpuEntity", {"sn": serialNo});
+        });
+        /**
          * 自定义表单验证
          */
         form.verify({
@@ -653,7 +671,6 @@
                 return checkResult
             }
         });
-
         /**
          * 监听规格复选框
          */
@@ -679,6 +696,7 @@
                 deploySpecMap.set(spec, [specValue])
             }
             deploySpecTable();
+            resetHeight();
         });
 
         upload.render({
@@ -1079,6 +1097,22 @@
         $(ele).attr("src", "/images/uploadfile.jpeg");
         $(ele).prev().attr("value", "");
         layui.table.cache["deploySpecTable"][index]["image"] = $(ele).parent().html();
+    }
+
+    function resetHeight() {
+        layui.use(['table'], function () {
+            var table = layui.table;
+            var specTableDataCount = table.cache["specTable"].length;
+            var paraTableDataCount = table.cache["paraTable"].length;
+            var deploySpecTableDataCount = table.cache["deploySpecTable"].length;
+            var initHeight = 2000;
+            var height = initHeight + (specTableDataCount + paraTableDataCount + deploySpecTableDataCount) * 40;
+            $("#stepForm").css("height", height + "px");
+        });
+    }
+
+    function resetHeightBack() {
+        $("#stepForm").css("height", "800px");
     }
 
 </script>
