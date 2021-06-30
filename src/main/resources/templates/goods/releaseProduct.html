@@ -212,130 +212,26 @@
                         </blockquote>
                         <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 商品相册</blockquote>
                         <blockquote class="layui-elem-quote layui-quote-nm">
-                            <div class="layui-row">
-                                <div class="layui-col-md2">
+                            <div class="layui-form-item">
+                                <div class="layui-inline" th:each="index:${#numbers.sequence(1, 5)}">
                                     <div class="layui-card">
                                         <div class="layui-card-header" style="text-align: center;">
                                             <div class="layui-btn-group">
-                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" id="uploadPictures1">
+                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" th:id="'uploadPictures' + ${index}">
                                                     <i class="layui-icon">&#xe67c;</i> 上传
                                                 </button>
                                                 <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="chooseAlbumGallery(this, 1)">
                                                     <i class="layui-icon">&#xe64a;</i> 图库
                                                 </button>
-                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="deletePicture(this, 1)">
+                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" th:onclick="'deletePicture(this, ' + ${index} + ')'">
                                                     <i class="layui-icon">&#xe640;</i> 删除
                                                 </button>
                                             </div>
                                         </div>
-                                        <div class="layui-card-body">
+                                        <div class="layui-card-body" style="text-align: center;">
                                             <input name="images" hidden/>
-                                            <img th:src="@{/images/uploadfile.png}" style="height: 250px; width: 100%;"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="layui-col-md2">
-                                    <div class="layui-card">
-                                        <div class="layui-card-header" style="text-align: center;">
-                                            <div class="layui-btn-group">
-                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" id="uploadPictures2">
-                                                    <i class="layui-icon">&#xe67c;</i> 上传
-                                                </button>
-                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="chooseAlbumGallery(this, 1)">
-                                                    <i class="layui-icon">&#xe64a;</i> 图库
-                                                </button>
-                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="deletePicture(this, 2)">
-                                                    <i class="layui-icon">&#xe640;</i> 删除
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="layui-card-body">
-                                            <input name="images" hidden/>
-                                            <img th:src="@{/images/uploadfile.jpeg}" style="height: 250px; width: 100%;"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="layui-col-md2">
-                                    <div class="layui-card">
-                                        <div class="layui-card-header" style="text-align: center;">
-                                            <div class="layui-btn-group">
-                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" id="uploadPictures3">
-                                                    <i class="layui-icon">&#xe67c;</i> 上传
-                                                </button>
-                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="chooseAlbumGallery(this, 1)">
-                                                    <i class="layui-icon">&#xe64a;</i> 图库
-                                                </button>
-                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="deletePicture(this, 2)">
-                                                    <i class="layui-icon">&#xe640;</i> 删除
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="layui-card-body">
-                                            <input name="images" hidden/>
-                                            <img th:src="@{/images/uploadfile.jpeg}" style="height: 250px; width: 100%;"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="layui-col-md2">
-                                    <div class="layui-card">
-                                        <div class="layui-card-header" style="text-align: center;">
-                                            <div class="layui-btn-group">
-                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" id="uploadPictures4">
-                                                    <i class="layui-icon">&#xe67c;</i> 上传
-                                                </button>
-                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="chooseAlbumGallery(this, 1)">
-                                                    <i class="layui-icon">&#xe64a;</i> 图库
-                                                </button>
-                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="deletePicture(this, 2)">
-                                                    <i class="layui-icon">&#xe640;</i> 删除
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="layui-card-body">
-                                            <input name="images" hidden/>
-                                            <img th:src="@{/images/uploadfile.jpeg}" style="height: 250px; width: 100%;"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="layui-col-md2">
-                                    <div class="layui-card">
-                                        <div class="layui-card-header" style="text-align: center;">
-                                            <div class="layui-btn-group">
-                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" id="uploadPictures5">
-                                                    <i class="layui-icon">&#xe67c;</i> 上传
-                                                </button>
-                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="chooseAlbumGallery(this, 1)">
-                                                    <i class="layui-icon">&#xe64a;</i> 图库
-                                                </button>
-                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="deletePicture(this, 2)">
-                                                    <i class="layui-icon">&#xe640;</i> 删除
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="layui-card-body">
-                                            <input name="images" hidden/>
-                                            <img th:src="@{/images/uploadfile.jpeg}" style="height: 250px; width: 100%;"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="layui-col-md2">
-                                    <div class="layui-card">
-                                        <div class="layui-card-header" style="text-align: center;">
-                                            <div class="layui-btn-group">
-                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" id="uploadPictures6">
-                                                    <i class="layui-icon">&#xe67c;</i> 上传
-                                                </button>
-                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="chooseAlbumGallery(this, 1)">
-                                                    <i class="layui-icon">&#xe64a;</i> 图库
-                                                </button>
-                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="deletePicture(this, 2)">
-                                                    <i class="layui-icon">&#xe640;</i> 删除
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="layui-card-body">
-                                            <input name="images" hidden/>
-                                            <img th:src="@{/images/uploadfile.jpeg}" style="height: 250px; width: 100%;"/>
+                                            <img th:if="${1 == index}" th:src="@{/images/uploadfile.png}" style="height: 200px; width: 200px;"/>
+                                            <img th:if="${1 != index}" th:src="@{/images/uploadfile.jpeg}" style="height: 200px; width: 200px;"/>
                                         </div>
                                     </div>
                                 </div>
@@ -397,7 +293,7 @@
 </script>
 <script type="text/html" id="deploySpecTool">
     <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除规格</a>
-    <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="upload"><i class="layui-icon">&#xe67c;</i>上传图片</a>
+    <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" id="uploadBtn{{ d.LAY_TABLE_INDEX }}" index="{{ d.LAY_TABLE_INDEX }}"><i class="layui-icon">&#xe67c;</i>上传图片</a>
 </script>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
@@ -413,7 +309,7 @@
     var $ = jQuery = layui.jquery;
     var tableIns1, tableIns2, tableIns3;
     var deploySpecMap = new Map();
-    layui.use(['form', 'table', 'layer', 'step', 'util', 'layedit', 'upload'], function () {
+    layui.use(['form', 'table', 'layer', 'step', 'util', 'layedit', 'upload', 'miniTab'], function () {
         var form = layui.form;
         var table = layui.table;
         var layer = layui.layer;
@@ -421,6 +317,7 @@
         var util = layui.util;
         var layedit = layui.layedit;
         var upload = layui.upload;
+        var miniTab = layui.miniTab;
 
         step.render({
             elem: '#stepForm',
@@ -428,7 +325,7 @@
             width: '90%', //设置容器宽度
             stepWidth: '1000px',
             height: '3000px',
-            initStep: 3,// 初始化显示索引
+            initStep: 1,// 初始化显示索引
             stepItems: [{
                 title: '选择商品分类'
             }, {
@@ -785,7 +682,7 @@
         });
 
         upload.render({
-            elem: '#uploadPictures1, #uploadPictures2, #uploadPictures3, #uploadPictures4, #uploadPicture5, #uploadPictures6' //绑定元素
+            elem: '#uploadPictures1, #uploadPictures2, #uploadPictures3, #uploadPictures4, #uploadPictures5' //绑定元素
             , url: '/sysFiles/upload?authorization=' + tokenQuery  // 上传文件的路径
             , done: function (res) {
                 //上传完毕回调
@@ -891,6 +788,9 @@
                         spec[d] = data[d];
                         skuName += " " + data[d];
                     } else if (d != 'LAY_TABLE_INDEX') {
+                        console.log(d)
+                        console.log($(data[d])[0])
+                        console.log($($(data[d])[0]).attr("value"))
                         shopSkuEntity[d] = $($(data[d])[0]).attr("value");
                     }
                 });
@@ -913,14 +813,14 @@
             });
             if (shopSkuEntityList.length > 0) {
                 shopSpuEntity.shopSkuEntityList = shopSkuEntityList;
-
-                console.log(shopSpuEntity)
-                console.log(shopSkuEntityList)
-
-                // TODO 执行提交审核
-                // CoreUtil.sendPost("/goods/add", shopSpuEntity, function (res) {
-                //
-                // });
+                // 执行提交审核
+                CoreUtil.sendPost("/goods/add", shopSpuEntity, function (res) {
+                    layer.msg("发布成功, 等待商品审核...");
+                    var options = {};
+                    options.href = "/index/shopSpu/auditList";
+                    options.title = "商品审核";
+                    miniTab.openNewTabByIframe(options);
+                });
             } else {
                 layer.msg("请至少维护一个SKU", {icon: 5});
             }
@@ -977,13 +877,10 @@
     function deletePicture(ele, type) {
         var parentObj = $(ele).parent().parent().next();
         $(parentObj).find("input[name='images']").attr("value", "");
-        switch (type) {
-            case 1:
-                $(parentObj).find("img").attr("src", "/images/uploadfile.png");
-                break;
-            case 2:
-                $(parentObj).find("img").attr("src", "/images/uploadfile.jpeg");
-                break;
+        if (1 == type) {
+            $(parentObj).find("img").attr("src", "/images/uploadfile.png");
+        } else {
+            $(parentObj).find("img").attr("src", "/images/uploadfile.jpeg");
         }
     }
 
@@ -1017,6 +914,7 @@
                     ]
                 ]
                 , done: function (res, curr, count) {
+                    deploySpecMap.clear();
                     deploySpecTable();
                 }
             });
@@ -1056,8 +954,9 @@
     }
 
     function deploySpecTable() {
-        layui.use(['table', 'layer'], function () {
+        layui.use(['table', 'layer', 'upload'], function () {
             var table = layui.table;
+            var upload = layui.upload;
             // var layer = layui.layer;
             var cols = [];
             var datas = [];
@@ -1072,6 +971,7 @@
             });
             //  笛卡尔积结果
             var calcDescartes = CoreUtil.calcDescartes(valueTempArray);
+            var uploadBtnIndex = "";// 上传按钮id
             $(calcDescartes).each(function (index, arr) {
                 arr = Array.isArray(arr) ? arr : [arr];
                 var data = {};
@@ -1082,8 +982,9 @@
                 data['num'] = "<input type=\"text\" name=\"num\" value='0' autocomplete=\"off\" placeholder=\"请输入商品库存\" class=\"layui-input tableInput\" onblur='resetInputValue(this, " + index + ")' />";
                 data['alertNum'] = "<input type=\"text\" name=\"alertNum\" value='0' autocomplete=\"off\" placeholder=\"请输入库存预警值\" class=\"layui-input tableInput\" onblur='resetInputValue(this, " + index + ")' />";
                 data['sn'] = "<input type=\"text\" name=\"sn\" value='0' autocomplete=\"off\" placeholder=\"请输入SKU编号\" class=\"layui-input tableInput\" onblur='resetInputValue(this, " + index + ")' />";
-                data['image'] = "<input name=\"image\" hidden/><img src=\"/images/uploadfile.jpeg\" style=\"width: 30px; height: 30px;\"/>";
+                data['image'] = "<input name='image' hidden/><img src='/images/uploadfile.jpeg' style='width: 30px; height: 30px; cursor: pointer;' ondblclick='cancalImage(this, " + index + ")'/>";
                 datas.push(data);
+                uploadBtnIndex += "#uploadBtn" + index + ",";
             });
             keyTempArray.push(
                 {width: 150, field: 'price', title: '<i style="color: red;">*</i> 销售价格', fixed: 'right'},
@@ -1091,7 +992,7 @@
                 {width: 150, field: 'alertNum', title: '<i style="color: red;">*</i> 库存预警值', fixed: 'right'},
                 {width: 150, field: 'sn', title: '<i style="color: red;">*</i> SKU编号', fixed: 'right'},
                 {width: 200, title: '操作', fixed: 'right', toolbar: "#deploySpecTool"},
-                {align: 'center', width: 80, field: 'image', title: '图片', fixed: 'right'}
+                {align: 'center', width: 130, field: 'image', title: '图片(双击取消)', fixed: 'right'}
             );
             cols.push(keyTempArray);
             var deploySpecTable = table.render({
@@ -1102,7 +1003,22 @@
                 , cols: cols
                 , data: datas
             });
-            //列操作
+            // 绑定上传
+            if (uploadBtnIndex) {
+                upload.render({
+                    elem: uploadBtnIndex.substring(0, uploadBtnIndex.length - 1) //绑定元素
+                    , url: '/sysFiles/upload?authorization=' + tokenQuery  // 上传文件的路径
+                    , done: function (res) {
+                        // 上传完毕回调
+                        var index = $(this.item).attr("index");
+                        var parentObj = $(this.item).parent().parent().next();
+                        $(parentObj).find("input[name='image']").attr("value", res.data.src);
+                        $(parentObj).find("img").attr("src", res.data.src);
+                        layui.table.cache["deploySpecTable"][index]["image"] = $(parentObj).children(":first").html();
+                    }
+                });
+            }
+            // 列操作
             table.on('tool(deploySpecTable)', function (obj) {
                 // var delData = obj.data;
                 var form = layui.form;
@@ -1144,11 +1060,6 @@
                         });
                         form.render('checkbox');
                         break;
-                    case 'upload':
-                        // TODO 上传图片
-
-
-                        break;
                 }
             });
         });
@@ -1162,6 +1073,12 @@
         }
         $(input).attr("value", value);
         layui.table.cache["deploySpecTable"][index][$(input).attr('name')] = $(input).parent().html();
+    }
+
+    function cancalImage(ele, index) {
+        $(ele).attr("src", "/images/uploadfile.jpeg");
+        $(ele).prev().attr("value", "");
+        layui.table.cache["deploySpecTable"][index]["image"] = $(ele).parent().html();
     }
 
 </script>

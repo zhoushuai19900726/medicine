@@ -73,10 +73,10 @@ public class ShopSpuController extends BaseController {
         return "goods/releaseProduct";
     }
 
-    @ApiOperation(value = "跳转进入新增/编辑页面")
-    @GetMapping("/index/shopSpu/addOrUpdate")
+    @ApiOperation(value = "跳转进入审核页面")
+    @GetMapping("/index/shopSpu/auditList")
     public String addOrUpdate() {
-        return "goods/addOrUpdate";
+        return "goods/auditList";
     }
 
     @ApiOperation(value = "新增")
