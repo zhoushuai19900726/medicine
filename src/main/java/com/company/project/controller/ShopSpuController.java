@@ -14,6 +14,7 @@ import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -59,6 +60,9 @@ public class ShopSpuController extends BaseController {
     @Resource
     private ShopBrandService shopBrandService;
 
+    @Resource
+    private ShopTemplateService shopTemplateService;
+
     @ApiOperation(value = "跳转到列表页面")
     @GetMapping("/index/shopSpu")
     public String shopSpu() {
@@ -72,8 +76,31 @@ public class ShopSpuController extends BaseController {
     }
 
     @ApiOperation(value = "跳转进入商品详情页面")
-    @GetMapping("/index/shopSpu/detail")
-    public String detail() {
+    @GetMapping("/index/shopSpu/detail/{id}")
+    public String detail(@PathVariable("id") String id, Model model) {
+        // SPU商品信息
+        ShopSpuEntity shopSpuEntity = shopSpuService.getById(id);
+        model.addAttribute("shopSpuEntity", shopSpuEntity);
+        // SKU商品消息
+        List<ShopSkuEntity> shopSkuEntityList = shopSkuService.list(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, id));
+        model.addAttribute("shopSkuEntityList", shopSkuEntityList);
+        // 封装NAME
+        if(Objects.nonNull(shopSpuEntity)){
+            // 商品分类
+            List<ShopCategoryEntity> shopEntityList = shopCategoryService.listByIds(Sets.newHashSet(shopSpuEntity.getCategory1Id(), shopSpuEntity.getCategory2Id(), shopSpuEntity.getCategory3Id()));
+            if (CollectionUtils.isNotEmpty(shopEntityList)) {
+                // 封装分类名称
+                Map<String, String> shopCategoryEntityMap = shopEntityList.stream().collect(Collectors.toMap(ShopCategoryEntity::getId, ShopCategoryEntity::getName, (k1, k2) -> k1));
+                shopSpuEntity.setCategory1Name(shopCategoryEntityMap.getOrDefault(shopSpuEntity.getCategory1Id(), DelimiterConstants.EMPTY_STR));
+                shopSpuEntity.setCategory2Name(shopCategoryEntityMap.getOrDefault(shopSpuEntity.getCategory2Id(), DelimiterConstants.EMPTY_STR));
+                shopSpuEntity.setCategory3Name(shopCategoryEntityMap.getOrDefault(shopSpuEntity.getCategory3Id(), DelimiterConstants.EMPTY_STR));
+            }
+            // 商品模板
+            ShopTemplateEntity shopTemplateEntity = shopTemplateService.getById(shopSpuEntity.getTemplateId());
+            if(Objects.nonNull(shopTemplateEntity)){
+                shopSpuEntity.setTemplateName(shopTemplateEntity.getName());
+            }
+        }
         return "goods/goodsDetail";
     }
 
@@ -165,7 +192,7 @@ public class ShopSpuController extends BaseController {
                 // 查询分类集合
                 List<ShopCategoryEntity> shopEntityList = shopCategoryService.listByIds(categoryIdSet);
                 if (CollectionUtils.isNotEmpty(shopEntityList)) {
-                    // 封装模板名称
+                    // 封装分类名称
                     shopCategoryEntityMap.putAll(shopEntityList.stream().collect(Collectors.toMap(ShopCategoryEntity::getId, ShopCategoryEntity::getName, (k1, k2) -> k1)));
                 }
             }
@@ -212,12 +239,12 @@ public class ShopSpuController extends BaseController {
         Integer n = shopSpuService.getBaseMapper().selectCount(Wrappers.<ShopSpuEntity>lambdaQuery().eq(ShopSpuEntity::getSellerId, sellerId));
         int a = NumberConstants.ZERO;
         String serialNo;
-        while(true){
+        while (true) {
             a++;
             String total = String.format("%04d", n + a);
             serialNo = DelimiterConstants.PREFIX + total;
             ShopSpuEntity shopSpuEntity = shopSpuService.getOne(Wrappers.<ShopSpuEntity>lambdaQuery().eq(ShopSpuEntity::getSn, serialNo));
-            if(Objects.isNull(shopSpuEntity)){
+            if (Objects.isNull(shopSpuEntity)) {
                 break;
             }
         }

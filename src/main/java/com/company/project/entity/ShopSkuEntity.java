@@ -1,14 +1,19 @@
 package com.company.project.entity;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.parser.Feature;
 import com.baomidou.mybatisplus.annotation.*;
+import com.company.project.common.utils.CommonUtils;
 import com.company.project.entity.BaseEntity;
 
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.LinkedHashMap;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * 商品SKU
@@ -119,6 +124,15 @@ public class ShopSkuEntity extends BaseEntity implements Serializable {
      */
     @TableField("spec")
     private String spec;
+    @TableField(exist = false)
+    private LinkedHashMap specMap = new LinkedHashMap<>();
+
+    public void setSpec(String spec) {
+        this.spec = spec;
+        if (StringUtils.isNotBlank(spec) && CommonUtils.isJson(spec)) {
+            this.specMap = JSON.parseObject(spec, LinkedHashMap.class, Feature.OrderedField);
+        }
+    }
 
     /**
      * 销量

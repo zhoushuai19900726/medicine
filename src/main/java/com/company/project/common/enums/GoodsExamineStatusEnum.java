@@ -3,6 +3,7 @@ package com.company.project.common.enums;
 import com.company.project.common.utils.DelimiterConstants;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -24,26 +25,26 @@ public enum GoodsExamineStatusEnum {
     /**
      * 待审核
      */
-    TO_BE_REVIEWED(0, "待审核"),
+    TO_BE_REVIEWED("0", "待审核"),
     /**
      * 审核通过
      */
-    APPROVED(1, "审核通过"),
+    APPROVED("1", "审核通过"),
     /**
      * 审核未通过
      */
-    AUDIT_FAILED(2, "审核未通过");
+    AUDIT_FAILED("2", "审核未通过");
 
-    private Integer type;
+    private String type;
     private String des;
 
-    GoodsExamineStatusEnum(Integer type, String des) {
+    GoodsExamineStatusEnum(String type, String des) {
         this.type = type;
         this.des = des;
     }
 
-    public static String getDesByType(Integer type) {
-        if (Objects.isNull(type)) {
+    public static String getDesByType(String type) {
+        if (StringUtils.isBlank(type)) {
             return DelimiterConstants.EMPTY_STR;
         }
         for (GoodsExamineStatusEnum goodsExamineStatusEnum : GoodsExamineStatusEnum.values()) {
@@ -54,7 +55,7 @@ public enum GoodsExamineStatusEnum {
         return DelimiterConstants.EMPTY_STR;
     }
 
-    public Integer getType() {
+    public String getType() {
         return type;
     }
 
@@ -62,9 +63,9 @@ public enum GoodsExamineStatusEnum {
         return des;
     }
 
-    public static List<Map<String, Object>> toList() {
-        List<Map<String, Object>> list = Lists.newArrayList();
-        Map<String, Object> map;
+    public static List<Map<String, String>> toList() {
+        List<Map<String, String>> list = Lists.newArrayList();
+        Map<String, String> map;
         for (GoodsExamineStatusEnum goodsExamineStatusEnum : GoodsExamineStatusEnum.values()) {
             map = Maps.newHashMap();
             map.put("id", goodsExamineStatusEnum.getType());

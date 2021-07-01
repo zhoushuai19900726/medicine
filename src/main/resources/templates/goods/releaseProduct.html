@@ -13,6 +13,11 @@
             margin-left: -15px;
             margin-top: -5px;
         }
+        .tableInput2 {
+            width: 200px;
+            margin-left: -15px;
+            margin-top: -5px;
+        }
     </style>
 </head>
 <body>
@@ -98,7 +103,7 @@
                                     </tr>
                                     <tr>
                                         <td class="required">商品名称</td>
-                                        <td><input type="text" name="name" lay-verify="required" autocomplete="off" placeholder="请输入商品名称" lay class="layui-input"/></td>
+                                        <td><input type="text" name="name" lay-verify="required" autocomplete="off" placeholder="请输入商品名称" class="layui-input"/></td>
                                         <td class="required">商品标题</td>
                                         <td><input type="text" name="caption" lay-verify="required" autocomplete="off" placeholder="请输入商品标题" class="layui-input"/></td>
                                     </tr>
@@ -833,11 +838,13 @@
                 shopSpuEntity.shopSkuEntityList = shopSkuEntityList;
                 // 执行提交审核
                 CoreUtil.sendPost("/goods/add", shopSpuEntity, function (res) {
-                    layer.msg("发布成功, 等待商品审核...");
-                    var options = {};
-                    options.href = "/index/shopSpu/auditList";
-                    options.title = "商品审核";
-                    miniTab.openNewTabByIframe(options);
+                    layer.msg("发布成功, 等待商品审核...", {time: 1000}, function () {
+                        window.location.reload();
+                        var options = {};
+                        options.href = "/index/shopSpu/auditList";
+                        options.title = "商品审核";
+                        miniTab.openNewTabByIframe(options);
+                    });
                 });
             } else {
                 layer.msg("请至少维护一个SKU", {icon: 5});
@@ -999,7 +1006,7 @@
                 $(arr).each(function (i, item) {
                     data[keyTempArray[i + 1].field] = item;
                 });
-                data['price'] = "<input type=\"text\" name=\"price\" value='0' autocomplete=\"off\" placeholder=\"请输入销售价格\" class=\"layui-input tableInput\" onblur='resetInputValue(this, " + index + ")' />";
+                data['price'] = "<input type=\"text\" name=\"price\" value='0' autocomplete=\"off\" placeholder=\"请输入销售价格\" class=\"layui-input tableInput2\" onblur='resetInputValue(this, " + index + ")' />";
                 data['num'] = "<input type=\"text\" name=\"num\" value='0' autocomplete=\"off\" placeholder=\"请输入商品库存\" class=\"layui-input tableInput\" onblur='resetInputValue(this, " + index + ")' />";
                 data['alertNum'] = "<input type=\"text\" name=\"alertNum\" value='0' autocomplete=\"off\" placeholder=\"请输入库存预警值\" class=\"layui-input tableInput\" onblur='resetInputValue(this, " + index + ")' />";
                 data['sn'] = "<input type=\"text\" name=\"sn\" value='" + (serialNo + "-" + (index + 1)) + "' autocomplete=\"off\" placeholder=\"请输入SKU编号\" class=\"layui-input tableInput\" onblur='resetInputValue(this, " + index + ")' />";
@@ -1008,7 +1015,7 @@
                 uploadBtnIndex += "#uploadBtn" + index + ",";
             });
             keyTempArray.push(
-                {width: 150, field: 'price', title: '<i style="color: red;">*</i> 销售价格', fixed: 'right'},
+                {width: 200, field: 'price', title: '<i style="color: red;">*</i> 销售价格<span class="layui-badge layui-bg-gray"><i class="fa fa-info-circle"></i> 单位:分</span>', fixed: 'right'},
                 {width: 150, field: 'num', title: '<i style="color: red;">*</i> 商品库存', fixed: 'right'},
                 {width: 150, field: 'alertNum', title: '<i style="color: red;">*</i> 库存预警值', fixed: 'right'},
                 {width: 150, field: 'sn', title: '<i style="color: red;">*</i> SKU编号', fixed: 'right'},

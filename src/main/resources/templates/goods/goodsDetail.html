@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
     <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
 </head>
 <body>
@@ -28,8 +29,9 @@
                 <li id="detailedDescription"></li>
             </ul>
             <div class="layui-tab-content">
+                <!-- 商品基本信息 -->
                 <div class="layui-tab-item layui-show">
-                    <div class="layui-form-item">
+                    <form class="layui-form">
                         <table class="layui-table" lay-size="sm">
                             <colgroup>
                                 <col width="100">
@@ -39,69 +41,176 @@
                             </colgroup>
                             <tbody>
                             <tr>
-                                <td class="required">商品分类</td>
+                                <td>商品分类</td>
                                 <td colspan="3">
                                     <div class="layui-breadcrumb" lay-separator="<i class='layui-icon'>&#xe602;</i>" style="padding-top: 8px; float: left;">
-                                        <a href="javascript:;" name="a_category1"></a>
-                                        <a href="javascript:;" name="a_category2"></a>
-                                        <a href="javascript:;" name="a_category3"></a>
-                                    </div>
-                                    <div style="padding-left: 20px; padding-top: 10px; float: left; cursor: pointer;">
-                                        <i class="fa fa-edit" style="font-size: 14px; color: #1E9FFF;" id="editCategory">编辑</i>
+                                        <a href="javascript:;" name="a_category1" th:text="${shopSpuEntity.category1Name}"></a>
+                                        <a href="javascript:;" name="a_category2" th:text="${shopSpuEntity.category2Name}"></a>
+                                        <a href="javascript:;" name="a_category3" th:text="${shopSpuEntity.category3Name}"></a>
                                     </div>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="required">商品名称</td>
-                                <td><input type="text" name="name" lay-verify="required" autocomplete="off" placeholder="请输入商品名称" lay class="layui-input"/></td>
-                                <td class="required">商品标题</td>
-                                <td><input type="text" name="caption" lay-verify="required" autocomplete="off" placeholder="请输入商品标题" class="layui-input"/></td>
-                            </tr>
-                            <tr>
-                                <td class="required">运营商家</td>
-                                <td>
-                                    <select name="sellerId" lay-filter="sellerId" lay-search lay-verify="required" th:with="sellerList=${@sellerService.list()}">
-                                        <option value="">请选择运营商家</option>
-                                        <option th:each="seller : ${sellerList}" th:text="${seller.sellerName}" th:value="${seller.id}"></option>
-                                    </select>
+                                <td>商品名称</td>
+                                <td><input type="text" class="layui-input" th:value="${shopSpuEntity.name}" disabled/>
                                 </td>
-                                <td class="required">商品品牌</td>
-                                <td>
-                                    <select name="brandId" lay-search lay-verify="required" th:with="brandList=${@shopBrandService.list()}">
-                                        <option value="">请选择商品品牌</option>
-                                        <option th:each="brand : ${brandList}" th:text="${brand.name}" th:value="${brand.id}"></option>
-                                    </select>
+                                <td>商品标题</td>
+                                <td><input type="text" class="layui-input" th:value="${shopSpuEntity.caption}" disabled/>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="required">商品状态</td>
+                                <td>运营商家</td>
                                 <td>
-                                    <select name="isMarketable" lay-search lay-verify="required" th:with="dataResult=${@commonController.findAllGoodsStatus()}">
-                                        <option th:each="map : ${dataResult.getData()}" th:text="${map.get('name')}" th:value="${map.get('id')}"></option>
+                                    <select th:with="sellerList=${@sellerService.list()}">
+                                        <option th:each="seller : ${sellerList}"
+                                                th:text="${seller.sellerName}" th:value="${seller.id}"
+                                                th:selected="${seller.id == shopSpuEntity.sellerId}"
+                                                th:disabled="${seller.id != shopSpuEntity.sellerId}"></option>
+                                    </select>
+                                </td>
+                                <td>商品品牌</td>
+                                <td>
+                                    <select th:with="brandList=${@shopBrandService.list()}">
+                                        <option th:each="brand : ${brandList}"
+                                                th:text="${brand.name}"
+                                                th:value="${brand.id}"
+                                                th:selected="${brand.id == shopSpuEntity.brandId}"
+                                                th:disabled="${brand.id != shopSpuEntity.brandId}"></option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>商品状态</td>
+                                <td>
+                                    <select th:with="dataResult=${@commonController.findAllGoodsStatus()}">
+                                        <option th:each="map : ${dataResult.getData()}"
+                                                th:text="${map.get('name')}"
+                                                th:value="${map.get('id')}"
+                                                th:selected="${map.get('id') == shopSpuEntity.isMarketable}"
+                                                th:disabled="${map.get('id') != shopSpuEntity.isMarketable}"></option>
                                     </select>
                                 </td>
                                 <td>运费模板</td>
                                 <td>
-                                    <select name="freightId" lay-search>
-                                        <option value="">请选择运费模板</option>
+                                    <select>
+                                        <option value="-1" disabled></option>
                                     </select>
                                 </td>
                             </tr>
                             <tr>
                                 <td>商品介绍</td>
                                 <td colspan="3">
-                                    <textarea name="introduction" placeholder="请输入商品介绍" class="layui-textarea" style="height:132px;"></textarea>
+                                    <textarea class="layui-textarea" style="height:132px;" th:text="${shopSpuEntity.introduction}" disabled></textarea>
                                 </td>
                             </tr>
                             </tbody>
                         </table>
-                    </div>
+                    </form>
                 </div>
-                <div class="layui-tab-item">2</div>
-                <div class="layui-tab-item">3</div>
-                <div class="layui-tab-item">4</div>
-                <div class="layui-tab-item">5</div>
-                <div class="layui-tab-item">6</div>
+                <!-- 商品售后服务 -->
+                <div class="layui-tab-item">
+                    <form class="layui-form">
+                        <table class="layui-table" lay-size="sm">
+                            <colgroup>
+                                <col width="100">
+                                <col width="1100">
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td>商品货号</td>
+                                <td>
+                                    <input type="text" class="layui-input" th:value="${shopSpuEntity.sn}" disabled/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>服务保证</td>
+                                <td>
+                                    <div th:with="dataResult=${@commonController.findAllServiceGuarantee()}">
+                                        <input type="checkbox" name="serviceGuarantee"
+                                               th:each="map : ${dataResult.getData()}"
+                                               th:title="${map.get('name')}"
+                                               th:checked="${#lists.contains(#strings.arraySplit(shopSpuEntity.saleService == null ? '' : shopSpuEntity.saleService, ','), map.get('name'))}"/>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+                <!-- 商品属性 -->
+                <div class="layui-tab-item">
+                    <form class="layui-form">
+                        <table class="layui-table" lay-size="sm">
+                            <colgroup>
+                                <col width="100">
+                                <col width="600">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>规格参数组</th>
+                                <th>
+                                    <span class="layui-badge layui-bg-green" th:text="${shopSpuEntity.templateName}"></span>
+                                </th>
+                            </tr>
+                            </thead>
+                            </tbody>
+                        </table>
+                        <fieldset class="table-search-fieldset" style="padding: 0 10px 5px 10px;">
+                            <legend><i class="fa fa-cogs" style="color: red;"><b> 商品规格</b></i></legend>
+                            <div class="layui-field-box">
+                                <table class="layui-table">
+                                    <colgroup>
+                                        <col width="60">
+                                        <col th:each="item:${shopSpuEntity.specItemsMap}">
+                                        <col width="160">
+                                        <col width="90">
+                                        <col width="105">
+                                        <col width="90">
+                                        <col width="80">
+                                        <col>
+                                    </colgroup>
+                                    <thead>
+                                    <tr>
+                                        <th>序号</th>
+                                        <th th:each="item:${shopSpuEntity.specItemsMap}"  th:text="${item.key}"></th>
+                                        <th>销售价格<span class="layui-badge layui-bg-gray"><i class="fa fa-info-circle"></i> 单位:分</span></th>
+                                        <th>商品库存</th>
+                                        <th>库存预警值</th>
+                                        <th>SKU编号</th>
+                                        <th>图片</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="shopSkuEntity,shopSkuStat : ${shopSkuEntityList}">
+                                        <td th:text="${shopSkuStat.index + 1}"></td>
+                                        <td th:each="item:${shopSkuEntity.specMap}"  th:text="${item.value}"></td>
+                                        <td th:text="${shopSkuEntity.price}"></td>
+                                        <td th:text="${shopSkuEntity.num}"></td>
+                                        <td th:text="${shopSkuEntity.alertNum}"></td>
+                                        <td th:text="${shopSkuEntity.sn}"></td>
+                                        <td><img th:src="${shopSkuEntity.image}" style="width: 30px; height: 30px; cursor: pointer;"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+                <!-- 商品参数 -->
+                <div class="layui-tab-item">
+
+
+                </div>
+                <!-- 商品相册 -->
+                <div class="layui-tab-item">
+
+
+                </div>
+                <!-- 详情描述 -->
+                <div class="layui-tab-item">
+
+
+                </div>
             </div>
         </div>
 

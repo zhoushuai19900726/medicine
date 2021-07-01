@@ -1,16 +1,22 @@
 package com.company.project.entity;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.parser.Feature;
 import com.baomidou.mybatisplus.annotation.*;
+import com.company.project.common.utils.CommonUtils;
 import com.company.project.common.utils.DelimiterConstants;
 import com.company.project.entity.BaseEntity;
 
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * 商品SPU
@@ -101,6 +107,8 @@ public class ShopSpuEntity extends BaseEntity implements Serializable {
      */
     @TableField("template_id")
     private String templateId;
+    @TableField(exist = false)
+    private String templateName;
 
     /**
      * 运费模板id
@@ -137,12 +145,31 @@ public class ShopSpuEntity extends BaseEntity implements Serializable {
      */
     @TableField("spec_items")
     private String specItems;
+    @TableField(exist = false)
+    private LinkedHashMap specItemsMap = new LinkedHashMap<>();
+
+    public void setSpecItems(String specItems) {
+        this.specItems = specItems;
+        if (StringUtils.isNotBlank(specItems) && CommonUtils.isJson(specItems)) {
+            this.specItemsMap = JSON.parseObject(specItems, LinkedHashMap.class, Feature.OrderedField);
+        }
+    }
 
     /**
      * 参数列表
      */
     @TableField("para_items")
     private String paraItems;
+
+    @TableField(exist = false)
+    private LinkedHashMap paraItemsMap = new LinkedHashMap<>();
+
+    public void setParaItems(String paraItems) {
+        this.paraItems = paraItems;
+        if (StringUtils.isNotBlank(paraItems) && CommonUtils.isJson(paraItems)) {
+            this.paraItemsMap = JSON.parseObject(paraItems, LinkedHashMap.class, Feature.OrderedField);
+        }
+    }
 
     /**
      * 销量
