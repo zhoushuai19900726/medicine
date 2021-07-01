@@ -216,6 +216,7 @@
             <artifactId>easy-captcha</artifactId>
             <version>${easy-captcha.version}</version>
         </dependency>
+
     </dependencies>
 
     <build>

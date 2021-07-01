@@ -6,12 +6,17 @@ import com.company.project.common.exception.code.BaseResponseCode;
 import com.company.project.common.exception.code.BusinessResponseCode;
 import com.company.project.common.utils.DataResult;
 import com.company.project.common.utils.DelimiterConstants;
+import com.company.project.common.utils.NumberConstants;
 import com.company.project.common.utils.OperationConstant;
+import com.company.project.entity.ShopCategoryEntity;
 import com.company.project.entity.ShopSkuEntity;
 import com.company.project.entity.ShopSpuOperationRecordEntity;
+import com.company.project.mapper.ShopCategoryMapper;
 import com.company.project.mapper.ShopSkuMapper;
 import com.company.project.mapper.ShopSpuOperationRecordMapper;
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -25,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -37,6 +43,9 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
 
     @Resource
     private ShopSkuMapper shopSkuMapper;
+
+    @Resource
+    private ShopCategoryMapper shopCategoryMapper;
 
     @Resource
     private ShopSpuOperationRecordMapper shopSpuOperationRecordMapper;
@@ -75,6 +84,8 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
         shopSpuMapper.insert(shopSpuEntity);
         // 保存SKU
         shopSkuEntityList.forEach(shopSkuEntity -> shopSkuMapper.insert(shopSkuEntity.setSpuId(shopSpuEntity.getId())));
+        // 分类中商品数
+        shopCategoryMapper.updateCount(Lists.newArrayList(new ShopCategoryEntity(shopSpuEntity.getCategory1Id(), NumberConstants.ONE), new ShopCategoryEntity(shopSpuEntity.getCategory2Id(), NumberConstants.ONE), new ShopCategoryEntity(shopSpuEntity.getCategory3Id(), NumberConstants.ONE)));
         long endTime = System.currentTimeMillis();
         // 操作记录
         shopSpuOperationRecordMapper.insert(new ShopSpuOperationRecordEntity(shopSpuEntity.getId(), OperationConstant.ADD, null, JSONObject.toJSONString(shopSpuEntity), (endTime - startTime)));
@@ -89,19 +100,45 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
         if (CollectionUtils.isNotEmpty(queryShopSpuEntityListResult)) {
             return DataResult.fail(BusinessResponseCode.SPU_SN_REPEATED_EXISTENCE.getMsg());
         }
+        // 查询原始对象
         ShopSpuEntity oldShopSpuEntity = shopSpuMapper.selectById(shopSpuEntity.getId());
         if (Objects.isNull(oldShopSpuEntity)) {
             return DataResult.fail(BaseResponseCode.OPERATION_ERRO.getMsg());
         }
-
-
+        // 更新SPU
         shopSpuMapper.updateById(shopSpuEntity);
+        // TODO 更新SKU - 及状态
 
 
         long endTime = System.currentTimeMillis();
         // 操作记录
         shopSpuOperationRecordMapper.insert(new ShopSpuOperationRecordEntity(oldShopSpuEntity.getId(), OperationConstant.UPDATE, JSONObject.toJSONString(oldShopSpuEntity), JSONObject.toJSONString(shopSpuEntity), (endTime - startTime)));
         return DataResult.success(shopSpuEntity);
+    }
+
+    @Override
+    public DataResult removeShopSpuEntityByIds(List<String> ids) {
+        long startTime = System.currentTimeMillis();
+        // 查询SPU集合
+        List<ShopSpuEntity> shopSpuEntityList = shopSpuMapper.selectBatchIds(ids);
+        if (CollectionUtils.isNotEmpty(shopSpuEntityList)) {
+            // 删除SPU
+            shopSpuMapper.deleteBatchIds(ids);
+            // 删除SKU
+            shopSkuMapper.delete(Wrappers.<ShopSkuEntity>lambdaQuery().in(ShopSkuEntity::getSpuId, ids));
+            // 分类中商品数
+            Map<String, List<ShopSpuEntity>> groupBy = Maps.newHashMap();
+            groupBy.putAll(shopSpuEntityList.stream().collect(Collectors.groupingBy(ShopSpuEntity::getCategory1Id)));
+            groupBy.putAll(shopSpuEntityList.stream().collect(Collectors.groupingBy(ShopSpuEntity::getCategory2Id)));
+            groupBy.putAll(shopSpuEntityList.stream().collect(Collectors.groupingBy(ShopSpuEntity::getCategory3Id)));
+            List<ShopCategoryEntity> shopCategoryEntityList = Lists.newArrayList();
+            groupBy.forEach((k, v) -> shopCategoryEntityList.add(new ShopCategoryEntity(k, -v.size())));
+            shopCategoryMapper.updateCount(shopCategoryEntityList);
+        }
+        long endTime = System.currentTimeMillis();
+        // 操作记录
+        ids.forEach(id -> shopSpuOperationRecordMapper.insert(new ShopSpuOperationRecordEntity(id, OperationConstant.DELETE, null, null, (endTime - startTime))));
+        return DataResult.success();
     }
 
 }

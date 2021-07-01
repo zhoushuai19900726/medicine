@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.company.project.common.utils.DataResult;
 import com.company.project.entity.ShopSpuEntity;
 
+import java.util.List;
+
 /**
  * 商品SPU
  *
@@ -17,5 +19,6 @@ public interface ShopSpuService extends IService<ShopSpuEntity> {
 
     DataResult updateShopSpuEntityById(ShopSpuEntity shopSpuEntity);
 
+    DataResult removeShopSpuEntityByIds(List<String> ids);
 }
 

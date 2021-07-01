@@ -229,6 +229,9 @@
             , page: true //开启分页
             , url: '/goods/listByPage' //数据接口
             , method: 'POST'
+            , where: {
+                deleted: 1
+            }
             , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
                 return {
                     "code": res.code, //解析接口状态

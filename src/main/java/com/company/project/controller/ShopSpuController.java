@@ -117,8 +117,14 @@ public class ShopSpuController extends BaseController {
 
     @ApiOperation(value = "跳转进入审核页面")
     @GetMapping("/index/shopSpu/auditList")
-    public String addOrUpdate() {
+    public String auditList() {
         return "goods/auditList";
+    }
+
+    @ApiOperation(value = "跳转进入回收站页面")
+    @GetMapping("/index/shopSpu/recycleBinList")
+    public String recycleBinList() {
+        return "goods/recycleBinList";
     }
 
     @ApiOperation(value = "新增")
@@ -136,7 +142,7 @@ public class ShopSpuController extends BaseController {
     @LogAnnotation(title = "商品SPU", action = "删除")
     @ResponseBody
     public DataResult delete(@RequestBody @ApiParam(value = "id集合") List<String> ids) {
-        return DataResult.success(shopSpuService.removeByIds(ids));
+        return shopSpuService.removeShopSpuEntityByIds(ids);
     }
 
     @ApiOperation(value = "更新")
@@ -184,6 +190,7 @@ public class ShopSpuController extends BaseController {
                 .eq(StringUtils.isNotBlank(shopSpu.getCategory2Id()), ShopSpuEntity::getCategory2Id, shopSpu.getCategory2Id())
                 .eq(StringUtils.isNotBlank(shopSpu.getCategory3Id()), ShopSpuEntity::getCategory3Id, shopSpu.getCategory3Id())
                 .in(StringUtils.isNotBlank(shopSpu.getCategory3IdListStr()), ShopSpuEntity::getCategory3Id, Splitter.on(DelimiterConstants.COMMA).omitEmptyStrings().trimResults().splitToList(shopSpu.getCategory3IdListStr()))
+//TODO                .or(wrapper -> wrapper.eq(Objects.nonNull(shopSpu.getDeleted()), ShopSpuEntity::getDeleted, shopSpu.getDeleted()))
                 .orderByDesc(ShopSpuEntity::getCreateTime);
         // 封装数据权限 - 执行查询
         IPage<ShopSpuEntity> iPage = shopSpuService.page(page, encapsulationDataRights(shopSpu, queryWrapper, ShopSpuEntity::getCreateId));

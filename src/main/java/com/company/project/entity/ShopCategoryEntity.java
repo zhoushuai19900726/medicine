@@ -146,5 +146,8 @@ public class ShopCategoryEntity extends BaseEntity implements Serializable {
     @TableField(exist = false)
     private List<ShopCategoryEntity> children;
 
-
+    public ShopCategoryEntity(String id, Integer goodsNum) {
+        this.id = id;
+        this.goodsNum = goodsNum;
+    }
 }
