@@ -3,6 +3,7 @@ package com.company.project.entity;
 import com.baomidou.mybatisplus.annotation.*;
 import com.company.project.common.utils.DelimiterConstants;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang.StringUtils;
 
@@ -18,6 +19,7 @@ import java.util.List;
  * @date 2020年3月18日
  */
 @Accessors(chain = true)
+@NoArgsConstructor
 @Data
 @TableName("shop_seller")
 public class ShopSellerEntity extends BaseEntity implements Serializable {

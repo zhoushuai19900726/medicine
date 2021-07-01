@@ -2,6 +2,7 @@ package com.company.project.entity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
@@ -16,6 +17,7 @@ import java.util.Date;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
+@NoArgsConstructor
 @Accessors(chain = true)
 public class SysGenerator extends BaseEntity implements Serializable {
 

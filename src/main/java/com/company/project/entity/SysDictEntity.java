@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
@@ -20,6 +21,7 @@ import java.util.Date;
  */
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @Data
 @TableName("sys_dict")
 public class SysDictEntity extends BaseEntity implements Serializable {

@@ -52,11 +52,11 @@
                             </tr>
                             <tr>
                                 <td>商品名称</td>
-                                <td><input type="text" class="layui-input" th:value="${shopSpuEntity.name}" disabled/>
-                                </td>
+                                <td colspan="3"><input type="text" class="layui-input" th:value="${shopSpuEntity.name}" disabled/></td>
+                            </tr>
+                            <tr>
                                 <td>商品标题</td>
-                                <td><input type="text" class="layui-input" th:value="${shopSpuEntity.caption}" disabled/>
-                                </td>
+                                <td colspan="3"><input type="text" class="layui-input" th:value="${shopSpuEntity.caption}" disabled/></td>
                             </tr>
                             <tr>
                                 <td>运营商家</td>
@@ -167,12 +167,11 @@
                                         <col width="105">
                                         <col width="90">
                                         <col width="80">
-                                        <col>
                                     </colgroup>
                                     <thead>
                                     <tr>
                                         <th>序号</th>
-                                        <th th:each="item:${shopSpuEntity.specItemsMap}"  th:text="${item.key}"></th>
+                                        <th th:each="item:${shopSpuEntity.specItemsMap}" th:text="${item.key}"></th>
                                         <th>销售价格<span class="layui-badge layui-bg-gray"><i class="fa fa-info-circle"></i> 单位:分</span></th>
                                         <th>商品库存</th>
                                         <th>库存预警值</th>
@@ -183,7 +182,7 @@
                                     <tbody>
                                     <tr th:each="shopSkuEntity,shopSkuStat : ${shopSkuEntityList}">
                                         <td th:text="${shopSkuStat.index + 1}"></td>
-                                        <td th:each="item:${shopSkuEntity.specMap}"  th:text="${item.value}"></td>
+                                        <td th:each="item:${shopSkuEntity.specMap}" th:text="${item.value}"></td>
                                         <td th:text="${shopSkuEntity.price}"></td>
                                         <td th:text="${shopSkuEntity.num}"></td>
                                         <td th:text="${shopSkuEntity.alertNum}"></td>
@@ -198,18 +197,70 @@
                 </div>
                 <!-- 商品参数 -->
                 <div class="layui-tab-item">
-
-
+                    <form class="layui-form">
+                        <table class="layui-table" lay-size="sm">
+                            <colgroup>
+                                <col width="100">
+                                <col width="600">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>规格参数组</th>
+                                <th>
+                                    <span class="layui-badge layui-bg-green" th:text="${shopSpuEntity.templateName}"></span>
+                                </th>
+                            </tr>
+                            </thead>
+                            </tbody>
+                        </table>
+                        <fieldset class="table-search-fieldset" style="padding: 0 10px 5px 10px;">
+                            <legend><i class="fa fa-cogs" style="color: red;"><b> 商品参数</b></i></legend>
+                            <div class="layui-field-box">
+                                <table class="layui-table">
+                                    <colgroup>
+                                        <col width="60">
+                                        <col width="150">
+                                        <col>
+                                    </colgroup>
+                                    <thead>
+                                    <tr>
+                                        <th>序号</th>
+                                        <th>参数类型</th>
+                                        <th>参数值列表</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="paraItems,paraItemsStat : ${shopSpuEntity.paraItemsMap}">
+                                        <td th:text="${paraItemsStat.index + 1}"></td>
+                                        <td th:text="${paraItems.key}"></td>
+                                        <td><span class="layui-badge layui-bg-cyan" th:each="para : ${paraItems.value}" th:text="${para}" style="margin-left: 5px;"></span></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </fieldset>
+                    </form>
                 </div>
                 <!-- 商品相册 -->
                 <div class="layui-tab-item">
-
-
+                    <img th:each="image: ${shopSpuEntity.images.split(',')}" th:src="${image}" style="width: 300px; height: 300px;"/>
                 </div>
                 <!-- 详情描述 -->
                 <div class="layui-tab-item">
-
-
+                    <div class="layui-tab layui-tab-card">
+                        <ul class="layui-tab-title">
+                            <li class="layui-this">移动端详情</li>
+                            <li>电脑端详情</li>
+                        </ul>
+                        <div class="layui-tab-content">
+                            <div class="layui-tab-item layui-show">
+                                <textarea id="mobileEditor" style="display: none;">移动端详情</textarea>
+                            </div>
+                            <div class="layui-tab-item">
+                                <textarea id="pcEditor" style="display: none;">电脑端详情</textarea>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -230,14 +281,14 @@
     var tokenQuery = token.replace("#", "%23");
     var tableIns1;
     var $ = jQuery = layui.jquery;
-    layui.use(['table', 'layer', 'laydate', 'util', 'element'], function () {
+    layui.use(['table', 'layer', 'laydate', 'util', 'element', 'layedit'], function () {
         var table = layui.table;
         var form = layui.form;
         var layer = layui.layer;
         var laydate = layui.laydate;
         var util = layui.util;
         var element = layui.element;
-
+        var layedit = layui.layedit;
 
         element.on('nav(layui-nav)', function (elem) {
             console.log(elem.text()); //得到当前点击的DOM对象
@@ -245,6 +296,14 @@
             $("#" + $(elem).attr("data-id")).click();
         });
 
+        // 建立mobile编辑器
+        layedit.build('mobileEditor', {
+            height: 500 //设置编辑器高度
+        });
+        // 建立pc编辑器
+        layedit.build('pcEditor', {
+            height: 500 //设置编辑器高度
+        });
 
     });
 </script>

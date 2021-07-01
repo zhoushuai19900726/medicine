@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang.StringUtils;
 
@@ -26,6 +27,7 @@ import org.apache.commons.lang.StringUtils;
  * @date 2021-06-17 10:25:25
  */
 @Accessors(chain = true)
+@NoArgsConstructor
 @Data
 @TableName("shop_spu")
 public class ShopSpuEntity extends BaseEntity implements Serializable {
@@ -196,6 +198,12 @@ public class ShopSpuEntity extends BaseEntity implements Serializable {
      */
     @TableField("is_enable_spec")
     private String isEnableSpec;
+
+    /**
+     * 是否推荐
+     */
+    @TableField("is_recommend")
+    private String isRecommend;
 
     /**
      * 审核状态，0：未审核，1：已审核，2：审核不通过

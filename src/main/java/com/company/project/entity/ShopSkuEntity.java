@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang.StringUtils;
 
@@ -23,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
  * @date 2021-06-17 10:25:18
  */
 @Accessors(chain = true)
+@NoArgsConstructor
 @Data
 @TableName("shop_sku")
 public class ShopSkuEntity extends BaseEntity implements Serializable {

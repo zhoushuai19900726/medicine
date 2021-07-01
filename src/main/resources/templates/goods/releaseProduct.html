@@ -103,9 +103,11 @@
                                     </tr>
                                     <tr>
                                         <td class="required">商品名称</td>
-                                        <td><input type="text" name="name" lay-verify="required" autocomplete="off" placeholder="请输入商品名称" class="layui-input"/></td>
+                                        <td colspan="3"><input type="text" name="name" lay-verify="required" autocomplete="off" placeholder="请输入商品名称" class="layui-input"/></td>
+                                    </tr>
+                                    <tr>
                                         <td class="required">商品标题</td>
-                                        <td><input type="text" name="caption" lay-verify="required" autocomplete="off" placeholder="请输入商品标题" class="layui-input"/></td>
+                                        <td colspan="3"><input type="text" name="caption" lay-verify="required" autocomplete="off" placeholder="请输入商品标题" class="layui-input"/></td>
                                     </tr>
                                     <tr>
                                         <td class="required">运营商家</td>
@@ -140,7 +142,7 @@
                                     <tr>
                                         <td>商品介绍</td>
                                         <td colspan="3">
-                                            <textarea name="introduction" placeholder="请输入商品介绍" class="layui-textarea" style="height:132px;"></textarea>
+                                            <textarea name="introduction" placeholder="请输入商品介绍" class="layui-textarea"></textarea>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -823,6 +825,8 @@
                     shopSkuEntity.sellerId = shopSpuEntity.sellerId;
                     // SKU名称
                     shopSkuEntity.name = skuName;
+                    // SKU状态
+                    shopSkuEntity.status = '1';
                     // 商品图片列表
                     shopSkuEntity.images = shopSpuEntity.images;
                     // 类目ID

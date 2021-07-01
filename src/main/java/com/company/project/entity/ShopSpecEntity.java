@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
@@ -17,6 +18,7 @@ import lombok.experimental.Accessors;
  * @date 2021-06-11 10:11:20
  */
 @Accessors(chain = true)
+@NoArgsConstructor
 @Data
 @TableName("shop_spec")
 public class ShopSpecEntity extends BaseEntity implements Serializable {

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
@@ -21,6 +22,7 @@ import java.util.List;
  */
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @Data
 public class SysUser extends BaseEntity implements Serializable {
     @TableId

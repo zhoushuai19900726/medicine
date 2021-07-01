@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
@@ -19,6 +20,7 @@ import java.util.Date;
  */
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @Data
 public class SysLog extends BaseEntity implements Serializable {
     @TableId

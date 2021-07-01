@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang.StringUtils;
 
@@ -22,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
  * @date 2021-06-16 10:33:59
  */
 @Accessors(chain = true)
+@NoArgsConstructor
 @Data
 @TableName("shop_category")
 public class ShopCategoryEntity extends BaseEntity implements Serializable {

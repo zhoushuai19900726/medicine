@@ -1,6 +1,7 @@
 package com.company.project.entity;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
@@ -11,6 +12,7 @@ import lombok.experimental.Accessors;
  * @date 2020年3月18日
  */
 @Accessors(chain = true)
+@NoArgsConstructor
 @Data
 public class ColumnEntity {
     /**

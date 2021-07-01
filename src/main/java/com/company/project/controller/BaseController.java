@@ -41,6 +41,30 @@ public class BaseController {
     /**
      * 封装用户信息
      *
+     * @param list
+     * @param <T>
+     * @return
+     */
+    protected <T> List<T> encapsulationUser(List<T> list) {
+        if (CollectionUtils.isNotEmpty(list)) {
+            // 提取userId
+            List<String> userIdList = getUserIdList(list);
+            if (CollectionUtils.isNotEmpty(userIdList)) {
+                // 查询用户信息
+                List<SysUser> sysUserList = userService.listByIds(userIdList);
+                if (CollectionUtils.isNotEmpty(sysUserList)) {
+                    Map<String, String> sysUserMap = sysUserList.stream().collect(Collectors.toMap(SysUser::getId, SysUser::getUsername, (k1, k2) -> k1));
+                    setUserName(list, sysUserMap);
+                }
+            }
+        }
+        return list;
+    }
+
+
+    /**
+     * 封装用户信息
+     *
      * @param iPage
      * @param <T>
      * @return

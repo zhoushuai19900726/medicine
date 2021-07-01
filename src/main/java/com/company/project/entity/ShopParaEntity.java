@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
@@ -18,6 +19,7 @@ import lombok.experimental.Accessors;
  * @date 2021-06-15 11:26:57
  */
 @Accessors(chain = true)
+@NoArgsConstructor
 @Data
 @TableName("shop_para")
 public class ShopParaEntity extends BaseEntity implements Serializable {

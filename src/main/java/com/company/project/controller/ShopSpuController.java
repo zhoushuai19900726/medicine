@@ -63,6 +63,9 @@ public class ShopSpuController extends BaseController {
     @Resource
     private ShopTemplateService shopTemplateService;
 
+    @Resource
+    private ShopSpuOperationRecordService shopSpuOperationRecordService;
+
     @ApiOperation(value = "跳转到列表页面")
     @GetMapping("/index/shopSpu")
     public String shopSpu() {
@@ -85,7 +88,7 @@ public class ShopSpuController extends BaseController {
         List<ShopSkuEntity> shopSkuEntityList = shopSkuService.list(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, id));
         model.addAttribute("shopSkuEntityList", shopSkuEntityList);
         // 封装NAME
-        if(Objects.nonNull(shopSpuEntity)){
+        if (Objects.nonNull(shopSpuEntity)) {
             // 商品分类
             List<ShopCategoryEntity> shopEntityList = shopCategoryService.listByIds(Sets.newHashSet(shopSpuEntity.getCategory1Id(), shopSpuEntity.getCategory2Id(), shopSpuEntity.getCategory3Id()));
             if (CollectionUtils.isNotEmpty(shopEntityList)) {
@@ -97,11 +100,19 @@ public class ShopSpuController extends BaseController {
             }
             // 商品模板
             ShopTemplateEntity shopTemplateEntity = shopTemplateService.getById(shopSpuEntity.getTemplateId());
-            if(Objects.nonNull(shopTemplateEntity)){
+            if (Objects.nonNull(shopTemplateEntity)) {
                 shopSpuEntity.setTemplateName(shopTemplateEntity.getName());
             }
         }
         return "goods/goodsDetail";
+    }
+
+    @ApiOperation(value = "跳转进入商品操作记录页面")
+    @GetMapping("/index/shopSpu/operationRecord/{id}")
+    public String operationRecord(@PathVariable("id") String id, Model model) {
+        List<ShopSpuOperationRecordEntity> shopSpuOperationRecordEntityList = shopSpuOperationRecordService.list(Wrappers.<ShopSpuOperationRecordEntity>lambdaQuery().eq(ShopSpuOperationRecordEntity::getSpuId, id).orderByDesc(ShopSpuOperationRecordEntity::getCreateTime));
+        model.addAttribute("shopSpuOperationRecordEntityList", encapsulationUser(shopSpuOperationRecordEntityList));
+        return "goods/operationRecord";
     }
 
     @ApiOperation(value = "跳转进入审核页面")

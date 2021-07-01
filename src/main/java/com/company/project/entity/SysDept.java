@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
@@ -18,6 +19,7 @@ import java.util.Date;
  * @date 2020年3月18日
  */
 @Accessors(chain = true)
+@NoArgsConstructor
 @Data
 public class SysDept implements Serializable {
     @TableId

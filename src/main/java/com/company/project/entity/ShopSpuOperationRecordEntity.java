@@ -6,58 +6,69 @@ import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
- * 相册图片
+ * 商品SPU操作记录
  *
  * @author zhoushuai
  * @email zhoushuai_0726@163.com
- * @date 2021-06-25 16:17:09
+ * @date 2021-07-01 14:20:15
  */
 @Accessors(chain = true)
 @NoArgsConstructor
 @Data
-@TableName("shop_album_gallery")
-public class ShopAlbumGalleryEntity extends BaseEntity implements Serializable {
+@TableName("shop_spu_operation_record")
+public class ShopSpuOperationRecordEntity extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    public ShopSpuOperationRecordEntity(String spuId, String operation, String oldObject, String newObject, Long timeConsuming) {
+        this.spuId = spuId;
+        this.operation = operation;
+        this.oldObject = oldObject;
+        this.newObject = newObject;
+        this.timeConsuming = timeConsuming;
+    }
+
     /**
-     * id
+     * 主键
      */
     @TableId("id")
     private String id;
-    @TableField(exist = false)
-    private List<String> idList;
 
     /**
-     * 图片名称
+     * 商品ID
      */
-    @TableField("name")
-    private String name;
+    @TableField("spu_id")
+    private String spuId;
 
     /**
-     * 相册ID
+     * 操作
      */
-    @TableField("album_id")
-    private String albumId;
+    @TableField("operation")
+    private String operation;
 
     /**
-     * 图片地址
+     * 原对象
      */
-    @TableField("image")
-    private String image;
+    @TableField("old_object")
+    private String oldObject;
 
     /**
-     * 排序
+     * 新对象
      */
-    @TableField("seq")
-    private Integer seq;
+    @TableField("new_object")
+    private String newObject;
+
+    /**
+     * 耗时
+     */
+    @TableField("time_consuming")
+    private Long timeConsuming;
 
     /**
      *
@@ -94,14 +105,11 @@ public class ShopAlbumGalleryEntity extends BaseEntity implements Serializable {
     private Date updateTime;
 
     /**
-     *
+     * 是否删除,0:未删除，1：已删除
      */
     @TableField(fill = FieldFill.INSERT)
     @TableLogic // 注释后进行物理删除
     private Integer deleted;
 
-    public ShopAlbumGalleryEntity(String id, String albumId) {
-        this.id = id;
-        this.albumId = albumId;
-    }
+
 }

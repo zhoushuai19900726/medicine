@@ -7,6 +7,7 @@ import com.company.project.vo.resp.DeptRespNodeVO;
 import com.company.project.vo.resp.PermissionRespNode;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
@@ -22,6 +23,7 @@ import java.util.List;
  * @date 2020年3月18日
  */
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @Data
 @Accessors(chain = true)
 public class SysRole extends BaseEntity implements Serializable {

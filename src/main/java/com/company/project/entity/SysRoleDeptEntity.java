@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
@@ -18,6 +19,7 @@ import java.util.Date;
  * @date 2020-09-27 17:30:15
  */
 @Accessors(chain = true)
+@NoArgsConstructor
 @Data
 @TableName("sys_role_dept")
 public class SysRoleDeptEntity extends BaseEntity implements Serializable {
