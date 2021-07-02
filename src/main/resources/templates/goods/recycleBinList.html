@@ -91,25 +91,13 @@
     <table class="layui-table" id="showTable" lay-filter="showTable" lay-size="sm"></table>
     <script type="text/html" id="toolbar">
         <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add" shiro:hasPermission="goods:add"><i class="layui-icon">&#xe61f;</i>发布商品</button>
             <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="goods:delete"><i class="layui-icon">&#xe640;</i>批量删除</button>
         </div>
     </script>
     <script type="text/html" id="tool">
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="detail" shiro:hasPermission="goods:list"><i class="layui-icon">&#xe615;</i>查看详情</a>
-        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="edit" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe642;</i>编辑商品</a>
-        {{# if(d.isRecommend == 1){ }}
-        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="cancelRecommend" shiro:hasPermission="goods:update"><i class="layui-icon">&#x1007;</i>取消推荐</a>
-        {{# }else { }}
-        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="recommend" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe658;</i>设为推荐</a>
-        {{# } }}
         <br/>
-        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="del" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe9aa;</i>转移商品</a>
-        {{# if(d.isMarketable == 2){ }}
-        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="goods:update"><i class="layui-icon">&#x1007;</i>取消停售</a>
-        {{# }else { }}
-        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="del" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe672;</i>商品停售</a>
-        {{# } }}
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="reduction" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe9aa;</i>还原商品</a>
         <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="goods:delete"><i class="layui-icon">&#xe640;</i>删除商品</a>
     </script>
     <script type="text/html" id="goodsDetailTpl">
@@ -227,11 +215,8 @@
             , contentType: 'application/json'
             , headers: {"authorization": token}
             , page: true //开启分页
-            , url: '/goods/listByPage' //数据接口
+            , url: '/goods/recycleBinListByPage' //数据接口
             , method: 'POST'
-            , where: {
-                deleted: 1
-            }
             , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
                 return {
                     "code": res.code, //解析接口状态
@@ -277,12 +262,6 @@
                         tipDialog(ids);
                     }
                     break;
-                case 'add':
-                    var options = {};
-                    options.href = "/index/shopSpu/releaseProduct";
-                    options.title = "发布商品";
-                    miniTab.openNewTabByIframe(options);
-                    break;
             }
         });
         //列操作
@@ -313,23 +292,6 @@
                         }
                     });
                     break;
-                case 'recommend':
-                    // 设为推荐
-                    CoreUtil.sendPut("/goods/update", {id: data.id, isRecommend: '1'}, function (res) {
-                        tableIns1.reload();
-                    });
-                    break;
-                case 'cancelRecommend':
-                    // 取消推荐
-                    CoreUtil.sendPut("/goods/update", {id: data.id, isRecommend: '0'}, function (res) {
-                        tableIns1.reload();
-                    });
-                    break;
-                case 'edit':
-                    // TODO 编辑商品
-
-
-                    break;
                 case 'operationRecord':
                     // 操作记录
                     layer.open({
@@ -347,6 +309,12 @@
                             // 置顶当前窗口
                             layer.setTop(layero);
                         }
+                    });
+                    break;
+                case 'reduction':
+                    // 还原商品
+                    CoreUtil.sendPut("/goods/update", {id: data.id, deleted: 0}, function (res) {
+                        tableIns1.reload();
                     });
                     break;
             }
@@ -378,7 +346,7 @@
         $('#export').on('click', function () {
             //原先分页limit
             var exportParams = {
-                limit: 10000,
+                limit: Number.MAX_VALUE,
                 key: $("#key").val()
             };
             CoreUtil.sendPost("/goods/listByPage", exportParams, function (res) {
@@ -391,16 +359,12 @@
 
         //删除
         var tipDialog = function (ids) {
-            layer.open({
-                content: "确定要删除么?",
-                yes: function (index, layero) {
-                    layer.close(index); //如果设定了yes回调，需进行手工关闭
-                    CoreUtil.sendDelete("/goods/delete", ids, function (res) {
-                        layer.msg(res.msg, {time: 500}, function () {
-                            tableIns1.reload();
-                        });
+            layer.confirm('回收站数据删除后将无法还原, 确定要删除么?', {icon: 3, title: '提示'}, function (index) {
+                CoreUtil.sendDelete("/goods/delete", ids, function (res) {
+                    layer.msg(res.msg, {time: 500}, function () {
+                        tableIns1.reload();
                     });
-                }
+                });
             });
         };
 

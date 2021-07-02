@@ -1,5 +1,8 @@
 package com.company.project.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.company.project.common.utils.DataResult;
 import com.company.project.entity.ShopSpuEntity;
@@ -15,10 +18,20 @@ import java.util.List;
  */
 public interface ShopSpuService extends IService<ShopSpuEntity> {
 
+    ShopSpuEntity getShopSpuEntityById(String id);
+
     DataResult saveShopSpuEntity(ShopSpuEntity shopSpuEntity);
 
     DataResult updateShopSpuEntityById(ShopSpuEntity shopSpuEntity);
 
     DataResult removeShopSpuEntityByIds(List<String> ids);
+
+    DataResult absolutelyRemoveShopSpuEntityByIds(List<String> ids);
+
+    IPage<ShopSpuEntity> listByPage(Page<ShopSpuEntity> page, LambdaQueryWrapper<ShopSpuEntity> wrapper);
+
+    IPage<ShopSpuEntity> recycleBinListByPage(Page<ShopSpuEntity> page, LambdaQueryWrapper<ShopSpuEntity> wrapper);
+
+    String getUniqueSnBySeller(String sellerId);
 }
 

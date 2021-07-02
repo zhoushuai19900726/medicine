@@ -375,7 +375,7 @@
         $('#export').on('click', function () {
             //原先分页limit
             var exportParams = {
-                limit: 10000,
+                limit: Number.MAX_VALUE,
                 key: $("#key").val()
             };
             CoreUtil.sendPost("/goods/listByPage", exportParams, function (res) {
@@ -388,16 +388,12 @@
 
         //删除
         var tipDialog = function (ids) {
-            layer.open({
-                content: "确定要删除么?",
-                yes: function (index, layero) {
-                    layer.close(index); //如果设定了yes回调，需进行手工关闭
-                    CoreUtil.sendDelete("/goods/delete", ids, function (res) {
-                        layer.msg(res.msg, {time: 500}, function () {
-                            tableIns1.reload();
-                        });
+            layer.confirm('确定要删除么?', {icon: 3, title: '提示'}, function (index) {
+                CoreUtil.sendDelete("/goods/delete", ids, function (res) {
+                    layer.msg(res.msg, {time: 500}, function () {
+                        tableIns1.reload();
                     });
-                }
+                });
             });
         };
 

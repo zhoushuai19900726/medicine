@@ -4,26 +4,16 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.company.project.common.aop.annotation.DataScope;
 import com.company.project.common.aop.annotation.LogAnnotation;
-import com.company.project.common.utils.DelimiterConstants;
-import com.company.project.common.utils.NumberConstants;
-import com.company.project.entity.ShopTemplateEntity;
-import com.company.project.service.ShopTemplateService;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import com.company.project.common.utils.DataResult;
 
@@ -46,10 +36,6 @@ public class ShopCategoryController extends BaseController {
 
     @Resource
     private ShopCategoryService shopCategoryService;
-
-    @Resource
-    private ShopTemplateService shopTemplateService;
-
 
     @ApiOperation(value = "跳转到一级列表页面")
     @GetMapping("/index/shopCategory")
@@ -122,14 +108,7 @@ public class ShopCategoryController extends BaseController {
     @LogAnnotation(title = "商品分类", action = "根据ID查询分类")
     @ResponseBody
     public DataResult findById(@PathVariable("id") String id) {
-        ShopCategoryEntity shopCategoryEntity = shopCategoryService.getById(id);
-        if(Objects.nonNull(shopCategoryEntity)){
-            ShopTemplateEntity shopTemplateEntity = shopTemplateService.getById(shopCategoryEntity.getTemplateId());
-            if(Objects.nonNull(shopTemplateEntity)){
-                shopCategoryEntity.setTemplateName(shopTemplateEntity.getName());
-            }
-        }
-        return DataResult.success(shopCategoryEntity);
+        return DataResult.success(shopCategoryService.getShopCategoryEntityById(id));
     }
 
     @ApiOperation(value = "查询下级分类")
@@ -166,23 +145,8 @@ public class ShopCategoryController extends BaseController {
                 .eq(StringUtils.isNotBlank(shopCategory.getParentId()), ShopCategoryEntity::getParentId, shopCategory.getParentId())
                 .like(StringUtils.isNotBlank(shopCategory.getName()), ShopCategoryEntity::getName, shopCategory.getName())
                 .orderByAsc(ShopCategoryEntity::getSeq);
-        // 封装数据权限 - 执行查询
-        IPage<ShopCategoryEntity> iPage = shopCategoryService.page(page, encapsulationDataRights(shopCategory, queryWrapper, ShopCategoryEntity::getCreateId));
-        // 封装模板名称
-        List<ShopCategoryEntity> shopCategoryEntityList = iPage.getRecords();
-        if (CollectionUtils.isNotEmpty(shopCategoryEntityList)) {
-            //  提取模板ID集合
-            List<String> templateIdList = shopCategoryEntityList.stream().map(ShopCategoryEntity::getTemplateId).collect(Collectors.toList());
-            // 查询模板集合
-            List<ShopTemplateEntity> shopTemplateEntityList = shopTemplateService.listByIds(templateIdList);
-            if (CollectionUtils.isNotEmpty(shopTemplateEntityList)) {
-                // 封装模板名称
-                Map<String, String> shopTemplateEntityMap = shopTemplateEntityList.stream().collect(Collectors.toMap(ShopTemplateEntity::getId, ShopTemplateEntity::getName, (k1, k2) -> k1));
-                shopCategoryEntityList.forEach(shopCategoryEntity -> shopCategoryEntity.setTemplateName(shopTemplateEntityMap.getOrDefault(shopCategoryEntity.getTemplateId(), DelimiterConstants.EMPTY_STR)));
-            }
-        }
-        // 封装用户 - 响应前端
-        return DataResult.success(encapsulationUser(iPage));
+        // 封装数据权限 - 封装用户 - 响应前端
+        return DataResult.success(encapsulationUser(shopCategoryService.listByPage(page, encapsulationDataRights(shopCategory, queryWrapper, ShopCategoryEntity::getCreateId))));
     }
 
 }

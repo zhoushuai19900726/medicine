@@ -284,7 +284,7 @@
         $('#export').on('click', function () {
             //原先分页limit
             var exportParams = {
-                limit: 10000,
+                limit: Number.MAX_VALUE,
                 beanName: $("#beanName").val()
             }
             CoreUtil.sendPost("/sysJob/listByPage", exportParams, function (res) {
