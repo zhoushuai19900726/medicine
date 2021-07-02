@@ -1,16 +1,11 @@
 package com.company.project.mapper;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.company.project.entity.ShopSpuEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -23,12 +18,21 @@ import java.util.List;
  */
 public interface ShopSpuMapper extends BaseMapper<ShopSpuEntity> {
 
-    @Select("SELECT * FROM shop_spu where id = ${id}")
+    @Select("SELECT COUNT(0) FROM shop_spu ${ew.customSqlSegment}")
+    Integer countByCondition(@Param(Constants.WRAPPER) Wrapper<ShopSpuEntity> wrapper);
+
+    @Select("SELECT * FROM shop_spu WHERE id = #{id}")
     ShopSpuEntity selectShopSpuEntityById(@Param("id") String id);
+
+    @Select("SELECT * FROM shop_spu WHERE sn = #{unique}")
+    ShopSpuEntity selectShopSpuEntityByUnique(@Param("unique") String unique);
 
     @Select("SELECT * FROM shop_spu ${ew.customSqlSegment}")
     IPage<ShopSpuEntity> recycleBinListByPage(IPage<ShopSpuEntity> page, @Param(Constants.WRAPPER) Wrapper<ShopSpuEntity> wrapper);
 
-    @Update("UPDATE shop_spu SET deleted = 0 where id = ${id}")
+    @Update("UPDATE shop_spu SET deleted = 0 WHERE id = #{id}")
     void reductionShopSpuEntityById(@Param("id") String id);
+
+    @Delete("<script> DELETE FROM shop_spu WHERE id IN  <foreach collection ='ids' item ='id' index ='index' separator=',' open='(' close=')'  > #{id} </foreach> </script>")
+    void absolutelyDeleteByIds(@Param("ids") List<String> ids);
 }

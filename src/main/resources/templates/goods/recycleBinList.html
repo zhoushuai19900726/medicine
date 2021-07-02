@@ -96,8 +96,8 @@
     </script>
     <script type="text/html" id="tool">
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="detail" shiro:hasPermission="goods:list"><i class="layui-icon">&#xe615;</i>查看详情</a>
-        <br/>
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="reduction" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe9aa;</i>还原商品</a>
+        <br/>
         <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="goods:delete"><i class="layui-icon">&#xe640;</i>删除商品</a>
     </script>
     <script type="text/html" id="goodsDetailTpl">
@@ -238,7 +238,7 @@
                     {align: 'center', width: 110, field: 'isMarketable', title: '商品状态', templet: '#isMarketableTpl'},
                     {align: 'center', width: 110, field: 'isEnableSpec', title: '启用规格', templet: '#isEnableSpecTpl'},
                     {align: 'center', width: 110, field: 'status', title: '审核状态', templet: '#statusTpl'},
-                    {width: 290, toolbar: "#tool", title: '操作'}
+                    {width: 200, toolbar: "#tool", title: '操作'}
                 ]
             ]
             , toolbar: '#toolbar'
@@ -360,7 +360,7 @@
         //删除
         var tipDialog = function (ids) {
             layer.confirm('回收站数据删除后将无法还原, 确定要删除么?', {icon: 3, title: '提示'}, function (index) {
-                CoreUtil.sendDelete("/goods/delete", ids, function (res) {
+                CoreUtil.sendDelete("/goods/absolutelyDelete", ids, function (res) {
                     layer.msg(res.msg, {time: 500}, function () {
                         tableIns1.reload();
                     });

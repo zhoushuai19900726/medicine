@@ -126,7 +126,7 @@ public class ShopSpuController extends BaseController {
     @LogAnnotation(title = "根据SPU商品货号查询", action = "查询")
     @ResponseBody
     public DataResult findOneByUnique(@PathVariable("sn") String sn) {
-        return DataResult.success(shopSpuService.getOne(Wrappers.<ShopSpuEntity>lambdaQuery().eq(ShopSpuEntity::getSn, sn)));
+        return DataResult.success(shopSpuService.getShopSpuEntityByUnique(sn));
     }
 
     @ApiOperation(value = "根据商家生成唯一商品货号")

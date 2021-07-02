@@ -43,6 +43,9 @@ public class ShopSellerEntity extends BaseEntity implements Serializable {
     @TableField("seller_address")
     private String sellerAddress;
 
+    @TableField("short_code")
+    private String shortCode;
+
     @TableField("province")
     private String province;
 

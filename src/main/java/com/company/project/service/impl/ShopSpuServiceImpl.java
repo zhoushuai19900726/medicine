@@ -58,6 +58,11 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
     private ShopSpuOperationRecordMapper shopSpuOperationRecordMapper;
 
     @Override
+    public ShopSpuEntity getShopSpuEntityByUnique(String unique) {
+        return shopSpuMapper.selectShopSpuEntityByUnique(unique);
+    }
+
+    @Override
     public ShopSpuEntity getShopSpuEntityById(String id) {
         ShopSpuEntity shopSpuEntity = shopSpuMapper.selectShopSpuEntityById(id);
         // 封装NAME
@@ -187,9 +192,9 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
     @Override
     public DataResult absolutelyRemoveShopSpuEntityByIds(List<String> ids) {
         // 物理删除SPU
-//        shopSpuMapper.absolutelyDeleteByIds(ids);
+        shopSpuMapper.absolutelyDeleteByIds(ids);
         // 物理删除SKU
-//        shopSkuMapper.absolutelyDeleteBySpuIds(ids);
+        shopSkuMapper.absolutelyDeleteBySpuIds(ids);
         return DataResult.success();
     }
 
@@ -206,17 +211,21 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
 
     @Override
     public String getUniqueSnBySeller(String sellerId) {
-        // 根据店铺id查找店铺发布了多少个商品
-        Integer n = shopSpuMapper.selectCount(Wrappers.<ShopSpuEntity>lambdaQuery().eq(ShopSpuEntity::getSellerId, sellerId));
-        int a = NumberConstants.ZERO;
-        String serialNo;
-        while (true) {
-            a++;
-            String total = String.format("%04d", n + a);
-            serialNo = DelimiterConstants.PREFIX + total;
-            ShopSpuEntity shopSpuEntity = shopSpuMapper.selectOne(Wrappers.<ShopSpuEntity>lambdaQuery().eq(ShopSpuEntity::getSn, serialNo));
-            if (Objects.isNull(shopSpuEntity)) {
-                break;
+        String serialNo = DelimiterConstants.EMPTY_STR;
+        // 查询店铺
+        ShopSellerEntity shopSellerEntity = shopSellerMapper.selectById(sellerId);
+        if(Objects.nonNull(shopSellerEntity)){
+            // 根据店铺id查找店铺发布了多少个商品
+            Integer n = shopSpuMapper.countByCondition(Wrappers.<ShopSpuEntity>lambdaQuery().eq(ShopSpuEntity::getSellerId, sellerId));
+            int a = NumberConstants.ZERO;
+            while (true) {
+                a++;
+                String total = String.format("%04d", n + a);
+                serialNo = (StringUtils.isNotBlank(shopSellerEntity.getShortCode()) ? shopSellerEntity.getShortCode() : DelimiterConstants.PREFIX) + total;
+                ShopSpuEntity shopSpuEntity = shopSpuMapper.selectOne(Wrappers.<ShopSpuEntity>lambdaQuery().eq(ShopSpuEntity::getSn, serialNo));
+                if (Objects.isNull(shopSpuEntity)) {
+                    break;
+                }
             }
         }
         return serialNo;

@@ -25,7 +25,7 @@ public interface ShopCategoryMapper extends BaseMapper<ShopCategoryEntity> {
             "</foreach>" +
             "</trim> " +
             "</trim> " +
-            "where  id in " +
+            "where id in " +
             "<foreach collection ='shopCategoryEntityList' item ='shopCategoryEntity' index ='index' separator=',' open='(' close=')'  > " +
             "#{shopCategoryEntity.id} " +
             "</foreach> </script>"})
