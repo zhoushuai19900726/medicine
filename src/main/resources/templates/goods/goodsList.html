@@ -5,10 +5,15 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
     <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
     <style>
         form .layui-input-inline {
             width: 240px !important;
+        }
+
+        body .background-color-aliceblue {
+            background-color: aliceblue;
         }
     </style>
 </head>
@@ -104,7 +109,7 @@
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="recommend" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe658;</i>设为推荐</a>
         {{# } }}
         <br/>
-        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="del" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe9aa;</i>转移商品</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="transferOrCopy" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe9aa;</i>转移复制</a>
         {{# if(d.isMarketable == 2){ }}
         <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="goods:update"><i class="layui-icon">&#x1007;</i>取消停售</a>
         {{# }else { }}
@@ -169,6 +174,93 @@
         </div>
         <br/>
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>审核详情</a>
+    </script>
+    <script type="text/html" id="transferOrCopyTpl">
+        <div class="panel panel-default" shiro:hasPermission="goods:update">
+            <div class="panel-heading title"></div>
+            <div class="layui-card-body">
+                <form class="layui-form" action="" style="width: 100%;">
+                    <table class="layui-table">
+                        <colgroup>
+                            <col width="100">
+                            <col width="600">
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="required">操作商品</td>
+                            <td>
+                                <table class="layui-table" lay-skin="nob">
+                                    <colgroup>
+                                        <col width="100">
+                                        <col>
+                                    </colgroup>
+                                    <tbody>
+                                    <tr>
+                                        <td style="text-align: center;"><img id="transferOrCopy-Image" src="" style="width: 85px; height: 85px;"/></td>
+                                        <td style="padding-left: 2px;">
+                                            <span class="layui-badge-rim">
+                                                <span class="layui-badge layui-bg-cyan" style="margin-left: -5px;">商品名称</span>
+                                                <span id="transferOrCopy-Name"></span>
+                                            </span>
+                                            <br/>
+                                            <span class="layui-badge-rim">
+                                                <span class="layui-badge layui-bg-cyan" style="margin-left: -5px;">运营商家</span>
+                                                <span id="transferOrCopy-SellerName"></span>
+                                            </span>
+                                            <br/>
+                                            <span class="layui-badge-rim">
+                                                <span class="layui-badge layui-bg-cyan" style="margin-left: -5px;">商品品牌</span>
+                                                <span id="transferOrCopy-BrandName"></span>
+                                            </span>
+                                            <br/>
+                                            <span class="layui-badge-rim">
+                                                <span class="layui-badge layui-bg-cyan" style="margin-left: -5px;">商品分类</span>
+                                                <span id="transferOrCopy-Category1Name"></span> <i class='fa fa-angle-double-right'></i>
+                                                <span id="transferOrCopy-Category2Name"></span> <i class='fa fa-angle-double-right'></i>
+                                                <span id="transferOrCopy-Category3Name"></span>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="required">操作类型</td>
+                            <td>
+                                <table class="layui-table" lay-skin="nob">
+                                    <colgroup>
+                                        <col width="200">
+                                        <col>
+                                    </colgroup>
+                                    <tbody>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" lay-filter="operationType" name="operationType" value="1" title="转移" checked/>
+                                            <br/>
+                                            <span class="layui-badge layui-bg-gray" style=""><i class="fa fa-info-circle"></i> 只能选择一个目标分类</span>
+                                        </td>
+                                        <td>
+                                            <input type="radio" lay-filter="operationType" name="operationType" value="2" title="复制"/>
+                                            <br/>
+                                            <span class="layui-badge layui-bg-gray" style=""><i class="fa fa-info-circle"></i> 可选择多个目标分类</span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="required">目标分类</td>
+                            <td>
+                                <div id="toCategory3IdListStr" class="xm-select-demo"></div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
     </script>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
@@ -321,6 +413,75 @@
                     CoreUtil.sendPut("/goods/update", {id: data.id, isRecommend: '0'}, function (res) {
                         tableIns1.reload();
                     });
+                    break;
+                case 'transferOrCopy':
+                    // 转移复制
+                    layer.open({
+                        id: 'transferOrCopy'
+                        , title: '<i class="layui-icon">&#xe9aa;</i> 转移商品 / 复制商品'
+                        , type: 1
+                        , skin: 'background-color-aliceblue'
+                        , scrollbar: false
+                        , area: ['80%', '90%']
+                        , content: $('#transferOrCopyTpl').html()
+                        , btn: ['确认提交', '取消']
+                        , yes: function (index, layero) {
+                            // 获取三级分类目标值
+                            var toCategory3IdListStr = xmSelect.get('#toCategory3IdListStr', true);
+                            var categoryList = toCategory3IdListStr.getValue().filter(ele => ele.level == 3);
+                            if(categoryList.length > 0){
+                                var operationType = $("input[type='radio'][name='operationType']:checked").val();
+                                switch (parseInt(operationType)) {
+                                    case 1:
+                                        // 转移商品
+
+                                        break;
+                                    case 2:
+                                        // 复制商品
+
+                                        break;
+                                }
+                            } else {
+                                layer.msg("请选择三级目标分类", {icon: 5});
+                            }
+                            // var newAlbumId = $("select[name='albumId']").val();
+                            // if (newAlbumId != albumId) {
+                            //     var param = {};
+                            //     param.id = id;
+                            //     param.albumId = newAlbumId;
+                            //     CoreUtil.sendPut("/shopAlbum/updateDetail", param, function (res) {
+                            //         loadData(albumId);
+                            //         getPage(albumId);
+                            //         layer.close(index);
+                            //     });
+                            // } else {
+                            //     layer.msg("无法转移到当前相册，请选择其他相册。", {icon: 5});
+                            // }
+                        }
+                        , success: function (layero, index) {
+                            $("#transferOrCopy-Image").attr("src", data.image);
+                            $("#transferOrCopy-Name").html(data.name);
+                            $("#transferOrCopy-SellerName").html(data.sellerName);
+                            $("#transferOrCopy-BrandName").html(data.brandName);
+                            $("#transferOrCopy-Category1Name").html(data.category1Name);
+                            $("#transferOrCopy-Category2Name").html(data.category2Name);
+                            $("#transferOrCopy-Category3Name").html(data.category3Name);
+                            setCascaderSelectData2([{demoId: "toCategory3IdListStr", title: "商品分类", url: "/shopCategory/listByAll"}]);
+                            form.render();
+                            form.on('radio(operationType)', function (data) {
+                                switch (parseInt(data.value)) {
+                                    case 1:
+                                        setCascaderSelectData2([{demoId: "toCategory3IdListStr", title: "商品分类", url: "/shopCategory/listByAll"}]);
+                                        break;
+                                    case 2:
+                                        setCascaderSelectData([{demoId: "toCategory3IdListStr", title: "商品分类", url: "/shopCategory/listByAll"}]);
+                                        break;
+                                }
+                            });
+                        }
+                    });
+
+
                     break;
                 case 'edit':
                     // TODO 编辑商品

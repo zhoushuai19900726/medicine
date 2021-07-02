@@ -7,6 +7,7 @@ function getSelect(demoId, title) {
         // layVerType: 'msg',
         // radio: true, // 单选
         // size: 'large',
+        direction: 'down',
         theme: {
             color: '#8dc63f',
             // maxColor: 'orange', // 选超的闪烁颜色
@@ -70,6 +71,7 @@ function setSelectData(objs) {
     });
 }
 
+// 多选
 function setCascaderSelectData(objs) {
     $(objs).each(function (index, obj) {
         var demoSelect = getCascaderSelect(obj.demoId, obj.title);
@@ -83,7 +85,7 @@ function setCascaderSelectData(objs) {
         });
     });
 }
-
+// 多选
 function getCascaderSelect(demoId, title) {
     return xmSelect.render({
         el: "#" + demoId,
@@ -100,6 +102,7 @@ function getCascaderSelect(demoId, title) {
             strict: true,
         },
         height: '800px',
+        direction: 'down',
         prop: {
             name: 'name',
             value: 'id',
@@ -121,5 +124,66 @@ function getCascaderSelect(demoId, title) {
         on: function (data) {
 
         }
+    });
+}
+
+
+// 单选选
+function setCascaderSelectData2(objs) {
+    $(objs).each(function (index, obj) {
+        var demoSelect = getCascaderSelect2(obj.demoId, obj.title);
+        CoreUtil.sendGet(obj.url, null, function (res) {
+            //初始化渲染数据
+            if (res.code == 0 && res.data != null) {
+                demoSelect.update({
+                    data: res.data,
+                })
+            }
+        });
+    });
+}
+
+// 单选
+function getCascaderSelect2(demoId, title) {
+    return xmSelect.render({
+        el: "#" + demoId,
+        name: demoId,
+        theme: {
+            color: '#8dc63f',
+        },
+        radio: true,
+        cascader: {
+            //是否显示级联模式
+            show: true,
+            //间距
+            indent: 240,
+            //是否严格遵守父子模式
+            strict: true,
+        },
+        height: '800px',
+        direction: 'down',
+        prop: {
+            name: 'name',
+            value: 'id',
+        },
+        model: {
+            label: {
+                type: 'block',
+                block: {
+                    //最大显示数量, 0:不限制
+                    showCount: 3,
+                    //是否显示删除图标
+                    showIcon: true,
+                }
+            }
+        },
+        tips: '请选择' + title,
+        empty: '呀, 没有数据呢',
+        data: [],
+        on: function(data){
+            if(data.isAdd){
+                return data.change.slice(0, 1)
+            }
+        },
     });
 }
