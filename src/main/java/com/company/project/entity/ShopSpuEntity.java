@@ -260,4 +260,16 @@ public class ShopSpuEntity extends BaseEntity implements Serializable {
     @TableField(exist = false)
     private List<ShopSkuEntity> shopSkuEntityList;
 
+    /**
+     * COPY至目标三级分类ID集合
+     */
+    @TableField(exist = false)
+    private List<String> copyToCategory3IdList;
+
+    /**
+     * 转移至目标三级分类ID
+     */
+    @TableField(exist = false)
+    private String transferToCategory3Id;
+
 }

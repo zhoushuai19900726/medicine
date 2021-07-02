@@ -185,6 +185,14 @@ public class ShopSpuController extends BaseController {
         return queryWrapper;
     }
 
+    @ApiOperation(value = "复制")
+    @PutMapping("goods/copyGoods")
+    @RequiresPermissions("goods:add")
+    @LogAnnotation(title = "商品SPU", action = "复制")
+    @ResponseBody
+    public DataResult copyGoods(@RequestBody ShopSpuEntity shopSpu) {
+        return DataResult.success(shopSpuService.copyGoods(shopSpu));
+    }
 
 
 }

@@ -109,7 +109,7 @@
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="recommend" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe658;</i>设为推荐</a>
         {{# } }}
         <br/>
-        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="transferOrCopy" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe9aa;</i>转移复制</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="transferOrCopy" shiro:hasPermission="goods:add"><i class="layui-icon">&#xe9aa;</i>转移复制</a>
         {{# if(d.isMarketable == 2){ }}
         <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="goods:update"><i class="layui-icon">&#x1007;</i>取消停售</a>
         {{# }else { }}
@@ -176,7 +176,7 @@
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>审核详情</a>
     </script>
     <script type="text/html" id="transferOrCopyTpl">
-        <div class="panel panel-default" shiro:hasPermission="goods:update">
+        <div class="panel panel-default" shiro:hasPermission="goods:add">
             <div class="panel-heading title"></div>
             <div class="layui-card-body">
                 <form class="layui-form" action="" style="width: 100%;">
@@ -427,36 +427,31 @@
                         , btn: ['确认提交', '取消']
                         , yes: function (index, layero) {
                             // 获取三级分类目标值
-                            var toCategory3IdListStr = xmSelect.get('#toCategory3IdListStr', true);
-                            var categoryList = toCategory3IdListStr.getValue().filter(ele => ele.level == 3);
-                            if(categoryList.length > 0){
+                            var categoryId3ListList = xmSelect.get('#toCategory3IdListStr', true).getValue().filter(ele => ele.level == 3).map(item => item.id);
+                            if(categoryId3ListList.length > 0){
                                 var operationType = $("input[type='radio'][name='operationType']:checked").val();
+                                var shopSpuEntity = {};
+                                shopSpuEntity.id = data.id;
                                 switch (parseInt(operationType)) {
                                     case 1:
                                         // 转移商品
+                                        shopSpuEntity.transferToCategory3Id = categoryId3ListList[0];
 
                                         break;
                                     case 2:
                                         // 复制商品
-
+                                        shopSpuEntity.copyToCategory3IdList = categoryId3ListList;
+                                        CoreUtil.sendPut("/goods/copyGoods", shopSpuEntity, function (res) {
+                                            layer.msg(res.msg, {time: 500}, function () {
+                                                tableIns1.reload();
+                                                layer.close(index);
+                                            });
+                                        });
                                         break;
                                 }
                             } else {
                                 layer.msg("请选择三级目标分类", {icon: 5});
                             }
-                            // var newAlbumId = $("select[name='albumId']").val();
-                            // if (newAlbumId != albumId) {
-                            //     var param = {};
-                            //     param.id = id;
-                            //     param.albumId = newAlbumId;
-                            //     CoreUtil.sendPut("/shopAlbum/updateDetail", param, function (res) {
-                            //         loadData(albumId);
-                            //         getPage(albumId);
-                            //         layer.close(index);
-                            //     });
-                            // } else {
-                            //     layer.msg("无法转移到当前相册，请选择其他相册。", {icon: 5});
-                            // }
                         }
                         , success: function (layero, index) {
                             $("#transferOrCopy-Image").attr("src", data.image);

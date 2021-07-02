@@ -35,5 +35,7 @@ public interface ShopSpuService extends IService<ShopSpuEntity> {
     IPage<ShopSpuEntity> recycleBinListByPage(Page<ShopSpuEntity> page, LambdaQueryWrapper<ShopSpuEntity> wrapper);
 
     String getUniqueSnBySeller(String sellerId);
+
+    ShopSpuEntity copyGoods(ShopSpuEntity shopSpu);
 }
 
