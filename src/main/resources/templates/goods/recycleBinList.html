@@ -313,8 +313,12 @@
                     break;
                 case 'reduction':
                     // 还原商品
-                    CoreUtil.sendPut("/goods/update", {id: data.id, deleted: 0}, function (res) {
-                        tableIns1.reload();
+                    layer.confirm('确定要还原么?', {icon: 3, title: '提示'}, function (index) {
+                        CoreUtil.sendPut("/goods/update", {id: data.id, deleted: 0}, function (res) {
+                            layer.msg(res.msg, {time: 500}, function () {
+                                tableIns1.reload();
+                            });
+                        });
                     });
                     break;
             }
