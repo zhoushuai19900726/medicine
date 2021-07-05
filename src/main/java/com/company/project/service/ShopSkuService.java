@@ -2,6 +2,7 @@ package com.company.project.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.company.project.common.utils.DataResult;
 import com.company.project.entity.ShopSkuEntity;
 
 import java.util.List;
@@ -17,5 +18,8 @@ public interface ShopSkuService extends IService<ShopSkuEntity> {
 
     List<ShopSkuEntity> listByCondition(LambdaQueryWrapper<ShopSkuEntity> wrapper);
 
+    ShopSkuEntity getShopSpuEntityById(String id);
+
+    Integer updateShopSpuEntityById(ShopSkuEntity shopSkuEntity);
 }
 

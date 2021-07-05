@@ -140,7 +140,7 @@
         <span class="layui-badge-rim">{{ d.category3Name }}</span>
     </script>
     <script type="text/html" id="stockTpl">
-        <div style="width: 100%;" class="layui-badge-rim">{{ d.saleNum }}</div>
+        <div style="width: 100%;" class="layui-badge-rim">{{ d.stock }}</div>
         <br/>
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="stock" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>库存管理</a>
     </script>
@@ -514,17 +514,17 @@
                     });
                     break;
                 case 'stock':
-                    // TODO 库存管理
+                    // 库存管理
                     layer.open({
                         type: 2,
-                        title: '<i class="layui-icon">&#xe62a;</i> 库存管理',
+                        title: '<i class="layui-icon">&#xe665;</i> 库存管理',
                         id: 'operationRecord',
                         scrollbar: false,
                         offset: 'r',
                         anim: 5,
                         maxmin: true,
                         area: ['1000px', '100%'],//宽高不影响最大化
-                        content: "../../index/shopSpu/operationRecord/" + data.id,//地址
+                        content: "../../index/shopSpu/stockControl/" + data.id,//地址
                         zIndex: layer.zIndex,
                         success: function (layero, index) {
                             // 置顶当前窗口

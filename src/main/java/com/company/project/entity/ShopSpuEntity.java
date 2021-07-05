@@ -274,6 +274,12 @@ public class ShopSpuEntity extends BaseEntity implements Serializable {
     private List<ShopSkuEntity> shopSkuEntityList;
 
     /**
+     * 库存
+     */
+    @TableField(exist = false)
+    private Integer stock;
+
+    /**
      * COPY至目标三级分类ID集合
      */
     @TableField(exist = false)

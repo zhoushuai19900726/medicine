@@ -56,12 +56,19 @@ public class ShopSpuController extends BaseController {
         return "goods/releaseProduct";
     }
 
-    @ApiOperation(value = "跳转进入商品详情页面")
+    @ApiOperation(value = "跳转进入商品SPU详情页面")
     @GetMapping("/index/shopSpu/detail/{id}")
-    public String detail(@PathVariable("id") String id, Model model) {
+    public String spuDetail(@PathVariable("id") String id, Model model) {
         model.addAttribute("shopSpuEntity", shopSpuService.getShopSpuEntityById(id));
         model.addAttribute("shopSkuEntityList", shopSkuService.listByCondition(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, id)));
         return "goods/goodsDetail";
+    }
+
+    @ApiOperation(value = "跳转进入商品SKU详情页面")
+    @GetMapping("/index/shopSku/detail/{id}")
+    public String skuDetail(@PathVariable("id") String id, Model model) {
+        model.addAttribute("shopSkuEntity", shopSkuService.getShopSpuEntityById(id));
+        return "goods/skuDetail";
     }
 
 
@@ -70,6 +77,14 @@ public class ShopSpuController extends BaseController {
     public String operationRecord(@PathVariable("id") String id, Model model) {
         model.addAttribute("shopSpuOperationRecordEntityList", encapsulationUser(shopSpuOperationRecordService.list(Wrappers.<ShopSpuOperationRecordEntity>lambdaQuery().eq(ShopSpuOperationRecordEntity::getSpuId, id).orderByDesc(ShopSpuOperationRecordEntity::getCreateTime))));
         return "goods/operationRecord";
+    }
+
+    @ApiOperation(value = "跳转进入商品库存管理页面")
+    @GetMapping("/index/shopSpu/stockControl/{id}")
+    public String stockControl(@PathVariable("id") String id, Model model) {
+        model.addAttribute("shopSpuEntity", shopSpuService.getShopSpuEntityById(id));
+        model.addAttribute("shopSkuEntityList", shopSkuService.listByCondition(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, id).orderByAsc(ShopSkuEntity::getId)));
+        return "goods/stockControl";
     }
 
     @ApiOperation(value = "跳转进入审核页面")
@@ -111,13 +126,22 @@ public class ShopSpuController extends BaseController {
         return shopSpuService.absolutelyRemoveShopSpuEntityByIds(ids);
     }
 
-    @ApiOperation(value = "更新")
+    @ApiOperation(value = "更新SPU")
     @PutMapping("goods/update")
     @RequiresPermissions("goods:update")
     @LogAnnotation(title = "商品SPU", action = "更新")
     @ResponseBody
     public DataResult update(@RequestBody ShopSpuEntity shopSpu) {
         return shopSpuService.updateShopSpuEntityById(shopSpu);
+    }
+
+    @ApiOperation(value = "更新SKU")
+    @PutMapping("goods/updateSku")
+    @RequiresPermissions("goods:update")
+    @LogAnnotation(title = "商品SKU", action = "更新")
+    @ResponseBody
+    public DataResult updateSku(@RequestBody ShopSkuEntity shopSkuEntity) {
+        return DataResult.success(shopSkuService.updateShopSpuEntityById(shopSkuEntity));
     }
 
     @ApiOperation(value = "根据唯一索引查询")

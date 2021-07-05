@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main" shiro:hasPermission="goods:update">
+
+        <form class="layui-form" id="skuForm">
+            <input type="hidden" name="id" class="layui-input" th:value="${shopSkuEntity.id}"/>
+            <table class="layui-table" lay-size="sm">
+                <colgroup>
+                    <col width="150">
+                    <col>
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td>商品SKU名称</td>
+                    <td th:text="${shopSkuEntity.name}"></td>
+                </tr>
+                <tr>
+                    <td>商品SKU货号</td>
+                    <td th:text="${shopSkuEntity.sn}"></td>
+                </tr>
+                <tr>
+                    <td>商品SKU规格</td>
+                    <td th:text="${shopSkuEntity.spec}"></td>
+                </tr>
+                <tr>
+                    <td>商品SKU价格</td>
+                    <td>
+                        <input type="text" name="price" th:value="${shopSkuEntity.price}" class="layui-input"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>商品SKU库存</td>
+                    <td>
+                        <input type="text" name="num" th:value="${shopSkuEntity.num}" class="layui-input"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>商品SKU库存预警值</td>
+                    <td>
+                        <input type="text" name="alertNum" th:value="${shopSkuEntity.alertNum}" class="layui-input"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>商品SKU图片</td>
+                    <td>
+                        <input type="hidden" name="image" th:value="${shopSkuEntity.image}"/>
+                        <img th:src="${shopSkuEntity.image}"/>
+                        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" id="uploadImage"><i class="layui-icon">&#xe67c;</i>上传图片</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <button class="layui-btn layui-btn-normal layui-btn-sm" lay-submit lay-filter="data-save-btn" shiro:hasPermission="goods:update">保存SKU</button>
+                        <button class="layui-btn layui-btn-primary layui-btn-sm" lay-submit lay-filter="data-back-btn">返回列表</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+
+
+    </div>
+</div>
+<script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/layui/layui.all.js}" charset="utf-8"></script>
+</body>
+</html>
+<script>
+    //获取token
+    var token = CoreUtil.getData("access_token");
+    //地址栏转义token中的#号
+    var tokenQuery = token.replace("#", "%23");
+    var tableIns1;
+    var $ = jQuery = layui.jquery;
+    layui.use(['form', 'table', 'layer', 'upload'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var layer = layui.layer;
+        var upload = layui.upload;
+
+        form.on('submit(data-back-btn)', function (data) {
+            //按钮【按钮二】的回调
+            var parentIndex = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(parentIndex);
+            return false;
+        });
+
+        form.on('submit(data-save-btn)', function (data) {
+            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
+            CoreUtil.sendPut("/goods/updateSku", data.field, function (res) {
+                // 刷新父页面列表
+                parent.parent.layui.table.reload('showTable');
+                parent.location.reload();
+            });
+            return false;
+        });
+
+        upload.render({
+            elem: '#uploadImage' //绑定元素
+            , url: '/sysFiles/upload?authorization=' + tokenQuery  // 上传文件的路径
+            , done: function (res) {
+                var parentObj = $(this.item).parent();
+                $(parentObj).find("input[name='image']").attr("value", res.data.src);
+                $(parentObj).find("img").attr("src", res.data.src);
+            }
+        });
+
+    });
+</script>

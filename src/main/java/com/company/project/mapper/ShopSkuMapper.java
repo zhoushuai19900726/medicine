@@ -28,4 +28,10 @@ public interface ShopSkuMapper extends BaseMapper<ShopSkuEntity> {
 
     @Delete("<script> DELETE FROM shop_sku WHERE spu_id IN  <foreach collection ='spuIds' item ='spuId' index ='index' separator=',' open='(' close=')'  > #{spuId} </foreach> </script>")
     void absolutelyDeleteBySpuIds(@Param("spuIds") List<String> spuIds);
+
+    @Select("SELECT * FROM shop_sku WHERE id = #{id}")
+    ShopSkuEntity getShopSpuEntityById(@Param("id") String id);
+
+    @Update("UPDATE shop_sku SET price = #{price}, num = #{num}, alert_num = #{alertNum}, image = #{image} WHERE id = #{id}")
+    Integer updateShopSpuEntityById(ShopSkuEntity shopSkuEntity);
 }

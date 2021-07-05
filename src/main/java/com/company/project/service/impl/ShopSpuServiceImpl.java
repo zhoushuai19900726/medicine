@@ -241,6 +241,7 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
      * @return
      */
     private IPage<ShopSpuEntity> encapsulatingFieldName(IPage<ShopSpuEntity> iPage) {
+        // SPU集合
         List<ShopSpuEntity> shopSpuEntityList = iPage.getRecords();
         // 封装名称
         if (CollectionUtils.isNotEmpty(shopSpuEntityList)) {
@@ -281,6 +282,9 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
                     shopBrandEntityMap.putAll(shopEntityList.stream().collect(Collectors.toMap(ShopBrandEntity::getId, ShopBrandEntity::getName, (k1, k2) -> k1)));
                 }
             }
+            // 查询SKU集合
+            List<ShopSkuEntity> shopSkuEntityList = shopSkuMapper.selectList(Wrappers.<ShopSkuEntity>lambdaQuery().in(ShopSkuEntity::getSpuId, shopSpuEntityList.stream().map(ShopSpuEntity::getId).collect(Collectors.toList())));
+            Map<String, List<ShopSkuEntity>> groupBy = shopSkuEntityList.stream().collect(Collectors.groupingBy(ShopSkuEntity::getSpuId));
             // 执行封装名称
             shopSpuEntityList.forEach(shopSpuEntity -> {
                 shopSpuEntity.setCategory1Name(shopCategoryEntityMap.getOrDefault(shopSpuEntity.getCategory1Id(), DelimiterConstants.EMPTY_STR));
@@ -288,6 +292,8 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
                 shopSpuEntity.setCategory3Name(shopCategoryEntityMap.getOrDefault(shopSpuEntity.getCategory3Id(), DelimiterConstants.EMPTY_STR));
                 shopSpuEntity.setSellerName(shopSellerEntityMap.getOrDefault(shopSpuEntity.getSellerId(), DelimiterConstants.EMPTY_STR));
                 shopSpuEntity.setBrandName(shopBrandEntityMap.getOrDefault(shopSpuEntity.getBrandId(), DelimiterConstants.EMPTY_STR));
+                // 库存
+                shopSpuEntity.setStock(groupBy.getOrDefault(shopSpuEntity.getId(), Lists.newArrayList()).stream().mapToInt(ShopSkuEntity::getNum).sum());
             });
         }
         return iPage;
