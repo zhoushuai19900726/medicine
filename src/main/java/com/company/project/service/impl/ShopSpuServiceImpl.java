@@ -5,11 +5,13 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.company.project.common.enums.GoodsExamineStatusEnum;
 import com.company.project.common.exception.code.BaseResponseCode;
 import com.company.project.common.exception.code.BusinessResponseCode;
 import com.company.project.common.utils.*;
 import com.company.project.entity.*;
 import com.company.project.mapper.*;
+import com.company.project.service.ShopCategoryService;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -54,6 +56,9 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
 
     @Resource
     private ShopSpuOperationRecordMapper shopSpuOperationRecordMapper;
+
+    @Resource
+    private ShopCategoryService shopCategoryService;
 
     @Override
     public ShopSpuEntity getShopSpuEntityByUnique(String unique) {
@@ -299,12 +304,18 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
                 // 声明落库数据
                 List<ShopSpuEntity> finalShopSpuEntityList = Lists.newArrayList();
                 List<ShopSkuEntity> finalShopSKuEntityList = Lists.newArrayList();
+                // 查询所有三级分类的上级、上级的上级
+                Map<String, String> parentMap = shopCategoryService.getAllParent(param.getCopyToCategory3IdList());
                 param.getCopyToCategory3IdList().forEach(category3Id -> {
                     // 复制SPU
                     ShopSpuEntity copyShopSpuEntity = new ShopSpuEntity();
                     BeanUtils.copyProperties(shopSpuEntity, copyShopSpuEntity);
                     copyShopSpuEntity.setId(CommonUtils.generateUUID());
                     copyShopSpuEntity.setSn(CommonUtils.generateShortUUID());
+                    copyShopSpuEntity.setStatus(GoodsExamineStatusEnum.TO_BE_REVIEWED.getType());
+                    copyShopSpuEntity.setCategory3Id(category3Id);
+                    copyShopSpuEntity.setCategory2Id(parentMap.getOrDefault(copyShopSpuEntity.getCategory3Id(), DelimiterConstants.EMPTY_STR));
+                    copyShopSpuEntity.setCategory1Id(parentMap.getOrDefault(copyShopSpuEntity.getCategory2Id(), DelimiterConstants.EMPTY_STR));
                     finalShopSpuEntityList.add(copyShopSpuEntity);
                     // 复制SKU
                     List<ShopSkuEntity> copyShopSkuEntityList = shopSkuEntityList.stream().map(shopSkuEntity -> {
@@ -321,14 +332,10 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
                 finalShopSpuEntityList.forEach(finalShopSPuEntity -> shopSpuMapper.insert(finalShopSPuEntity));
                 // 保存SKU
                 finalShopSKuEntityList.forEach(finalShopSKuEntity -> shopSkuMapper.insert(finalShopSKuEntity));
-                // TODO 分类中商品数 param.getCopyToCategory3IdList()及父分类数量+1
-
-
-
-
-
-
-
+                // 分类中商品数
+                List<ShopCategoryEntity> shopCategoryEntityList = Lists.newArrayList();
+                parentMap.keySet().forEach(k -> shopCategoryEntityList.add(new ShopCategoryEntity(k, NumberConstants.ONE)));
+                shopCategoryMapper.updateCount(shopCategoryEntityList);
             }
         }
         return param;

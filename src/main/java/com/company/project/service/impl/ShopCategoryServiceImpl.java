@@ -9,6 +9,7 @@ import com.company.project.common.utils.NumberConstants;
 import com.company.project.entity.ShopTemplateEntity;
 import com.company.project.mapper.ShopTemplateMapper;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -36,9 +37,9 @@ public class ShopCategoryServiceImpl extends ServiceImpl<ShopCategoryMapper, Sho
     @Override
     public ShopCategoryEntity getShopCategoryEntityById(String id) {
         ShopCategoryEntity shopCategoryEntity = shopCategoryMapper.selectById(id);
-        if(Objects.nonNull(shopCategoryEntity)){
+        if (Objects.nonNull(shopCategoryEntity)) {
             ShopTemplateEntity shopTemplateEntity = shopTemplateMapper.selectById(shopCategoryEntity.getTemplateId());
-            if(Objects.nonNull(shopTemplateEntity)){
+            if (Objects.nonNull(shopTemplateEntity)) {
                 shopCategoryEntity.setTemplateName(shopTemplateEntity.getName());
             }
         }
@@ -77,5 +78,38 @@ public class ShopCategoryServiceImpl extends ServiceImpl<ShopCategoryMapper, Sho
             }
         }
         return iPage;
+    }
+
+    @Override
+    public Map<String, String> getAllParent(List<String> category3IdList) {
+        List<ShopCategoryEntity> shopCategoryEntityList = Lists.newArrayList();
+        Map<String, String> returnMap = Maps.newHashMap();
+        // 三级分类
+        if (CollectionUtils.isNotEmpty(category3IdList)) {
+            List<ShopCategoryEntity> shopCategory3EntityList = shopCategoryMapper.selectBatchIds(category3IdList);
+            if (CollectionUtils.isNotEmpty(shopCategory3EntityList)) {
+                shopCategoryEntityList.addAll(shopCategory3EntityList);
+                // 二级分类
+                List<String> category2IdList = shopCategory3EntityList.stream().map(ShopCategoryEntity::getParentId).collect(Collectors.toList());
+                if (CollectionUtils.isNotEmpty(category2IdList)) {
+                    List<ShopCategoryEntity> shopCategory2EntityList = shopCategoryMapper.selectBatchIds(category2IdList);
+                    if (CollectionUtils.isNotEmpty(shopCategory2EntityList)) {
+                        shopCategoryEntityList.addAll(shopCategory2EntityList);
+                        // 一级分类
+                        List<String> category1IdList = shopCategory2EntityList.stream().map(ShopCategoryEntity::getParentId).collect(Collectors.toList());
+                        if (CollectionUtils.isNotEmpty(category1IdList)) {
+                            List<ShopCategoryEntity> shopCategory1EntityList = shopCategoryMapper.selectBatchIds(category1IdList);
+                            if (CollectionUtils.isNotEmpty(shopCategory1EntityList)) {
+                                shopCategoryEntityList.addAll(shopCategory1EntityList);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (CollectionUtils.isNotEmpty(shopCategoryEntityList)) {
+            returnMap = shopCategoryEntityList.stream().collect(Collectors.toMap(ShopCategoryEntity::getId, ShopCategoryEntity::getParentId, (k1, k2) -> k1));
+        }
+        return returnMap;
     }
 }

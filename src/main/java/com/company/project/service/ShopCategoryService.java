@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.company.project.entity.ShopCategoryEntity;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 商品分类
@@ -24,6 +25,8 @@ public interface ShopCategoryService extends IService<ShopCategoryEntity> {
     List<ShopCategoryEntity> listByAll();
 
     IPage<ShopCategoryEntity> listByPage(Page<ShopCategoryEntity> page, LambdaQueryWrapper<ShopCategoryEntity> wrapper);
+
+    Map<String, String> getAllParent(List<String> category3IdList);
 
 }
 
