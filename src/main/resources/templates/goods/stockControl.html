@@ -11,9 +11,7 @@
 <body>
 <div class="layuimini-container">
     <div class="layuimini-main" shiro:hasPermission="goods:update">
-
         <blockquote class="layui-elem-quote">
-
             <form class="layui-form">
                 <table class="layui-table" lay-size="sm">
                     <colgroup>
@@ -47,7 +45,6 @@
                         <td>商品名称</td>
                         <td colspan="3"><input type="text" class="layui-input" th:value="${shopSpuEntity.name}" disabled/></td>
                     </tr>
-
                     </tbody>
                 </table>
             </form>
@@ -86,13 +83,11 @@
                     <td th:text="${shopSkuEntity.alertNum}"></td>
                     <td th:text="${shopSkuEntity.sn}"></td>
                     <td><img th:src="${shopSkuEntity.image}" style="width: 30px; height: 30px; cursor: pointer;"></td>
-                    <td><i class="fa fa-edit" style="color: red; cursor: pointer;" onclick="editSku(this.id)" th:id="${shopSkuEntity.id}">编辑</i></td>
+                    <td><i class="fa fa-edit" style="color: red; cursor: pointer;" onclick="editSku(this.id)" th:id="${shopSkuEntity.id}"> 编辑</i></td>
                 </tr>
                 </tbody>
             </table>
         </blockquote>
-
-
     </div>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>

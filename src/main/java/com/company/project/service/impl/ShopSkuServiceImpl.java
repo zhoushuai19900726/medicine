@@ -33,4 +33,19 @@ public class ShopSkuServiceImpl extends ServiceImpl<ShopSkuMapper, ShopSkuEntity
     public Integer updateShopSpuEntityById(ShopSkuEntity shopSkuEntity) {
         return shopSkuMapper.updateShopSpuEntityById(shopSkuEntity);
     }
+
+    @Override
+    public Integer reductionSku(String id) {
+        return shopSkuMapper.reductionSku(id);
+    }
+
+    @Override
+    public Integer absolutelyDeleteSku(String id) {
+        return shopSkuMapper.absolutelyDeleteSku(id);
+    }
+
+    @Override
+    public Integer updateShopSpuEntityStatusById(ShopSkuEntity shopSkuEntity) {
+        return shopSkuMapper.updateShopSpuEntityStatusById(shopSkuEntity);
+    }
 }

@@ -156,9 +156,19 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
             }
             // 更新SPU
             shopSpuMapper.updateById(shopSpuEntity);
-            // TODO 更新SKU - 及状态
-
-
+            // 更新SKU - 状态与SPU保持一致
+            if(StringUtils.isNotBlank(shopSpuEntity.getIsMarketable())){
+                List<ShopSkuEntity> shopSkuEntityList = shopSkuMapper.listByCondition(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, shopSpuEntity.getId()));
+                if(CollectionUtils.isNotEmpty(shopSkuEntityList)){
+                    ShopSpuEntity finalShopSpuEntity = shopSpuEntity;
+                    shopSkuEntityList.forEach(shopSkuEntity -> {
+                        ShopSkuEntity updSku = new ShopSkuEntity();
+                        updSku.setId(shopSkuEntity.getId());
+                        updSku.setStatus(finalShopSpuEntity.getIsMarketable());
+                        shopSkuMapper.updateShopSpuEntityStatusById(updSku);
+                    });
+                }
+            }
             long endTime = System.currentTimeMillis();
             // 操作记录
             shopSpuOperationRecordMapper.insert(new ShopSpuOperationRecordEntity(oldShopSpuEntity.getId(), OperationConstant.UPDATE, JSONObject.toJSONString(oldShopSpuEntity), JSONObject.toJSONString(shopSpuEntity), (endTime - startTime)));

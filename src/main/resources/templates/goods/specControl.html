@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main" shiro:hasPermission="goods:update">
+        <blockquote class="layui-elem-quote">
+            <form class="layui-form">
+                <table class="layui-table" lay-size="sm">
+                    <colgroup>
+                        <col width="100">
+                        <col width="500">
+                        <col width="100">
+                        <col width="500">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td>商品分类</td>
+                        <td>
+                            <div class="layui-breadcrumb" lay-separator="<i class='layui-icon'>&#xe602;</i>" style="padding-top: 8px; float: left;">
+                                <a href="javascript:;" name="a_category1" th:text="${shopSpuEntity.category1Name}"></a>
+                                <a href="javascript:;" name="a_category2" th:text="${shopSpuEntity.category2Name}"></a>
+                                <a href="javascript:;" name="a_category3" th:text="${shopSpuEntity.category3Name}"></a>
+                            </div>
+                        </td>
+                        <td>商品状态</td>
+                        <td>
+                            <select th:with="dataResult=${@commonController.findAllGoodsStatus()}">
+                                <option th:each="map : ${dataResult.getData()}"
+                                        th:text="${map.get('name')}"
+                                        th:value="${map.get('id')}"
+                                        th:selected="${map.get('id') == shopSpuEntity.isMarketable}"
+                                        th:disabled="${map.get('id') != shopSpuEntity.isMarketable}"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>商品名称</td>
+                        <td colspan="3"><input type="text" class="layui-input" th:value="${shopSpuEntity.name}" disabled/></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+        </blockquote>
+        <blockquote class="layui-elem-quote layui-quote-nm"><i class="layui-icon">&#xe62a;</i> 商品SPU规格信息</blockquote>
+        <blockquote class="layui-elem-quote layui-quote-nm">
+            <form class="layui-form">
+                <table class="layui-table" lay-size="sm">
+                    <colgroup>
+                        <col width="60">
+                        <col width="150">
+                        <col>
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>规格名称</th>
+                        <th>可选值列表</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="shopSpecEntity,shopSpecStat : ${shopSpecEntityList}">
+                        <td th:text="${shopSpecStat.index + 1}"></td>
+                        <td th:text="${shopSpecEntity.name}"></td>
+                        <td>
+                            <input type="checkbox" name="specValue"
+                                   th:each="option : ${#strings.arraySplit(shopSpecEntity.options == null ? '' : shopSpecEntity.options, ',')}"
+                                   th:title="${option}"
+                                   th:checked="${null != shopSpuEntity.specItemsMap.get(shopSpecEntity.name) && #lists.contains(shopSpuEntity.specItemsMap.get(shopSpecEntity.name), option)}"/>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="layui-table" lay-size="sm" id="specTable">
+                    <colgroup>
+                        <col width="60">
+                        <col th:each="item:${shopSpuEntity.specItemsMap}">
+                        <col width="160">
+                        <col width="90">
+                        <col width="105">
+                        <col width="90">
+                        <col width="90">
+                        <col width="60">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th th:each="item:${shopSpuEntity.specItemsMap}" th:text="${item.key}"></th>
+                        <th>销售价格<span class="layui-badge layui-bg-gray"><i class="fa fa-info-circle"></i> 单位:分</span></th>
+                        <th>商品库存</th>
+                        <th>库存预警值</th>
+                        <th>SKU编号</th>
+                        <th>SKU状态</th>
+                        <th>图片</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="shopSkuEntity,shopSkuStat : ${shopSkuEntityList}">
+                        <td th:text="${shopSkuStat.index + 1}"></td>
+                        <td th:each="item:${shopSkuEntity.specMap}" th:text="${item.value}"></td>
+                        <td th:text="${shopSkuEntity.price}"></td>
+                        <td th:text="${shopSkuEntity.num}"></td>
+                        <td th:text="${shopSkuEntity.alertNum}"></td>
+                        <td th:text="${shopSkuEntity.sn}"></td>
+                        <td>
+                            <block th:if="${shopSkuEntity.status == '2'}">
+                                <span class="layui-badge layui-bg-red"> 停售中...</span>
+                            </block>
+                            <block th:if="${shopSkuEntity.status != '2'}">
+                                <input type="checkbox" th:value="${shopSkuEntity.id}" lay-skin="switch" lay-text="上架|下架 " lay-filter="skuStatusSwitch" th:checked="${shopSkuEntity.status == '1'}"/>
+                            </block>
+                        </td>
+                        <td><img th:src="${shopSkuEntity.image}" style="width: 30px; height: 30px; cursor: pointer;"></td>
+                        <td>
+                            <block th:if="${shopSkuEntity.deleted == 0}">
+                                <i class="fa fa-trash-o" style="color: red; cursor: pointer;" onclick="deleteSku(this.id)" th:id="${shopSkuEntity.id}"> 删除</i>
+                            </block>
+                            <block th:if="${shopSkuEntity.deleted == 1}">
+                                <i class="fa fa-recycle" style="color: green; cursor: pointer;" onclick="reductionSku(this.id)" th:id="${shopSkuEntity.id}"> 还原</i>
+                            </block>
+                            <i class="fa fa-trash-o" style="color: #645c48; cursor: pointer;" onclick="absolutelyDeleteSku(this.id)" th:id="${shopSkuEntity.id}"> 彻底删除</i>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+        </blockquote>
+        <blockquote class="layui-elem-quote layui-quote-nm"><i class="layui-icon">&#xe62a;</i> 商品SPU参数信息</blockquote>
+        <blockquote class="layui-elem-quote layui-quote-nm">
+            <form class="layui-form">
+                <table class="layui-table" lay-size="sm">
+                    <colgroup>
+                        <col width="60">
+                        <col width="150">
+                        <col>
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>参数名称</th>
+                        <th>可选值列表</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="shopParaEntity,shopParaStat : ${shopParaEntityList}">
+                        <td th:text="${shopParaStat.index + 1}"></td>
+                        <td th:text="${shopParaEntity.name}"></td>
+                        <td>
+                            <input type="checkbox" name="paraValue"
+                                   th:each="option : ${#strings.arraySplit(shopParaEntity.options == null ? '' : shopParaEntity.options, ',')}"
+                                   th:title="${option}"
+                                   th:para="${shopParaEntity.name}"
+                                   th:checked="${null != shopSpuEntity.paraItemsMap.get(shopParaEntity.name) && #lists.contains(shopSpuEntity.paraItemsMap.get(shopParaEntity.name), option)}"/>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+        </blockquote>
+
+        <form class="layui-form">
+            <table class="layui-table" lay-size="sm">
+                <tbody>
+                <tr>
+                    <td>
+                        <button class="layui-btn layui-btn-normal layui-btn-sm" lay-submit lay-filter="data-save-btn" shiro:hasPermission="goods:update">保存规格参数</button>
+                        <button class="layui-btn layui-btn-primary layui-btn-sm" lay-submit lay-filter="data-back-btn">返回商品列表</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+<script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/layui/layui.all.js}" charset="utf-8"></script>
+</body>
+</html>
+<script>
+    //获取token
+    var token = CoreUtil.getData("access_token");
+    //地址栏转义token中的#号
+    var tokenQuery = token.replace("#", "%23");
+    var tableIns1;
+    var $ = jQuery = layui.jquery;
+    layui.use(['form', 'table', 'layer'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var layer = layui.layer;
+
+
+        form.on('submit(data-back-btn)', function (data) {
+            //按钮【按钮二】的回调
+            var parentIndex = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(parentIndex);
+            return false;
+        });
+
+        /*form.on('submit(data-save-btn)', function (data) {
+            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
+            CoreUtil.sendPut("/goods/updateSku", data.field, function (res) {
+                // 刷新父页面列表
+                parent.parent.layui.table.reload('showTable');
+                parent.location.reload();
+            });
+            return false;
+        });*/
+
+        /**
+         * 监听table内开关操作
+         */
+        form.on('switch(skuStatusSwitch)', function (obj) {
+            CoreUtil.sendPut("/goods/updateSkuStatus", {id: this.value, status: (obj.elem.checked ? '1' : '0')}, function (res) {
+                layer.tips(obj.elem.checked ? "上架成功" : "下架成功", obj.othis);
+            });
+        });
+
+
+    });
+
+    function deleteSku(skuId) {
+        var layer = layui.layer;
+        layer.confirm('确定要删除么?', {icon: 3, title: '提示'}, function (index) {
+            CoreUtil.sendDelete("/goods/deleteSku/" + skuId, null, function (res) {
+                layer.msg(res.msg, {time: 500}, function () {
+                    window.location.reload();
+                });
+            });
+        });
+    }
+
+    function reductionSku(skuId) {
+        var layer = layui.layer;
+        layer.confirm('确定要还原么?', {icon: 3, title: '提示'}, function (index) {
+            CoreUtil.sendDelete("/goods/reductionSku/" + skuId, null, function (res) {
+                layer.msg(res.msg, {time: 500}, function () {
+                    window.location.reload();
+                });
+            });
+        });
+    }
+
+    function absolutelyDeleteSku(skuId) {
+        var layer = layui.layer;
+        layer.confirm('删除后将无法还原, 确定要彻底删除么?', {icon: 3, title: '提示'}, function (index) {
+            CoreUtil.sendDelete("/goods/absolutelyDeleteSku/" + skuId, null, function (res) {
+                layer.msg(res.msg, {time: 500}, function () {
+                    window.location.reload();
+                });
+            });
+        });
+    }
+</script>

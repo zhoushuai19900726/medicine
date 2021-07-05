@@ -21,5 +21,11 @@ public interface ShopSkuService extends IService<ShopSkuEntity> {
     ShopSkuEntity getShopSpuEntityById(String id);
 
     Integer updateShopSpuEntityById(ShopSkuEntity shopSkuEntity);
+
+    Integer reductionSku(String id);
+
+    Integer absolutelyDeleteSku(String id);
+
+    Integer updateShopSpuEntityStatusById(ShopSkuEntity shopSkuEntity);
 }
 

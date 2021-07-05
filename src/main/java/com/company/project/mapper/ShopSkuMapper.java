@@ -34,4 +34,13 @@ public interface ShopSkuMapper extends BaseMapper<ShopSkuEntity> {
 
     @Update("UPDATE shop_sku SET price = #{price}, num = #{num}, alert_num = #{alertNum}, image = #{image} WHERE id = #{id}")
     Integer updateShopSpuEntityById(ShopSkuEntity shopSkuEntity);
+
+    @Update("UPDATE shop_sku SET status = #{status} WHERE id = #{id}")
+    Integer updateShopSpuEntityStatusById(ShopSkuEntity shopSkuEntity);
+
+    @Update("UPDATE shop_sku SET deleted = 0 WHERE id = #{id}")
+    Integer reductionSku(@Param("id") String id);
+
+    @Delete("DELETE FROM shop_sku WHERE id = #{id}")
+    Integer absolutelyDeleteSku(@Param("id") String id);
 }

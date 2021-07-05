@@ -42,6 +42,12 @@ public class ShopSpuController extends BaseController {
     private ShopSkuService shopSkuService;
 
     @Resource
+    private ShopSpecService shopSpecService;
+
+    @Resource
+    private ShopParaService shopParaService;
+
+    @Resource
     private ShopSpuOperationRecordService shopSpuOperationRecordService;
 
     @ApiOperation(value = "跳转到列表页面")
@@ -87,6 +93,17 @@ public class ShopSpuController extends BaseController {
         return "goods/stockControl";
     }
 
+    @ApiOperation(value = "跳转进入商品规格管理页面")
+    @GetMapping("/index/shopSpu/specControl/{id}")
+    public String specControl(@PathVariable("id") String id, Model model) {
+        ShopSpuEntity shopSpuEntity = shopSpuService.getShopSpuEntityById(id);
+        model.addAttribute("shopSpuEntity", shopSpuEntity);
+        model.addAttribute("shopSkuEntityList", shopSkuService.listByCondition(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, id).orderByAsc(ShopSkuEntity::getId)));
+        model.addAttribute("shopSpecEntityList", shopSpecService.list(Wrappers.<ShopSpecEntity>lambdaQuery().eq(ShopSpecEntity::getTemplateId, shopSpuEntity.getTemplateId()).orderByAsc(ShopSpecEntity::getSeq)));
+        model.addAttribute("shopParaEntityList", shopParaService.list(Wrappers.<ShopParaEntity>lambdaQuery().eq(ShopParaEntity::getTemplateId, shopSpuEntity.getTemplateId()).orderByAsc(ShopParaEntity::getSeq)));
+        return "goods/specControl";
+    }
+
     @ApiOperation(value = "跳转进入审核页面")
     @GetMapping("/index/shopSpu/auditList")
     public String auditList() {
@@ -108,13 +125,40 @@ public class ShopSpuController extends BaseController {
         return shopSpuService.saveShopSpuEntity(shopSpu);
     }
 
-    @ApiOperation(value = "逻辑删除")
+    @ApiOperation(value = "逻辑删除SPU")
     @DeleteMapping("goods/delete")
     @RequiresPermissions("goods:delete")
     @LogAnnotation(title = "商品SPU", action = "逻辑删除")
     @ResponseBody
     public DataResult delete(@RequestBody @ApiParam(value = "id集合") List<String> ids) {
         return shopSpuService.removeShopSpuEntityByIds(ids);
+    }
+
+    @ApiOperation(value = "逻辑删除SKU")
+    @DeleteMapping("goods/deleteSku/{id}")
+    @RequiresPermissions("goods:delete")
+    @LogAnnotation(title = "商品SKU", action = "逻辑删除")
+    @ResponseBody
+    public DataResult deleteSku(@PathVariable("id") String id) {
+        return DataResult.success(shopSkuService.removeById(id));
+    }
+
+    @ApiOperation(value = "物理删除SKU")
+    @DeleteMapping("goods/absolutelyDeleteSku/{id}")
+    @RequiresPermissions("goods:delete")
+    @LogAnnotation(title = "商品SKU", action = "逻辑删除")
+    @ResponseBody
+    public DataResult absolutelyDeleteSku(@PathVariable("id") String id) {
+        return DataResult.success(shopSkuService.absolutelyDeleteSku(id));
+    }
+
+    @ApiOperation(value = "还原SKU")
+    @DeleteMapping("goods/reductionSku/{id}")
+    @RequiresPermissions("goods:delete")
+    @LogAnnotation(title = "商品SKU", action = "还原")
+    @ResponseBody
+    public DataResult reductionSku(@PathVariable("id") String id) {
+        return DataResult.success(shopSkuService.reductionSku(id));
     }
 
     @ApiOperation(value = "物理删除")
@@ -142,6 +186,15 @@ public class ShopSpuController extends BaseController {
     @ResponseBody
     public DataResult updateSku(@RequestBody ShopSkuEntity shopSkuEntity) {
         return DataResult.success(shopSkuService.updateShopSpuEntityById(shopSkuEntity));
+    }
+
+    @ApiOperation(value = "更新SKU状态")
+    @PutMapping("goods/updateSkuStatus")
+    @RequiresPermissions("goods:update")
+    @LogAnnotation(title = "商品SKU", action = "更新")
+    @ResponseBody
+    public DataResult updateSkuStatus(@RequestBody ShopSkuEntity shopSkuEntity) {
+        return DataResult.success(shopSkuService.updateShopSpuEntityStatusById(shopSkuEntity));
     }
 
     @ApiOperation(value = "根据唯一索引查询")
