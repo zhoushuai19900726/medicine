@@ -111,9 +111,9 @@
         <br/>
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="transferOrCopy" shiro:hasPermission="goods:add"><i class="layui-icon">&#xe9aa;</i>转移复制</a>
         {{# if(d.isMarketable == 2){ }}
-        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="goods:update"><i class="layui-icon">&#x1007;</i>取消停售</a>
+        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="cancelHaltSales" shiro:hasPermission="goods:update"><i class="layui-icon">&#x1007;</i>取消停售</a>
         {{# }else { }}
-        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="del" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe672;</i>商品停售</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="haltSales" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe672;</i>商品停售</a>
         {{# } }}
         <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="goods:delete"><i class="layui-icon">&#xe640;</i>删除商品</a>
     </script>
@@ -404,14 +404,20 @@
                     break;
                 case 'recommend':
                     // 设为推荐
-                    CoreUtil.sendPut("/goods/update", {id: data.id, isRecommend: '1'}, function (res) {
-                        tableIns1.reload();
+                    layer.confirm('确定要设为推荐么?', {icon: 3, title: '提示'}, function (index) {
+                        CoreUtil.sendPut("/goods/update", {id: data.id, isRecommend: '1'}, function (res) {
+                            layer.close(index);
+                            tableIns1.reload();
+                        });
                     });
                     break;
                 case 'cancelRecommend':
                     // 取消推荐
-                    CoreUtil.sendPut("/goods/update", {id: data.id, isRecommend: '0'}, function (res) {
-                        tableIns1.reload();
+                    layer.confirm('确定要取消推荐么?', {icon: 3, title: '提示'}, function (index) {
+                        CoreUtil.sendPut("/goods/update", {id: data.id, isRecommend: '0'}, function (res) {
+                            layer.close(index);
+                            tableIns1.reload();
+                        });
                     });
                     break;
                 case 'transferOrCopy':
@@ -448,8 +454,8 @@
                                 // 执行操作
                                 CoreUtil.sendPut(url, shopSpuEntity, function (res) {
                                     layer.msg(res.msg, {time: 500}, function () {
-                                        tableIns1.reload();
                                         layer.close(index);
+                                        tableIns1.reload();
                                     });
                                 });
                             } else {
@@ -483,6 +489,29 @@
                     // TODO 编辑商品
 
 
+                    break;
+                case 'haltSales':
+                    // 商品停售
+                    layer.prompt({
+                        formType: 2,
+                        value: data.haltSalesReason,
+                        title: '请输入停售原因',
+                        area: ['800px', '350px']
+                    }, function(value, index, elem){
+                        CoreUtil.sendPut("/goods/update", {id: data.id, isMarketable: '2', haltSalesReason: value}, function (res) {
+                            layer.close(index);
+                            tableIns1.reload();
+                        });
+                    });
+                    break;
+                case 'cancelHaltSales':
+                    // 取消商品停售
+                    layer.confirm('确定要取消商品停售么?', {icon: 3, title: '提示'}, function (index) {
+                        CoreUtil.sendPut("/goods/update", {id: data.id, isMarketable: '1'}, function (res) {
+                            layer.close(index);
+                            tableIns1.reload();
+                        });
+                    });
                     break;
                 case 'operationRecord':
                     // 操作记录

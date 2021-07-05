@@ -186,7 +186,7 @@ public class ShopSpuEntity extends BaseEntity implements Serializable {
     private Integer commentNum;
 
     /**
-     * 是否上架,0已下架，1已上架
+     * 是否上架,0已下架，1已上架 2停售
      */
     @TableField("is_marketable")
     private String isMarketable;
@@ -212,6 +212,19 @@ public class ShopSpuEntity extends BaseEntity implements Serializable {
     private String status;
     @TableField(exist = false)
     private String statusListStr = DelimiterConstants.EMPTY_STR;
+
+
+    /**
+     * 停售原因
+     */
+    @TableField("halt_sales_reason")
+    private String haltSalesReason;
+
+    /**
+     * 审核拒绝原因
+     */
+    @TableField("audit_rejection_reason")
+    private String auditRejectionReason;
 
     /**
      *
