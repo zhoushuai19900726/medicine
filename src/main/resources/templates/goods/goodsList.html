@@ -142,7 +142,7 @@
     <script type="text/html" id="stockTpl">
         <div style="width: 100%;" class="layui-badge-rim">{{ d.saleNum }}</div>
         <br/>
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>查看库存</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="stock" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>库存管理</a>
     </script>
     <script type="text/html" id="saleTpl">
         <div style="width: 100%;" class="layui-badge-rim">{{ d.saleNum }}</div>
@@ -156,7 +156,7 @@
     </script>
     <script type="text/html" id="isMarketableTpl">
         {{# if(d.isMarketable == 2){ }}
-        <div style="width: 100%;" class="layui-badge layui-bg-red">停售中...</div>
+        <div style="width: 100%; cursor: pointer;" class="layui-badge layui-bg-red" onmouseenter="showHaltSalesReason('{{d.haltSalesReason}}', this)"><i class="layui-icon">&#xe6b2;</i> 停售中...</div>
         {{# }else { }}
         <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="上架|下架 " lay-filter="upperAndLowerSwitch" {{d.isMarketable== 1 ? 'checked' : ''}}/>
         {{# } }}
@@ -513,6 +513,25 @@
                         });
                     });
                     break;
+                case 'stock':
+                    // TODO 库存管理
+                    layer.open({
+                        type: 2,
+                        title: '<i class="layui-icon">&#xe62a;</i> 库存管理',
+                        id: 'operationRecord',
+                        scrollbar: false,
+                        offset: 'r',
+                        anim: 5,
+                        maxmin: true,
+                        area: ['1000px', '100%'],//宽高不影响最大化
+                        content: "../../index/shopSpu/operationRecord/" + data.id,//地址
+                        zIndex: layer.zIndex,
+                        success: function (layero, index) {
+                            // 置顶当前窗口
+                            layer.setTop(layero);
+                        }
+                    });
+                    break;
                 case 'operationRecord':
                     // 操作记录
                     layer.open({
@@ -604,4 +623,9 @@
             return false;
         });
     });
+
+    function showHaltSalesReason(haltSalesReason, ele) {
+        var layer = layui.layer;
+        layer.tips(haltSalesReason, ele);
+    }
 </script>
