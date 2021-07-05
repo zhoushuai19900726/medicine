@@ -311,7 +311,7 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
                     // 复制SPU
                     ShopSpuEntity copyShopSpuEntity = new ShopSpuEntity();
                     BeanUtils.copyProperties(shopSpuEntity, copyShopSpuEntity);
-                    copyShopSpuEntity.setId(CommonUtils.generateUUID());
+                    copyShopSpuEntity.setId(CommonUtils.generateUUID());// 为了区分开数据，暂不使用 SnowflakeIdWorker idWorker = new SnowflakeIdWorker(0, 0);
                     copyShopSpuEntity.setSn(CommonUtils.generateShortUUID());
                     copyShopSpuEntity.setStatus(GoodsExamineStatusEnum.TO_BE_REVIEWED.getType());
                     copyShopSpuEntity.setCategory3Id(category3Id);
