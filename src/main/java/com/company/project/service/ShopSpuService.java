@@ -37,5 +37,7 @@ public interface ShopSpuService extends IService<ShopSpuEntity> {
     String getUniqueSnBySeller(String sellerId);
 
     ShopSpuEntity copyGoods(ShopSpuEntity shopSpu);
+
+    ShopSpuEntity tansferGoods(ShopSpuEntity shopSpu);
 }
 

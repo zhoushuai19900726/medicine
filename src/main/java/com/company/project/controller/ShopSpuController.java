@@ -194,6 +194,15 @@ public class ShopSpuController extends BaseController {
         return DataResult.success(shopSpuService.copyGoods(shopSpu));
     }
 
+    @ApiOperation(value = "转移")
+    @PutMapping("goods/tansferGoods")
+    @RequiresPermissions("goods:add")
+    @LogAnnotation(title = "商品SPU", action = "转移")
+    @ResponseBody
+    public DataResult tansferGoods(@RequestBody ShopSpuEntity shopSpu) {
+        return DataResult.success(shopSpuService.tansferGoods(shopSpu));
+    }
+
 
 }
 

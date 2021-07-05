@@ -14,6 +14,8 @@ public class OperationConstant {
     public static final String DELETE = "删除";
     public static final String UPDATE = "更新";
     public static final String REDUCTION = "还原";
+    public static final String COPY = "复制";
+    public static final String TRANSFER = "转移";
 
 
 }

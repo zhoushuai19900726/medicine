@@ -428,27 +428,30 @@
                         , yes: function (index, layero) {
                             // 获取三级分类目标值
                             var categoryId3ListList = xmSelect.get('#toCategory3IdListStr', true).getValue().filter(ele => ele.level == 3).map(item => item.id);
-                            if(categoryId3ListList.length > 0){
+                            if (categoryId3ListList.length > 0) {
                                 var operationType = $("input[type='radio'][name='operationType']:checked").val();
                                 var shopSpuEntity = {};
                                 shopSpuEntity.id = data.id;
+                                var url;
                                 switch (parseInt(operationType)) {
                                     case 1:
                                         // 转移商品
                                         shopSpuEntity.transferToCategory3Id = categoryId3ListList[0];
-
+                                        url = "/goods/tansferGoods";
                                         break;
                                     case 2:
                                         // 复制商品
                                         shopSpuEntity.copyToCategory3IdList = categoryId3ListList;
-                                        CoreUtil.sendPut("/goods/copyGoods", shopSpuEntity, function (res) {
-                                            layer.msg(res.msg, {time: 500}, function () {
-                                                tableIns1.reload();
-                                                layer.close(index);
-                                            });
-                                        });
+                                        url = "/goods/copyGoods";
                                         break;
                                 }
+                                // 执行操作
+                                CoreUtil.sendPut(url, shopSpuEntity, function (res) {
+                                    layer.msg(res.msg, {time: 500}, function () {
+                                        tableIns1.reload();
+                                        layer.close(index);
+                                    });
+                                });
                             } else {
                                 layer.msg("请选择三级目标分类", {icon: 5});
                             }
@@ -475,8 +478,6 @@
                             });
                         }
                     });
-
-
                     break;
                 case 'edit':
                     // TODO 编辑商品
