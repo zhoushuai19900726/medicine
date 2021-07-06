@@ -2,309 +2,317 @@
 <html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
       xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-  <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
-  <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
-  <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
-  <style>
-    .tableInput {
-      width: 150px;
-      margin-left: -15px;
-      margin-top: -5px;
-    }
-    .tableInput2 {
-      width: 200px;
-      margin-left: -15px;
-      margin-top: -5px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <style>
+        .tableInput {
+            width: 150px;
+            margin-left: -15px;
+            margin-top: -5px;
+        }
+
+        .tableInput2 {
+            width: 200px;
+            margin-left: -15px;
+            margin-top: -5px;
+        }
+    </style>
 </head>
 <body>
 <div class="layuimini-container">
-  <div class="layuimini-main" shiro:hasPermission="goods:add">
+    <div class="layuimini-main" shiro:hasPermission="goods:add">
 
-    <div class="layui-carousel" id="stepForm" lay-filter="stepForm" style="margin: 0 auto;">
-      <div carousel-item>
-        <div>
-          <form class="layui-form" style="margin: 0 auto;">
-            <blockquote class="layui-elem-quote">
-              <i class="layui-icon">&#xe653;</i> 选择商品分类
-              <span class="layui-breadcrumb" lay-separator="<i class='layui-icon'>&#xe602;</i>" style="float: right;">
+        <div class="layui-carousel" id="stepForm" lay-filter="stepForm" style="margin: 0 auto;">
+            <div carousel-item>
+                <div>
+                    <form class="layui-form" style="margin: 0 auto;">
+                        <blockquote class="layui-elem-quote">
+                            <i class="layui-icon">&#xe653;</i> 选择商品分类
+                            <span class="layui-breadcrumb" lay-separator="<i class='layui-icon'>&#xe602;</i>" style="float: right;">
                                 <a href="javascript:;" name="a_category1"></a>
                                 <a href="javascript:;" name="a_category2"></a>
                                 <a href="javascript:;" name="a_category3"></a>
                             </span>
-            </blockquote>
-            <blockquote class="layui-elem-quote layui-quote-nm">
-              <div class="layui-row">
-                <div class="layui-col-md4">
-                  <div class="layui-card">
-                    <div class="layui-card-header">
-                      <blockquote class="layui-elem-quote layui-quote-nm"><i class="layui-icon">&#xe62a;</i> 一级商品分类</blockquote>
-                    </div>
-                    <div class="layui-card-body">
-                      <table class="layui-table" id="showTable1" lay-filter="showTable1"></table>
-                    </div>
-                  </div>
+                        </blockquote>
+                        <blockquote class="layui-elem-quote layui-quote-nm">
+                            <div class="layui-row">
+                                <div class="layui-col-md4">
+                                    <div class="layui-card">
+                                        <div class="layui-card-header">
+                                            <blockquote class="layui-elem-quote layui-quote-nm"><i class="layui-icon">&#xe62a;</i> 一级商品分类</blockquote>
+                                        </div>
+                                        <div class="layui-card-body">
+                                            <table class="layui-table" id="showTable1" lay-filter="showTable1"></table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md4">
+                                    <div class="layui-card">
+                                        <div class="layui-card-header">
+                                            <blockquote class="layui-elem-quote layui-quote-nm"><i class="layui-icon">&#xe62a;</i> 二级商品分类</blockquote>
+                                        </div>
+                                        <div class="layui-card-body">
+                                            <table class="layui-table" id="showTable2" lay-filter="showTable2"></table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-col-md4">
+                                    <div class="layui-card">
+                                        <div class="layui-card-header">
+                                            <blockquote class="layui-elem-quote layui-quote-nm"><i class="layui-icon">&#xe62a;</i> 三级商品分类</blockquote>
+                                        </div>
+                                        <div class="layui-card-body">
+                                            <table class="layui-table" id="showTable3" lay-filter="showTable3"></table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </blockquote>
+                        <div class="layui-form-item">
+                            <button type="button" class="layui-btn layui-btn-primary layui-border-black back" style="float: left;"><i class="fa fa-reply"></i> 返回商品列表</button>
+                            <button class="layui-btn layui-btn-primary layui-border-blue" lay-submit lay-filter="formStep" style="float: right;">下一步, 填写商品信息 <i class="fa fa-share"></i></button>
+                        </div>
+                    </form>
                 </div>
-                <div class="layui-col-md4">
-                  <div class="layui-card">
-                    <div class="layui-card-header">
-                      <blockquote class="layui-elem-quote layui-quote-nm"><i class="layui-icon">&#xe62a;</i> 二级商品分类</blockquote>
-                    </div>
-                    <div class="layui-card-body">
-                      <table class="layui-table" id="showTable2" lay-filter="showTable2"></table>
-                    </div>
-                  </div>
+                <div>
+                    <form class="layui-form" style="margin: 0 auto;" lay-filter="shopSpuEntity">
+                        <input type="hidden" name="id" th:value="${shopSpuEntity.id}"/>
+                        <input type="hidden" name="category1Id" th:value="${shopSpuEntity.category1Id}"/>
+                        <input type="hidden" name="category2Id" th:value="${shopSpuEntity.category2Id}"/>
+                        <input type="hidden" name="category3Id" th:value="${shopSpuEntity.category3Id}"/>
+                        <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 商品基本信息</blockquote>
+                        <blockquote class="layui-elem-quote layui-quote-nm">
+                            <div class="layui-form-item">
+                                <table class="layui-table" lay-size="sm">
+                                    <colgroup>
+                                        <col width="100">
+                                        <col width="500">
+                                        <col width="100">
+                                        <col width="500">
+                                    </colgroup>
+                                    <tbody>
+                                    <tr>
+                                        <td class="required">商品分类</td>
+                                        <td colspan="3">
+                                            <div class="layui-breadcrumb" lay-separator="<i class='layui-icon'>&#xe602;</i>" style="padding-top: 8px; float: left;">
+                                                <a href="javascript:;" name="a_category1"></a>
+                                                <a href="javascript:;" name="a_category2"></a>
+                                                <a href="javascript:;" name="a_category3"></a>
+                                            </div>
+                                            <div style="padding-left: 20px; padding-top: 10px; float: left; cursor: pointer;">
+                                                <i class="fa fa-edit" style="font-size: 14px; color: #1E9FFF;" id="editCategory">编辑</i>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="required">商品名称</td>
+                                        <td colspan="3"><input type="text" name="name" lay-verify="required" autocomplete="off" placeholder="请输入商品名称" class="layui-input"
+                                                               th:value="${shopSpuEntity.name}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="required">商品标题</td>
+                                        <td colspan="3"><input type="text" name="caption" lay-verify="required" autocomplete="off" placeholder="请输入商品标题" class="layui-input"
+                                                               th:value="${shopSpuEntity.caption}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="required">运营商家</td>
+                                        <td>
+                                            <select name="sellerId" lay-filter="sellerId" lay-search lay-verify="required" th:with="sellerList=${@sellerService.list()}">
+                                                <option value="">请选择运营商家</option>
+                                                <option th:each="seller : ${sellerList}" th:text="${seller.sellerName}" th:value="${seller.id}"
+                                                        th:selected="${shopSpuEntity.sellerId == seller.id}"></option>
+                                            </select>
+                                        </td>
+                                        <td class="required">商品品牌</td>
+                                        <td>
+                                            <select name="brandId" lay-search lay-verify="required" th:with="brandList=${@shopBrandService.list()}">
+                                                <option value="">请选择商品品牌</option>
+                                                <option th:each="brand : ${brandList}" th:text="${brand.name}" th:value="${brand.id}" th:selected="${shopSpuEntity.brandId == brand.id}"></option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="required">商品状态</td>
+                                        <td>
+                                            <select name="isMarketable" lay-search lay-verify="required" th:with="dataResult=${@commonController.findAllGoodsStatus()}">
+                                                <option th:each="map : ${dataResult.getData()}" th:text="${map.get('name')}" th:value="${map.get('id')}"
+                                                        th:selected="${shopSpuEntity.isMarketable == map.get('id')}"></option>
+                                            </select>
+                                        </td>
+                                        <td>运费模板</td>
+                                        <td>
+                                            <select name="freightId" lay-search>
+                                                <option value="">请选择运费模板</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>商品介绍</td>
+                                        <td colspan="3">
+                                            <textarea name="introduction" placeholder="请输入商品介绍" class="layui-textarea"></textarea>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </blockquote>
+                        <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 商品售后服务</blockquote>
+                        <blockquote class="layui-elem-quote layui-quote-nm">
+                            <table class="layui-table" lay-size="sm">
+                                <colgroup>
+                                    <col width="100">
+                                    <col width="1100">
+                                </colgroup>
+                                <tbody>
+                                <tr>
+                                    <td class="required">商品货号</td>
+                                    <td>
+                                        <input type="text" name="sn" lay-verify="required|SPU_SN" autocomplete="off" placeholder="请输入商品货号" class="layui-input" th:value="${shopSpuEntity.sn}"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>服务保证</td>
+                                    <td>
+                                        <div th:with="dataResult=${@commonController.findAllServiceGuarantee()}">
+                                            <input type="checkbox" name="serviceGuarantee" th:each="map : ${dataResult.getData()}" th:title="${map.get('name')}"/>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </blockquote>
+                        <div class="layui-form-item">
+                            <button type="button" class="layui-btn layui-btn-primary layui-border-black back" style="float: left;"><i class="fa fa-reply"></i> 返回商品列表</button>
+                            <button class="layui-btn layui-btn-primary layui-border-blue" lay-submit lay-filter="formStep2" style="float: right;">下一步, 填写商品属性 <i class="fa fa-share"></i></button>
+                        </div>
+                    </form>
                 </div>
-                <div class="layui-col-md4">
-                  <div class="layui-card">
-                    <div class="layui-card-header">
-                      <blockquote class="layui-elem-quote layui-quote-nm"><i class="layui-icon">&#xe62a;</i> 三级商品分类</blockquote>
-                    </div>
-                    <div class="layui-card-body">
-                      <table class="layui-table" id="showTable3" lay-filter="showTable3"></table>
-                    </div>
-                  </div>
+                <div>
+                    <form class="layui-form" style="margin: 0 auto;">
+                        <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 商品属性</blockquote>
+                        <blockquote class="layui-elem-quote layui-quote-nm">
+                            <table class="layui-table" lay-size="sm">
+                                <colgroup>
+                                    <col width="100">
+                                    <col width="600">
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>规格参数组</th>
+                                    <th>
+                                        <span class="layui-badge layui-bg-green" id="templateName"></span>
+                                        <input id="templateId" hidden/>
+                                    </th>
+                                </tr>
+                                </thead>
+                                </tbody>
+                            </table>
+                            <fieldset class="table-search-fieldset" style="padding: 0 10px 5px 10px;">
+                                <legend><i class="fa fa-cogs" style="color: red;"><b> 商品规格</b></i></legend>
+                                <div class="layui-field-box">
+                                    <table class="layui-table" lay-filter="specTable" id="specTable" style="margin-top: -10px;"></table>
+                                </div>
+                                <div class="layui-field-box">
+                                    <table class="layui-table" lay-filter="deploySpecTable" id="deploySpecTable" style="margin-top: -10px;"></table>
+                                </div>
+                            </fieldset>
+                        </blockquote>
+                        <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 商品参数</blockquote>
+                        <blockquote class="layui-elem-quote layui-quote-nm">
+                            <fieldset class="table-search-fieldset" style="padding: 0 10px 5px 10px;">
+                                <legend><i class="fa fa-cogs" style="color: red;"><b> 商品参数</b></i></legend>
+                                <div class="layui-field-box">
+                                    <table class="layui-table" lay-filter="paraTable" id="paraTable" style="margin-top: -10px;"></table>
+                                </div>
+                            </fieldset>
+                        </blockquote>
+                        <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 商品相册</blockquote>
+                        <blockquote class="layui-elem-quote layui-quote-nm">
+                            <div class="layui-form-item">
+                                <div class="layui-inline" th:each="index:${#numbers.sequence(1, 5)}">
+                                    <div class="layui-card">
+                                        <div class="layui-card-header" style="text-align: center;">
+                                            <div class="layui-btn-group">
+                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" th:id="'uploadPictures' + ${index}">
+                                                    <i class="layui-icon">&#xe67c;</i> 上传
+                                                </button>
+                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="chooseAlbumGallery(this, 1)">
+                                                    <i class="layui-icon">&#xe64a;</i> 图库
+                                                </button>
+                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" th:onclick="'deletePicture(this, ' + ${index} + ')'">
+                                                    <i class="layui-icon">&#xe640;</i> 删除
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="layui-card-body" style="text-align: center;">
+                                            <input name="images" hidden/>
+                                            <img th:if="${1 == index}" th:src="@{/images/uploadfile.png}" style="height: 200px; width: 200px;"/>
+                                            <img th:if="${1 != index}" th:src="@{/images/uploadfile.jpeg}" style="height: 200px; width: 200px;"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </blockquote>
+                        <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 详情描述</blockquote>
+                        <blockquote class="layui-elem-quote layui-quote-nm">
+                            <a class="layui-btn layui-btn-primary layui-border-green layui-btn-xs" onclick="chooseAlbumGallery(this, 2)"><i class="fa fa-image"> 从图库选择</i></a>
+                            <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs"><i class="fa fa-question-circle"> 移动端上传说明</i></a>
+                            <div class="layui-tab layui-tab-card">
+                                <ul class="layui-tab-title">
+                                    <li class="layui-this">移动端详情</li>
+                                    <li>电脑端详情</li>
+                                </ul>
+                                <div class="layui-tab-content">
+                                    <div class="layui-tab-item layui-show">
+                                        <textarea id="mobileEditor" style="display: none;">移动端详情</textarea>
+                                    </div>
+                                    <div class="layui-tab-item">
+                                        <textarea id="pcEditor" style="display: none;">电脑端详情</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </blockquote>
+                        <div class="layui-form-item">
+                            <button type="button" class="layui-btn layui-btn-primary layui-border-black pre" style="float: left;"><i class="fa fa-reply"></i> 上一步, 填写商品信息</button>
+                            <button class="layui-btn layui-btn-primary layui-border-blue" lay-submit lay-filter="submitExamine" style="float: right;"><i class="fa fa-send"></i> 提交审核</button>
+                        </div>
+                    </form>
                 </div>
-              </div>
-            </blockquote>
-            <div class="layui-form-item">
-              <button type="button" class="layui-btn layui-btn-primary layui-border-black back" style="float: left;"><i class="fa fa-reply"></i> 返回商品列表</button>
-              <button class="layui-btn layui-btn-primary layui-border-blue" lay-submit lay-filter="formStep" style="float: right;">下一步, 填写商品信息 <i class="fa fa-share"></i></button>
             </div>
-          </form>
         </div>
-        <div>
-          <form class="layui-form" style="margin: 0 auto;" lay-filter="shopSpuEntity">
-            <input type="hidden" name="id" th:value="${shopSpuEntity.id}"/>
-            <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 商品基本信息</blockquote>
-            <blockquote class="layui-elem-quote layui-quote-nm">
-              <div class="layui-form-item">
-                <table class="layui-table" lay-size="sm">
-                  <colgroup>
-                    <col width="100">
-                    <col width="500">
-                    <col width="100">
-                    <col width="500">
-                  </colgroup>
-                  <tbody>
-                  <tr>
-                    <td class="required">商品分类</td>
-                    <td colspan="3">
-                      <div class="layui-breadcrumb" lay-separator="<i class='layui-icon'>&#xe602;</i>" style="padding-top: 8px; float: left;">
-                        <a href="javascript:;" name="a_category1"></a>
-                        <a href="javascript:;" name="a_category2"></a>
-                        <a href="javascript:;" name="a_category3"></a>
-                      </div>
-                      <div style="padding-left: 20px; padding-top: 10px; float: left; cursor: pointer;">
-                        <i class="fa fa-edit" style="font-size: 14px; color: #1E9FFF;" id="editCategory">编辑</i>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="required">商品名称</td>
-                    <td colspan="3"><input type="text" name="name" lay-verify="required" autocomplete="off" placeholder="请输入商品名称" class="layui-input" th:value="${shopSpuEntity.name}"/></td>
-                  </tr>
-                  <tr>
-                    <td class="required">商品标题</td>
-                    <td colspan="3"><input type="text" name="caption" lay-verify="required" autocomplete="off" placeholder="请输入商品标题" class="layui-input" th:value="${shopSpuEntity.caption}"/></td>
-                  </tr>
-                  <tr>
-                    <td class="required">运营商家</td>
-                    <td>
-                      <select name="sellerId" lay-filter="sellerId" lay-search lay-verify="required" th:with="sellerList=${@sellerService.list()}">
-                        <option value="">请选择运营商家</option>
-                        <option th:each="seller : ${sellerList}" th:text="${seller.sellerName}" th:value="${seller.id}" th:selected="${shopSpuEntity.sellerId == seller.id}"></option>
-                      </select>
-                    </td>
-                    <td class="required">商品品牌</td>
-                    <td>
-                      <select name="brandId" lay-search lay-verify="required" th:with="brandList=${@shopBrandService.list()}">
-                        <option value="">请选择商品品牌</option>
-                        <option th:each="brand : ${brandList}" th:text="${brand.name}" th:value="${brand.id}" th:selected="${shopSpuEntity.brandId == brand.id}"></option>
-                      </select>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="required">商品状态</td>
-                    <td>
-                      <select name="isMarketable" lay-search lay-verify="required" th:with="dataResult=${@commonController.findAllGoodsStatus()}">
-                        <option th:each="map : ${dataResult.getData()}" th:text="${map.get('name')}" th:value="${map.get('id')}" th:selected="${shopSpuEntity.isMarketable == map.get('id')}"></option>
-                      </select>
-                    </td>
-                    <td>运费模板</td>
-                    <td>
-                      <select name="freightId" lay-search>
-                        <option value="">请选择运费模板</option>
-                      </select>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>商品介绍</td>
-                    <td colspan="3">
-                      <textarea name="introduction" placeholder="请输入商品介绍" class="layui-textarea"></textarea>
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
-            </blockquote>
-            <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 商品售后服务</blockquote>
-            <blockquote class="layui-elem-quote layui-quote-nm">
-              <table class="layui-table" lay-size="sm">
-                <colgroup>
-                  <col width="100">
-                  <col width="1100">
-                </colgroup>
-                <tbody>
-                <tr>
-                  <td class="required">商品货号</td>
-                  <td>
-                    <input type="text" name="sn" lay-verify="required|SPU_SN" autocomplete="off" placeholder="请输入商品货号" class="layui-input" th:value="${shopSpuEntity.sn}"/>
-                  </td>
-                </tr>
-                <tr>
-                  <td>服务保证</td>
-                  <td>
-                    <div th:with="dataResult=${@commonController.findAllServiceGuarantee()}">
-                      <input type="checkbox" name="serviceGuarantee" th:each="map : ${dataResult.getData()}" th:title="${map.get('name')}"/>
-                    </div>
-                  </td>
-                </tr>
-                </tbody>
-              </table>
-            </blockquote>
-            <div class="layui-form-item">
-              <button type="button" class="layui-btn layui-btn-primary layui-border-black back" style="float: left;"><i class="fa fa-reply"></i> 返回商品列表</button>
-              <button class="layui-btn layui-btn-primary layui-border-blue" lay-submit lay-filter="formStep2" style="float: right;">下一步, 填写商品属性 <i class="fa fa-share"></i></button>
-            </div>
-          </form>
-        </div>
-        <div>
-          <form class="layui-form" style="margin: 0 auto;">
-            <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 商品属性</blockquote>
-            <blockquote class="layui-elem-quote layui-quote-nm">
-              <table class="layui-table" lay-size="sm">
-                <colgroup>
-                  <col width="100">
-                  <col width="600">
-                </colgroup>
-                <thead>
-                <tr>
-                  <th>规格参数组</th>
-                  <th>
-                    <span class="layui-badge layui-bg-green" id="templateName"></span>
-                    <input id="templateId" hidden/>
-                  </th>
-                </tr>
-                </thead>
-                </tbody>
-              </table>
-              <fieldset class="table-search-fieldset" style="padding: 0 10px 5px 10px;">
-                <legend><i class="fa fa-cogs" style="color: red;"><b> 商品规格</b></i></legend>
-                <div class="layui-field-box">
-                  <table class="layui-table" lay-filter="specTable" id="specTable" style="margin-top: -10px;"></table>
-                </div>
-                <div class="layui-field-box">
-                  <table class="layui-table" lay-filter="deploySpecTable" id="deploySpecTable" style="margin-top: -10px;"></table>
-                </div>
-              </fieldset>
-            </blockquote>
-            <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 商品参数</blockquote>
-            <blockquote class="layui-elem-quote layui-quote-nm">
-              <fieldset class="table-search-fieldset" style="padding: 0 10px 5px 10px;">
-                <legend><i class="fa fa-cogs" style="color: red;"><b> 商品参数</b></i></legend>
-                <div class="layui-field-box">
-                  <table class="layui-table" lay-filter="paraTable" id="paraTable" style="margin-top: -10px;"></table>
-                </div>
-              </fieldset>
-            </blockquote>
-            <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 商品相册</blockquote>
-            <blockquote class="layui-elem-quote layui-quote-nm">
-              <div class="layui-form-item">
-                <div class="layui-inline" th:each="index:${#numbers.sequence(1, 5)}">
-                  <div class="layui-card">
-                    <div class="layui-card-header" style="text-align: center;">
-                      <div class="layui-btn-group">
-                        <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" th:id="'uploadPictures' + ${index}">
-                          <i class="layui-icon">&#xe67c;</i> 上传
-                        </button>
-                        <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="chooseAlbumGallery(this, 1)">
-                          <i class="layui-icon">&#xe64a;</i> 图库
-                        </button>
-                        <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" th:onclick="'deletePicture(this, ' + ${index} + ')'">
-                          <i class="layui-icon">&#xe640;</i> 删除
-                        </button>
-                      </div>
-                    </div>
-                    <div class="layui-card-body" style="text-align: center;">
-                      <input name="images" hidden/>
-                      <img th:if="${1 == index}" th:src="@{/images/uploadfile.png}" style="height: 200px; width: 200px;"/>
-                      <img th:if="${1 != index}" th:src="@{/images/uploadfile.jpeg}" style="height: 200px; width: 200px;"/>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </blockquote>
-            <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 详情描述</blockquote>
-            <blockquote class="layui-elem-quote layui-quote-nm">
-              <a class="layui-btn layui-btn-primary layui-border-green layui-btn-xs" onclick="chooseAlbumGallery(this, 2)"><i class="fa fa-image"> 从图库选择</i></a>
-              <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs"><i class="fa fa-question-circle"> 移动端上传说明</i></a>
-              <div class="layui-tab layui-tab-card">
-                <ul class="layui-tab-title">
-                  <li class="layui-this">移动端详情</li>
-                  <li>电脑端详情</li>
-                </ul>
-                <div class="layui-tab-content">
-                  <div class="layui-tab-item layui-show">
-                    <textarea id="mobileEditor" style="display: none;">移动端详情</textarea>
-                  </div>
-                  <div class="layui-tab-item">
-                    <textarea id="pcEditor" style="display: none;">电脑端详情</textarea>
-                  </div>
-                </div>
-              </div>
-            </blockquote>
-            <div class="layui-form-item">
-              <button type="button" class="layui-btn layui-btn-primary layui-border-black pre" style="float: left;"><i class="fa fa-reply"></i> 上一步, 填写商品信息</button>
-              <button class="layui-btn layui-btn-primary layui-border-blue" lay-submit lay-filter="submitExamine" style="float: right;"><i class="fa fa-send"></i> 提交审核</button>
-            </div>
-          </form>
-        </div>
-      </div>
     </div>
-  </div>
 </div>
 <script type="text/html" id="toolbar1">
-  <div class="layui-btn-container">
-    <a class="layui-btn layui-btn-primary layui-border-green layui-btn-sm" lay-event="add" shiro:hasPermission="shopCategory:add"><i class="layui-icon">&#xe61f;</i> 新增一级分类</a>
-  </div>
+    <div class="layui-btn-container">
+        <a class="layui-btn layui-btn-primary layui-border-green layui-btn-sm" lay-event="add" shiro:hasPermission="shopCategory:add"><i class="layui-icon">&#xe61f;</i> 新增一级分类</a>
+    </div>
 </script>
 <script type="text/html" id="toolbar2">
-  <div class="layui-btn-container">
-    <a class="layui-btn layui-btn-primary layui-border-green layui-btn-sm" lay-event="add" shiro:hasPermission="shopCategory:add"><i class="layui-icon">&#xe61f;</i> 新增二级分类</a>
-  </div>
+    <div class="layui-btn-container">
+        <a class="layui-btn layui-btn-primary layui-border-green layui-btn-sm" lay-event="add" shiro:hasPermission="shopCategory:add"><i class="layui-icon">&#xe61f;</i> 新增二级分类</a>
+    </div>
 </script>
 <script type="text/html" id="toolbar3">
-  <div class="layui-btn-container">
-    <a class="layui-btn layui-btn-primary layui-border-green layui-btn-sm" lay-event="add" shiro:hasPermission="shopCategory:add"><i class="layui-icon">&#xe61f;</i> 新增三级分类</a>
-  </div>
+    <div class="layui-btn-container">
+        <a class="layui-btn layui-btn-primary layui-border-green layui-btn-sm" lay-event="add" shiro:hasPermission="shopCategory:add"><i class="layui-icon">&#xe61f;</i> 新增三级分类</a>
+    </div>
 </script>
 <script type="text/html" id="specOptions">
-  {{# layui.each(d.options.split(','), function(index, item){     }}
-  <input type="checkbox" title="{{ item }}" spec="{{ d.name }}" spec-id="{{ d.id }}" lay-filter="specOption"/>
-  {{# });  }}
+    {{# layui.each(d.options.split(','), function(index, item){     }}
+    <input type="checkbox" title="{{ item }}" spec="{{ d.name }}" spec-id="{{ d.id }}" lay-filter="specOption"/>
+    {{# });  }}
 </script>
 <script type="text/html" id="paraOptions">
-  {{# layui.each(d.options.split(','), function(index, item){     }}
-  <input type="checkbox" name="paraOption" param="{{ d.name }}" title="{{ item }}"/>
-  {{# });  }}
+    {{# layui.each(d.options.split(','), function(index, item){     }}
+    <input type="checkbox" name="paraOption" param="{{ d.name }}" title="{{ item }}"/>
+    {{# });  }}
 </script>
 <script type="text/html" id="deploySpecTool">
-  <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除规格</a>
-  <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" id="uploadBtn{{ d.LAY_TABLE_INDEX }}" index="{{ d.LAY_TABLE_INDEX }}"><i class="layui-icon">&#xe67c;</i>上传图片</a>
+    <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除规格</a>
+    <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" id="uploadBtn{{ d.LAY_TABLE_INDEX }}" index="{{ d.LAY_TABLE_INDEX }}"><i class="layui-icon">&#xe67c;</i>上传图片</a>
 </script>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
@@ -383,7 +391,7 @@
             , contentType: 'application/json'
             , headers: {"authorization": token}
             , height: 490
-            , page: true //开启分页
+            , page: false
             , url: '/shopCategory/listByPage' //数据接口
             , where: {parentId: '0'}
             , method: 'POST'
@@ -402,10 +410,22 @@
                     {minWidth: 220, field: 'name', title: '分类名称', edit: 'text'},
                 ]
             ]
+            , limit: 10000 // 数据表格默认全部显示
             , toolbar: '#toolbar1'
             , defaultToolbar: []
             , done: function (res, curr, count) {
-                $(".layui-table-view[lay-id='showTable1'] .layui-table-body tr[data-index='0'] .layui-form-radio").click();
+                var category1Id = form.val("shopSpuEntity").category1Id;
+                var flag = true;
+                $(".layui-table-view[lay-id='showTable1'] .layui-table-body tr").each(function (index, item) {
+                    var categoryId = $(item).find("td[data-field='id']").eq(0).text();
+                    if(category1Id == categoryId){
+                        flag = false;
+                        $(item).find(".layui-form-radio").click();
+                    }
+                });
+                if(flag){
+                    $(".layui-table-view[lay-id='showTable1'] .layui-table-body tr[data-index='0'] .layui-form-radio").click();
+                }
             }
         });
         table.on('radio(showTable1)', function (obj) {
@@ -415,10 +435,7 @@
             $("a[name='a_category3']").html("");
             tableIns2.reload({
                     url: '/shopCategory/listByPage', //数据接口
-                    where: {parentId: obj.data.id},
-                    page: {
-                        curr: 1 //重新从第 1 页开始
-                    }
+                    where: {parentId: obj.data.id}
                 }
             );
             tableIns3.reload({
@@ -435,7 +452,7 @@
                         id: 'shopCategory_add1', //设定一个id，防止重复弹出
                         title: '<i class="layui-icon">&#xe653;</i> 新增一级商品分类',
                         type: 2,
-                        content: '../../index/shopCategory/addOrUpdate',
+                        content: '../../../index/shopCategory/addOrUpdate',
                         btn: ['提交保存', '取消'],
                         area: ['50%', '70%'],
                         scrollbar: false,
@@ -458,7 +475,7 @@
             , contentType: 'application/json'
             , headers: {"authorization": token}
             , height: 490
-            , page: true //开启分页
+            , page: false //开启分页
             // , url: '/shopCategory/listByPage' //数据接口
             // , where: {parentId: '-1'}
             , method: 'POST'
@@ -477,11 +494,23 @@
                     {minWidth: 220, field: 'name', title: '分类名称', edit: 'text'},
                 ]
             ]
+            , limit: 10000 // 数据表格默认全部显示
             , data: []
             , toolbar: '#toolbar2'
             , defaultToolbar: []
             , done: function (res, curr, count) {
-                $(".layui-table-view[lay-id='showTable2'] .layui-table-body tr[data-index='0'] .layui-form-radio").click();
+                var category2Id = form.val("shopSpuEntity").category2Id;
+                var flag = true;
+                $(".layui-table-view[lay-id='showTable2'] .layui-table-body tr").each(function (index, item) {
+                    var categoryId = $(item).find("td[data-field='id']").eq(0).text();
+                    if(category2Id == categoryId){
+                        flag = false;
+                        $(item).find(".layui-form-radio").click();
+                    }
+                });
+                if(flag){
+                    $(".layui-table-view[lay-id='showTable2'] .layui-table-body tr[data-index='0'] .layui-form-radio").click();
+                }
             }
         });
         table.on('radio(showTable2)', function (obj) {
@@ -490,10 +519,7 @@
             $("a[name='a_category3']").html("");
             tableIns3.reload({
                     url: '/shopCategory/listByPage', //数据接口
-                    where: {parentId: obj.data.id},
-                    page: {
-                        curr: 1 //重新从第 1 页开始
-                    }
+                    where: {parentId: obj.data.id}
                 }
             );
         });
@@ -507,7 +533,7 @@
                         id: 'shopCategory_add2', //设定一个id，防止重复弹出
                         title: '<i class="layui-icon">&#xe653;</i> 新增二级商品分类',
                         type: 2,
-                        content: '../../index/shopCategory/addOrUpdate2',
+                        content: '../../../index/shopCategory/addOrUpdate2',
                         btn: ['提交保存', '取消'],
                         area: ['50%', '70%'],
                         scrollbar: false,
@@ -539,7 +565,7 @@
             , contentType: 'application/json'
             , headers: {"authorization": token}
             , height: 490
-            , page: true //开启分页
+            , page: false //开启分页
             // , url: '/shopCategory/listByPage' //数据接口
             // , where: {parentId: '-1'}
             , method: 'POST'
@@ -558,11 +584,23 @@
                     {minWidth: 220, field: 'name', title: '分类名称', edit: 'text'},
                 ]
             ]
+            , limit: 10000 // 数据表格默认全部显示
             , data: []
             , toolbar: '#toolbar3'
             , defaultToolbar: []
             , done: function (res, curr, count) {
-                $(".layui-table-view[lay-id='showTable3'] .layui-table-body tr[data-index='0'] .layui-form-radio").click();
+                var category3Id = form.val("shopSpuEntity").category3Id;
+                var flag = true;
+                $(".layui-table-view[lay-id='showTable3'] .layui-table-body tr").each(function (index, item) {
+                    var categoryId = $(item).find("td[data-field='id']").eq(0).text();
+                    if(category3Id == categoryId){
+                        flag = false;
+                        $(item).find(".layui-form-radio").click();
+                    }
+                });
+                if(flag){
+                    $(".layui-table-view[lay-id='showTable3'] .layui-table-body tr[data-index='0'] .layui-form-radio").click();
+                }
             }
         });
         table.on('radio(showTable3)', function (obj) {
@@ -589,7 +627,7 @@
                         id: 'shopCategory_add3', //设定一个id，防止重复弹出
                         title: '<i class="layui-icon">&#xe653;</i> 新增三级商品分类',
                         type: 2,
-                        content: '../../index/shopCategory/addOrUpdate3/' + checkStatus.data[0].parentId,
+                        content: '../../../index/shopCategory/addOrUpdate3/' + checkStatus.data[0].parentId,
                         btn: ['提交保存', '取消'],
                         area: ['70%', '70%'],
                         scrollbar: false,
