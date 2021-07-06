@@ -366,6 +366,8 @@
         layer.confirm('确定要删除么?', {icon: 3, title: '提示'}, function (index) {
             CoreUtil.sendDelete("/goods/deleteSku/" + skuId, null, function (res) {
                 layer.msg(res.msg, {time: 500}, function () {
+                    // 刷新父页面列表
+                    parent.layui.table.reload('showTable');
                     window.location.reload();
                 });
             });
@@ -377,6 +379,8 @@
         layer.confirm('确定要还原么?', {icon: 3, title: '提示'}, function (index) {
             CoreUtil.sendDelete("/goods/reductionSku/" + skuId, null, function (res) {
                 layer.msg(res.msg, {time: 500}, function () {
+                    // 刷新父页面列表
+                    parent.layui.table.reload('showTable');
                     window.location.reload();
                 });
             });
@@ -388,6 +392,8 @@
         layer.confirm('删除后将无法还原, 确定要彻底删除么?', {icon: 3, title: '提示'}, function (index) {
             CoreUtil.sendDelete("/goods/absolutelyDeleteSku/" + skuId, null, function (res) {
                 layer.msg(res.msg, {time: 500}, function () {
+                    // 刷新父页面列表
+                    parent.layui.table.reload('showTable');
                     window.location.reload();
                 });
             });
