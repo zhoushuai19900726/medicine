@@ -5,10 +5,15 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
     <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
     <style>
         form .layui-input-inline {
             width: 240px !important;
+        }
+
+        body .background-color-aliceblue {
+            background-color: aliceblue;
         }
     </style>
 </head>
@@ -97,11 +102,10 @@
     </script>
     <script type="text/html" id="tool">
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="detail" shiro:hasPermission="goods:list"><i class="layui-icon">&#xe615;</i>查看详情</a>
-        <!-- TODO 设置推荐 -->
-        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="del" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe658;</i>设为推荐</a>
+        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe640;</i>删除商品</a>
         <br/>
-        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="edit" shiro:hasPermission="goods:update"><i class="layui-icon">&#x1005;</i>审核通过</a>
-        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="goods:delete"><i class="layui-icon">&#x1007;</i>审核驳回</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="approved" shiro:hasPermission="goods:update"><i class="layui-icon">&#x1005;</i>审核通过</a>
+        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="auditRejection" shiro:hasPermission="goods:delete"><i class="layui-icon">&#x1007;</i>审核驳回</a>
     </script>
     <script type="text/html" id="goodsDetailTpl">
         <table class="layui-table" lay-even="" lay-skin="nob">
@@ -126,40 +130,28 @@
         <span class="layui-badge-rim">{{ d.category3Name }}</span>
     </script>
     <script type="text/html" id="stockTpl">
-        <div style="width: 100%;" class="layui-badge-rim">{{ d.saleNum }}</div>
-        <br/>
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>查看库存</a>
+        <div style="width: 100%;" class="layui-badge-rim">{{ d.stock }}</div>
     </script>
     <script type="text/html" id="saleTpl">
         <div style="width: 100%;" class="layui-badge-rim">{{ d.saleNum }}</div>
-        <br/>
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>查看订单</a>
     </script>
     <script type="text/html" id="evaluationTpl">
         <div style="width: 100%;" class="layui-badge-rim">{{ d.commentNum }}</div>
-        <br/>
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>查看评价</a>
     </script>
     <script type="text/html" id="isMarketableTpl">
         {{# if(d.isMarketable == 2){ }}
-        <div style="width: 100%;" class="layui-badge layui-bg-red">停售中...</div>
+        <div style="width: 100%; cursor: pointer;" class="layui-badge layui-bg-red" onmouseenter="showHaltSalesReason('{{d.haltSalesReason}}', this)"><i class="layui-icon">&#xe6b2;</i> 停售中...</div>
         {{# }else { }}
-        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="上架|下架 " lay-filter="isMarketableStr" {{d.isMarketable== 1 ? 'checked' : ''}}/>
+        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="上架|下架 " disabled {{d.isMarketable== 1 ? 'checked' : ''}} />
         {{# } }}
-        <br/>
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>上架记录</a>
     </script>
     <script type="text/html" id="isEnableSpecTpl">
-        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="启用|关闭" lay-filter="isEnableSpecStr" {{d.isEnableSpec== 1 ? 'checked' : ''}}/>
-        <br/>
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>规格详情</a>
+        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="启用|关闭" disabled {{d.isEnableSpec== 1 ? 'checked' : ''}}/>
     </script>
     <script type="text/html" id="statusTpl">
         <div style="width: 100%;" class="layui-badge {{d.status == 0 ? 'layui-bg-orange' : d.status == 1 ? 'layui-bg-green' : 'layui-bg-red'}}">{{d.status == 0 ? '待审核' : d.status == 1 ? '审核通过' :
             '审核未通过'}}
         </div>
-        <br/>
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>审核详情</a>
     </script>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
@@ -220,8 +212,8 @@
             , page: true //开启分页
             , url: '/goods/listByPage' //数据接口
             , method: 'POST'
-            , where: {
-                status: 0
+            ,  where: {
+                status : '0'
             }
             , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
                 return {
@@ -235,7 +227,7 @@
                 [
                     {type: 'checkbox'},
                     {align: 'center', width: 80, field: 'id', title: 'ID', sort: true},
-                    {align: 'center', width: 100, field: 'sn', title: '商品货号', edit: 'text'},
+                    {align: 'center', width: 100, field: 'sn', title: '商品货号'},
                     {title: '商品信息', templet: '#goodsDetailTpl'},
                     {width: 150, field: 'category', title: '分类', templet: '#categoryTpl'},
                     {align: 'center', width: 110, field: 'stock', title: '库存', sort: true, templet: '#stockTpl'},
@@ -285,26 +277,49 @@
                     ids.push(data.id);
                     tipDialog(ids);
                     break;
-                case 'edit':
-                    // TODO 编辑商品
-
-
+                case 'detail':
+                    // 商品详情
+                    layer.open({
+                        type: 2,
+                        title: '<i class="layui-icon">&#xe62a;</i> 商品详情',
+                        id: 'goodsDetail',
+                        scrollbar: false,
+                        offset: 'r',
+                        anim: 5,
+                        maxmin: true,
+                        area: ['1000px', '100%'],//宽高不影响最大化
+                        content: "../../index/shopSpu/detail/" + data.id,//地址
+                        zIndex: layer.zIndex,
+                        success: function (layero, index) {
+                            // 置顶当前窗口
+                            layer.setTop(layero);
+                        }
+                    });
+                    break;
+                case 'approved':
+                    // 审核通过
+                    layer.confirm('确定要通过审核么?', {icon: 3, title: '提示'}, function (index) {
+                        CoreUtil.sendPut("/goods/update", {id: data.id, status: '1'}, function (res) {
+                            layer.close(index);
+                            tableIns1.reload();
+                        });
+                    });
+                    break;
+                case 'auditRejection':
+                    // 审核驳回
+                    layer.prompt({
+                        formType: 2,
+                        value: data.auditRejectionReason,
+                        title: '请输入驳回原因',
+                        area: ['800px', '350px']
+                    }, function(value, index, elem){
+                        CoreUtil.sendPut("/goods/update", {id: data.id, status: '2', auditRejectionReason: value}, function (res) {
+                            layer.close(index);
+                            tableIns1.reload();
+                        });
+                    });
                     break;
             }
-        });
-        /**
-         * 监听单元格编辑
-         */
-        table.on('edit(showTable)', function (obj) {
-            var value = obj.value //得到修改后的值
-                , data = obj.data //得到所在行所有键值
-                , field = obj.field; //得到字段
-            var shopSpu = {};
-            shopSpu.id = data.id;
-            shopSpu[field] = util.escape(value);
-            CoreUtil.sendPut("/goods/update", shopSpu, function (res) {
-                tableIns1.reload();
-            });
         });
         //导出
         $('#export').on('click', function () {
@@ -323,16 +338,12 @@
 
         //删除
         var tipDialog = function (ids) {
-            layer.open({
-                content: "确定要删除么?",
-                yes: function (index, layero) {
-                    layer.close(index); //如果设定了yes回调，需进行手工关闭
-                    CoreUtil.sendDelete("/goods/delete", ids, function (res) {
-                        layer.msg(res.msg, {time: 500}, function () {
-                            tableIns1.reload();
-                        });
+            layer.confirm('确定要删除么?', {icon: 3, title: '提示'}, function (index) {
+                CoreUtil.sendDelete("/goods/delete", ids, function (res) {
+                    layer.msg(res.msg, {time: 500}, function () {
+                        tableIns1.reload();
                     });
-                }
+                });
             });
         };
 
@@ -342,6 +353,7 @@
         form.on('submit(data-search-btn)', function (data) {
             // 查询条件
             var where = data.field;
+            where.status = '0';
             // 刷新table
             tableIns1.reload({
                 where: where,
@@ -357,4 +369,8 @@
             return false;
         });
     });
+
+    function showHaltSalesReason(haltSalesReason, ele) {
+        layui.layer.tips(haltSalesReason, ele);
+    }
 </script>
