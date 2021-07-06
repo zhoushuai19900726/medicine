@@ -124,62 +124,113 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
         return DataResult.success(shopSpuEntity);
     }
 
+    /**
+     * 还原商品
+     *
+     * @param shopSpuEntity
+     */
+    private DataResult reductionGoods(ShopSpuEntity shopSpuEntity) {
+        long startTime = System.currentTimeMillis();
+        // 还原SPU
+        shopSpuMapper.reductionShopSpuEntityById(shopSpuEntity.getId());
+        // 还原SKU
+        shopSkuMapper.reductionShopSpuEntityBySpuId(shopSpuEntity.getId());
+        //  查询SPU
+        shopSpuEntity = shopSpuMapper.selectById(shopSpuEntity.getId());
+        if (Objects.nonNull(shopSpuEntity)) {
+            // 分类中商品数
+            shopCategoryMapper.updateCount(Lists.newArrayList(new ShopCategoryEntity(shopSpuEntity.getCategory1Id(), NumberConstants.ONE), new ShopCategoryEntity(shopSpuEntity.getCategory2Id(), NumberConstants.ONE), new ShopCategoryEntity(shopSpuEntity.getCategory3Id(), NumberConstants.ONE)));
+        }
+        long endTime = System.currentTimeMillis();
+        // 操作记录
+        shopSpuOperationRecordMapper.insert(new ShopSpuOperationRecordEntity(shopSpuEntity.getId(), OperationConstant.REDUCTION, null, null, (endTime - startTime)));
+        return DataResult.success(shopSpuEntity);
+    }
+
+    /**
+     * 仅更新SPU
+     *
+     * @param shopSpuEntity
+     * @return
+     */
+    private DataResult onlyUpdateSpu(ShopSpuEntity shopSpuEntity) {
+        long startTime = System.currentTimeMillis();
+        // 校验SPU商品货号
+        if (StringUtils.isNotBlank(shopSpuEntity.getSn())) {
+            List<ShopSpuEntity> queryShopSpuEntityListResult = shopSpuMapper.listByCondition(Wrappers.<ShopSpuEntity>lambdaQuery().eq(ShopSpuEntity::getSn, shopSpuEntity.getSn()).ne(ShopSpuEntity::getId, shopSpuEntity.getId()));
+            if (CollectionUtils.isNotEmpty(queryShopSpuEntityListResult)) {
+                return DataResult.fail(BusinessResponseCode.SPU_SN_REPEATED_EXISTENCE.getMsg());
+            }
+        }
+        // 查询原始对象
+        ShopSpuEntity oldShopSpuEntity = shopSpuMapper.selectShopSpuEntityById(shopSpuEntity.getId());
+        if (Objects.isNull(oldShopSpuEntity)) {
+            return DataResult.fail(BaseResponseCode.OPERATION_ERRO.getMsg());
+        }
+        // 更新SPU
+        shopSpuMapper.updateById(shopSpuEntity);
+        // 更新SKU - 状态与SPU保持一致
+        if (StringUtils.isNotBlank(shopSpuEntity.getIsMarketable())) {
+            List<ShopSkuEntity> shopSkuEntityList = shopSkuMapper.listByCondition(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, shopSpuEntity.getId()));
+            if (CollectionUtils.isNotEmpty(shopSkuEntityList)) {
+                ShopSpuEntity finalShopSpuEntity = shopSpuEntity;
+                shopSkuEntityList.forEach(shopSkuEntity -> {
+                    ShopSkuEntity updSku = new ShopSkuEntity();
+                    updSku.setId(shopSkuEntity.getId());
+                    updSku.setStatus(finalShopSpuEntity.getIsMarketable());
+                    shopSkuMapper.updateShopSpuEntityStatusById(updSku);
+                });
+            }
+        }
+        long endTime = System.currentTimeMillis();
+        // 操作记录
+        shopSpuOperationRecordMapper.insert(new ShopSpuOperationRecordEntity(oldShopSpuEntity.getId(), OperationConstant.UPDATE, JSONObject.toJSONString(oldShopSpuEntity), JSONObject.toJSONString(shopSpuEntity), (endTime - startTime)));
+        return DataResult.success(shopSpuEntity);
+    }
+
+    /**
+     * 更新SPU、SKU
+     * @param shopSpuEntity
+     * @return
+     */
+    private DataResult updateSpuAndSku(ShopSpuEntity shopSpuEntity) {
+        long startTime = System.currentTimeMillis();
+        // 校验SPU商品货号
+        if (StringUtils.isNotBlank(shopSpuEntity.getSn())) {
+            List<ShopSpuEntity> queryShopSpuEntityListResult = shopSpuMapper.listByCondition(Wrappers.<ShopSpuEntity>lambdaQuery().eq(ShopSpuEntity::getSn, shopSpuEntity.getSn()).ne(ShopSpuEntity::getId, shopSpuEntity.getId()));
+            if (CollectionUtils.isNotEmpty(queryShopSpuEntityListResult)) {
+                return DataResult.fail(BusinessResponseCode.SPU_SN_REPEATED_EXISTENCE.getMsg());
+            }
+        }
+        // 查询原始对象
+        ShopSpuEntity oldShopSpuEntity = shopSpuMapper.selectShopSpuEntityById(shopSpuEntity.getId());
+        if (Objects.isNull(oldShopSpuEntity)) {
+            return DataResult.fail(BaseResponseCode.OPERATION_ERRO.getMsg());
+        }
+        // 更新SPU
+        shopSpuMapper.updateById(shopSpuEntity);
+        // 删除旧SKU
+        shopSkuMapper.delete(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, shopSpuEntity.getId()));
+        // 保存新SKU
+        shopSpuEntity.getShopSkuEntityList().forEach(shopSkuEntity -> shopSkuMapper.insert(shopSkuEntity));
+        long endTime = System.currentTimeMillis();
+        // 操作记录
+        shopSpuOperationRecordMapper.insert(new ShopSpuOperationRecordEntity(oldShopSpuEntity.getId(), OperationConstant.UPDATE, JSONObject.toJSONString(oldShopSpuEntity), JSONObject.toJSONString(shopSpuEntity), (endTime - startTime)));
+        return DataResult.success(shopSpuEntity);
+    }
+
     @Override
     public DataResult updateShopSpuEntityById(ShopSpuEntity shopSpuEntity) {
-        System.out.println(1);
-//        long startTime = System.currentTimeMillis();
-//        if (NumberConstants.ZERO_I.equals(shopSpuEntity.getDeleted())) {
-//            // 还原SPU
-//            shopSpuMapper.reductionShopSpuEntityById(shopSpuEntity.getId());
-//            // 还原SKU
-//            shopSkuMapper.reductionShopSpuEntityBySpuId(shopSpuEntity.getId());
-//            //  查询SPU
-//            shopSpuEntity = shopSpuMapper.selectById(shopSpuEntity.getId());
-//            if (Objects.nonNull(shopSpuEntity)) {
-//                // 分类中商品数
-//                shopCategoryMapper.updateCount(Lists.newArrayList(new ShopCategoryEntity(shopSpuEntity.getCategory1Id(), NumberConstants.ONE), new ShopCategoryEntity(shopSpuEntity.getCategory2Id(), NumberConstants.ONE), new ShopCategoryEntity(shopSpuEntity.getCategory3Id(), NumberConstants.ONE)));
-//            }
-//            long endTime = System.currentTimeMillis();
-//            // 操作记录
-//            shopSpuOperationRecordMapper.insert(new ShopSpuOperationRecordEntity(shopSpuEntity.getId(), OperationConstant.REDUCTION, null, null, (endTime - startTime)));
-//        } else if (CollectionUtils.isNotEmpty(shopSpuEntity.getShopSkuEntityList())) {
-//            // 更新SKU
-//
-//
-//
-//        } else {
-//            // 校验SPU商品货号
-//            if (StringUtils.isNotBlank(shopSpuEntity.getSn())) {
-//                List<ShopSpuEntity> queryShopSpuEntityListResult = shopSpuMapper.listByCondition(Wrappers.<ShopSpuEntity>lambdaQuery().eq(ShopSpuEntity::getSn, shopSpuEntity.getSn()).ne(ShopSpuEntity::getId, shopSpuEntity.getId()));
-//                if (CollectionUtils.isNotEmpty(queryShopSpuEntityListResult)) {
-//                    return DataResult.fail(BusinessResponseCode.SPU_SN_REPEATED_EXISTENCE.getMsg());
-//                }
-//            }
-//            // 查询原始对象
-//            ShopSpuEntity oldShopSpuEntity = shopSpuMapper.selectShopSpuEntityById(shopSpuEntity.getId());
-//            if (Objects.isNull(oldShopSpuEntity)) {
-//                return DataResult.fail(BaseResponseCode.OPERATION_ERRO.getMsg());
-//            }
-//            // 更新SPU
-//            shopSpuMapper.updateById(shopSpuEntity);
-//            // 更新SKU - 状态与SPU保持一致
-//            if (StringUtils.isNotBlank(shopSpuEntity.getIsMarketable())) {
-//                List<ShopSkuEntity> shopSkuEntityList = shopSkuMapper.listByCondition(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, shopSpuEntity.getId()));
-//                if (CollectionUtils.isNotEmpty(shopSkuEntityList)) {
-//                    ShopSpuEntity finalShopSpuEntity = shopSpuEntity;
-//                    shopSkuEntityList.forEach(shopSkuEntity -> {
-//                        ShopSkuEntity updSku = new ShopSkuEntity();
-//                        updSku.setId(shopSkuEntity.getId());
-//                        updSku.setStatus(finalShopSpuEntity.getIsMarketable());
-//                        shopSkuMapper.updateShopSpuEntityStatusById(updSku);
-//                    });
-//                }
-//            }
-//            long endTime = System.currentTimeMillis();
-//            // 操作记录
-//            shopSpuOperationRecordMapper.insert(new ShopSpuOperationRecordEntity(oldShopSpuEntity.getId(), OperationConstant.UPDATE, JSONObject.toJSONString(oldShopSpuEntity), JSONObject.toJSONString(shopSpuEntity), (endTime - startTime)));
-//        }
-        return DataResult.success(shopSpuEntity);
+        if (NumberConstants.ZERO_I.equals(shopSpuEntity.getDeleted())) {
+            //  还原商品
+            return reductionGoods(shopSpuEntity);
+        } else if (CollectionUtils.isNotEmpty(shopSpuEntity.getShopSkuEntityList())) {
+            // 更新SPU、SKU
+            return updateSpuAndSku(shopSpuEntity);
+        } else {
+            // 仅更新SPU
+            return onlyUpdateSpu(shopSpuEntity);
+        }
     }
 
     @Override

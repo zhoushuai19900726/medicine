@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.company.project.common.aop.annotation.DataScope;
 import com.company.project.common.aop.annotation.LogAnnotation;
 import com.company.project.common.utils.DelimiterConstants;
+import com.company.project.common.utils.NumberConstants;
 import com.company.project.entity.*;
 import com.company.project.service.*;
+import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.commons.lang.StringUtils;
@@ -19,6 +21,7 @@ import io.swagger.annotations.ApiParam;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.company.project.common.utils.DataResult;
 
@@ -70,7 +73,7 @@ public class ShopSpuController extends BaseController {
     @GetMapping("/index/shopSpu/detail/{id}")
     public String spuDetail(@PathVariable("id") String id, Model model) {
         model.addAttribute("shopSpuEntity", shopSpuService.getShopSpuEntityById(id));
-        model.addAttribute("shopSkuEntityList", shopSkuService.listByCondition(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, id)));
+        model.addAttribute("shopSkuEntityList", shopSkuService.list(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, id)));
         return "goods/goodsDetail";
     }
 
@@ -110,8 +113,15 @@ public class ShopSpuController extends BaseController {
             }
         }
         model.addAttribute("shopSpuEntity", shopSpuEntity);
-        model.addAttribute("shopSkuEntityList", shopSkuService.listByCondition(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, id).orderByAsc(ShopSkuEntity::getId)));
+        List<ShopSkuEntity> shopSkuEntityList = shopSkuService.listByCondition(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, id).orderByAsc(ShopSkuEntity::getId));
+        model.addAttribute("skuSnList", Joiner.on(DelimiterConstants.COMMA).skipNulls().join(shopSkuEntityList.stream().map(ShopSkuEntity::getSn).collect(Collectors.toList())));
+        // 未删除SKU
+        model.addAttribute("shopSkuEntityList", shopSkuEntityList.stream().filter(a -> NumberConstants.ZERO_I.equals(a.getDeleted())).collect(Collectors.toList()));
+        // 已删除SKU
+        model.addAttribute("removedShopSkuEntityList", shopSkuEntityList.stream().filter(a -> NumberConstants.ONE_I.equals(a.getDeleted())).collect(Collectors.toList()));
+        // 规格模板
         model.addAttribute("shopSpecEntityList", shopSpecService.list(Wrappers.<ShopSpecEntity>lambdaQuery().eq(ShopSpecEntity::getTemplateId, shopSpuEntity.getTemplateId()).orderByAsc(ShopSpecEntity::getSeq)));
+        // 参数模板
         model.addAttribute("shopParaEntityList", shopParaService.list(Wrappers.<ShopParaEntity>lambdaQuery().eq(ShopParaEntity::getTemplateId, shopSpuEntity.getTemplateId()).orderByAsc(ShopParaEntity::getSeq)));
         return "goods/specControl";
     }

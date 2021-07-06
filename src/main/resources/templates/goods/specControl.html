@@ -20,6 +20,7 @@
     <div class="layuimini-main" shiro:hasPermission="goods:update">
         <blockquote class="layui-elem-quote">
             <form class="layui-form" lay-filter="shopSpuEntityForm">
+                <input type="hidden" name="skuSnList" th:value="${skuSnList}"/>
                 <input type="hidden" name="id" th:value="${shopSpuEntity.id}"/>
                 <input type="hidden" name="sn" th:value="${shopSpuEntity.sn}"/>
                 <input type="hidden" name="sellerId" th:value="${shopSpuEntity.sellerId}"/>
@@ -65,7 +66,7 @@
                 </table>
             </form>
         </blockquote>
-        <blockquote class="layui-elem-quote layui-quote-nm"><i class="layui-icon">&#xe62a;</i> 商品SPU规格信息</blockquote>
+        <blockquote class="layui-elem-quote layui-quote-nm"><i class="layui-icon">&#xe62a;</i> 商品SKU规格信息</blockquote>
         <blockquote class="layui-elem-quote layui-quote-nm">
             <form class="layui-form">
                 <table class="layui-table" lay-size="sm">
@@ -96,10 +97,11 @@
                     </tbody>
                 </table>
                 <table class="layui-table" id="deploySpecTable" lay-filter="deploySpecTable" style="margin-top: -10px;" hidden></table>
-                <table class="layui-table" lay-size="sm" id="specTable">
+                <table class="layui-table" lay-size="sm" id="specTable" lay-filter="specTable">
                     <colgroup>
                         <col width="60">
-                        <col th:each="item:${shopSpuEntity.specItemsMap}">
+                        <!--<col th:each="item:${shopSpuEntity.specItemsMap}">-->
+                        <col>
                         <col width="160">
                         <col width="90">
                         <col width="105">
@@ -110,7 +112,8 @@
                     <thead>
                     <tr>
                         <th>序号</th>
-                        <th th:each="item:${shopSpuEntity.specItemsMap}" th:text="${item.key}"></th>
+                        <!--<th th:each="item:${shopSpuEntity.specItemsMap}" th:text="${item.key}"></th>-->
+                        <th>规格</th>
                         <th>销售价格<span class="layui-badge layui-bg-gray"><i class="fa fa-info-circle"></i> 单位:分</span></th>
                         <th>商品库存</th>
                         <th>库存预警值</th>
@@ -123,7 +126,13 @@
                     <tbody>
                     <tr th:each="shopSkuEntity,shopSkuStat : ${shopSkuEntityList}">
                         <td th:text="${shopSkuStat.index + 1}"></td>
-                        <td th:each="item:${shopSkuEntity.specMap}" th:text="${item.value}"></td>
+                        <!--<td th:each="item:${shopSkuEntity.specMap}" th:text="${item.value}"></td>-->
+                        <td>
+                            <span class="layui-badge-rim" style="margin-left: 5px;" th:each="item:${shopSkuEntity.specMap}">
+                                <span class="layui-badge layui-bg-cyan" style="margin-left: -5px;" th:text="${item.key}"></span>
+                                <span th:text="${item.value}"></span>
+                            </span>
+                        </td>
                         <td th:text="${shopSkuEntity.price}"></td>
                         <td th:text="${shopSkuEntity.num}"></td>
                         <td th:text="${shopSkuEntity.alertNum}"></td>
@@ -138,17 +147,44 @@
                         </td>
                         <td><img th:src="${shopSkuEntity.image}" style="width: 30px; height: 30px; cursor: pointer;"></td>
                         <td>
-                            <block th:if="${shopSkuEntity.deleted == 0}">
-                                <i class="fa fa-trash-o" style="color: red; cursor: pointer;" onclick="deleteSku(this.id)" th:id="${shopSkuEntity.id}"> 删除</i>
-                            </block>
-                            <block th:if="${shopSkuEntity.deleted == 1}">
-                                <i class="fa fa-recycle" style="color: green; cursor: pointer;" onclick="reductionSku(this.id)" th:id="${shopSkuEntity.id}"> 还原</i>
-                            </block>
+                            <i class="fa fa-trash-o" style="color: red; cursor: pointer;" onclick="deleteSku(this.id)" th:id="${shopSkuEntity.id}"> 删除</i>
+                            <!--<i class="fa fa-recycle" style="color: green; cursor: pointer;" onclick="reductionSku(this.id)" th:id="${shopSkuEntity.id}"> 还原</i>-->
                             <i class="fa fa-trash-o" style="color: #645c48; cursor: pointer;" onclick="absolutelyDeleteSku(this.id)" th:id="${shopSkuEntity.id}"> 彻底删除</i>
                         </td>
                     </tr>
                     </tbody>
                 </table>
+                <block th:if="${removedShopSkuEntityList.size() > 0}">
+                    <blockquote class="layui-elem-quote layui-quote-nm"><i class="layui-icon">&#xe62a;</i> 商品SKU回收站</blockquote>
+                    <table class="layui-table" lay-size="sm" id="removedSpecTable" lay-filter="removedSpecTable">
+                        <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>SKU编号</th>
+                            <th>图片</th>
+                            <th>规格</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="shopSkuEntity,shopSkuStat : ${removedShopSkuEntityList}">
+                            <td th:text="${shopSkuStat.index + 1}"></td>
+                            <td th:text="${shopSkuEntity.sn}"></td>
+                            <td><img th:src="${shopSkuEntity.image}" style="width: 30px; height: 30px; cursor: pointer;"></td>
+                            <td>
+                                <span class="layui-badge-rim" style="margin-left: 5px;" th:each="item:${shopSkuEntity.specMap}">
+                                    <span class="layui-badge layui-bg-cyan" style="margin-left: -5px;" th:text="${item.key}"></span>
+                                    <span th:text="${item.value}"></span>
+                                </span>
+                            </td>
+                            <td>
+                                <i class="fa fa-recycle" style="color: green; cursor: pointer;" onclick="reductionSku(this.id)" th:id="${shopSkuEntity.id}"> 还原</i>
+                                <i class="fa fa-trash-o" style="color: #645c48; cursor: pointer;" onclick="absolutelyDeleteSku(this.id)" th:id="${shopSkuEntity.id}"> 彻底删除</i>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </block>
             </form>
         </blockquote>
         <blockquote class="layui-elem-quote layui-quote-nm"><i class="layui-icon">&#xe62a;</i> 商品SPU参数信息</blockquote>
@@ -253,6 +289,9 @@
                     }
                 });
                 if (specFlag) {
+                    // SPU_ID
+                    shopSkuEntity.spuId = shopSpuEntity.id;
+                    // SKU规格
                     shopSkuEntity.spec = JSON.stringify(spec);
                     // 商家ID
                     shopSkuEntity.sellerId = shopSpuEntity.sellerId;
@@ -387,11 +426,14 @@
                 keyTempArray.push({field: k, title: k});
                 valueTempArray.push(v);
             });
-            // 商品货号
+            // SPU商品货号
             var serialNo = form.val("shopSpuEntityForm").sn;
+            // 旧SKU商品货号
+            var skuSnList = form.val("shopSpuEntityForm").skuSnList.split(',');
             // 笛卡尔积结果
             var calcDescartes = CoreUtil.calcDescartes(valueTempArray);
             var uploadBtnIndex = "";// 上传按钮id
+            var init = 1;
             $(calcDescartes).each(function (index, arr) {
                 arr = Array.isArray(arr) ? arr : [arr];
                 var data = {};
@@ -401,7 +443,16 @@
                 data['price'] = "<input type=\"text\" name=\"price\" value='0' autocomplete=\"off\" placeholder=\"请输入销售价格\" class=\"layui-input tableInput\" onblur='resetInputValue(this, " + index + ")' />";
                 data['num'] = "<input type=\"text\" name=\"num\" value='0' autocomplete=\"off\" placeholder=\"请输入商品库存\" class=\"layui-input tableInput\" onblur='resetInputValue(this, " + index + ")' />";
                 data['alertNum'] = "<input type=\"text\" name=\"alertNum\" value='0' autocomplete=\"off\" placeholder=\"请输入库存预警值\" class=\"layui-input tableInput\" onblur='resetInputValue(this, " + index + ")' />";
-                data['sn'] = "<input type=\"text\" name=\"sn\" value='" + (serialNo + "-" + (index + 1)) + "' autocomplete=\"off\" placeholder=\"请输入SKU编号\" class=\"layui-input tableInput\" onblur='resetInputValue(this, " + index + ")' />";
+                var skuSn = serialNo + "-" + (index + init);
+                while (true) {
+                    if (skuSnList.indexOf(skuSn) < 0) {
+                        skuSnList.push(skuSn);
+                        break;
+                    }
+                    init++;
+                    skuSn = serialNo + "-" + (index + init);
+                }
+                data['sn'] = "<input type=\"text\" name=\"sn\" value='" + skuSn + "' autocomplete=\"off\" placeholder=\"请输入SKU编号\" class=\"layui-input tableInput\" onblur='resetInputValue(this, " + index + ")' />";
                 data['image'] = "<input name='image' hidden/><img src='/images/uploadfile.jpeg' style='width: 30px; height: 30px; cursor: pointer;' ondblclick='cancalImage(this, " + index + ")'/>";
                 datas.push(data);
                 uploadBtnIndex += "#uploadBtn" + index + ",";
