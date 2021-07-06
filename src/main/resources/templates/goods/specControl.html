@@ -7,12 +7,28 @@
     <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
     <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
     <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <style>
+        .tableInput {
+            width: 100px;
+            margin-left: -15px;
+            margin-top: -5px;
+        }
+    </style>
 </head>
 <body>
 <div class="layuimini-container">
     <div class="layuimini-main" shiro:hasPermission="goods:update">
         <blockquote class="layui-elem-quote">
-            <form class="layui-form">
+            <form class="layui-form" lay-filter="shopSpuEntityForm">
+                <input type="hidden" name="id" th:value="${shopSpuEntity.id}"/>
+                <input type="hidden" name="sn" th:value="${shopSpuEntity.sn}"/>
+                <input type="hidden" name="sellerId" th:value="${shopSpuEntity.sellerId}"/>
+                <input type="hidden" name="images" th:value="${shopSpuEntity.images}"/>
+                <input type="hidden" name="category3Id" th:value="${shopSpuEntity.category3Id}"/>
+                <input type="hidden" name="category3Name" th:value="${shopSpuEntity.category3Name}"/>
+                <input type="hidden" name="brandId" th:value="${shopSpuEntity.brandId}"/>
+                <input type="hidden" name="brandName" th:value="${shopSpuEntity.brandName}"/>
+                <input type="submit" lay-filter="data-save-btn" id="data-save-btn" lay-submit="" hidden/>
                 <table class="layui-table" lay-size="sm">
                     <colgroup>
                         <col width="100">
@@ -43,7 +59,7 @@
                     </tr>
                     <tr>
                         <td>商品名称</td>
-                        <td colspan="3"><input type="text" class="layui-input" th:value="${shopSpuEntity.name}" disabled/></td>
+                        <td colspan="3"><input name="name" type="text" class="layui-input" th:value="${shopSpuEntity.name}" disabled/></td>
                     </tr>
                     </tbody>
                 </table>
@@ -70,14 +86,16 @@
                         <td th:text="${shopSpecStat.index + 1}"></td>
                         <td th:text="${shopSpecEntity.name}"></td>
                         <td>
-                            <input type="checkbox" name="specValue"
+                            <input type="checkbox" name="specValue" lay-filter="specValue"
                                    th:each="option : ${#strings.arraySplit(shopSpecEntity.options == null ? '' : shopSpecEntity.options, ',')}"
                                    th:title="${option}"
+                                   th:spec="${shopSpecEntity.name}"
                                    th:checked="${null != shopSpuEntity.specItemsMap.get(shopSpecEntity.name) && #lists.contains(shopSpuEntity.specItemsMap.get(shopSpecEntity.name), option)}"/>
                         </td>
                     </tr>
                     </tbody>
                 </table>
+                <table class="layui-table" id="deploySpecTable" lay-filter="deploySpecTable" style="margin-top: -10px;" hidden></table>
                 <table class="layui-table" lay-size="sm" id="specTable">
                     <colgroup>
                         <col width="60">
@@ -154,10 +172,10 @@
                         <td th:text="${shopParaStat.index + 1}"></td>
                         <td th:text="${shopParaEntity.name}"></td>
                         <td>
-                            <input type="checkbox" name="paraValue"
+                            <input type="checkbox" name="paraOption"
                                    th:each="option : ${#strings.arraySplit(shopParaEntity.options == null ? '' : shopParaEntity.options, ',')}"
                                    th:title="${option}"
-                                   th:para="${shopParaEntity.name}"
+                                   th:param="${shopParaEntity.name}"
                                    th:checked="${null != shopSpuEntity.paraItemsMap.get(shopParaEntity.name) && #lists.contains(shopSpuEntity.paraItemsMap.get(shopParaEntity.name), option)}"/>
                         </td>
                     </tr>
@@ -165,23 +183,15 @@
                 </table>
             </form>
         </blockquote>
-
-        <form class="layui-form">
-            <table class="layui-table" lay-size="sm">
-                <tbody>
-                <tr>
-                    <td>
-                        <button class="layui-btn layui-btn-normal layui-btn-sm" lay-submit lay-filter="data-save-btn" shiro:hasPermission="goods:update">保存规格参数</button>
-                        <button class="layui-btn layui-btn-primary layui-btn-sm" lay-submit lay-filter="data-back-btn">返回商品列表</button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </form>
     </div>
+    <script type="text/html" id="deploySpecTool">
+        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" id="uploadBtn{{ d.LAY_TABLE_INDEX }}" index="{{ d.LAY_TABLE_INDEX }}"><i class="layui-icon">&#xe67c;</i>上传</a>
+    </script>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
 <script th:src="@{/layui/layui.all.js}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/js/lay-config.js(v=2.0.0)}" charset="utf-8"></script>
 </body>
 </html>
 <script>
@@ -191,28 +201,114 @@
     var tokenQuery = token.replace("#", "%23");
     var tableIns1;
     var $ = jQuery = layui.jquery;
-    layui.use(['form', 'table', 'layer'], function () {
+    layui.use(['form', 'table', 'layer', 'miniTab'], function () {
         var form = layui.form;
         var table = layui.table;
         var layer = layui.layer;
+        var miniTab = layui.miniTab;
 
-
-        form.on('submit(data-back-btn)', function (data) {
-            //按钮【按钮二】的回调
-            var parentIndex = parent.layer.getFrameIndex(window.name);
-            parent.layer.close(parentIndex);
+        form.on('submit(data-save-btn)', function (data) {
+            // 商品SPU信息
+            var shopSpuEntity = form.val("shopSpuEntityForm");
+            // 规格列表
+            var specItems = Object.create(null);
+            deploySpecMap.forEach(function (v, k, map) {
+                specItems[k] = v;
+            });
+            shopSpuEntity.specItems = JSON.stringify(specItems);
+            // 参数列表
+            var paraItems = Object.create(null);
+            var paraItemsMap = new Map();
+            $("input[type=checkbox][name='paraOption']:checked").each(function () {
+                var param = $(this).attr("param");
+                var value = $(this).attr("title");
+                if (paraItemsMap.has(param)) {
+                    paraItemsMap.get(param).push(value);
+                } else {
+                    paraItemsMap.set(param, [value]);
+                }
+            });
+            paraItemsMap.forEach(function (v, k, map) {
+                paraItems[k] = v;
+            });
+            shopSpuEntity.paraItems = JSON.stringify(paraItems);
+            // 审核状态
+            shopSpuEntity.status = 0;
+            // 商品SKU信息 - 集合
+            var shopSkuEntityList = [];
+            var deploySpecTableDatas = layui.table.cache["deploySpecTable"];
+            $(deploySpecTableDatas).each(function (index, data) {
+                var shopSkuEntity = {};
+                // sku规格
+                var spec = {};
+                var skuName = shopSpuEntity.name;
+                var specFlag = false;
+                $(Object.keys(data)).each(function (i, d) {
+                    if (deploySpecMap.has(d)) {
+                        specFlag = true;
+                        spec[d] = data[d];
+                        skuName += " " + data[d];
+                    } else if (d != 'LAY_TABLE_INDEX') {
+                        shopSkuEntity[d] = $($(data[d])[0]).attr("value");
+                    }
+                });
+                if (specFlag) {
+                    shopSkuEntity.spec = JSON.stringify(spec);
+                    // 商家ID
+                    shopSkuEntity.sellerId = shopSpuEntity.sellerId;
+                    // SKU名称
+                    shopSkuEntity.name = skuName;
+                    // SKU状态
+                    shopSkuEntity.status = '1';
+                    // 商品图片列表
+                    shopSkuEntity.images = shopSpuEntity.images;
+                    // 类目ID
+                    shopSkuEntity.categoryId = shopSpuEntity.category3Id;
+                    shopSkuEntity.categoryName = shopSpuEntity.category3Name;
+                    // 类目ID
+                    shopSkuEntity.brandId = shopSpuEntity.brandId;
+                    shopSkuEntity.brandName = $("select[name='brandId']:selected").text();
+                    shopSkuEntityList.push(shopSkuEntity);
+                }
+            });
+            shopSpuEntity.shopSkuEntityList = shopSkuEntityList;
+            // 执行提交审核
+            CoreUtil.sendSyncPut("/goods/update", shopSpuEntity, function (res) {
+                layer.msg("修改成功, 等待商品审核...", {time: 1000}, function () {
+                    // 刷新父页面列表
+                    parent.layui.table.reload('showTable');
+                    // 按钮【按钮二】的回调
+                    var parentIndex = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(parentIndex);
+                    var options = {};
+                    options.href = "/index/shopSpu/auditList";
+                    options.title = "商品审核";
+                    parent.layui.miniTab.openNewTabByIframe(options);
+                });
+            });
             return false;
         });
 
-        /*form.on('submit(data-save-btn)', function (data) {
-            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
-            CoreUtil.sendPut("/goods/updateSku", data.field, function (res) {
-                // 刷新父页面列表
-                parent.parent.layui.table.reload('showTable');
-                parent.location.reload();
-            });
-            return false;
-        });*/
+        var deploySpecFlag = false;
+        form.on('checkbox(specValue)', function (data) {
+            if (deploySpecFlag) {
+                deploySpecTable();
+            } else {
+                layer.confirm("检测到规格项发生变化, 规格列表将进行重新组合, 点击保存按钮后即可生效, 是否继续?", {
+                    btn: ['继续', '取消']
+                }, function (index) {
+                    // 按钮1的事件
+                    deploySpecFlag = true;
+                    layer.close(index);
+                    deploySpecTable();
+                }, function () {
+                    // 按钮2的事件
+                    data.elem.checked = !data.elem.checked;
+                    form.render('checkbox');
+                });
+            }
+        });
+
 
         /**
          * 监听table内开关操作
@@ -258,4 +354,155 @@
             });
         });
     }
+
+    var deploySpecMap = new Map();
+
+    function deploySpecTable() {
+        layui.use(['form', 'table', 'layer', 'upload'], function () {
+            var form = layui.form;
+            var table = layui.table;
+            var upload = layui.upload;
+            // var layer = layui.layer;
+            // 封装数据MAP
+            deploySpecMap.clear();
+            $("input[type='checkbox'][name='specValue']:checked").each(function (index, item) {
+                var spec = $(item).attr("spec");
+                var specValue = $(item).attr("title");
+                if (deploySpecMap.has(spec)) {
+                    var specValueList = deploySpecMap.get(spec);
+                    specValueList.push(specValue);
+                } else {
+                    deploySpecMap.set(spec, [specValue])
+                }
+            });
+            // 组织表格
+            var cols = [];
+            var datas = [];
+            var keyTempArray = [];
+            var valueTempArray = [];
+            keyTempArray.push(
+                {width: 60, title: '序号', fixed: 'left', type: 'numbers'}
+            );
+            deploySpecMap.forEach(function (v, k, map) {
+                keyTempArray.push({field: k, title: k});
+                valueTempArray.push(v);
+            });
+            // 商品货号
+            var serialNo = form.val("shopSpuEntityForm").sn;
+            // 笛卡尔积结果
+            var calcDescartes = CoreUtil.calcDescartes(valueTempArray);
+            var uploadBtnIndex = "";// 上传按钮id
+            $(calcDescartes).each(function (index, arr) {
+                arr = Array.isArray(arr) ? arr : [arr];
+                var data = {};
+                $(arr).each(function (i, item) {
+                    data[keyTempArray[i + 1].field] = item;
+                });
+                data['price'] = "<input type=\"text\" name=\"price\" value='0' autocomplete=\"off\" placeholder=\"请输入销售价格\" class=\"layui-input tableInput\" onblur='resetInputValue(this, " + index + ")' />";
+                data['num'] = "<input type=\"text\" name=\"num\" value='0' autocomplete=\"off\" placeholder=\"请输入商品库存\" class=\"layui-input tableInput\" onblur='resetInputValue(this, " + index + ")' />";
+                data['alertNum'] = "<input type=\"text\" name=\"alertNum\" value='0' autocomplete=\"off\" placeholder=\"请输入库存预警值\" class=\"layui-input tableInput\" onblur='resetInputValue(this, " + index + ")' />";
+                data['sn'] = "<input type=\"text\" name=\"sn\" value='" + (serialNo + "-" + (index + 1)) + "' autocomplete=\"off\" placeholder=\"请输入SKU编号\" class=\"layui-input tableInput\" onblur='resetInputValue(this, " + index + ")' />";
+                data['image'] = "<input name='image' hidden/><img src='/images/uploadfile.jpeg' style='width: 30px; height: 30px; cursor: pointer;' ondblclick='cancalImage(this, " + index + ")'/>";
+                datas.push(data);
+                uploadBtnIndex += "#uploadBtn" + index + ",";
+            });
+            keyTempArray.push(
+                {width: 100, field: 'price', title: '<i style="color: red;">*</i> 销售价格<span class="layui-badge layui-bg-gray"><i class="fa fa-info-circle"></i> 单位:分</span>', fixed: 'right'},
+                {width: 100, field: 'num', title: '<i style="color: red;">*</i> 商品库存', fixed: 'right'},
+                {width: 100, field: 'alertNum', title: '<i style="color: red;">*</i> 库存预警值', fixed: 'right'},
+                {width: 100, field: 'sn', title: '<i style="color: red;">*</i> SKU编号', fixed: 'right'},
+                {width: 150, title: '操作', fixed: 'right', toolbar: "#deploySpecTool"},
+                {align: 'center', width: 100, field: 'image', title: '图片<span class="layui-badge layui-bg-gray"><i class="fa fa-info-circle"></i> 双击取消</span>', fixed: 'right'}
+            );
+            cols.push(keyTempArray);
+            $("#specTable").hide();
+            $("#deploySpecTable").show();
+            var deploySpecTable = table.render({
+                id: 'deploySpecTable'
+                , elem: '#deploySpecTable'
+                , limit: Number.MAX_VALUE // 数据表格默认全部显示
+                , cols: cols
+                , data: datas
+            });
+            // 绑定上传
+            if (uploadBtnIndex) {
+                upload.render({
+                    elem: uploadBtnIndex.substring(0, uploadBtnIndex.length - 1) //绑定元素
+                    , url: '/sysFiles/upload?authorization=' + tokenQuery  // 上传文件的路径
+                    , done: function (res) {
+                        // 上传完毕回调
+                        var index = $(this.item).attr("index");
+                        var parentObj = $(this.item).parent().parent().next();
+                        $(parentObj).find("input[name='image']").attr("value", res.data.src);
+                        $(parentObj).find("img").attr("src", res.data.src);
+                        layui.table.cache["deploySpecTable"][index]["image"] = $(parentObj).children(":first").html();
+                    }
+                });
+            }
+            // 列操作
+            table.on('tool(deploySpecTable)', function (obj) {
+                switch (obj.event) {
+                    case 'del':
+                        var Data = table.cache["deploySpecTable"];
+                        // 根据索引删除当前行
+                        Data.splice(obj.tr.data('index'), 1);
+                        deploySpecTable.reload({data: Data});
+                        // 删除后剩余的规格
+                        var surplusSpecMap = new Map();
+                        // 同步商品规格可选值列表复选框
+                        $(Data).each(function (index, data) {
+                            $(Object.keys(data)).each(function (i, d) {
+                                if (deploySpecMap.has(d)) {
+                                    if (surplusSpecMap.has(d)) {
+                                        var specValueList = surplusSpecMap.get(d);
+                                        specValueList.add(data[d]);
+                                    } else {
+                                        surplusSpecMap.set(d, new Set().add(data[d]));
+                                    }
+                                }
+                            });
+                        });
+                        deploySpecMap.forEach(function (v, k, map) {
+                            if (surplusSpecMap.has(k)) {
+                                var originalSpecList = deploySpecMap.get(k);
+                                var surplusSpecList = surplusSpecMap.get(k);
+                                // 差集
+                                var result = CoreUtil.subSet(originalSpecList, surplusSpecList);
+                                // 全部取消选中
+                                $("input[spec='" + k + "'][type='checkbox'][title='" + result[0] + "'][name='specValue']").prop("checked", false);
+                                deploySpecMap.set(k, Array.from(surplusSpecList));
+                            } else {
+                                // 全部取消选中
+                                $("input[spec='" + k + "'][type='checkbox'][name='specValue']").prop("checked", false);
+                                deploySpecMap.delete(k);
+                            }
+                        });
+                        form.render('checkbox');
+                        break;
+                }
+            });
+
+        });
+    }
+
+    function resetInputValue(input, index) {
+        var value = $(input).val();
+        if (!value) {
+            value = 0;
+            $(input).val(value);
+        }
+        $(input).attr("value", value);
+        layui.table.cache["deploySpecTable"][index][$(input).attr('name')] = $(input).parent().html();
+    }
+
+    function cancalImage(ele, index) {
+        $(ele).attr("src", "/images/uploadfile.jpeg");
+        $(ele).prev().attr("value", "");
+        layui.table.cache["deploySpecTable"][index]["image"] = $(ele).parent().html();
+    }
+
+    function saveGoods() {
+        $("#data-save-btn").click();
+    }
+
 </script>

@@ -545,6 +545,11 @@
                         area: ['1000px', '100%'],//宽高不影响最大化
                         content: "../../index/shopSpu/specControl/" + data.id,//地址
                         zIndex: layer.zIndex,
+                        btn: ['保存规格参数', '返回商品列表'],
+                        yes: function (index, layero) {
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            window[layero.find('iframe')[0]['name']].saveGoods();
+                        },
                         success: function (layero, index) {
                             // 置顶当前窗口
                             layer.setTop(layero);
@@ -644,7 +649,6 @@
     });
 
     function showHaltSalesReason(haltSalesReason, ele) {
-        var layer = layui.layer;
-        layer.tips(haltSalesReason, ele);
+        layui.layer.tips(haltSalesReason, ele);
     }
 </script>

@@ -813,9 +813,6 @@
                         spec[d] = data[d];
                         skuName += " " + data[d];
                     } else if (d != 'LAY_TABLE_INDEX') {
-                        console.log(d)
-                        console.log($(data[d])[0])
-                        console.log($($(data[d])[0]).attr("value"))
                         shopSkuEntity[d] = $($(data[d])[0]).attr("value");
                     }
                 });
@@ -1002,7 +999,7 @@
             });
             // 商品货号
             var serialNo = form.val("shopSpuEntity").sn;
-            //  笛卡尔积结果
+            // 笛卡尔积结果
             var calcDescartes = CoreUtil.calcDescartes(valueTempArray);
             var uploadBtnIndex = "";// 上传按钮id
             $(calcDescartes).each(function (index, arr) {
@@ -1053,8 +1050,6 @@
             }
             // 列操作
             table.on('tool(deploySpecTable)', function (obj) {
-                // var delData = obj.data;
-                var form = layui.form;
                 switch (obj.event) {
                     case 'del':
                         var Data = table.cache["deploySpecTable"];

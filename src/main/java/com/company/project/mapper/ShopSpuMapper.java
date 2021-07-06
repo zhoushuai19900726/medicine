@@ -18,6 +18,9 @@ import java.util.List;
  */
 public interface ShopSpuMapper extends BaseMapper<ShopSpuEntity> {
 
+    @Select("SELECT * FROM shop_spu ${ew.customSqlSegment}")
+    List<ShopSpuEntity> listByCondition(@Param(Constants.WRAPPER) Wrapper<ShopSpuEntity> wrapper);
+
     @Select("SELECT COUNT(0) FROM shop_spu ${ew.customSqlSegment}")
     Integer countByCondition(@Param(Constants.WRAPPER) Wrapper<ShopSpuEntity> wrapper);
 

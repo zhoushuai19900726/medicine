@@ -18,6 +18,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.company.project.common.utils.DataResult;
 
@@ -40,6 +41,9 @@ public class ShopSpuController extends BaseController {
 
     @Resource
     private ShopSkuService shopSkuService;
+
+    @Resource
+    private ShopBrandService shopBrandService;
 
     @Resource
     private ShopSpecService shopSpecService;
@@ -89,7 +93,8 @@ public class ShopSpuController extends BaseController {
     @GetMapping("/index/shopSpu/stockControl/{id}")
     public String stockControl(@PathVariable("id") String id, Model model) {
         model.addAttribute("shopSpuEntity", shopSpuService.getShopSpuEntityById(id));
-        model.addAttribute("shopSkuEntityList", shopSkuService.listByCondition(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, id).orderByAsc(ShopSkuEntity::getId)));
+        // 库存管理只对未删除规格进行库存维护
+        model.addAttribute("shopSkuEntityList", shopSkuService.list(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, id).orderByAsc(ShopSkuEntity::getId)));
         return "goods/stockControl";
     }
 
@@ -97,6 +102,13 @@ public class ShopSpuController extends BaseController {
     @GetMapping("/index/shopSpu/specControl/{id}")
     public String specControl(@PathVariable("id") String id, Model model) {
         ShopSpuEntity shopSpuEntity = shopSpuService.getShopSpuEntityById(id);
+        // 品牌
+        if(StringUtils.isNotBlank(shopSpuEntity.getBrandId())){
+            ShopBrandEntity shopBrandEntity = shopBrandService.getById(shopSpuEntity.getBrandId());
+            if(Objects.nonNull(shopBrandEntity)){
+                shopSpuEntity.setBrandName(shopBrandEntity.getName());
+            }
+        }
         model.addAttribute("shopSpuEntity", shopSpuEntity);
         model.addAttribute("shopSkuEntityList", shopSkuService.listByCondition(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, id).orderByAsc(ShopSkuEntity::getId)));
         model.addAttribute("shopSpecEntityList", shopSpecService.list(Wrappers.<ShopSpecEntity>lambdaQuery().eq(ShopSpecEntity::getTemplateId, shopSpuEntity.getTemplateId()).orderByAsc(ShopSpecEntity::getSeq)));
