@@ -55,10 +55,13 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
     private ShopTemplateMapper shopTemplateMapper;
 
     @Resource
+    private ShopCategoryService shopCategoryService;
+
+    @Resource
     private ShopSpuOperationRecordMapper shopSpuOperationRecordMapper;
 
     @Resource
-    private ShopCategoryService shopCategoryService;
+    private ShopSpuAuditRecordMapper shopSpuAuditRecordMapper;
 
     @Override
     public ShopSpuEntity getShopSpuEntityByUnique(String unique) {
@@ -119,6 +122,8 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
         // 分类中商品数
         shopCategoryMapper.updateCount(Lists.newArrayList(new ShopCategoryEntity(shopSpuEntity.getCategory1Id(), NumberConstants.ONE), new ShopCategoryEntity(shopSpuEntity.getCategory2Id(), NumberConstants.ONE), new ShopCategoryEntity(shopSpuEntity.getCategory3Id(), NumberConstants.ONE)));
         long endTime = System.currentTimeMillis();
+        // 审核记录
+        shopSpuAuditRecordMapper.insert(new ShopSpuAuditRecordEntity(shopSpuEntity.getId(), AuditConstant.INITIATE_AUDIT_APPLICATION));
         // 操作记录
         shopSpuOperationRecordMapper.insert(new ShopSpuOperationRecordEntity(shopSpuEntity.getId(), OperationConstant.ADD, null, JSONObject.toJSONString(shopSpuEntity), (endTime - startTime)));
         return DataResult.success(shopSpuEntity);
@@ -141,6 +146,8 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
             // 分类中商品数
             shopCategoryMapper.updateCount(Lists.newArrayList(new ShopCategoryEntity(shopSpuEntity.getCategory1Id(), NumberConstants.ONE), new ShopCategoryEntity(shopSpuEntity.getCategory2Id(), NumberConstants.ONE), new ShopCategoryEntity(shopSpuEntity.getCategory3Id(), NumberConstants.ONE)));
         }
+        // 审核记录
+        shopSpuAuditRecordMapper.insert(new ShopSpuAuditRecordEntity(shopSpuEntity.getId(), AuditConstant.INITIATE_AUDIT_APPLICATION));
         long endTime = System.currentTimeMillis();
         // 操作记录
         shopSpuOperationRecordMapper.insert(new ShopSpuOperationRecordEntity(shopSpuEntity.getId(), OperationConstant.REDUCTION, null, null, (endTime - startTime)));
@@ -169,6 +176,10 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
         }
         // 更新SPU
         shopSpuMapper.updateById(shopSpuEntity);
+        if(StringUtils.isNotBlank(shopSpuEntity.getStatus())){
+            // 审核记录
+            shopSpuAuditRecordMapper.insert(new ShopSpuAuditRecordEntity(shopSpuEntity.getId(), AuditConstant.AuditStatus(shopSpuEntity.getStatus()), shopSpuEntity.getAuditRejectionReason()));
+        }
         // 更新SKU - 状态与SPU保持一致
         if (StringUtils.isNotBlank(shopSpuEntity.getIsMarketable())) {
             List<ShopSkuEntity> shopSkuEntityList = shopSkuMapper.listByCondition(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, shopSpuEntity.getId()));
@@ -190,6 +201,7 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
 
     /**
      * 更新SPU、SKU
+     *
      * @param shopSpuEntity
      * @return
      */
@@ -207,8 +219,12 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
         if (Objects.isNull(oldShopSpuEntity)) {
             return DataResult.fail(BaseResponseCode.OPERATION_ERRO.getMsg());
         }
+        // 审核状态
+        shopSpuEntity.setStatus(GoodsExamineStatusEnum.TO_BE_REVIEWED.getType());
         // 更新SPU
         shopSpuMapper.updateById(shopSpuEntity);
+        // 审核记录
+        shopSpuAuditRecordMapper.insert(new ShopSpuAuditRecordEntity(shopSpuEntity.getId(), AuditConstant.INITIATE_AUDIT_APPLICATION));
         // 删除旧SKU
         shopSkuMapper.delete(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, shopSpuEntity.getId()));
         // 保存新SKU
@@ -403,8 +419,12 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
                     }).collect(Collectors.toList());
                     finalShopSKuEntityList.addAll(copyShopSkuEntityList);
                 });
-                // 保存SPU
-                finalShopSpuEntityList.forEach(finalShopSPuEntity -> shopSpuMapper.insert(finalShopSPuEntity));
+                finalShopSpuEntityList.forEach(finalShopSPuEntity -> {
+                    // 保存SPU
+                    shopSpuMapper.insert(finalShopSPuEntity);
+                    // 审核记录
+                    shopSpuAuditRecordMapper.insert(new ShopSpuAuditRecordEntity(finalShopSPuEntity.getId(), AuditConstant.INITIATE_AUDIT_APPLICATION));
+                });
                 // 保存SKU
                 finalShopSKuEntityList.forEach(finalShopSKuEntity -> shopSkuMapper.insert(finalShopSKuEntity));
                 // 分类中商品数
@@ -435,17 +455,22 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
                 // 修改原SPU
                 ShopSpuEntity updSpu = new ShopSpuEntity();
                 updSpu.setId(shopSpuEntity.getId());
+                updSpu.setStatus(GoodsExamineStatusEnum.TO_BE_REVIEWED.getType());
                 updSpu.setCategory3Id(param.getTransferToCategory3Id());
                 updSpu.setCategory2Id(parentMap.getOrDefault(updSpu.getCategory3Id(), DelimiterConstants.EMPTY_STR));
                 updSpu.setCategory1Id(parentMap.getOrDefault(updSpu.getCategory2Id(), DelimiterConstants.EMPTY_STR));
                 shopSpuMapper.updateById(updSpu);
+                // 审核记录
+                shopSpuAuditRecordMapper.insert(new ShopSpuAuditRecordEntity(updSpu.getId(), AuditConstant.INITIATE_AUDIT_APPLICATION));
+                // 三级分类
+                ShopCategoryEntity shopCategoryEntity = shopCategoryMapper.selectById(updSpu.getCategory3Id());
                 // 修改原SKU
                 shopSkuEntityList.forEach(shopSkuEntity -> {
                     ShopSkuEntity updSku = new ShopSkuEntity();
                     updSku.setId(shopSkuEntity.getId());
                     updSku.setSpuId(updSpu.getId());
                     updSku.setCategoryId(updSpu.getCategory3Id());
-                    updSku.setCategoryName(DelimiterConstants.EMPTY_STR);
+                    updSku.setCategoryName(Objects.nonNull(shopCategoryEntity) ? shopCategoryEntity.getName() : DelimiterConstants.EMPTY_STR);
                     shopSkuMapper.updateById(updSku);
                 });
                 // 现分类中商品数 +1

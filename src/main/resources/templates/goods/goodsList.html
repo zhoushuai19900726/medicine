@@ -181,10 +181,11 @@
         {{# }else if(d.status == '1') { }}
         <div style="width: 100%; cursor: pointer;" class="layui-badge layui-bg-green"><i class="layui-icon">&#xe609;</i> 审核通过</div>
         {{# }else { }}
-        <div style="width: 100%; cursor: pointer;" class="layui-badge layui-bg-red" onmouseenter="showAuditRejectionReason('{{d.auditRejectionReason}}', this)"><i class="layui-icon">&#xe6b2;</i> 审核驳回</div>
+        <div style="width: 100%; cursor: pointer;" class="layui-badge layui-bg-red" onmouseenter="showAuditRejectionReason('{{d.auditRejectionReason}}', this)"><i class="layui-icon">&#xe6b2;</i> 审核驳回
+        </div>
         {{# } }}
         <br/>
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>审核详情</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="auditRecord" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>审核详情</a>
     </script>
     <script type="text/html" id="transferOrCopyTpl">
         <div class="panel panel-default" shiro:hasPermission="goods:add">
@@ -508,7 +509,7 @@
                         value: data.haltSalesReason,
                         title: '请输入停售原因',
                         area: ['800px', '350px']
-                    }, function(value, index, elem){
+                    }, function (value, index, elem) {
                         CoreUtil.sendPut("/goods/update", {id: data.id, isMarketable: '2', haltSalesReason: value}, function (res) {
                             layer.close(index);
                             tableIns1.reload();
@@ -585,6 +586,51 @@
                             layer.setTop(layero);
                         }
                     });
+                    break;
+                case 'auditRecord':
+                    // 审核记录
+                    if (data.status == '2') {
+                        layer.open({
+                            type: 2,
+                            title: '<i class="layui-icon">&#xe62a;</i> 审核记录',
+                            id: 'auditRecord',
+                            scrollbar: false,
+                            offset: 'r',
+                            anim: 5,
+                            maxmin: true,
+                            area: ['1000px', '100%'],//宽高不影响最大化
+                            content: "../../index/shopSpu/auditRecord/" + data.id,//地址
+                            zIndex: layer.zIndex,
+                            btn: ['重新提交审核', '取消']
+                            , yes: function (index, layero) {
+                                CoreUtil.sendPut("/goods/update", {id: data.id, status: '0'}, function (res) {
+                                    layer.close(index);
+                                    tableIns1.reload();
+                                });
+                            }
+                            , success: function (layero, index) {
+                                // 置顶当前窗口
+                                layer.setTop(layero);
+                            }
+                        });
+                    } else {
+                        layer.open({
+                            type: 2,
+                            title: '<i class="layui-icon">&#xe62a;</i> 审核记录',
+                            id: 'auditRecord',
+                            scrollbar: false,
+                            offset: 'r',
+                            anim: 5,
+                            maxmin: true,
+                            area: ['1000px', '100%'],//宽高不影响最大化
+                            content: "../../index/shopSpu/auditRecord/" + data.id,//地址
+                            zIndex: layer.zIndex
+                            , success: function (layero, index) {
+                                // 置顶当前窗口
+                                layer.setTop(layero);
+                            }
+                        });
+                    }
                     break;
                 case 'orderList':
                     //  TODO 查看订单
@@ -676,6 +722,7 @@
     function showHaltSalesReason(haltSalesReason, ele) {
         layui.layer.tips(haltSalesReason, ele);
     }
+
     function showAuditRejectionReason(auditRejectionReason, ele) {
         layui.layer.tips(auditRejectionReason, ele);
     }

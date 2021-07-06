@@ -57,6 +57,9 @@ public class ShopSpuController extends BaseController {
     @Resource
     private ShopSpuOperationRecordService shopSpuOperationRecordService;
 
+    @Resource
+    private ShopSpuAuditRecordService shopSpuAuditRecordService;
+
     @ApiOperation(value = "跳转到列表页面")
     @GetMapping("/index/shopSpu")
     public String shopSpu() {
@@ -90,6 +93,12 @@ public class ShopSpuController extends BaseController {
     public String operationRecord(@PathVariable("id") String id, Model model) {
         model.addAttribute("shopSpuOperationRecordEntityList", encapsulationUser(shopSpuOperationRecordService.list(Wrappers.<ShopSpuOperationRecordEntity>lambdaQuery().eq(ShopSpuOperationRecordEntity::getSpuId, id).orderByDesc(ShopSpuOperationRecordEntity::getCreateTime))));
         return "goods/operationRecord";
+    }
+    @ApiOperation(value = "跳转进入商品审核记录页面")
+    @GetMapping("/index/shopSpu/auditRecord/{id}")
+    public String auditRecord(@PathVariable("id") String id, Model model) {
+        model.addAttribute("shopSpuAuditRecordEntityList", encapsulationUser(shopSpuAuditRecordService.list(Wrappers.<ShopSpuAuditRecordEntity>lambdaQuery().eq(ShopSpuAuditRecordEntity::getSpuId, id).orderByDesc(ShopSpuAuditRecordEntity::getCreateTime))));
+        return "goods/auditRecord";
     }
 
     @ApiOperation(value = "跳转进入商品库存管理页面")

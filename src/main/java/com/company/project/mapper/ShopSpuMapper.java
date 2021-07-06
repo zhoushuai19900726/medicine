@@ -33,7 +33,7 @@ public interface ShopSpuMapper extends BaseMapper<ShopSpuEntity> {
     @Select("SELECT * FROM shop_spu ${ew.customSqlSegment}")
     IPage<ShopSpuEntity> recycleBinListByPage(IPage<ShopSpuEntity> page, @Param(Constants.WRAPPER) Wrapper<ShopSpuEntity> wrapper);
 
-    @Update("UPDATE shop_spu SET deleted = 0 WHERE id = #{id}")
+    @Update("UPDATE shop_spu SET deleted = 0, status = '0' WHERE id = #{id}")
     void reductionShopSpuEntityById(@Param("id") String id);
 
     @Delete("<script> DELETE FROM shop_spu WHERE id IN  <foreach collection ='ids' item ='id' index ='index' separator=',' open='(' close=')'  > #{id} </foreach> </script>")
