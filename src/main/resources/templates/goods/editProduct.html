@@ -152,7 +152,7 @@
                                     <tr>
                                         <td>商品介绍</td>
                                         <td colspan="3">
-                                            <textarea name="introduction" placeholder="请输入商品介绍" class="layui-textarea"></textarea>
+                                            <textarea name="introduction" placeholder="请输入商品介绍" class="layui-textarea" th:text="${shopSpuEntity.introduction}"></textarea>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -177,7 +177,10 @@
                                     <td>服务保证</td>
                                     <td>
                                         <div th:with="dataResult=${@commonController.findAllServiceGuarantee()}">
-                                            <input type="checkbox" name="serviceGuarantee" th:each="map : ${dataResult.getData()}" th:title="${map.get('name')}"/>
+                                            <input type="checkbox" name="serviceGuarantee"
+                                                   th:each="map : ${dataResult.getData()}"
+                                                   th:title="${map.get('name')}"
+                                                   th:checked="${#lists.contains(#strings.arraySplit(shopSpuEntity.saleService == null ? '' : shopSpuEntity.saleService, ','), map.get('name'))}"/>
                                         </div>
                                     </td>
                                 </tr>
@@ -418,12 +421,12 @@
                 var flag = true;
                 $(".layui-table-view[lay-id='showTable1'] .layui-table-body tr").each(function (index, item) {
                     var categoryId = $(item).find("td[data-field='id']").eq(0).text();
-                    if(category1Id == categoryId){
+                    if (category1Id == categoryId) {
                         flag = false;
                         $(item).find(".layui-form-radio").click();
                     }
                 });
-                if(flag){
+                if (flag) {
                     $(".layui-table-view[lay-id='showTable1'] .layui-table-body tr[data-index='0'] .layui-form-radio").click();
                 }
             }
@@ -503,12 +506,12 @@
                 var flag = true;
                 $(".layui-table-view[lay-id='showTable2'] .layui-table-body tr").each(function (index, item) {
                     var categoryId = $(item).find("td[data-field='id']").eq(0).text();
-                    if(category2Id == categoryId){
+                    if (category2Id == categoryId) {
                         flag = false;
                         $(item).find(".layui-form-radio").click();
                     }
                 });
-                if(flag){
+                if (flag) {
                     $(".layui-table-view[lay-id='showTable2'] .layui-table-body tr[data-index='0'] .layui-form-radio").click();
                 }
             }
@@ -593,12 +596,12 @@
                 var flag = true;
                 $(".layui-table-view[lay-id='showTable3'] .layui-table-body tr").each(function (index, item) {
                     var categoryId = $(item).find("td[data-field='id']").eq(0).text();
-                    if(category3Id == categoryId){
+                    if (category3Id == categoryId) {
                         flag = false;
                         $(item).find(".layui-form-radio").click();
                     }
                 });
-                if(flag){
+                if (flag) {
                     $(".layui-table-view[lay-id='showTable3'] .layui-table-body tr[data-index='0'] .layui-form-radio").click();
                 }
             }
