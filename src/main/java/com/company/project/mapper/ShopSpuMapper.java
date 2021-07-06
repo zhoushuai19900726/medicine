@@ -27,8 +27,8 @@ public interface ShopSpuMapper extends BaseMapper<ShopSpuEntity> {
     @Select("SELECT * FROM shop_spu WHERE id = #{id}")
     ShopSpuEntity selectShopSpuEntityById(@Param("id") String id);
 
-    @Select("SELECT * FROM shop_spu WHERE sn = #{unique}")
-    ShopSpuEntity selectShopSpuEntityByUnique(@Param("unique") String unique);
+    @Select("<script> SELECT * FROM shop_spu WHERE sn = #{shopSpuEntity.sn} <when test='shopSpuEntity.id != null'> AND id != #{shopSpuEntity.id} </when> </script>")
+    ShopSpuEntity selectShopSpuEntityByUnique(@Param("shopSpuEntity") ShopSpuEntity shopSpuEntity);
 
     @Select("SELECT * FROM shop_spu ${ew.customSqlSegment}")
     IPage<ShopSpuEntity> recycleBinListByPage(IPage<ShopSpuEntity> page, @Param(Constants.WRAPPER) Wrapper<ShopSpuEntity> wrapper);

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.company.project.common.enums.GoodsExamineStatusEnum;
+import com.company.project.common.enums.GoodsStatusEnum;
 import com.company.project.common.exception.code.BaseResponseCode;
 import com.company.project.common.exception.code.BusinessResponseCode;
 import com.company.project.common.utils.*;
@@ -64,8 +65,8 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
     private ShopSpuAuditRecordMapper shopSpuAuditRecordMapper;
 
     @Override
-    public ShopSpuEntity getShopSpuEntityByUnique(String unique) {
-        return shopSpuMapper.selectShopSpuEntityByUnique(unique);
+    public ShopSpuEntity getShopSpuEntityByUnique(ShopSpuEntity shopSpuEntity) {
+        return shopSpuMapper.selectShopSpuEntityByUnique(shopSpuEntity);
     }
 
     @Override
@@ -174,12 +175,16 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
         if (Objects.isNull(oldShopSpuEntity)) {
             return DataResult.fail(BaseResponseCode.OPERATION_ERRO.getMsg());
         }
-        // 更新SPU
-        shopSpuMapper.updateById(shopSpuEntity);
         if(StringUtils.isNotBlank(shopSpuEntity.getStatus())){
             // 审核记录
             shopSpuAuditRecordMapper.insert(new ShopSpuAuditRecordEntity(shopSpuEntity.getId(), AuditConstant.AuditStatus(shopSpuEntity.getStatus()), shopSpuEntity.getAuditRejectionReason()));
+        } else if(StringUtils.equals(shopSpuEntity.getIsMarketable(), GoodsStatusEnum.PUT_ON_THE_SHELVES.getType())){
+            shopSpuEntity.setStatus(GoodsExamineStatusEnum.TO_BE_REVIEWED.getType());
+            // 审核记录
+            shopSpuAuditRecordMapper.insert(new ShopSpuAuditRecordEntity(shopSpuEntity.getId(), AuditConstant.INITIATE_AUDIT_APPLICATION));
         }
+        // 更新SPU
+        shopSpuMapper.updateById(shopSpuEntity);
         // 更新SKU - 状态与SPU保持一致
         if (StringUtils.isNotBlank(shopSpuEntity.getIsMarketable())) {
             List<ShopSkuEntity> shopSkuEntityList = shopSkuMapper.listByCondition(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, shopSpuEntity.getId()));

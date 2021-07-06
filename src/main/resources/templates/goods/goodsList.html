@@ -498,9 +498,23 @@
                     });
                     break;
                 case 'edit':
-                    // TODO 编辑商品
-
-
+                    // 编辑商品
+                    layer.open({
+                        type: 2,
+                        title: '<i class="layui-icon">&#xe642;</i> 编辑商品',
+                        id: 'goodsDetail',
+                        scrollbar: false,
+                        offset: 'r',
+                        anim: 5,
+                        maxmin: true,
+                        area: ['100%', '100%'],//宽高不影响最大化
+                        content: "../../index/shopSpu/editProduct/" + data.id,//地址
+                        zIndex: layer.zIndex,
+                        success: function (layero, index) {
+                            // 置顶当前窗口
+                            layer.setTop(layero);
+                        }
+                    });
                     break;
                 case 'haltSales':
                     // 商品停售

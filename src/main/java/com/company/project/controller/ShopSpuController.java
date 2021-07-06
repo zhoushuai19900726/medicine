@@ -72,6 +72,14 @@ public class ShopSpuController extends BaseController {
         return "goods/releaseProduct";
     }
 
+    @ApiOperation(value = "跳转到编辑商品页面")
+    @GetMapping("/index/shopSpu/editProduct/{id}")
+    public String editProduct(@PathVariable("id") String id, Model model) {
+        model.addAttribute("shopSpuEntity", shopSpuService.getById(id));
+        model.addAttribute("shopSkuEntityList", shopSkuService.list(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, id)));
+        return "goods/editProduct";
+    }
+
     @ApiOperation(value = "跳转进入商品SPU详情页面")
     @GetMapping("/index/shopSpu/detail/{id}")
     public String spuDetail(@PathVariable("id") String id, Model model) {
@@ -94,6 +102,7 @@ public class ShopSpuController extends BaseController {
         model.addAttribute("shopSpuOperationRecordEntityList", encapsulationUser(shopSpuOperationRecordService.list(Wrappers.<ShopSpuOperationRecordEntity>lambdaQuery().eq(ShopSpuOperationRecordEntity::getSpuId, id).orderByDesc(ShopSpuOperationRecordEntity::getCreateTime))));
         return "goods/operationRecord";
     }
+
     @ApiOperation(value = "跳转进入商品审核记录页面")
     @GetMapping("/index/shopSpu/auditRecord/{id}")
     public String auditRecord(@PathVariable("id") String id, Model model) {
@@ -115,9 +124,9 @@ public class ShopSpuController extends BaseController {
     public String specControl(@PathVariable("id") String id, Model model) {
         ShopSpuEntity shopSpuEntity = shopSpuService.getShopSpuEntityById(id);
         // 品牌
-        if(StringUtils.isNotBlank(shopSpuEntity.getBrandId())){
+        if (StringUtils.isNotBlank(shopSpuEntity.getBrandId())) {
             ShopBrandEntity shopBrandEntity = shopBrandService.getById(shopSpuEntity.getBrandId());
-            if(Objects.nonNull(shopBrandEntity)){
+            if (Objects.nonNull(shopBrandEntity)) {
                 shopSpuEntity.setBrandName(shopBrandEntity.getName());
             }
         }
@@ -229,12 +238,12 @@ public class ShopSpuController extends BaseController {
     }
 
     @ApiOperation(value = "根据唯一索引查询")
-    @PutMapping("goods/findOneByUnique/{sn}")
+    @PutMapping("goods/findOneByUnique")
     @RequiresPermissions("goods:update")
     @LogAnnotation(title = "根据SPU商品货号查询", action = "查询")
     @ResponseBody
-    public DataResult findOneByUnique(@PathVariable("sn") String sn) {
-        return DataResult.success(shopSpuService.getShopSpuEntityByUnique(sn));
+    public DataResult findOneByUnique(@RequestBody ShopSpuEntity shopSpuEntity) {
+        return DataResult.success(shopSpuService.getShopSpuEntityByUnique(shopSpuEntity));
     }
 
     @ApiOperation(value = "根据商家生成唯一商品货号")

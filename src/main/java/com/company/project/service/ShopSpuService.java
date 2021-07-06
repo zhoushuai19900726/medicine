@@ -18,7 +18,7 @@ import java.util.List;
  */
 public interface ShopSpuService extends IService<ShopSpuEntity> {
 
-    ShopSpuEntity getShopSpuEntityByUnique(String unique);
+    ShopSpuEntity getShopSpuEntityByUnique(ShopSpuEntity shopSpuEntity);
 
     ShopSpuEntity getShopSpuEntityById(String id);
 
