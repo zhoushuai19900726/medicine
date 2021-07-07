@@ -195,5 +195,12 @@ public class ShopSkuEntity extends BaseEntity implements Serializable {
     @TableLogic // 注释后进行物理删除
     private Integer deleted;
 
+    public ShopSkuEntity(String status) {
+        this.status = status;
+    }
 
+    public ShopSkuEntity(String categoryId, String categoryName) {
+        this.categoryId = categoryId;
+        this.categoryName = categoryName;
+    }
 }

@@ -187,16 +187,7 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
         shopSpuMapper.updateById(shopSpuEntity);
         // 更新SKU - 状态与SPU保持一致
         if (StringUtils.isNotBlank(shopSpuEntity.getIsMarketable())) {
-            List<ShopSkuEntity> shopSkuEntityList = shopSkuMapper.listByCondition(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, shopSpuEntity.getId()));
-            if (CollectionUtils.isNotEmpty(shopSkuEntityList)) {
-                ShopSpuEntity finalShopSpuEntity = shopSpuEntity;
-                shopSkuEntityList.forEach(shopSkuEntity -> {
-                    ShopSkuEntity updSku = new ShopSkuEntity();
-                    updSku.setId(shopSkuEntity.getId());
-                    updSku.setStatus(finalShopSpuEntity.getIsMarketable());
-                    shopSkuMapper.updateShopSpuEntityStatusById(updSku);
-                });
-            }
+            shopSkuMapper.update(new ShopSkuEntity(shopSpuEntity.getIsMarketable()), Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, shopSpuEntity.getId()));
         }
         long endTime = System.currentTimeMillis();
         // 操作记录
@@ -451,8 +442,6 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
             // 查询商品SPU
             ShopSpuEntity shopSpuEntity = shopSpuMapper.selectById(param.getId());
             if (Objects.nonNull(shopSpuEntity)) {
-                // 查询商品SKU
-                List<ShopSkuEntity> shopSkuEntityList = shopSkuMapper.selectList(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, param.getId()));
                 // 原分类中商品数 -1
                 shopCategoryMapper.updateCount(Lists.newArrayList(new ShopCategoryEntity(shopSpuEntity.getCategory1Id(), NumberConstants.MINUS_ONE), new ShopCategoryEntity(shopSpuEntity.getCategory2Id(), NumberConstants.MINUS_ONE), new ShopCategoryEntity(shopSpuEntity.getCategory3Id(), NumberConstants.MINUS_ONE)));
                 // 现分类
@@ -470,14 +459,7 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
                 // 三级分类
                 ShopCategoryEntity shopCategoryEntity = shopCategoryMapper.selectById(updSpu.getCategory3Id());
                 // 修改原SKU
-                shopSkuEntityList.forEach(shopSkuEntity -> {
-                    ShopSkuEntity updSku = new ShopSkuEntity();
-                    updSku.setId(shopSkuEntity.getId());
-                    updSku.setSpuId(updSpu.getId());
-                    updSku.setCategoryId(updSpu.getCategory3Id());
-                    updSku.setCategoryName(Objects.nonNull(shopCategoryEntity) ? shopCategoryEntity.getName() : DelimiterConstants.EMPTY_STR);
-                    shopSkuMapper.updateById(updSku);
-                });
+                shopSkuMapper.update(new ShopSkuEntity(updSpu.getCategory3Id(), Objects.nonNull(shopCategoryEntity) ? shopCategoryEntity.getName() : DelimiterConstants.EMPTY_STR), Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, updSpu.getId()));
                 // 现分类中商品数 +1
                 shopCategoryMapper.updateCount(Lists.newArrayList(new ShopCategoryEntity(updSpu.getCategory1Id(), NumberConstants.ONE), new ShopCategoryEntity(updSpu.getCategory2Id(), NumberConstants.ONE), new ShopCategoryEntity(updSpu.getCategory3Id(), NumberConstants.ONE)));
                 long endTime = System.currentTimeMillis();

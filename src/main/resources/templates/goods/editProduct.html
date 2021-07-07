@@ -83,6 +83,8 @@
                         <input type="hidden" name="category1Id" th:value="${shopSpuEntity.category1Id}"/>
                         <input type="hidden" name="category2Id" th:value="${shopSpuEntity.category2Id}"/>
                         <input type="hidden" name="category3Id" th:value="${shopSpuEntity.category3Id}"/>
+                        <input type="hidden" name="specItems" th:value="${shopSpuEntity.specItems}"/>
+                        <input type="hidden" name="paraItems" th:value="${shopSpuEntity.paraItems}"/>
                         <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 商品基本信息</blockquote>
                         <blockquote class="layui-elem-quote layui-quote-nm">
                             <div class="layui-form-item">
@@ -235,28 +237,76 @@
                         <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 商品相册</blockquote>
                         <blockquote class="layui-elem-quote layui-quote-nm">
                             <div class="layui-form-item">
-                                <div class="layui-inline" th:each="index:${#numbers.sequence(1, 5)}">
-                                    <div class="layui-card">
-                                        <div class="layui-card-header" style="text-align: center;">
-                                            <div class="layui-btn-group">
-                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" th:id="'uploadPictures' + ${index}">
-                                                    <i class="layui-icon">&#xe67c;</i> 上传
-                                                </button>
-                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="chooseAlbumGallery(this, 1)">
-                                                    <i class="layui-icon">&#xe64a;</i> 图库
-                                                </button>
-                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" th:onclick="'deletePicture(this, ' + ${index} + ')'">
-                                                    <i class="layui-icon">&#xe640;</i> 删除
-                                                </button>
+
+                                <block th:if="${shopSpuEntity.images != null && shopSpuEntity.images != ''}">
+                                    <div class="layui-inline" th:each="image, imageStat : ${#strings.arraySplit(shopSpuEntity.images, ',')}">
+                                        <div class="layui-card">
+                                            <div class="layui-card-header" style="text-align: center;">
+                                                <div class="layui-btn-group">
+                                                    <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" th:id="'uploadPictures' + ${imageStat.index + 1}">
+                                                        <i class="layui-icon">&#xe67c;</i> 上传
+                                                    </button>
+                                                    <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="chooseAlbumGallery(this, 1)">
+                                                        <i class="layui-icon">&#xe64a;</i> 图库
+                                                    </button>
+                                                    <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" th:onclick="'deletePicture(this, ' + ${imageStat.index + 1} + ')'">
+                                                        <i class="layui-icon">&#xe640;</i> 删除
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="layui-card-body" style="text-align: center;">
+                                                <input name="images" hidden/>
+                                                <img th:src="${image}" style="height: 200px; width: 200px;"/>
                                             </div>
                                         </div>
-                                        <div class="layui-card-body" style="text-align: center;">
-                                            <input name="images" hidden/>
-                                            <img th:if="${1 == index}" th:src="@{/images/uploadfile.png}" style="height: 200px; width: 200px;"/>
-                                            <img th:if="${1 != index}" th:src="@{/images/uploadfile.jpeg}" style="height: 200px; width: 200px;"/>
+                                    </div>
+                                    <div class="layui-inline" th:each="index : ${#numbers.sequence(#lists.size(#strings.arraySplit(shopSpuEntity.images, ',')) + 1, 5)}">
+                                        <div class="layui-card">
+                                            <div class="layui-card-header" style="text-align: center;">
+                                                <div class="layui-btn-group">
+                                                    <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" th:id="'uploadPictures' + ${index + 1}">
+                                                        <i class="layui-icon">&#xe67c;</i> 上传
+                                                    </button>
+                                                    <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="chooseAlbumGallery(this, 1)">
+                                                        <i class="layui-icon">&#xe64a;</i> 图库
+                                                    </button>
+                                                    <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" th:onclick="'deletePicture(this, ' + ${index + 1} + ')'">
+                                                        <i class="layui-icon">&#xe640;</i> 删除
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="layui-card-body" style="text-align: center;">
+                                                <input name="images" hidden/>
+                                                <img th:src="@{/images/uploadfile.jpeg}" style="height: 200px; width: 200px;"/>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                </block>
+                                <block th:if="${shopSpuEntity.images == null || shopSpuEntity.images == ''}">
+                                    <div class="layui-inline" th:each="index : ${#numbers.sequence(1, 5)}">
+                                        <div class="layui-card">
+                                            <div class="layui-card-header" style="text-align: center;">
+                                                <div class="layui-btn-group">
+                                                    <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" th:id="'uploadPictures' + ${index}">
+                                                        <i class="layui-icon">&#xe67c;</i> 上传
+                                                    </button>
+                                                    <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="chooseAlbumGallery(this, 1)">
+                                                        <i class="layui-icon">&#xe64a;</i> 图库
+                                                    </button>
+                                                    <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" th:onclick="'deletePicture(this, ' + ${index} + ')'">
+                                                        <i class="layui-icon">&#xe640;</i> 删除
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="layui-card-body" style="text-align: center;">
+                                                <input name="images" hidden/>
+                                                <img th:if="${1 == index}" th:src="@{/images/uploadfile.png}" style="height: 200px; width: 200px;"/>
+                                                <img th:if="${1 != index}" th:src="@{/images/uploadfile.jpeg}" style="height: 200px; width: 200px;"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </block>
+
                             </div>
                         </blockquote>
                         <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 详情描述</blockquote>
@@ -346,8 +396,10 @@
             filter: 'stepForm',
             width: '90%', //设置容器宽度
             stepWidth: '1000px',
-            height: '800px',
-            initStep: 2,// 初始化显示索引
+            // height: '800px',
+            // initStep: 1,// 初始化显示索引
+            height: '3000px',
+            initStep: 3,// TODO 初始化显示索引
             stepItems: [{
                 title: '选择商品分类'
             }, {
@@ -886,13 +938,15 @@
             if (shopSkuEntityList.length > 0) {
                 shopSpuEntity.shopSkuEntityList = shopSkuEntityList;
                 // 执行提交审核
-                CoreUtil.sendPost("/goods/add", shopSpuEntity, function (res) {
+                CoreUtil.sendPut("/goods/update", shopSpuEntity, function (res) {
                     layer.msg("发布成功, 等待商品审核...", {time: 1000}, function () {
-                        window.location.reload();
+                        // 按钮【按钮二】的回调
+                        var parentIndex = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(parentIndex);
                         var options = {};
                         options.href = "/index/shopSpu/auditList";
                         options.title = "商品审核";
-                        miniTab.openNewTabByIframe(options);
+                        parent.miniTab.openNewTabByIframe(options);
                     });
                 });
             } else {
@@ -916,7 +970,7 @@
             anim: 5,
             maxmin: true,
             area: ['1000px', '100%'],//宽高不影响最大化
-            content: "../../index/shopAlbum/chooseAlbumGallery",//地址
+            content: "../../../index/shopAlbum/chooseAlbumGallery",//地址
             zIndex: layer.zIndex,
             btn: ['确认选择', '关闭'],
             success: function (layero, index) {
@@ -959,7 +1013,8 @@
     }
 
     function renderingSpecTable(templateId) {
-        layui.use(['table', 'layer'], function () {
+        layui.use(['form', 'table', 'layer'], function () {
+            var form = layui.form;
             var table = layui.table;
             table.render({
                 id: 'specTable'
@@ -989,6 +1044,17 @@
                 ]
                 , done: function (res, curr, count) {
                     deploySpecMap.clear();
+                    // 加入回显内容 - 规格列表
+                    var specItems = form.val("shopSpuEntity").specItems;
+                    var myJson = JSON.parse(specItems);
+                    for (var p in myJson) {
+                        deploySpecMap.set(p, myJson[p]);
+                        // 规格值
+                        $(myJson[p]).each(function (i, d) {
+                            $("input[type='checkbox'][spec='" + p + "'][title='" + d + "']").prop("checked", true);
+                        });
+                    }
+                    form.render('checkbox');
                     deploySpecTable();
                 }
             });
@@ -996,8 +1062,9 @@
     }
 
     function renderingParaTable(templateId) {
-        layui.use(['table', 'layer'], function () {
+        layui.use(['form', 'table', 'layer'], function () {
             var table = layui.table;
+            var form = layui.form;
             table.render({
                 id: 'paraTable'
                 , elem: '#paraTable'
@@ -1024,6 +1091,18 @@
                         {field: 'options', title: '录入参数', templet: '#paraOptions'},
                     ]
                 ]
+                , done: function (res, curr, count) {
+                    // 加入回显内容 - 参数列表
+                    var paraItems = form.val("shopSpuEntity").paraItems;
+                    var myJson = JSON.parse(paraItems);
+                    for (var p in myJson) {
+                        // 参数值
+                        $(myJson[p]).each(function (i, d) {
+                            $("input[type='checkbox'][name='paraOption'][param='" + p + "'][title='" + d + "']").prop("checked", true);
+                        });
+                    }
+                    form.render('checkbox');
+                }
             });
         });
     }

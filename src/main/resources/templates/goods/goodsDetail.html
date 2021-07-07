@@ -187,7 +187,7 @@
                                         <td th:text="${shopSkuEntity.num}"></td>
                                         <td th:text="${shopSkuEntity.alertNum}"></td>
                                         <td th:text="${shopSkuEntity.sn}"></td>
-                                        <td><img th:src="${shopSkuEntity.image}" style="width: 30px; height: 30px; cursor: pointer;"></td>
+                                        <td><img th:src="${shopSkuEntity.image}" style="width: 30px; height: 30px; cursor: pointer;"/></td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -245,7 +245,7 @@
                 <div class="layui-tab-item">
                     <div class="layui-carousel" id="album">
                         <div carousel-item="">
-                            <div th:each="image: ${shopSpuEntity.images.split(',')}"><img th:src="${image}" about="" title="" style="width: 100%; height: 100%;"></div>
+                            <div th:each="image: ${(shopSpuEntity.images == null ? '' : shopSpuEntity.images).split(',')}"><img th:src="${image}" about="" title="" style="width: 100%; height: 100%;"></div>
                         </div>
                     </div>
                 </div>

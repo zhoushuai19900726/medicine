@@ -124,9 +124,9 @@
                 <td>
                     {{# if(d.isRecommend == 1){ }}
                     <i class="fa fa-star" style="color: red; position: absolute; left: -15px; top: 0"></i>
-                    <img src="{{d.image}}" style="width: 60px; height: 60px;" title="{{ d.caption }}"/>
+                    <img src="{{ d.image != null && d.image != '' ? d.image : '/images/emptyImage.jpeg' }}" style="width: 60px; height: 60px;" title="{{ d.caption }}"/>
                     {{# }else { }}
-                    <img src="{{d.image}}" style="width: 60px; height: 60px;" title="{{ d.caption }}"/>
+                    <img src="{{ d.image != null && d.image != '' ? d.image : '/images/emptyImage.jpeg' }}" style="width: 60px; height: 60px;" title="{{ d.caption }}"/>
                     {{# } }}
                 </td>
                 <td style="padding-left: 2px;">
