@@ -58,7 +58,6 @@
     <script type="text/html" id="configTool">
         <a class="layui-btn layui-btn-primary layui-border-blue layui-btn-xs" lay-event="newSubordinate" shiro:hasPermission="shopCategory:add"><i class="layui-icon">&#xe61f;</i>新增下级</a>
         <a class="layui-btn layui-btn-primary layui-border-orange layui-btn-xs" lay-event="viewSubordinate" shiro:hasPermission="shopCategory:list"><i class="layui-icon">&#xe615;</i>查看下级</a>
-        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="transferGoods" shiro:hasPermission="shopCategory:update"><i class="layui-icon">&#xe9aa;</i>转移商品</a>
     </script>
     <script type="text/html" id="tool">
         <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit" shiro:hasPermission="shopCategory:update"><i class="layui-icon">&#xe642;</i>编辑</a>
@@ -102,7 +101,7 @@
             elem: '#createEndTime'
             , type: 'datetime'
         });
-        //加载table TODO 商品数量
+        //加载table
         tableIns1 = table.render({
             elem: '#showTable'
             , contentType: 'application/json'
@@ -132,7 +131,7 @@
                     {field: 'templateName', title: '模板'},
                     {width: 100, field: 'createName', title: '创建人'},
                     {field: 'createTime', title: '创建时间', sort: true},
-                    {width: 300, align: 'center', toolbar: "#configTool", title: '设置'},
+                    {width: 200, align: 'center', toolbar: "#configTool", title: '设置'},
                     {width: 150, toolbar: "#tool", title: '操作'}
                 ]
             ]
@@ -243,10 +242,6 @@
                             window[layero.find('iframe')[0]['name']].assignment(data.id, data.templateId);
                         }
                     });
-                    break;
-                case 'transferGoods':
-                    // TODO 转移商品
-
                     break;
             }
         });

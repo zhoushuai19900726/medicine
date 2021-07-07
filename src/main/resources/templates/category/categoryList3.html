@@ -47,9 +47,6 @@
             <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="batchDeleted" shiro:hasPermission="shopCategory:delete"><i class="layui-icon">&#xe640;</i>批量删除</button>
         </div>
     </script>
-    <script type="text/html" id="configTool">
-        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="transferGoods" shiro:hasPermission="shopCategory:update"><i class="layui-icon">&#xe9aa;</i>转移商品</a>
-    </script>
     <script type="text/html" id="tool">
         <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit" shiro:hasPermission="shopCategory:update"><i class="layui-icon">&#xe642;</i>编辑</a>
         <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="del" shiro:hasPermission="shopCategory:delete"><i class="layui-icon">&#xe640;</i>删除</a>
@@ -81,7 +78,7 @@
     });
 
     function loadTable(parentId, grandParentId, templateId) {
-        //加载table TODO 商品数量
+        //加载table
         tableIns1 = table.render({
             elem: '#showTable'
             , contentType: 'application/json'
@@ -102,14 +99,13 @@
                 [
                     {type: 'checkbox', fixed: 'left'},
                     {width: 120, field: 'id', title: 'ID', sort: true},
-                    {width: 150, field: 'name', title: '分类名称', edit: 'text'},
+                    {field: 'name', title: '分类名称', edit: 'text'},
                     {width: 80, field: 'level', title: '级别'},
                     {width: 120, field: 'goodsNum', title: '商品数量', sort: true},
                     {width: 100, field: 'isShow', title: '是否显示', templet: '#isShowSwitchTpl'},
                     {width: 100, field: 'isMenu', title: '是否导航', templet: '#isMenuSwitchTpl'},
                     {align: 'center', width: 80, field: 'seq', title: '排序', sort: true, edit: 'text'},
                     {width: 100, field: 'createName', title: '创建人'},
-                    {width: 120, align: 'center', toolbar: "#configTool", title: '设置', fixed: 'right'},
                     {width: 150, toolbar: "#tool", title: '操作', fixed: 'right'}
                 ]
             ]
@@ -187,10 +183,6 @@
                             window[layero.find('iframe')[0]['name']].assignment(data);
                         }
                     });
-                    break;
-                case 'transferGoods':
-                    // TODO 转移商品
-
                     break;
             }
         });
