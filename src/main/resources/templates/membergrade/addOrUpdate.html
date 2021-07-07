@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/jq-module/zyupload/zyupload-1.0.0.min.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+</head>
+<body>
+<div class="panel panel-default" shiro:hasPermission="shopMemberGrade:add">
+    <div class="panel-heading title"></div>
+    <div class="layui-card-body">
+        <form class="layui-form" action="" lay-filter="shopMemberGradeForm" id="shopMemberGradeForm" style="width: 100%;">
+            <input name="id" hidden/>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">等级名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" lay-verify="required" placeholder="请输入等级名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">所需积分</label>
+                <div class="layui-input-block">
+                    <input type="number" name="integration" lay-verify="required|number" placeholder="请输入所需积分" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">优惠百分比(折扣)</label>
+                <div class="layui-input-block">
+                    <input type="number" name="preferential" lay-verify="required" placeholder="请输入优惠百分比" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item" pane="">
+                <label class="layui-form-label required">会员帐号有效期(年)</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="deadline" value="-1" title="无限制" checked="">
+                    <input type="radio" name="deadline" value="0" title="<input type='number' id='deadline'/>年">
+                </div>
+            </div>
+            <div class="layui-form-item" pane="">
+                <label class="layui-form-label required">是否默认</label>
+                <div class="layui-input-block">
+                    <input type="checkbox" name="isDefault" lay-skin="switch" lay-filter="isDefault" lay-text="是|否 " title="是否默认" value="1" />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">图标</label>
+                <div class="layui-input-block">
+                    <input name="image" id="image" hidden/>
+                    <div id="zyupload" class="zyupload"></div>
+                </div>
+            </div>
+            <input type="submit" lay-filter="submitBtnForAdd" id="submitBtnForAdd" lay-submit="" hidden/>
+            <input type="submit" lay-filter="submitBtnForUpdate" id="submitBtnForUpdate" lay-submit="" hidden/>
+        </form>
+    </div>
+</div>
+<script th:src="@{/layui2.0/lib/jq-module/zyupload/jquery.min.js}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/lib/jq-module/zyupload/jquery-migrate.js}" charset="utf-8"></script>
+<script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/lib/jq-module/zyupload/zyupload-1.0.0.min.js}" charset="utf-8"></script>
+</body>
+</html>
+<script>
+    //获取token
+    var token = CoreUtil.getData("access_token");
+    //地址栏转义token中的#号
+    var tokenQuery = token.replace("#", "%23");
+
+    $(function () {
+        // 初始化插件
+        $("#zyupload").zyUpload({
+            width: "100%",                 // 宽度
+            height: "400px",                 // 宽度
+            itemWidth: "140px",                 // 文件项的宽度
+            itemHeight: "140px",                 // 文件项的高度
+            url: '/sysFiles/upload?authorization=' + tokenQuery,  // 上传文件的路径
+            fileType: ["jpg", "png", "jpeg", "ico", "icon", "bmp"],// 上传文件的类型
+            fileSize: 51200000,                // 上传文件的大小
+            multiple: false,                    // 是否可以多个文件上传
+            dragDrop: false,                    // 是否可以拖动上传文件
+            tailor: false,                    // 是否可以裁剪图片
+            del: true,                    // 是否可以删除文件
+            finishDel: false,  				  // 是否在上传文件完成后删除预览
+            /* 外部获得的回调接口 */
+            onSelect: function (selectFiles, allFiles) {
+                // 选择文件的回调方法  selectFile:当前选中的文件  allFiles:还没上传的全部文件
+                console.info("当前选择了以下文件：");
+                console.info(selectFiles);
+                console.info("还没上传的全部文件：");
+                console.info(allFiles);
+                //
+                // var finalAllFiles = [];
+                // finalAllFiles.push(selectFiles);
+                // allFiles = finalAllFiles;
+
+            },
+            onDelete: function (file, files) {
+                // 删除一个文件的回调方法 file:当前删除的文件  files:删除之后的文件
+                // console.info("当前删除了此文件：");
+                // console.info(file.name);
+            },
+            onSuccess: function (file, response) {
+                // 文件上传成功的回调方法
+                // console.info("此文件上传成功：");
+                // console.info(file.name);
+                // console.info("此文件上传到服务器地址：");
+                // console.info(response);
+                $("#uploadInf").append("<p>上传成功，文件地址是：" + response + "</p>");
+                response = JSON.parse(response);
+                $("#image").val(response.data.src);
+            },
+            onFailure: function (file, response) {
+                // 文件上传失败的回调方法
+                // console.info("此文件上传失败：");
+                // console.info(file.name);
+                $("#uploadInf").append("<p>上传失败，文件地址是：" + response + "</p>");
+            },
+            onComplete: function (response) {
+                // 上传完成的回调方法
+                // console.info("所有文件上传完成");
+                // console.info(response);
+            }
+        });
+
+    });
+
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form;
+        var layer = layui.layer;
+        // 表单提交
+        form.on('submit(submitBtnForAdd)', function (data) {
+            if(!data.field.isDefault){
+                data.field.isDefault = 0;
+            }
+            if("0" == data.field.deadline){
+                var deadline = $("#deadline").val();
+                data.field.deadline = deadline ? deadline : -1;
+            }
+            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
+            CoreUtil.sendPost("/shopMemberGrade/add", data.field, function (res) {
+                // 刷新父页面列表
+                parent.layui.table.reload('showTable');
+                // 提示
+                layer.open({
+                    content: '<i class="layui-icon layui-icon-face-smile" style="color: green;"></i> 保存成功'
+                    , btn: ['继续添加', '返回列表']
+                    , yes: function (index, layero) {
+                        // 清空表单 （“brandForm”是表单的id）
+                        $("#shopMemberGradeForm")[0].reset();
+                        form.render();
+                        layer.close(index);
+                    }, btn2: function (index, layero) {
+                        //按钮【按钮二】的回调
+                        var parentIndex = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(parentIndex);
+                        //return false 开启该代码可禁止点击该按钮关闭
+                    }, cancel: function () {
+                        //右上角关闭回调
+                        var parentIndex = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(parentIndex);
+                        //return false 开启该代码可禁止点击该按钮关闭
+                    }
+                });
+            });
+            //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            return false;
+        });
+        form.on('submit(submitBtnForUpdate)', function (data) {
+            if(!data.field.isDefault){
+                data.field.isDefault = 0;
+            }
+            if("0" == data.field.deadline){
+                var deadline = $("#deadline").val();
+                data.field.deadline = deadline ? deadline : -1;
+            }
+            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
+            CoreUtil.sendPut("/shopMemberGrade/update", data.field, function (res) {
+                // 刷新父页面列表
+                parent.layui.table.reload('showTable');
+                parent.layer.msg("修改成功");
+                var parentIndex = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(parentIndex);
+            });
+            //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            return false;
+        });
+    });
+
+    /**
+     * 父级页面控制子页面提交表单
+     */
+    function saveShopMemberGrade(submitBtn) {
+        $("#" + submitBtn).click();
+    }
+
+    /**
+     * 父级页面控制子页面填充
+     */
+    function assignment(data) {
+        var form = layui.form,
+            layarea = layui.layarea;
+        // 表单赋值
+        var oldDeadline = data.deadline;
+        var deadline = data.deadline;
+        if(-1 != oldDeadline){
+            deadline = 0;
+        }
+        form.val("shopMemberGradeForm", {
+            "id": data.id,
+            "name": data.name,
+            "integration": data.integration,
+            "preferential": data.preferential,
+            "deadline": deadline,
+            "image": data.image
+        });
+        // 是否显示开关
+        $("input[type='checkbox'][name='isDefault']").prop("checked", data.isDefault == 1);
+        form.render("checkbox");
+        if(-1 != oldDeadline){
+            $("#deadline").val(oldDeadline);
+        }
+        // 图标
+        initImage(data.image);
+    }
+
+    /**
+     * 初始化图片
+     * @param image
+     */
+    function initImage(image) {
+        if (image) $("#preview div[class='add_upload'] div[class='uploadImg'] img[class='upload_image']").attr("src", image);
+    }
+
+</script>

@@ -6,10 +6,11 @@
     <title>Title</title>
     <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
     <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
 </head>
 <body>
 <div class="layuimini-container">
-    <div class="layuimini-main" shiro:hasPermission="shopBrand:list">
+    <div class="layuimini-main" shiro:hasPermission="shopMemberGrade:list">
 
         <fieldset class="table-search-fieldset">
             <legend>搜索信息</legend>
@@ -17,15 +18,15 @@
                 <form class="layui-form layui-form-pane" action="">
                     <div class="layui-form-item">
                         <div class="layui-inline">
-                            <label class="layui-form-label">品牌ID</label>
+                            <label class="layui-form-label">会员等级ID</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="id" autocomplete="off" placeholder="请输入品牌ID" class="layui-input">
+                                <input type="text" name="id" autocomplete="off" placeholder="请输入会员等级ID" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label">品牌名称</label>
+                            <label class="layui-form-label">会员等级名称</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="name" autocomplete="off" placeholder="请输入品牌名称" class="layui-input">
+                                <input type="text" name="name" autocomplete="off" placeholder="请输入会员等级名称" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline">
@@ -49,20 +50,39 @@
     <table class="layui-table" id="showTable" lay-filter="showTable"></table>
     <script type="text/html" id="toolbar">
         <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add" shiro:hasPermission="shopBrand:add"><i class="layui-icon">&#xe61f;</i>新增品牌</button>
-            <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="batchDeleted" shiro:hasPermission="shopBrand:delete"><i class="layui-icon">&#xe640;</i>批量删除</button>
+            <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add" shiro:hasPermission="shopMemberGrade:add"><i class="layui-icon">&#xe61f;</i>新增会员等级</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopMemberGrade:delete"><i class="layui-icon">&#xe640;</i>批量删除</button>
         </div>
     </script>
     <script type="text/html" id="tool">
-        <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit" shiro:hasPermission="shopBrand:update"><i class="layui-icon">&#xe642;</i>编辑</a>
-        <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="del" shiro:hasPermission="shopBrand:delete"><i class="layui-icon">&#xe640;</i>删除</a>
+        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit" shiro:hasPermission="shopMemberGrade:update"><i class="layui-icon">&#xe642;</i>编辑</a>
+        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" shiro:hasPermission="shopMemberGrade:delete"><i class="layui-icon">&#xe640;</i>删除</a>
     </script>
+
     <script type="text/html" id="imgTpl">
         <img src="{{ d.image }}" />
+    </script>
+
+    <script type="text/html" id="deadlineTpl">
+        {{#  if(d.deadline == -1){ }}
+        <span style="color: #F581B1;">无限制</span>
+        {{#  } else { }}
+        {{ d.deadline }}年
+        {{#  } }}
+    </script>
+
+    <script type="text/html" id="preferentialTpl">
+        {{ d.preferential }}%
+    </script>
+
+    <script type="text/html" id="isDefaultTpl">
+        <input type="checkbox" name="isDefault" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isDefault" {{ d.isDefault == 1 ? 'checked' : '' }}>
     </script>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
 <script th:src="@{/layui/layui.all.js}" charset="utf-8"></script>
+</body>
+</html>
 <script>
     //获取token
     var token = CoreUtil.getData("access_token");
@@ -71,11 +91,11 @@
     var tableIns1;
     var $ = jQuery = layui.jquery;
     layui.use(['table', 'layer', 'laydate', 'util'], function () {
-        var table = layui.table,
-            form = layui.form,
-            layer = layui.layer,
-            laydate = layui.laydate,
-            util = layui.util;
+        var table = layui.table;
+        var form = layui.form;
+        var layer = layui.layer;
+        var laydate = layui.laydate;
+        var util = layui.util;
         /**
          * 日期时间选择器
          */
@@ -90,15 +110,13 @@
             elem: '#createEndTime'
             , type: 'datetime'
         });
-        /**
-         * 加载table
-         */
+        //加载table
         tableIns1 = table.render({
             elem: '#showTable'
             , contentType: 'application/json'
             , headers: {"authorization": token}
             , page: true //开启分页
-            , url: '/shopBrand/listByPage' //数据接口
+            , url: '/shopMemberGrade/listByPage' //数据接口
             , method: 'POST'
             , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
                 return {
@@ -111,23 +129,21 @@
             , cols: [
                 [
                     {type: 'checkbox', fixed: 'left'},
-                    {width: 100, field: 'id', title: '品牌ID'},
-                    {field: 'name', title: '品牌名称', edit: 'text'},
-                    {field: 'letter', title: '首字母', sort: true},
-                    {field: 'image', title: '品牌图标', templet: '#imgTpl'},
-                    {field: 'seq', title: '品牌排序', edit: 'text'},
-                    {width: 100, field: 'createName', title: '创建人'},
-                    {field: 'createTime', title: '创建时间', sort: true},
-                    {width: 100, field: 'updateName', title: '修改人'},
-                    {field: 'updateTime', title: '修改时间', sort: true},
+                    {field: 'id', title: 'id', sort: true},
+                    {field: 'name', title: '等级名称', edit: 'text'},
+                    {field: 'image', title: '图标', templet: '#imgTpl'},
+                    {field: 'integration', title: '所需积分', sort: true},
+                    {field: 'deadline', title: '会员帐号有效期(年)', templet: '#deadlineTpl'},
+                    {field: 'preferential', title: '优惠百分比', templet: '#preferentialTpl'},
+                    {field: 'isDefault', title: '是否是默认', templet: '#isDefaultTpl'},
                     {width: 150, toolbar: "#tool", title: '操作'}
                 ]
             ]
             , toolbar: '#toolbar'
         });
-        /**
-         * 表头工具
-         */
+
+
+        //表头工具
         table.on('toolbar(showTable)', function (obj) {
             switch (obj.event) {
                 case 'batchDeleted':
@@ -145,24 +161,22 @@
                     break;
                 case 'add':
                     layer.open({
-                        id: 'brand_add', //设定一个id，防止重复弹出
-                        title: '<i class="layui-icon">&#xe653;</i> 新增品牌',
+                        id: 'shopMemberGrade_add', //设定一个id，防止重复弹出
+                        title: '<i class="layui-icon">&#xe653;</i> 新增会员等级',
                         type: 2,
-                        content: '../index/shopBrand/addOrUpdate',
+                        content: '../index/shopMemberGrade/addOrUpdate',
                         btn: ['提交保存', '取消'],
                         area: ['60%', '85%'],
                         scrollbar: false,
                         yes: function (index, layero) {
                             // 得到iframe页的窗口对象并调用子页面方法
-                            window[layero.find('iframe')[0]['name']].saveBrand("submitBtnForAdd");
+                            window[layero.find('iframe')[0]['name']].saveShopMemberGrade("submitBtnForAdd");
                         }
                     });
                     break;
             }
         });
-        /**
-         * 列操作
-         */
+        //列操作
         table.on('tool(showTable)', function (obj) {
             var data = obj.data;
             switch (obj.event) {
@@ -173,16 +187,16 @@
                     break;
                 case 'edit':
                     layer.open({
-                        id: 'brand_update', //设定一个id，防止重复弹出
-                        title: '<i class="layui-icon">&#xe653;</i> 编辑品牌',
+                        id: 'shopMemberGrade_update', //设定一个id，防止重复弹出
+                        title: '<i class="layui-icon">&#xe653;</i> 编辑会员等级',
                         type: 2,
-                        content: '../index/shopBrand/addOrUpdate',
+                        content: '../index/shopMemberGrade/addOrUpdate',
                         btn: ['提交保存', '取消'],
                         area: ['60%', '85%'],
                         scrollbar: false,
                         yes: function (index, layero) {
                             // 得到iframe页的窗口对象并调用子页面方法
-                            window[layero.find('iframe')[0]['name']].saveBrand("submitBtnForUpdate");
+                            window[layero.find('iframe')[0]['name']].saveShopMemberGrade("submitBtnForUpdate");
                         },
                         success: function (layero, index) {
                             // 得到iframe页的窗口对象并调用子页面方法
@@ -192,6 +206,7 @@
                     break;
             }
         });
+
         /**
          * 监听单元格编辑
          */
@@ -199,41 +214,46 @@
             var value = obj.value //得到修改后的值
                 , data = obj.data //得到所在行所有键值
                 , field = obj.field; //得到字段
-            var shopBrand = {};
-            shopBrand.id = data.id;
-            shopBrand[field] = util.escape(value);
-            CoreUtil.sendPut("/shopBrand/update", shopBrand, function (res) {
+            var para = {};
+            para.id = data.id;
+            para[field] = util.escape(value);
+            CoreUtil.sendPut("/shopMemberGrade/update", para, function (res) {
                 tableIns1.reload();
             });
         });
-        /**
-         * 导出
-         */
+        //监听是否默认操作
+        form.on('switch(isDefault)', function(obj){
+            CoreUtil.sendPut("/shopMemberGrade/update", {id: this.value, isDefault: (obj.elem.checked ? 1 : 0)}, function (res) {
+                layer.tips(obj.elem.checked ? "开启成功" : "关闭成功", obj.othis);
+                tableIns1.reload();
+            });
+        });
+        //导出
         $('#export').on('click', function () {
             //原先分页limit
             var exportParams = {
                 limit: Number.MAX_VALUE,
                 key: $("#key").val()
             };
-            CoreUtil.sendPost("/shopBrand/listByPage", exportParams, function (res) {
+            CoreUtil.sendPost("/shopMemberGrade/listByPage", exportParams, function (res) {
                 //初始化渲染数据
                 if (res.data != null && res.data.records != null) {
                     table.exportFile(tableIns1.config.id, res.data.records, 'xls');
                 }
             });
         });
-        /**
-         * 删除
-         */
+
+        //删除
         var tipDialog = function (ids) {
-            layer.confirm('确定要删除么?', {icon: 3, title: '提示'}, function (index) {
-                CoreUtil.sendDelete("/shopBrand/delete", ids, function (res) {
+            layer.confirm(' 确定要删除么?', {icon: 3, title: '提示'}, function (index) {
+                CoreUtil.sendDelete("/shopMemberGrade/delete", ids, function (res) {
                     layer.msg(res.msg, {time: 500}, function () {
                         tableIns1.reload();
                     });
                 });
             });
         };
+
         /**
          * 执行查询
          */
@@ -253,7 +273,6 @@
             });
             return false;
         });
+
     });
 </script>
-</body>
-</html>
