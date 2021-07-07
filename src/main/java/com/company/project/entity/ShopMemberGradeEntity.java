@@ -69,6 +69,54 @@ public class ShopMemberGradeEntity extends BaseEntity implements Serializable {
     private Integer isDefault;
 
     /**
+     * 免运费标准(分)
+     */
+    @TableField("free_freight_standard")
+    private Integer freeFreightStandard;
+
+    /**
+     * 奖励评价(成长值)
+     */
+    @TableField("reward_evaluation")
+    private Integer rewardEvaluation;
+
+    /**
+     * 满免运费特权
+     */
+    @TableField("full_freight_free_privilege")
+    private Integer fullFreightFreePrivilege;
+
+    /**
+     * 签到奖励特权
+     */
+    @TableField("sign_in_reward_privilege")
+    private Integer signInRewardPrivilege;
+
+    /**
+     * 评价奖励特权
+     */
+    @TableField("evaluation_reward_privilege")
+    private Integer evaluationRewardPrivilege;
+
+    /**
+     * 专享活动特权
+     */
+    @TableField("exclusive_event_privileges")
+    private Integer exclusiveEventPrivileges;
+
+    /**
+     * 会员特价特权
+     */
+    @TableField("special_member_privileges")
+    private Integer specialMemberPrivileges;
+
+    /**
+     * 生日礼包特权
+     */
+    @TableField("birthday_package_privileges")
+    private Integer birthdayPackagePrivileges;
+
+    /**
      *
      */
     @TableField(fill = FieldFill.INSERT)

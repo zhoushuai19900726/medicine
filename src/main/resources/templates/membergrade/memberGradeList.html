@@ -65,7 +65,7 @@
 
     <script type="text/html" id="deadlineTpl">
         {{#  if(d.deadline == -1){ }}
-        <span style="color: #F581B1;">无限制</span>
+        <span style="color: #F581B1;">无时间限制</span>
         {{#  } else { }}
         {{ d.deadline }}年
         {{#  } }}
@@ -77,6 +77,30 @@
 
     <script type="text/html" id="isDefaultTpl">
         <input type="checkbox" name="isDefault" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isDefault" {{ d.isDefault == 1 ? 'checked' : '' }}>
+    </script>
+
+    <script type="text/html" id="fullFreightFreePrivilegeTpl">
+        <input type="checkbox" name="fullFreightFreePrivilege" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="fullFreightFreePrivilege" {{ d.fullFreightFreePrivilege == 1 ? 'checked' : '' }}>
+    </script>
+
+    <script type="text/html" id="signInRewardPrivilegeTpl">
+        <input type="checkbox" name="signInRewardPrivilege" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="signInRewardPrivilege" {{ d.signInRewardPrivilege == 1 ? 'checked' : '' }}>
+    </script>
+
+    <script type="text/html" id="evaluationRewardPrivilegeTpl">
+        <input type="checkbox" name="evaluationRewardPrivilege" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="evaluationRewardPrivilege" {{ d.evaluationRewardPrivilege == 1 ? 'checked' : '' }}>
+    </script>
+
+    <script type="text/html" id="exclusiveEventPrivilegesTpl">
+        <input type="checkbox" name="exclusiveEventPrivileges" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="exclusiveEventPrivileges" {{ d.exclusiveEventPrivileges == 1 ? 'checked' : '' }}>
+    </script>
+
+    <script type="text/html" id="specialMemberPrivilegesTpl">
+        <input type="checkbox" name="specialMemberPrivileges" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="specialMemberPrivileges" {{ d.specialMemberPrivileges == 1 ? 'checked' : '' }}>
+    </script>
+
+    <script type="text/html" id="birthdayPackagePrivilegesTpl">
+        <input type="checkbox" name="birthdayPackagePrivileges" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="birthdayPackagePrivileges" {{ d.birthdayPackagePrivileges == 1 ? 'checked' : '' }}>
     </script>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
@@ -128,15 +152,23 @@
             }
             , cols: [
                 [
-                    {type: 'checkbox', fixed: 'left'},
-                    {field: 'id', title: 'id', sort: true},
-                    {field: 'name', title: '等级名称', edit: 'text'},
-                    {field: 'image', title: '图标', templet: '#imgTpl'},
-                    {field: 'integration', title: '所需积分', sort: true},
-                    {field: 'deadline', title: '会员帐号有效期(年)', templet: '#deadlineTpl'},
-                    {field: 'preferential', title: '优惠百分比', templet: '#preferentialTpl'},
-                    {field: 'isDefault', title: '是否是默认', templet: '#isDefaultTpl'},
-                    {width: 150, toolbar: "#tool", title: '操作'}
+                    {width: 60, type: 'checkbox', fixed: 'left'},
+                    {width: 120, field: 'id', title: 'ID', sort: true},
+                    {width: 120, field: 'name', title: '等级名称', edit: 'text'},
+                    {width: 100, field: 'image', title: '图标', templet: '#imgTpl'},
+                    {width: 120, field: 'integration', title: '成长值满足点', sort: true},
+                    {width: 120, field: 'preferential', title: '优惠百分比', templet: '#preferentialTpl'},
+                    {width: 120, field: 'isDefault', title: '是否默认', templet: '#isDefaultTpl'},
+                    {width: 120, field: 'freeFreightStandard', title: '免运费标准(分)'},
+                    {width: 120, field: 'fullFreightFreePrivilege', title: '满免运费特权', templet: '#fullFreightFreePrivilegeTpl'},
+                    {width: 120, field: 'rewardEvaluation', title: '奖励评价(成长值)'},
+                    {width: 120, field: 'signInRewardPrivilege', title: '签到奖励特权', templet: '#signInRewardPrivilegeTpl'},
+                    {width: 120, field: 'evaluationRewardPrivilege', title: '评价奖励特权', templet: '#evaluationRewardPrivilegeTpl'},
+                    {width: 120, field: 'exclusiveEventPrivileges', title: '专享活动特权', templet: '#exclusiveEventPrivilegesTpl'},
+                    {width: 120, field: 'specialMemberPrivileges', title: '会员特价特权', templet: '#specialMemberPrivilegesTpl'},
+                    {width: 120, field: 'birthdayPackagePrivileges', title: '生日礼包特权', templet: '#birthdayPackagePrivilegesTpl'},
+                    {width: 120, field: 'deadline', title: '会员帐号有效期(年)', templet: '#deadlineTpl'},
+                    {width: 150, toolbar: "#tool", title: '操作', fixed: 'right'}
                 ]
             ]
             , toolbar: '#toolbar'
@@ -166,7 +198,7 @@
                         type: 2,
                         content: '../index/shopMemberGrade/addOrUpdate',
                         btn: ['提交保存', '取消'],
-                        area: ['60%', '85%'],
+                        area: ['1030px', '85%'],
                         scrollbar: false,
                         yes: function (index, layero) {
                             // 得到iframe页的窗口对象并调用子页面方法
@@ -224,6 +256,42 @@
         //监听是否默认操作
         form.on('switch(isDefault)', function(obj){
             CoreUtil.sendPut("/shopMemberGrade/update", {id: this.value, isDefault: (obj.elem.checked ? 1 : 0)}, function (res) {
+                layer.tips(obj.elem.checked ? "开启成功" : "关闭成功", obj.othis);
+                tableIns1.reload();
+            });
+        });
+        form.on('switch(fullFreightFreePrivilege)', function(obj){
+            CoreUtil.sendPut("/shopMemberGrade/update", {id: this.value, fullFreightFreePrivilege: (obj.elem.checked ? 1 : 0)}, function (res) {
+                layer.tips(obj.elem.checked ? "开启成功" : "关闭成功", obj.othis);
+                tableIns1.reload();
+            });
+        });
+        form.on('switch(signInRewardPrivilege)', function(obj){
+            CoreUtil.sendPut("/shopMemberGrade/update", {id: this.value, signInRewardPrivilege: (obj.elem.checked ? 1 : 0)}, function (res) {
+                layer.tips(obj.elem.checked ? "开启成功" : "关闭成功", obj.othis);
+                tableIns1.reload();
+            });
+        });
+        form.on('switch(evaluationRewardPrivilege)', function(obj){
+            CoreUtil.sendPut("/shopMemberGrade/update", {id: this.value, evaluationRewardPrivilege: (obj.elem.checked ? 1 : 0)}, function (res) {
+                layer.tips(obj.elem.checked ? "开启成功" : "关闭成功", obj.othis);
+                tableIns1.reload();
+            });
+        });
+        form.on('switch(exclusiveEventPrivileges)', function(obj){
+            CoreUtil.sendPut("/shopMemberGrade/update", {id: this.value, exclusiveEventPrivileges: (obj.elem.checked ? 1 : 0)}, function (res) {
+                layer.tips(obj.elem.checked ? "开启成功" : "关闭成功", obj.othis);
+                tableIns1.reload();
+            });
+        });
+        form.on('switch(specialMemberPrivileges)', function(obj){
+            CoreUtil.sendPut("/shopMemberGrade/update", {id: this.value, specialMemberPrivileges: (obj.elem.checked ? 1 : 0)}, function (res) {
+                layer.tips(obj.elem.checked ? "开启成功" : "关闭成功", obj.othis);
+                tableIns1.reload();
+            });
+        });
+        form.on('switch(birthdayPackagePrivileges)', function(obj){
+            CoreUtil.sendPut("/shopMemberGrade/update", {id: this.value, birthdayPackagePrivileges: (obj.elem.checked ? 1 : 0)}, function (res) {
                 layer.tips(obj.elem.checked ? "开启成功" : "关闭成功", obj.othis);
                 tableIns1.reload();
             });

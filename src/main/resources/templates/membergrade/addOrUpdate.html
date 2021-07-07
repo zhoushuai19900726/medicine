@@ -8,49 +8,102 @@
     <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
     <link rel="stylesheet" th:href="@{/layui2.0/lib/jq-module/zyupload/zyupload-1.0.0.min.css}" media="all">
     <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <style>
+        .layui-input-inline-new {
+            border-radius: 2px 0 0 2px;
+            box-sizing: border-box;
+            border: 1px solid #eee;
+            height: 38px;
+            line-height: 20px;
+            background-color: #fff;
+        }
+
+        .layui-input-new {
+            margin-top: -6px;
+            height: 30px;
+            width: 300px;
+        }
+
+        .layui-form-label {
+            width: 120px !important;
+        }
+    </style>
 </head>
 <body>
 <div class="panel panel-default" shiro:hasPermission="shopMemberGrade:add">
     <div class="panel-heading title"></div>
     <div class="layui-card-body">
-        <form class="layui-form" action="" lay-filter="shopMemberGradeForm" id="shopMemberGradeForm" style="width: 100%;">
+        <form class="layui-form layui-form-pane" action="" lay-filter="shopMemberGradeForm" id="shopMemberGradeForm" style="width: 100%;">
             <input name="id" hidden/>
             <div class="layui-form-item">
                 <label class="layui-form-label required">等级名称</label>
-                <div class="layui-input-block">
+                <div class="layui-input-inline">
                     <input type="text" name="name" lay-verify="required" placeholder="请输入等级名称" autocomplete="off" class="layui-input">
                 </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label required">所需积分</label>
-                <div class="layui-input-block">
-                    <input type="number" name="integration" lay-verify="required|number" placeholder="请输入所需积分" autocomplete="off" class="layui-input">
+                <label class="layui-form-label required">成长值满足点</label>
+                <div class="layui-input-inline">
+                    <input type="number" name="integration" lay-verify="required|number" placeholder="请输入成长值满足点" autocomplete="off" class="layui-input">
+                </div>
+                <label class="layui-form-label required">优惠百分比(折扣)</label>
+                <div class="layui-input-inline">
+                    <input type="number" name="preferential" lay-verify="required" placeholder="请输入优惠百分比(折扣)" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label required">优惠百分比(折扣)</label>
-                <div class="layui-input-block">
-                    <input type="number" name="preferential" lay-verify="required" placeholder="请输入优惠百分比" autocomplete="off" class="layui-input">
+                <label class="layui-form-label required">免运费标准(分)</label>
+                <div class="layui-input-inline">
+                    <input type="number" name="freeFreightStandard" lay-verify="required|number" placeholder="免运费标准(分)" autocomplete="off" class="layui-input">
+                </div>
+                <label class="layui-form-label required">奖励评价(成长值)</label>
+                <div class="layui-input-inline">
+                    <input type="number" name="rewardEvaluation" lay-verify="required|number" placeholder="奖励评价(成长值)" autocomplete="off" class="layui-input">
+                </div>
+                <label class="layui-form-label required">是否默认</label>
+                <div class="layui-input-inline layui-input-inline-new">
+                    <input type="checkbox" name="isDefault" lay-skin="switch" lay-filter="isDefault" lay-text="是|否 " title="是否默认" value="1"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">满免运费特权</label>
+                <div class="layui-input-inline layui-input-inline-new">
+                    <input type="checkbox" name="fullFreightFreePrivilege" lay-skin="switch" lay-filter="fullFreightFreePrivilege" lay-text="是|否 " title="满免运费特权" value="1"/>
+                </div>
+                <label class="layui-form-label required">评价奖励特权</label>
+                <div class="layui-input-inline layui-input-inline-new">
+                    <input type="checkbox" name="evaluationRewardPrivilege" lay-skin="switch" lay-filter="evaluationRewardPrivilege" lay-text="是|否 " title="满免运费特权" value="1"/>
+                </div>
+                <label class="layui-form-label required">签到奖励特权</label>
+                <div class="layui-input-inline layui-input-inline-new">
+                    <input type="checkbox" name="signInRewardPrivilege" lay-skin="switch" lay-filter="signInRewardPrivilege" lay-text="是|否 " title="满免运费特权" value="1"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">专享活动特权</label>
+                <div class="layui-input-inline layui-input-inline-new">
+                    <input type="checkbox" name="exclusiveEventPrivileges" lay-skin="switch" lay-filter="exclusiveEventPrivileges" lay-text="是|否 " title="满免运费特权" value="1"/>
+                </div>
+                <label class="layui-form-label required">会员特价特权</label>
+                <div class="layui-input-inline layui-input-inline-new">
+                    <input type="checkbox" name="specialMemberPrivileges" lay-skin="switch" lay-filter="specialMemberPrivileges" lay-text="是|否 " title="满免运费特权" value="1"/>
+                </div>
+                <label class="layui-form-label required">生日礼包特权</label>
+                <div class="layui-input-inline layui-input-inline-new">
+                    <input type="checkbox" name="birthdayPackagePrivileges" lay-skin="switch" lay-filter="birthdayPackagePrivileges" lay-text="是|否 " title="满免运费特权" value="1"/>
                 </div>
             </div>
             <div class="layui-form-item" pane="">
                 <label class="layui-form-label required">会员帐号有效期(年)</label>
-                <div class="layui-input-block">
-                    <input type="radio" name="deadline" value="-1" title="无限制" checked="">
-                    <input type="radio" name="deadline" value="0" title="<input type='number' id='deadline'/>年">
+                <div class="layui-input-block layui-input-inline-new" style="margin-left: 120px!important;">
+                    <input type="radio" name="deadline" value="-1" title="无时间限制" checked="">
+                    <input type="radio" name="deadline" value="0"
+                           title="<input type='number' id='deadline' class='layui-input layui-input-new' autocomplete='off' placeholder='请填写会员有效期时间(例：5, 代表5年)'/>">
                 </div>
             </div>
-            <div class="layui-form-item" pane="">
-                <label class="layui-form-label required">是否默认</label>
-                <div class="layui-input-block">
-                    <input type="checkbox" name="isDefault" lay-skin="switch" lay-filter="isDefault" lay-text="是|否 " title="是否默认" value="1" />
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label required">图标</label>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label required" style="width: 100%!important;">图标</label>
                 <div class="layui-input-block">
                     <input name="image" id="image" hidden/>
-                    <div id="zyupload" class="zyupload"></div>
+                    <div id="zyupload" class="zyupload" style="margin-top: -10px;"></div>
                 </div>
             </div>
             <input type="submit" lay-filter="submitBtnForAdd" id="submitBtnForAdd" lay-submit="" hidden/>
@@ -134,10 +187,28 @@
         var layer = layui.layer;
         // 表单提交
         form.on('submit(submitBtnForAdd)', function (data) {
-            if(!data.field.isDefault){
+            if (!data.field.isDefault) {
                 data.field.isDefault = 0;
             }
-            if("0" == data.field.deadline){
+            if (!data.field.fullFreightFreePrivilege) {
+                data.field.fullFreightFreePrivilege = 0;
+            }
+            if (!data.field.signInRewardPrivilege) {
+                data.field.signInRewardPrivilege = 0;
+            }
+            if (!data.field.evaluationRewardPrivilege) {
+                data.field.evaluationRewardPrivilege = 0;
+            }
+            if (!data.field.exclusiveEventPrivileges) {
+                data.field.exclusiveEventPrivileges = 0;
+            }
+            if (!data.field.specialMemberPrivileges) {
+                data.field.specialMemberPrivileges = 0;
+            }
+            if (!data.field.birthdayPackagePrivileges) {
+                data.field.birthdayPackagePrivileges = 0;
+            }
+            if ("0" == data.field.deadline) {
                 var deadline = $("#deadline").val();
                 data.field.deadline = deadline ? deadline : -1;
             }
@@ -171,10 +242,28 @@
             return false;
         });
         form.on('submit(submitBtnForUpdate)', function (data) {
-            if(!data.field.isDefault){
+            if (!data.field.isDefault) {
                 data.field.isDefault = 0;
             }
-            if("0" == data.field.deadline){
+            if (!data.field.fullFreightFreePrivilege) {
+                data.field.fullFreightFreePrivilege = 0;
+            }
+            if (!data.field.signInRewardPrivilege) {
+                data.field.signInRewardPrivilege = 0;
+            }
+            if (!data.field.evaluationRewardPrivilege) {
+                data.field.evaluationRewardPrivilege = 0;
+            }
+            if (!data.field.exclusiveEventPrivileges) {
+                data.field.exclusiveEventPrivileges = 0;
+            }
+            if (!data.field.specialMemberPrivileges) {
+                data.field.specialMemberPrivileges = 0;
+            }
+            if (!data.field.birthdayPackagePrivileges) {
+                data.field.birthdayPackagePrivileges = 0;
+            }
+            if ("0" == data.field.deadline) {
                 var deadline = $("#deadline").val();
                 data.field.deadline = deadline ? deadline : -1;
             }
@@ -207,7 +296,7 @@
         // 表单赋值
         var oldDeadline = data.deadline;
         var deadline = data.deadline;
-        if(-1 != oldDeadline){
+        if (-1 != oldDeadline) {
             deadline = 0;
         }
         form.val("shopMemberGradeForm", {
@@ -216,12 +305,20 @@
             "integration": data.integration,
             "preferential": data.preferential,
             "deadline": deadline,
+            "freeFreightStandard": data.freeFreightStandard,
+            "rewardEvaluation": data.rewardEvaluation,
             "image": data.image
         });
         // 是否显示开关
         $("input[type='checkbox'][name='isDefault']").prop("checked", data.isDefault == 1);
+        $("input[type='checkbox'][name='fullFreightFreePrivilege']").prop("checked", data.fullFreightFreePrivilege == 1);
+        $("input[type='checkbox'][name='signInRewardPrivilege']").prop("checked", data.signInRewardPrivilege == 1);
+        $("input[type='checkbox'][name='evaluationRewardPrivilege']").prop("checked", data.evaluationRewardPrivilege == 1);
+        $("input[type='checkbox'][name='exclusiveEventPrivileges']").prop("checked", data.exclusiveEventPrivileges == 1);
+        $("input[type='checkbox'][name='specialMemberPrivileges']").prop("checked", data.specialMemberPrivileges == 1);
+        $("input[type='checkbox'][name='birthdayPackagePrivileges']").prop("checked", data.birthdayPackagePrivileges == 1);
         form.render("checkbox");
-        if(-1 != oldDeadline){
+        if (-1 != oldDeadline) {
             $("#deadline").val(oldDeadline);
         }
         // 图标

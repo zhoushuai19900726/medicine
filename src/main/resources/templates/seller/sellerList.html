@@ -6,6 +6,16 @@
     <title>Title</title>
     <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
     <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <style>
+        .layui-input-inline-new {
+            border-radius: 2px 0 0 2px;
+            box-sizing: border-box;
+            border: 1px solid #eee;
+            height: 38px;
+            line-height: 20px;
+            background-color: #fff;
+        }
+    </style>
 </head>
 <body>
 <div class="layuimini-container">
@@ -54,7 +64,7 @@
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">开馆状态</label>
-                            <div class="layui-input-inline" style="border-radius: 2px 0 0 2px; box-sizing: border-box; border: 1px solid #eee; height: 38px; line-height: 20px;">
+                            <div class="layui-input-inline layui-input-inline-new">
                                 <input type="checkbox" name="statusList" title="开馆" value="1"/>
                                 <input type="checkbox" name="statusList" title="闭馆" value="0"/>
                             </div>
