@@ -97,6 +97,7 @@ public class ShopMemberGradeController extends BaseController {
         LambdaQueryWrapper<ShopMemberGradeEntity> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper
                 .eq(StringUtils.isNotBlank(shopMemberGrade.getId()), ShopMemberGradeEntity::getId, shopMemberGrade.getId())
+                .like(StringUtils.isNotBlank(shopMemberGrade.getName()), ShopMemberGradeEntity::getName, shopMemberGrade.getName())
                 .orderByAsc(ShopMemberGradeEntity::getIntegration);
         // 封装数据权限 - 执行查询 - 封装用户 - 响应前端
         return DataResult.success(encapsulationUser(shopMemberGradeService.page(page, encapsulationDataRights(shopMemberGrade, queryWrapper, ShopMemberGradeEntity::getCreateId))));

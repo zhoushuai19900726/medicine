@@ -67,12 +67,20 @@
         {{#  if(d.deadline == -1){ }}
         <span style="color: #F581B1;">无时间限制</span>
         {{#  } else { }}
-        {{ d.deadline }}年
+        {{ d.deadline + '年' }}
         {{#  } }}
     </script>
 
     <script type="text/html" id="preferentialTpl">
-        {{ d.preferential }}%
+        {{ d.preferential + '%' }}
+    </script>
+
+    <script type="text/html" id="rewardEvaluationTpl">
+        {{ (d.rewardEvaluation >= 0 ? '+' : '') + d.rewardEvaluation + '成长值/条'}}
+    </script>
+
+    <script type="text/html" id="freeFreightStandardTpl">
+        {{ (d.freeFreightStandard / 100) + '元/每笔' }}
     </script>
 
     <script type="text/html" id="isDefaultTpl">
@@ -156,18 +164,18 @@
                     {width: 120, field: 'id', title: 'ID', sort: true},
                     {width: 120, field: 'name', title: '等级名称', edit: 'text'},
                     {width: 100, field: 'image', title: '图标', templet: '#imgTpl'},
-                    {width: 120, field: 'integration', title: '成长值满足点', sort: true},
+                    {width: 140, field: 'integration', title: '成长值满足点', sort: true},
                     {width: 120, field: 'preferential', title: '优惠百分比', templet: '#preferentialTpl'},
                     {width: 120, field: 'isDefault', title: '是否默认', templet: '#isDefaultTpl'},
-                    {width: 120, field: 'freeFreightStandard', title: '免运费标准(分)'},
+                    {width: 150, field: 'freeFreightStandard', title: '免运费标准', templet: '#freeFreightStandardTpl'},
                     {width: 120, field: 'fullFreightFreePrivilege', title: '满免运费特权', templet: '#fullFreightFreePrivilegeTpl'},
-                    {width: 120, field: 'rewardEvaluation', title: '奖励评价(成长值)'},
+                    {width: 150, field: 'rewardEvaluation', title: '奖励评价(成长值)', templet: '#rewardEvaluationTpl'},
                     {width: 120, field: 'signInRewardPrivilege', title: '签到奖励特权', templet: '#signInRewardPrivilegeTpl'},
                     {width: 120, field: 'evaluationRewardPrivilege', title: '评价奖励特权', templet: '#evaluationRewardPrivilegeTpl'},
                     {width: 120, field: 'exclusiveEventPrivileges', title: '专享活动特权', templet: '#exclusiveEventPrivilegesTpl'},
                     {width: 120, field: 'specialMemberPrivileges', title: '会员特价特权', templet: '#specialMemberPrivilegesTpl'},
                     {width: 120, field: 'birthdayPackagePrivileges', title: '生日礼包特权', templet: '#birthdayPackagePrivilegesTpl'},
-                    {width: 120, field: 'deadline', title: '会员帐号有效期(年)', templet: '#deadlineTpl'},
+                    {width: 150, field: 'deadline', title: '会员帐号有效期(年)', templet: '#deadlineTpl'},
                     {width: 150, toolbar: "#tool", title: '操作', fixed: 'right'}
                 ]
             ]
