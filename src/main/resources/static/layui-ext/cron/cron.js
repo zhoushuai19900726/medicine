@@ -1040,7 +1040,6 @@ layui.define(["form"], function (exports) {
             return;
           }
           var cronStr = that.cron.join(" ").trim();
-          // TODO 请求接口获取最近运行时间，或js生成最近运行时间
           if (options.url) {
             $.post(
               options.url,

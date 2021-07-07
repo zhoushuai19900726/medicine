@@ -154,13 +154,20 @@ public class ShopSpuController extends BaseController {
         return "goods/specControl";
     }
 
-    @ApiOperation(value = "跳转进入审核页面")
+
+    @ApiOperation(value = "跳转进入在售商品列表页面")
+    @GetMapping("/index/shopSpu/onSaleList")
+    public String onSaleList() {
+        return "goods/onSaleGoodsList";
+    }
+
+    @ApiOperation(value = "跳转进入商品审核列表页面")
     @GetMapping("/index/shopSpu/auditList")
     public String auditList() {
         return "goods/auditList";
     }
 
-    @ApiOperation(value = "跳转进入回收站页面")
+    @ApiOperation(value = "跳转进入商品回收站列表页面")
     @GetMapping("/index/shopSpu/recycleBinList")
     public String recycleBinList() {
         return "goods/recycleBinList";
