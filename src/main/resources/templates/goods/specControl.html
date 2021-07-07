@@ -247,11 +247,13 @@
             // 商品SPU信息
             var shopSpuEntity = form.val("shopSpuEntityForm");
             // 规格列表
-            var specItems = Object.create(null);
-            deploySpecMap.forEach(function (v, k, map) {
-                specItems[k] = v;
-            });
-            shopSpuEntity.specItems = JSON.stringify(specItems);
+            if(deploySpecMap.size > 0){
+                var specItems = Object.create(null);
+                deploySpecMap.forEach(function (v, k, map) {
+                    specItems[k] = v;
+                });
+                shopSpuEntity.specItems = JSON.stringify(specItems);
+            }
             // 参数列表
             var paraItems = Object.create(null);
             var paraItemsMap = new Map();
@@ -273,44 +275,46 @@
             // 商品SKU信息 - 集合
             var shopSkuEntityList = [];
             var deploySpecTableDatas = layui.table.cache["deploySpecTable"];
-            $(deploySpecTableDatas).each(function (index, data) {
-                var shopSkuEntity = {};
-                // sku规格
-                var spec = {};
-                var skuName = shopSpuEntity.name;
-                var specFlag = false;
-                $(Object.keys(data)).each(function (i, d) {
-                    if (deploySpecMap.has(d)) {
-                        specFlag = true;
-                        spec[d] = data[d];
-                        skuName += " " + data[d];
-                    } else if (d != 'LAY_TABLE_INDEX') {
-                        shopSkuEntity[d] = $($(data[d])[0]).attr("value");
+            if(deploySpecTableDatas){
+                $(deploySpecTableDatas).each(function (index, data) {
+                    var shopSkuEntity = {};
+                    // sku规格
+                    var spec = {};
+                    var skuName = shopSpuEntity.name;
+                    var specFlag = false;
+                    $(Object.keys(data)).each(function (i, d) {
+                        if (deploySpecMap.has(d)) {
+                            specFlag = true;
+                            spec[d] = data[d];
+                            skuName += " " + data[d];
+                        } else if (d != 'LAY_TABLE_INDEX') {
+                            shopSkuEntity[d] = $($(data[d])[0]).attr("value");
+                        }
+                    });
+                    if (specFlag) {
+                        // SPU_ID
+                        shopSkuEntity.spuId = shopSpuEntity.id;
+                        // SKU规格
+                        shopSkuEntity.spec = JSON.stringify(spec);
+                        // 商家ID
+                        shopSkuEntity.sellerId = shopSpuEntity.sellerId;
+                        // SKU名称
+                        shopSkuEntity.name = skuName;
+                        // SKU状态
+                        shopSkuEntity.status = '1';
+                        // 商品图片列表
+                        shopSkuEntity.images = shopSpuEntity.images;
+                        // 类目ID
+                        shopSkuEntity.categoryId = shopSpuEntity.category3Id;
+                        shopSkuEntity.categoryName = shopSpuEntity.category3Name;
+                        // 类目ID
+                        shopSkuEntity.brandId = shopSpuEntity.brandId;
+                        shopSkuEntity.brandName = $("select[name='brandId']:selected").text();
+                        shopSkuEntityList.push(shopSkuEntity);
                     }
                 });
-                if (specFlag) {
-                    // SPU_ID
-                    shopSkuEntity.spuId = shopSpuEntity.id;
-                    // SKU规格
-                    shopSkuEntity.spec = JSON.stringify(spec);
-                    // 商家ID
-                    shopSkuEntity.sellerId = shopSpuEntity.sellerId;
-                    // SKU名称
-                    shopSkuEntity.name = skuName;
-                    // SKU状态
-                    shopSkuEntity.status = '1';
-                    // 商品图片列表
-                    shopSkuEntity.images = shopSpuEntity.images;
-                    // 类目ID
-                    shopSkuEntity.categoryId = shopSpuEntity.category3Id;
-                    shopSkuEntity.categoryName = shopSpuEntity.category3Name;
-                    // 类目ID
-                    shopSkuEntity.brandId = shopSpuEntity.brandId;
-                    shopSkuEntity.brandName = $("select[name='brandId']:selected").text();
-                    shopSkuEntityList.push(shopSkuEntity);
-                }
-            });
-            shopSpuEntity.shopSkuEntityList = shopSkuEntityList;
+                shopSpuEntity.shopSkuEntityList = shopSkuEntityList;
+            }
             // 执行提交审核
             CoreUtil.sendSyncPut("/goods/update", shopSpuEntity, function (res) {
                 layer.msg("修改成功, 等待商品审核...", {time: 1000}, function () {

@@ -75,8 +75,18 @@ public class ShopSpuController extends BaseController {
     @ApiOperation(value = "跳转到编辑商品页面")
     @GetMapping("/index/shopSpu/editProduct/{id}")
     public String editProduct(@PathVariable("id") String id, Model model) {
-        model.addAttribute("shopSpuEntity", shopSpuService.getById(id));
-        model.addAttribute("shopSkuEntityList", shopSkuService.list(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, id)));
+        ShopSpuEntity shopSpuEntity = shopSpuService.getShopSpuEntityById(id);
+        model.addAttribute("shopSpuEntity", shopSpuEntity);
+        List<ShopSkuEntity> shopSkuEntityList = shopSkuService.listByCondition(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, id).orderByAsc(ShopSkuEntity::getId));
+        model.addAttribute("skuSnList", Joiner.on(DelimiterConstants.COMMA).skipNulls().join(shopSkuEntityList.stream().map(ShopSkuEntity::getSn).collect(Collectors.toList())));
+        // 未删除SKU
+        model.addAttribute("shopSkuEntityList", shopSkuEntityList.stream().filter(a -> NumberConstants.ZERO_I.equals(a.getDeleted())).collect(Collectors.toList()));
+        // 已删除SKU
+        model.addAttribute("removedShopSkuEntityList", shopSkuEntityList.stream().filter(a -> NumberConstants.ONE_I.equals(a.getDeleted())).collect(Collectors.toList()));
+        // 规格模板
+        model.addAttribute("shopSpecEntityList", shopSpecService.list(Wrappers.<ShopSpecEntity>lambdaQuery().eq(ShopSpecEntity::getTemplateId, shopSpuEntity.getTemplateId()).orderByAsc(ShopSpecEntity::getSeq)));
+        // 参数模板
+        model.addAttribute("shopParaEntityList", shopParaService.list(Wrappers.<ShopParaEntity>lambdaQuery().eq(ShopParaEntity::getTemplateId, shopSpuEntity.getTemplateId()).orderByAsc(ShopParaEntity::getSeq)));
         return "goods/editProduct";
     }
 
