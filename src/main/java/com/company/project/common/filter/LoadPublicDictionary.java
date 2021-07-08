@@ -2,6 +2,7 @@ package com.company.project.common.filter;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.company.project.common.utils.Constant;
+import com.company.project.common.utils.DictionariesKeyConstant;
 import com.company.project.entity.SysDictDetailEntity;
 import com.company.project.entity.SysDictEntity;
 import com.company.project.service.SysDictDetailService;
@@ -52,13 +53,13 @@ public class LoadPublicDictionary implements CommandLineRunner {
         if (CollectionUtils.isNotEmpty(sysDictDetailEntityList)) {
             Map<String, List<SysDictDetailEntity>> groupBy = sysDictDetailEntityList.stream().collect(Collectors.groupingBy(SysDictDetailEntity::getDictId));
             List<SysDictEntity> sysDictEntityList = sysDictService.listByIds(groupBy.keySet());
-            Map<String, String> sysDictEntityMMap = sysDictEntityList.stream().collect(Collectors.toMap(SysDictEntity::getId, SysDictEntity::getName,(k1,k2)->k1));
+            Map<String, String> sysDictEntityMMap = sysDictEntityList.stream().collect(Collectors.toMap(SysDictEntity::getId, SysDictEntity::getName, (k1, k2) -> k1));
             groupBy.forEach((k, v) -> {
-                if(sysDictEntityMMap.containsKey(k)){
+                if (sysDictEntityMMap.containsKey(k)) {
                     // 清空缓存
-                    redisTemplate.delete(Constant.DICT_KEY_PREFIX.concat(sysDictEntityMMap.get(k)));
+                    redisTemplate.delete(DictionariesKeyConstant.DICT_KEY_PREFIX.concat(sysDictEntityMMap.get(k)));
                     // 加入缓存
-                    redisTemplate.boundHashOps(Constant.DICT_KEY_PREFIX.concat(sysDictEntityMMap.get(k))).putAll(v.stream().collect(Collectors.toMap(SysDictDetailEntity::getId, a -> a, (k1, k2) -> k1)));
+                    redisTemplate.boundHashOps(DictionariesKeyConstant.DICT_KEY_PREFIX.concat(sysDictEntityMMap.get(k))).putAll(v.stream().collect(Collectors.toMap(SysDictDetailEntity::getId, a -> a, (k1, k2) -> k1)));
                 }
             });
         }

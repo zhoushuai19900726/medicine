@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.company.project.common.utils.Constant;
 import com.company.project.common.utils.DataResult;
+import com.company.project.common.utils.DictionariesKeyConstant;
 import com.company.project.common.utils.NumberConstants;
 import com.company.project.entity.SysDictDetailEntity;
 import com.company.project.entity.SysDictEntity;
@@ -62,7 +63,7 @@ public class SysDictDetailController {
         // 加入缓存
         SysDictEntity sysDictEntity = sysDictService.getById(sysDictDetail.getDictId());
         if (Objects.nonNull(sysDictEntity)) {
-            redisTemplate.boundHashOps(Constant.DICT_KEY_PREFIX.concat(sysDictEntity.getName())).put(sysDictDetail.getId(), sysDictDetail);
+            redisTemplate.boundHashOps(DictionariesKeyConstant.DICT_KEY_PREFIX.concat(sysDictEntity.getName())).put(sysDictDetail.getId(), sysDictDetail);
         }
         return DataResult.success();
     }
@@ -82,7 +83,7 @@ public class SysDictDetailController {
                     Map<String, List<SysDictDetailEntity>> groupBy = sysDictDetailEntityList.stream().collect(Collectors.groupingBy(SysDictDetailEntity::getDictId));
                     groupBy.forEach((k, v)  -> {
                         if(sysDictEntityMap.containsKey(k)){
-                            redisTemplate.boundHashOps(Constant.DICT_KEY_PREFIX.concat(sysDictEntityMap.get(k))).delete(v.stream().map(SysDictDetailEntity::getId).toArray());
+                            redisTemplate.boundHashOps(DictionariesKeyConstant.DICT_KEY_PREFIX.concat(sysDictEntityMap.get(k))).delete(v.stream().map(SysDictDetailEntity::getId).toArray());
                         }
                     });
                 }
@@ -106,7 +107,7 @@ public class SysDictDetailController {
         sysDictDetailService.updateById(sysDictDetail);
         // 更新缓存
         SysDictEntity sysDictEntity = sysDictService.getById(sysDictDetail.getDictId());
-        redisTemplate.boundHashOps(Constant.DICT_KEY_PREFIX.concat(sysDictEntity.getName())).put(sysDictDetail.getId(), sysDictDetail);
+        redisTemplate.boundHashOps(DictionariesKeyConstant.DICT_KEY_PREFIX.concat(sysDictEntity.getName())).put(sysDictDetail.getId(), sysDictDetail);
         return DataResult.success();
     }
 
