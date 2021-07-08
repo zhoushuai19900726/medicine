@@ -19,6 +19,18 @@ public class Constant {
     public static final String ROLES_KEY = "roles-key";
 
     /**
+     * 字典相关
+     */
+    public static final String DICT_KEY_PREFIX = "dict-key-";
+    /**
+     * 字典KEY
+     */
+    // 性别
+    public static final String SEX = DICT_KEY_PREFIX.concat("sex");
+    // 商品服务保证
+    public static final String SERVICE_GUARANTEE = DICT_KEY_PREFIX.concat("service_guarantee");
+
+    /**
      * 后台管理
      */
     public static final String ADMIN_ID = "1";

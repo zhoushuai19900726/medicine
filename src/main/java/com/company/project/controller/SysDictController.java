@@ -31,8 +31,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/sysDict")
 public class SysDictController {
+
     @Resource
     private SysDictService sysDictService;
+
     @Resource
     private SysDictDetailService sysDictDetailService;
 
