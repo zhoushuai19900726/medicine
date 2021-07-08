@@ -9,6 +9,7 @@ import com.company.project.common.exception.code.BaseResponseCode;
 import com.company.project.entity.ShopAlbumGalleryEntity;
 import com.company.project.service.ShopAlbumGalleryService;
 import com.google.common.collect.Lists;
+import io.swagger.annotations.Api;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +37,7 @@ import javax.annotation.Resource;
  * @email zhoushuai_0726@163.com
  * @date 2021-06-25 14:17:03
  */
+@Api(tags = "相册")
 @Controller
 @RequestMapping("/")
 public class ShopAlbumController extends BaseController {

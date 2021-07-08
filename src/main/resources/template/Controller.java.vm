@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.company.project.common.aop.annotation.DataScope;
 import com.company.project.common.aop.annotation.LogAnnotation;
+import io.swagger.annotations.Api;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ import javax.annotation.Resource;
  * @email ${email}
  * @date ${datetime}
  */
+@Api(tags = "${comments}")
 @Controller
 @RequestMapping("/")
 public class ${className}Controller extends BaseController {

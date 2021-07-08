@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.company.project.common.aop.annotation.DataScope;
 import com.company.project.common.aop.annotation.LogAnnotation;
 import com.company.project.common.utils.PinYinUtils;
+import io.swagger.annotations.Api;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,7 @@ import javax.annotation.Resource;
  * @email zhoushuai_0726@163.com
  * @date 2021-06-15 14:15:14
  */
+@Api(tags = "商品品牌")
 @Controller
 @RequestMapping("/")
 public class ShopBrandController extends BaseController {

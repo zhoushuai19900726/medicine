@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.company.project.common.aop.annotation.DataScope;
 import com.company.project.common.aop.annotation.LogAnnotation;
+import io.swagger.annotations.Api;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.ui.Model;
@@ -30,6 +31,7 @@ import javax.annotation.Resource;
  * @email zhoushuai_0726@163.com
  * @date 2021-06-16 10:33:59
  */
+@Api(tags = "商品分类")
 @Controller
 @RequestMapping("/")
 public class ShopCategoryController extends BaseController {

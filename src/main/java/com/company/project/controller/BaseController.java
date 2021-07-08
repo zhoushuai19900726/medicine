@@ -8,6 +8,7 @@ import com.company.project.entity.SysUser;
 import com.company.project.service.HttpSessionService;
 import com.company.project.service.UserService;
 import com.google.common.collect.Lists;
+import io.swagger.annotations.Api;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -23,12 +24,13 @@ import java.util.stream.Collectors;
 
 
 /**
- * 公共Controller
+ * 底层Controller
  *
  * @author zhoushuai
  * @version V1.0
  * @date 2020年3月18日
  */
+@Api(tags = "底层Controller")
 @Controller
 public class BaseController {
 

@@ -4,6 +4,7 @@ import com.company.project.common.enums.GoodsExamineStatusEnum;
 import com.company.project.common.enums.GoodsStatusEnum;
 import com.company.project.common.enums.ServiceGuaranteeEnum;
 import com.company.project.common.utils.DataResult;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @version V1.0
  * @date 2020年3月18日
  */
+@Api(tags = "公共Controller")
 @Controller
 @RequestMapping("/common")
 public class CommonController {

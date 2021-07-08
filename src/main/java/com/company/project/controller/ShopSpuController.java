@@ -10,6 +10,7 @@ import com.company.project.entity.*;
 import com.company.project.service.*;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import io.swagger.annotations.Api;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.ui.Model;
@@ -35,6 +36,7 @@ import javax.annotation.Resource;
  * @email zhoushuai_0726@163.com
  * @date 2021-06-17 10:25:25
  */
+@Api(tags = "商品SPU/SKU")
 @Controller
 @RequestMapping("/")
 public class ShopSpuController extends BaseController {
