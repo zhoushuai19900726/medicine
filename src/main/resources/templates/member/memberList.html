@@ -12,6 +12,7 @@
             height: 60px;
             white-space: nowrap;
         }
+
         table tbody tr td .laytable-cell-checkbox {
             line-height: 60px;
         }
@@ -57,23 +58,28 @@
     <script type="text/html" id="toolbar">
         <div class="layui-btn-container">
             <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add" shiro:hasPermission="shopMember:add"><i class="layui-icon">&#xe61f;</i>新增会员</button>
-            <button class="layui-btn layui-btn-sm layui-btn-warm" lay-event="batchDeleted" shiro:hasPermission="shopMember:delete"><i class="layui-icon">&#xe639;</i>批量注销</button>
-            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopMember:delete"><i class="layui-icon">&#xe640;</i>批量删除</button>
+            <button class="layui-btn layui-btn-sm layui-btn-warm" lay-event="batchDeleted" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe682;</i>批量注销</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe640;</i>批量删除</button>
+
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="batchDeleted" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe67d;</i>下载模板</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="batchDeleted" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe681;</i>批量导入</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="batchDeleted" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe682;</i>批量注销</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="batchDeleted" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe640;</i>批量删除</button>
         </div>
     </script>
     <script type="text/html" id="tool">
-        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="edit" shiro:hasPermission="shopMember:update"><i class="layui-icon">&#xe615;</i>查看会员</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="edit" shiro:hasPermission="shopMember:list"><i class="layui-icon">&#xe615;</i>查看会员</a>
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="edit" shiro:hasPermission="shopMember:update"><i class="layui-icon">&#xe642;</i>会员更新</a>
         <br/>
-        <a class="layui-btn layui-btn-primary layui-border-orange layui-btn-xs" lay-event="del" shiro:hasPermission="shopMember:delete"><i class="layui-icon">&#xe639;</i>注销会员</a>
-        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="shopMember:delete"><i class="layui-icon">&#xe640;</i>删除会员</a>
+        <a class="layui-btn layui-btn-primary layui-border-orange layui-btn-xs" lay-event="del" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe682;</i>注销会员</a>
+        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe640;</i>删除会员</a>
     </script>
     <script type="text/html" id="config">
-        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="edit" shiro:hasPermission="shopMember:update"><i class="layui-icon">&#xe9aa;</i>重置密码</a>
-        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="del" shiro:hasPermission="shopMember:delete"><i class="layui-icon">&#xe9aa;</i>重置推荐</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="edit" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe639;</i>重置密码</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="del" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe639;</i>重置推荐</a>
         <br/>
-        <a class="layui-btn layui-btn-primary layui-border-blue layui-btn-xs" lay-event="edit" shiro:hasPermission="shopMember:update"><i class="layui-icon">&#xe627;</i>赠订单额</a>
-        <a class="layui-btn layui-btn-primary layui-border-blue layui-btn-xs" lay-event="del" shiro:hasPermission="shopMember:delete"><i class="layui-icon">&#xe627;</i>赠优惠券</a>
+        <a class="layui-btn layui-btn-primary layui-border-blue layui-btn-xs" lay-event="edit" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe627;</i>赠订单额</a>
+        <a class="layui-btn layui-btn-primary layui-border-blue layui-btn-xs" lay-event="del" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe627;</i>赠优惠券</a>
     </script>
     <script type="text/html" id="memberInfo">
         <div class="layui-row">
