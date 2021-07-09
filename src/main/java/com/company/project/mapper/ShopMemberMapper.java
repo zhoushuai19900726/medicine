@@ -16,5 +16,6 @@ import org.apache.ibatis.annotations.Select;
 public interface ShopMemberMapper extends BaseMapper<ShopMemberEntity> {
 
     @Select("<script> SELECT * FROM shop_member WHERE member_name = #{shopMemberEntity.memberName} <when test='shopMemberEntity.memberId != null'> AND member_id != #{shopMemberEntity.memberId} </when> </script>")
-    ShopMemberEntity findOneByUnique(@Param("shopMemberEntity") ShopMemberEntity shopMemberEntity);
+    ShopMemberEntity findOneByMemberName(@Param("shopMemberEntity") ShopMemberEntity shopMemberEntity);
+
 }

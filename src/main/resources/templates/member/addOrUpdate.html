@@ -236,7 +236,7 @@
         form.verify({
             isExist: function (value) {
                 var msg = '账号已存在';
-                CoreUtil.sendSyncGet("/shopMember/findOneByUnique", {memberName: value}, function (res) {
+                CoreUtil.sendSyncGet("/shopMember/findOneByMemberName", {memberName: value}, function (res) {
                     if (!res.data) {
                         msg = '';
                     }

@@ -90,13 +90,13 @@ public class ShopMemberController extends BaseController {
     }
 
 
-    @ApiOperation(value = "根据唯一索引查询")
-    @GetMapping("shopMember/findOneByUnique")
+    @ApiOperation(value = "根据账号查询")
+    @GetMapping("shopMember/findOneByMemberName")
     @RequiresPermissions("shopMember:list")
     @LogAnnotation(title = "会员", action = "查询全部")
     @ResponseBody
-    public DataResult findOneByUnique(ShopMemberEntity shopMemberEntity) {
-        return DataResult.success(shopMemberService.findOneByUnique(shopMemberEntity));
+    public DataResult findOneByMemberName(ShopMemberEntity shopMemberEntity) {
+        return DataResult.success(shopMemberService.findOneByMemberName(shopMemberEntity));
     }
 
     @ApiOperation(value = "查询分页数据")

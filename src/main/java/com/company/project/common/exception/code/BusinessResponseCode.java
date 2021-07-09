@@ -23,6 +23,11 @@ public enum BusinessResponseCode implements ResponseCodeInterface {
     SPEC_REPEAT(910001, "商品规格名称重复"),
     PARA_REPEAT(910002, "商品参数名称重复"),
 
+    /**
+     * 错误码 - 会员模块
+     */
+    ACCOUNT_REPEAT(920001, "账号已存在"),
+    INVITATION_CODE_REPEAT(920002, "邀请码已存在"),
 
     ;
 

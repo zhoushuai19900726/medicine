@@ -13,7 +13,7 @@ import com.company.project.entity.ShopMemberEntity;
  */
 public interface ShopMemberService extends IService<ShopMemberEntity> {
 
-    ShopMemberEntity findOneByUnique(ShopMemberEntity shopMemberEntity);
+    ShopMemberEntity findOneByMemberName(ShopMemberEntity shopMemberEntity);
 
     DataResult saveShopMemberEntity(ShopMemberEntity shopMember);
 }
