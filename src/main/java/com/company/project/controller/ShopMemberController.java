@@ -59,7 +59,7 @@ public class ShopMemberController extends BaseController {
     @LogAnnotation(title = "会员", action = "新增")
     @ResponseBody
     public DataResult add(@RequestBody ShopMemberEntity shopMember) {
-        return DataResult.success(shopMemberService.save(shopMember));
+        return shopMemberService.saveShopMemberEntity(shopMember);
     }
 
     @ApiOperation(value = "删除")
@@ -87,6 +87,16 @@ public class ShopMemberController extends BaseController {
     @ResponseBody
     public DataResult findListByAll() {
         return DataResult.success(shopMemberService.list());
+    }
+
+
+    @ApiOperation(value = "根据唯一索引查询")
+    @GetMapping("shopMember/findOneByUnique")
+    @RequiresPermissions("shopMember:list")
+    @LogAnnotation(title = "会员", action = "查询全部")
+    @ResponseBody
+    public DataResult findOneByUnique(ShopMemberEntity shopMemberEntity) {
+        return DataResult.success(shopMemberService.findOneByUnique(shopMemberEntity));
     }
 
     @ApiOperation(value = "查询分页数据")

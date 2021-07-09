@@ -87,6 +87,12 @@ public class ShopMemberEntity extends BaseEntity implements Serializable {
     private Long memberBirthday;
 
     /**
+     * 身份证
+     */
+    @TableField("member_identity")
+    private String memberIdentity;
+
+    /**
      * 会员邮箱
      */
     @TableField("member_email")
@@ -97,6 +103,12 @@ public class ShopMemberEntity extends BaseEntity implements Serializable {
      */
     @TableField("member_qq")
     private String memberQq;
+
+    /**
+     * 阿里旺旺
+     */
+    @TableField("member_ww")
+    private String memberWw;
 
     /**
      * 支付宝姓名
@@ -155,20 +167,20 @@ public class ShopMemberEntity extends BaseEntity implements Serializable {
     /**
      * 地区ID
      */
-    @TableField("member_area_id")
-    private String memberAreaId;
+    @TableField("member_area")
+    private String memberArea;
 
     /**
      * 城市ID
      */
-    @TableField("member_city_id")
-    private String memberCityId;
+    @TableField("member_city")
+    private String memberCity;
 
     /**
      * 省份ID
      */
-    @TableField("member_province_id")
-    private String memberProvinceId;
+    @TableField("member_province")
+    private String memberProvince;
 
     /**
      * 地区内容

@@ -9,9 +9,8 @@
     <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
 </head>
 <body>
-<div class="panel panel-default" shiro:hasPermission="${classname}:add">
-    <div class="panel-heading title"></div>
-    <div class="layui-card-body">
+<div class="layuimini-container">
+    <div class="layuimini-main" shiro:hasPermission="${classname}:add">
         <form class="layui-form" action="" lay-filter="${classname}Form" id="${classname}Form" style="width: 100%;">
             #foreach($column in $columns)
                 #if($column.columnName == $pk.columnName)

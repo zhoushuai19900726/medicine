@@ -1,6 +1,7 @@
 package com.company.project.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.company.project.common.utils.DataResult;
 import com.company.project.entity.ShopMemberEntity;
 
 /**
@@ -12,5 +13,8 @@ import com.company.project.entity.ShopMemberEntity;
  */
 public interface ShopMemberService extends IService<ShopMemberEntity> {
 
+    ShopMemberEntity findOneByUnique(ShopMemberEntity shopMemberEntity);
+
+    DataResult saveShopMemberEntity(ShopMemberEntity shopMember);
 }
 

@@ -78,7 +78,9 @@
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="edit" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe639;</i>重置密码</a>
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="del" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe639;</i>重置推荐</a>
         <br/>
+        <!-- TODO 可查看订单列表 - 进行赠送 -->
         <a class="layui-btn layui-btn-primary layui-border-blue layui-btn-xs" lay-event="edit" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe627;</i>赠订单额</a>
+        <!-- TODO 可查看优惠券列表 - 进行赠送 -->
         <a class="layui-btn layui-btn-primary layui-border-blue layui-btn-xs" lay-event="del" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe627;</i>赠优惠券</a>
     </script>
     <script type="text/html" id="memberInfo">
@@ -89,24 +91,24 @@
             <div class="layui-col-xs8">
                 <div>
                     <div class="layui-row">
-                        <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan" style="margin-left: -6px;">账号</span> {{ d.memberName }}</span>
+                        <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">账号</span> {{ d.memberName }}</span>
                     </div>
                     <div class="layui-row">
-                        <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan" style="margin-left: -6px;">实名</span> {{ d.memberTrueName }} ({{ d.memberNick }})</span>
+                        <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">实名</span> {{ d.memberTrueName }} ({{ d.memberNick }})</span>
                     </div>
                 </div>
             </div>
         </div>
     </script>
     <script type="text/html" id="registerInfo">
-        <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan" style="margin-left: -6px;">注册日期</span> 9999-99-99 23:59:59</span>
+        <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">注册日期</span> 9999-99-99 23:59:59</span>
         <br/>
-        <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan" style="margin-left: -6px;">登陆日期</span> 9999-99-99 23:59:59</span>
+        <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">登陆日期</span> 9999-99-99 23:59:59</span>
     </script>
     <script type="text/html" id="identificationCodeInfo">
-        <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan" style="margin-left: -6px;">邀请码</span> AHSGWUEY</span>
+        <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">邀请码</span> AHSGWUEY</span>
         <br/>
-        <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan" style="margin-left: -6px;">推荐码</span> AHSGWUEY</span>
+        <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">推荐码</span> AHSGWUEY</span>
     </script>
     <script type="text/html" id="walletBalanceInfo">
         <div style="width: 100%;" class="layui-badge-rim"><i class="fa fa-jpy"></i> 988.78</div>
@@ -121,7 +123,7 @@
     <script type="text/html" id="vipInfo">
         <div style="width: 100%;" class="layui-badge-rim"><i class="fa fa-star"></i> 一星VIP</div>
         <br/>
-        <div style="width: 100%;" class="layui-badge-rim"><span class="layui-badge layui-bg-cyan" style="margin-left: -6px;">升级日期</span> 9999-99-99 23:59:59</div>
+        <div style="width: 100%;" class="layui-badge-rim"><span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">升级日期</span> 9999-99-99 23:59:59</div>
     </script>
     <script type="text/html" id="statusInfo">
         <input type="checkbox" lay-skin="switch" value="{{d.memberId}}" lay-text="开启|关闭 " lay-filter="" checked/>
@@ -212,16 +214,24 @@
                     break;
                 case 'add':
                     layer.open({
-                        id: 'shopMember_add', //设定一个id，防止重复弹出
-                        title: '<i class="layui-icon">&#xe653;</i> 新增会员',
                         type: 2,
-                        content: '../index/shopMember/addOrUpdate',
-                        btn: ['提交保存', '取消'],
-                        area: ['60%', '85%'],
+                        title: '<i class="layui-icon">&#xe653;</i> 新增会员',
+                        id: 'member_add',
                         scrollbar: false,
+                        offset: 'r',
+                        anim: 5,
+                        maxmin: true,
+                        area: ['1000px', '100%'],//宽高不影响最大化
+                        content: "../index/shopMember/addOrUpdate",//地址
+                        zIndex: layer.zIndex,
+                        btn: ['提交保存', '返回会员列表'],
                         yes: function (index, layero) {
                             // 得到iframe页的窗口对象并调用子页面方法
-                            window[layero.find('iframe')[0]['name']].saveShopMember("submitBtnForAdd");
+                            window[layero.find('iframe')[0]['name']].saveShopMember('submitBtnForAdd');
+                        },
+                        success: function (layero, index) {
+                            // 置顶当前窗口
+                            layer.setTop(layero);
                         }
                     });
                     break;

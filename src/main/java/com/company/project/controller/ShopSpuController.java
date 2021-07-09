@@ -257,7 +257,7 @@ public class ShopSpuController extends BaseController {
     }
 
     @ApiOperation(value = "根据唯一索引查询")
-    @PutMapping("goods/findOneByUnique")
+    @GetMapping("goods/findOneByUnique")
     @RequiresPermissions("goods:update")
     @LogAnnotation(title = "根据SPU商品货号查询", action = "查询")
     @ResponseBody

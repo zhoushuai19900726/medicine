@@ -1,8 +1,5 @@
 package com.company.project.controller;
 
-import com.company.project.common.enums.GoodsExamineStatusEnum;
-import com.company.project.common.enums.GoodsStatusEnum;
-import com.company.project.common.utils.Constant;
 import com.company.project.common.utils.DataResult;
 import com.company.project.common.utils.DictionariesKeyConstant;
 import com.google.common.collect.Lists;
@@ -37,16 +34,21 @@ public class CommonController {
     @Resource
     private RedisTemplate redisTemplate;
 
+    @ApiOperation(value = "查询所有性别")
+    @GetMapping("findAllSex")
+    @ResponseBody
+    public DataResult findAllSex() {
+        return DataResult.success(analysisRedisData(DictionariesKeyConstant.SEX));
+    }
+
     @ApiOperation(value = "查询所有商品上下架状态")
     @GetMapping("findAllGoodsStatus")
-    @RequiresPermissions("goods:list")
     @ResponseBody
     public DataResult findAllGoodsStatus() {
         return DataResult.success(analysisRedisData(DictionariesKeyConstant.GOODS_STATUS));
     }
 
     @ApiOperation(value = "查询所有商品审核状态")
-    @GetMapping("findAllGoodsExamineStatus")
     @RequiresPermissions("goods:list")
     @ResponseBody
     public DataResult findAllGoodsExamineStatus() {
@@ -55,7 +57,6 @@ public class CommonController {
 
     @ApiOperation(value = "查询所有商品服务保证")
     @GetMapping("findAllServiceGuarantee")
-    @RequiresPermissions("goods:list")
     @ResponseBody
     public DataResult findAllServiceGuarantee() {
         return DataResult.success(analysisRedisData(DictionariesKeyConstant.SERVICE_GUARANTEE));
