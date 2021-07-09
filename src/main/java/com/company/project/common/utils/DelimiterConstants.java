@@ -1,5 +1,7 @@
 package com.company.project.common.utils;
 
+import com.company.project.entity.ShopMemberEntity;
+
 /***
  *       ___      _        _
  *      / __\__ _| |_ __ _| |_ __   __ _
@@ -77,6 +79,32 @@ public class DelimiterConstants {
     public static final String VERSION = "version";
 
     public static final String INDEX_TITLE = "级指标";
+
+    // TODO 系统配置中设置默认头像
+    public static final String DEFAULT_AVATAR = "http://localhost:8080/files/20210709/ec89c38d64cc40388d5e4487c2320214.jpeg";
+
+    public static final String SYS_ADMIN_ID = "1";
+    private static final String SYS_ADMIN_NAME = "ZHOUSHUAI";
+    private static final String SYS_ADMIN_NICK = "平台";
+    private static final String SYS_ADMIN_MOBILE = "18615662262";
+    private static final String SYS_ADMIN_PASSWORD = "ZHOUSHUAI_19900726";
+    private static final String SYS_ADMIN_INVITATION_CODE = "A0000001";
+
+
+    public static ShopMemberEntity INIT_MEMBER() {
+        return new ShopMemberEntity(
+                SYS_ADMIN_ID,
+                SYS_ADMIN_NAME,
+                SYS_ADMIN_NICK,
+                PasswordUtils.encode(SYS_ADMIN_PASSWORD, PasswordUtils.getSalt()),
+                PasswordUtils.encode(SYS_ADMIN_PASSWORD, PasswordUtils.getSalt()),
+                SYS_ADMIN_NICK,
+                SYS_ADMIN_MOBILE,
+                SYS_ADMIN_INVITATION_CODE,
+                DEFAULT_AVATAR
+        );
+    }
+
 
     /**
      * 加解密-秘钥

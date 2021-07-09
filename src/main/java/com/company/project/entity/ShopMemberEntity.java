@@ -84,7 +84,7 @@ public class ShopMemberEntity extends BaseEntity implements Serializable {
      * 生日
      */
     @TableField("member_birthday")
-    private Long memberBirthday;
+    private String memberBirthday;
 
     /**
      * 身份证
@@ -144,13 +144,13 @@ public class ShopMemberEntity extends BaseEntity implements Serializable {
      * 当前登录时间
      */
     @TableField("member_login_time")
-    private Long memberLoginTime;
+    private Date memberLoginTime;
 
     /**
      * 上次登录时间
      */
     @TableField("member_old_login_time")
-    private Long memberOldLoginTime;
+    private Date memberOldLoginTime;
 
     /**
      * 当前登录ip
@@ -295,5 +295,24 @@ public class ShopMemberEntity extends BaseEntity implements Serializable {
     @TableLogic // 注释后进行物理删除
     private Integer deleted;
 
+    public ShopMemberEntity(String memberInvitationCode) {
+        this.memberInvitationCode = memberInvitationCode;
+    }
 
+    public ShopMemberEntity(String memberId, String memberInvitationCode) {
+        this.memberId = memberId;
+        this.memberInvitationCode = memberInvitationCode;
+    }
+
+    public ShopMemberEntity(String memberId, String memberName, String memberNick, String memberPasswd, String paymentPasswd, String memberTrueName, String memberMobile, String memberInvitationCode, String memberAvatar) {
+        this.memberId = memberId;
+        this.memberName = memberName;
+        this.memberNick = memberNick;
+        this.memberPasswd = memberPasswd;
+        this.paymentPasswd = paymentPasswd;
+        this.memberTrueName = memberTrueName;
+        this.memberMobile = memberMobile;
+        this.memberInvitationCode = memberInvitationCode;
+        this.memberAvatar = memberAvatar;
+    }
 }

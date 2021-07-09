@@ -28,6 +28,7 @@ public enum BusinessResponseCode implements ResponseCodeInterface {
      */
     ACCOUNT_REPEAT(920001, "账号已存在"),
     INVITATION_CODE_REPEAT(920002, "邀请码已存在"),
+    INVALID_RECOMMENDATION_CODE(920003, "无效的推荐码"),
 
     ;
 

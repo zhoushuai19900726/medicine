@@ -15,7 +15,10 @@ import org.apache.ibatis.annotations.Select;
  */
 public interface ShopMemberMapper extends BaseMapper<ShopMemberEntity> {
 
-    @Select("<script> SELECT * FROM shop_member WHERE member_name = #{shopMemberEntity.memberName} <when test='shopMemberEntity.memberId != null'> AND member_id != #{shopMemberEntity.memberId} </when> </script>")
+    @Select("<script> SELECT * FROM shop_member WHERE member_name = #{shopMemberEntity.memberName} <when test='shopMemberEntity.memberId != null'> AND member_id != #{shopMemberEntity.memberId} </when> LIMIT 1 </script>")
     ShopMemberEntity findOneByMemberName(@Param("shopMemberEntity") ShopMemberEntity shopMemberEntity);
+
+    @Select("<script> SELECT * FROM shop_member WHERE member_invitation_code = #{shopMemberEntity.memberInvitationCode} <when test='shopMemberEntity.memberId != null'> AND member_id != #{shopMemberEntity.memberId} LIMIT 1 </when> </script>")
+    ShopMemberEntity findOneByInvitationCode(@Param("shopMemberEntity") ShopMemberEntity shopMemberEntity);
 
 }

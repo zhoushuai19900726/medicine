@@ -94,16 +94,33 @@
                         <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">账号</span> {{ d.memberName }}</span>
                     </div>
                     <div class="layui-row">
-                        <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">实名</span> {{ d.memberTrueName }} ({{ d.memberNick }})</span>
+                        <span class="layui-badge-rim">
+                            <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">实名</span>
+                            {{#  if(d.memberTrueName == null || d.memberTrueName == ''){ }}
+                            <i class="fa fa-question-circle"></i>
+                            {{#  } else { }}
+                            {{ d.memberTrueName }}
+                            {{#  } }}
+                            {{#  if(d.memberNick != null && d.memberNick != ''){ }}
+                            ({{ d.memberNick }})
+                            {{#  } }}
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
     </script>
     <script type="text/html" id="registerInfo">
-        <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">注册日期</span> 9999-99-99 23:59:59</span>
+        <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">注册日期</span> {{ d.createTime }}</span>
         <br/>
-        <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">登陆日期</span> 9999-99-99 23:59:59</span>
+        <span class="layui-badge-rim">
+            <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">登陆日期</span>
+            {{#  if(d.memberLoginTime == null || d.memberLoginTime == ''){ }}
+            <i class="fa fa-question-circle"></i>
+            {{#  } else { }}
+            {{ d.memberLoginTime }}
+            {{#  } }}
+        </span>
     </script>
     <script type="text/html" id="identificationCodeInfo">
         <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">邀请码</span> AHSGWUEY</span>
@@ -128,7 +145,7 @@
     <script type="text/html" id="statusInfo">
         <input type="checkbox" lay-skin="switch" value="{{d.memberId}}" lay-text="开启|关闭 " lay-filter="" checked/>
         <br/>
-        <div style="width: 100%;" class="layui-badge-rim"><i class="fa fa-vimeo-square"></i> 1.0.15</div>
+        <div style="width: 100%;" class="layui-badge-rim"><i class="fa fa-vimeo-square"></i> {{ '1.0.' + d.memberVersion }}</div>
     </script>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
