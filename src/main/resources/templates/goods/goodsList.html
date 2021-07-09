@@ -165,13 +165,13 @@
         {{# if(d.isMarketable == '2'){ }}
         <div style="width: 100%; cursor: pointer;" class="layui-badge layui-bg-red" onmouseenter="showHaltSalesReason('{{d.haltSalesReason}}', this)"><i class="layui-icon">&#xe6b2;</i> 停售中...</div>
         {{# }else { }}
-        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="上架|下架 " lay-filter="upperAndLowerSwitch" {{d.isMarketable== 1 ? 'checked' : ''}}/>
+        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="上架|下架 " lay-filter="upperAndLowerSwitch" {{d.isMarketable == 1 ? 'checked' : ''}}/>
         {{# } }}
         <br/>
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="operationRecord" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>操作记录</a>
     </script>
     <script type="text/html" id="isEnableSpecTpl">
-        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="启用|关闭" lay-filter="enableAndCloseSwitch" {{d.isEnableSpec== 1 ? 'checked' : ''}}/>
+        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="启用|关闭" lay-filter="enableAndCloseSwitch" {{d.isEnableSpec == 1 ? 'checked' : ''}}/>
         <br/>
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="spec" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>规格参数</a>
     </script>

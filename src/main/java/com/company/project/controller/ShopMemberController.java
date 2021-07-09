@@ -113,9 +113,7 @@ public class ShopMemberController extends BaseController {
                 .eq(StringUtils.isNotBlank(shopMember.getMemberMobile()), ShopMemberEntity::getMemberMobile, shopMember.getMemberMobile())
                 .eq(StringUtils.isNotBlank(shopMember.getMemberInvitationCode()), ShopMemberEntity::getMemberInvitationCode, shopMember.getMemberInvitationCode())
                 .orderByDesc(ShopMemberEntity::getCreateTime);
-        // 封装数据权限 - 执行查询 - 封装用户 - 响应前端
-//        return DataResult.success(encapsulationUser(shopMemberService.page(page, encapsulationDataRights(shopMember, queryWrapper, ShopMemberEntity::getCreateId))));
-        return DataResult.success(shopMemberService.page(new Page<>(shopMember.getPage(), shopMember.getLimit()), queryWrapper));
+        return DataResult.success(shopMemberService.listByPage(new Page<>(shopMember.getPage(), shopMember.getLimit()), queryWrapper));
     }
 
 }

@@ -123,27 +123,55 @@
         </span>
     </script>
     <script type="text/html" id="identificationCodeInfo">
-        <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">邀请码</span> AHSGWUEY</span>
+        <span class="layui-badge-rim">
+            <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">邀请码</span>
+            {{#  if(d.memberInvitationCode == null || d.memberInvitationCode == ''){ }}
+            <i class="fa fa-question-circle"></i>
+            {{#  } else { }}
+            {{ d.memberInvitationCode }}
+            {{#  } }}
+        </span>
         <br/>
-        <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">推荐码</span> AHSGWUEY</span>
+        <span class="layui-badge-rim">
+            <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">推荐码</span>
+            {{#  if(d.memberInvitationCodeFrom == null || d.memberInvitationCodeFrom == ''){ }}
+            <i class="fa fa-question-circle"></i>
+            {{#  } else { }}
+            {{ d.memberInvitationCodeFrom }}
+            {{#  } }}
+        </span>
     </script>
     <script type="text/html" id="walletBalanceInfo">
-        <div style="width: 100%;" class="layui-badge-rim"><i class="fa fa-jpy"></i> 988.78</div>
+        <div style="width: 100%;" class="layui-badge-rim"><i class="fa fa-jpy"></i> {{ d.walletBalance }}</div>
         <br/>
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="orderList" shiro:hasPermission="shopMember:manager" style="width: 100%;"><i class="layui-icon">&#xe615;</i>消费记录</a>
     </script>
     <script type="text/html" id="growthValueInfo">
-        <div style="width: 100%;" class="layui-badge-rim"><i class="fa fa-money"></i> 180097</div>
+        <div style="width: 100%;" class="layui-badge-rim"><i class="fa fa-money"></i> {{ d.growthValue }}</div>
         <br/>
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="orderList" shiro:hasPermission="shopMember:manager" style="width: 100%;"><i class="layui-icon">&#xe615;</i>成长值记录</a>
     </script>
     <script type="text/html" id="vipInfo">
-        <div style="width: 100%;" class="layui-badge-rim"><i class="fa fa-star"></i> 一星VIP</div>
+        <div style="width: 100%;" class="layui-badge-rim">
+            <i class="fa fa-shirtsinbulk"></i>
+            {{#  if(d.memberGradeName == null || d.memberGradeName == ''){ }}
+            <i class="fa fa-question-circle"></i>
+            {{#  } else { }}
+            {{ d.memberGradeName }}
+            {{#  } }}
+        </div>
         <br/>
-        <div style="width: 100%;" class="layui-badge-rim"><span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">升级日期</span> 9999-99-99 23:59:59</div>
+        <span class="layui-badge-rim">
+            <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">升级日期</span>
+            {{#  if(d.gradeTime == null || d.gradeTime == ''){ }}
+            <i class="fa fa-question-circle"></i>
+            {{#  } else { }}
+            {{ d.gradeTime }}
+            {{#  } }}
+        </span>
     </script>
     <script type="text/html" id="statusInfo">
-        <input type="checkbox" lay-skin="switch" value="{{d.memberId}}" lay-text="开启|关闭 " lay-filter="" checked/>
+        <input type="checkbox" lay-skin="switch" value="{{d.memberId}}" lay-text="开启|关闭 " lay-filter="" {{d.memberState == 1 ? 'checked' : ''}}/>
         <br/>
         <div style="width: 100%;" class="layui-badge-rim"><i class="fa fa-vimeo-square"></i> {{ '1.0.' + d.memberVersion }}</div>
     </script>
@@ -203,7 +231,7 @@
                     {width: 160, title: '识别码', templet: '#identificationCodeInfo'},
                     {align: 'center', width: 150, title: '钱包余额', templet: '#walletBalanceInfo'},
                     {align: 'center', width: 150, title: '成长值', templet: '#growthValueInfo'},
-                    {width: 210, title: 'VIP信息', templet: '#vipInfo'},
+                    {width: 215, title: 'VIP信息', templet: '#vipInfo'},
                     {align: 'center', width: 100, field: 'memberState', title: '状态', templet: '#statusInfo', fixed: 'right'},
                     {width: 200, toolbar: "#config", title: '设置', fixed: 'right'},
                     {width: 200, toolbar: "#tool", title: '操作', fixed: 'right'}

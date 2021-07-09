@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.*;
 
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import lombok.Data;
@@ -294,6 +295,14 @@ public class ShopMemberEntity extends BaseEntity implements Serializable {
     @TableField(fill = FieldFill.INSERT)
     @TableLogic // 注释后进行物理删除
     private Integer deleted;
+
+    // 钱包余额
+    @TableField(exist = false)
+    private BigDecimal walletBalance;
+
+    // 成长值
+    @TableField(exist = false)
+    private BigDecimal growthValue;
 
     public ShopMemberEntity(String memberInvitationCode) {
         this.memberInvitationCode = memberInvitationCode;

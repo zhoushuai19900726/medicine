@@ -1,5 +1,8 @@
 package com.company.project.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.company.project.common.utils.DataResult;
 import com.company.project.entity.ShopMemberEntity;
@@ -16,5 +19,7 @@ public interface ShopMemberService extends IService<ShopMemberEntity> {
     ShopMemberEntity findOneByMemberName(ShopMemberEntity shopMemberEntity);
 
     DataResult saveShopMemberEntity(ShopMemberEntity shopMember);
+
+    IPage<ShopMemberEntity> listByPage(Page<ShopMemberEntity> page, LambdaQueryWrapper<ShopMemberEntity> wrapper);
 }
 

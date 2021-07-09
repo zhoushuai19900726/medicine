@@ -1,11 +1,15 @@
 package com.company.project.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.company.project.common.exception.code.BusinessResponseCode;
 import com.company.project.common.utils.*;
 import com.company.project.entity.*;
 import com.company.project.mapper.*;
+import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -14,8 +18,12 @@ import com.company.project.service.ShopMemberService;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service("shopMemberService")
@@ -105,10 +113,48 @@ public class ShopMemberServiceImpl extends ServiceImpl<ShopMemberMapper, ShopMem
         }
         // 保存推荐关系
         shopRecommendationRelationshipMapper.insert(shopRecommendationRelationshipEntity);
-        // 保存成长值
-        shopMemberGrowthValueMapper.insert(new ShopMemberGrowthValueEntity(shopMemberEntity.getMemberId()));
         // 保存会员钱包
         shopMemberWalletMapper.insert(new ShopMemberWalletEntity(shopMemberEntity.getMemberId()));
+        // 保存成长值
+        shopMemberGrowthValueMapper.insert(new ShopMemberGrowthValueEntity(shopMemberEntity.getMemberId()));
         return DataResult.success(shopMemberEntity);
     }
+
+    @Override
+    public IPage<ShopMemberEntity> listByPage(Page<ShopMemberEntity> page, LambdaQueryWrapper<ShopMemberEntity> wrapper) {
+        return encapsulatingFieldName(shopMemberMapper.selectPage(page, wrapper));
+    }
+
+    private IPage<ShopMemberEntity> encapsulatingFieldName(IPage<ShopMemberEntity> iPage) {
+        // 会员集合
+        List<ShopMemberEntity> shopMemberEntityList = iPage.getRecords();
+        // 封装名称
+        if (CollectionUtils.isNotEmpty(shopMemberEntityList)) {
+            // 查询结果封装
+            Map<String, BigDecimal> walletMap = Maps.newHashMap();
+            Map<String, BigDecimal> growthMap = Maps.newHashMap();
+            // 提取memberId
+            List<String> memberIdList = shopMemberEntityList.stream().map(ShopMemberEntity::getMemberId).collect(Collectors.toList());
+            // 查询钱包集合
+            List<ShopMemberWalletEntity> shopMemberWalletEntityList = shopMemberWalletMapper.selectList(Wrappers.<ShopMemberWalletEntity>lambdaQuery().in(ShopMemberWalletEntity::getMemberId, memberIdList));
+            if (CollectionUtils.isNotEmpty(shopMemberWalletEntityList)) {
+                // 封装钱包余额
+                walletMap.putAll(shopMemberWalletEntityList.stream().collect(Collectors.toMap(ShopMemberWalletEntity::getMemberId, ShopMemberWalletEntity::getBalance, (k1, k2) -> k1)));
+            }
+            // 查询成长值集合
+            List<ShopMemberGrowthValueEntity> shopMemberGrowthValueEntityList = shopMemberGrowthValueMapper.selectList(Wrappers.<ShopMemberGrowthValueEntity>lambdaQuery().in(ShopMemberGrowthValueEntity::getMemberId, memberIdList));
+            if (CollectionUtils.isNotEmpty(shopMemberGrowthValueEntityList)) {
+                // 封装成长值
+                growthMap.putAll(shopMemberGrowthValueEntityList.stream().collect(Collectors.toMap(ShopMemberGrowthValueEntity::getMemberId, ShopMemberGrowthValueEntity::getGrowthValue, (k1, k2) -> k1)));
+            }
+            // 执行封装
+            shopMemberEntityList.forEach(shopMemberEntity -> {
+                shopMemberEntity.setWalletBalance(walletMap.getOrDefault(shopMemberEntity.getMemberId(), BigDecimal.ZERO));
+                shopMemberEntity.setGrowthValue(growthMap.getOrDefault(shopMemberEntity.getMemberId(), BigDecimal.ZERO));
+            });
+        }
+        return iPage;
+    }
+
+
 }
