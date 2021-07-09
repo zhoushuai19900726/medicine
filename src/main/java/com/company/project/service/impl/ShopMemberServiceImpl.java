@@ -101,7 +101,7 @@ public class ShopMemberServiceImpl extends ServiceImpl<ShopMemberMapper, ShopMem
         shopRecommendationRelationshipEntity.setMemberId(shopMemberEntity.getMemberId());
         shopRecommendationRelationshipEntity.setRecommendId(references.getMemberId());
         // 上级推荐关系
-        ShopRecommendationRelationshipEntity referencesRelationship = shopRecommendationRelationshipMapper.selectById(references.getMemberId());
+        ShopRecommendationRelationshipEntity referencesRelationship = shopRecommendationRelationshipMapper.selectOne(Wrappers.<ShopRecommendationRelationshipEntity>lambdaQuery().eq(ShopRecommendationRelationshipEntity::getMemberId, references.getMemberId()));
         if (Objects.nonNull(referencesRelationship)) {
             shopRecommendationRelationshipEntity.setRecommendLevel(referencesRelationship.getRecommendLevel() + NumberConstants.ONE_I);
         } else {
