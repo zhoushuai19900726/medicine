@@ -79,6 +79,16 @@ public class ShopMemberController extends BaseController {
         return "member/memberDetail";
     }
 
+    @ApiOperation(value = "跳转进入消费记录页面")
+    @GetMapping("/index/shopMember/walletRecord/{memberId}")
+    public String walletRecord(@PathVariable("memberId") String memberId, Model model) {
+        // 会员信息
+        model.addAttribute("shopMemberEntity", shopMemberService.findOneByMemberId(memberId));
+        // 钱包余额
+        model.addAttribute("shopMemberWalletEntity", shopMemberWalletService.getOne(Wrappers.<ShopMemberWalletEntity>lambdaQuery().in(ShopMemberWalletEntity::getMemberId, memberId)));
+        return "member/walletRecord";
+    }
+
     @ApiOperation(value = "新增")
     @PostMapping("shopMember/add")
     @RequiresPermissions("shopMember:add")

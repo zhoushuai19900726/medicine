@@ -61,10 +61,10 @@
             <button class="layui-btn layui-btn-sm layui-btn-warm" lay-event="batchCancelled" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe682;</i>批量注销</button>
             <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe640;</i>批量删除</button>
 
-            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="batchDeleted" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe67d;</i>下载模板</button>
-            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="batchDeleted" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe681;</i>批量导入</button>
-            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="batchDeleted" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe682;</i>批量注销</button>
-            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="batchDeleted" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe640;</i>批量删除</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="aaaaa" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe67d;</i>下载模板</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="aaaaa" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe681;</i>批量导入</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="aaaaa" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe682;</i>批量注销</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="aaaaa" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe640;</i>批量删除</button>
         </div>
     </script>
     <script type="text/html" id="tool">
@@ -145,12 +145,12 @@
         <div style="width: 100%;" class="layui-badge-rim"><i class="fa fa-jpy"></i> {{ d.walletBalance }}</div>
         <br/>
         <!-- TODO 可查看订单列表 - 进行赠送 -->
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="orderList" shiro:hasPermission="shopMember:manager" style="width: 100%;"><i class="layui-icon">&#xe615;</i>消费记录</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="walletRecordList" shiro:hasPermission="shopMember:manager" style="width: 100%;"><i class="layui-icon">&#xe615;</i>消费记录</a>
     </script>
     <script type="text/html" id="growthValueInfo">
         <div style="width: 100%;" class="layui-badge-rim"><i class="fa fa-money"></i> {{ d.growthValue }}</div>
         <br/>
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="orderList" shiro:hasPermission="shopMember:manager" style="width: 100%;"><i class="layui-icon">&#xe615;</i>成长值记录</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="growthValueRecordList" shiro:hasPermission="shopMember:manager" style="width: 100%;"><i class="layui-icon">&#xe615;</i>成长值记录</a>
     </script>
     <script type="text/html" id="vipInfo">
         <div style="width: 100%;" class="layui-badge-rim">
@@ -524,6 +524,25 @@
                 case 'freeCoupon':
                     // TODO 赠送优惠券
 
+                    break;
+                case 'walletRecordList':
+                    // 消费记录
+                    layer.open({
+                        type: 2,
+                        title: '<i class="layui-icon">&#xe65e;</i> 消费记录',
+                        id: 'shopMember_detail',
+                        scrollbar: false,
+                        offset: 'r',
+                        anim: 5,
+                        maxmin: true,
+                        area: ['1000px', '100%'],//宽高不影响最大化
+                        content: "../index/shopMember/walletRecord/" + data.memberId,//地址
+                        zIndex: layer.zIndex,
+                        success: function (layero, index) {
+                            // 置顶当前窗口
+                            layer.setTop(layero);
+                        }
+                    });
                     break;
             }
         });

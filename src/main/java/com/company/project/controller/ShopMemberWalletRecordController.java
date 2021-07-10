@@ -38,28 +38,6 @@ public class ShopMemberWalletRecordController extends BaseController {
     @Resource
     private ShopMemberWalletRecordService shopMemberWalletRecordService;
 
-
-    @ApiOperation(value = "跳转到会员钱包列表页面")
-    @GetMapping("/index/shopMemberWalletRecord")
-    public String shopMemberWalletRecord() {
-        return "shopmemberwalletrecord/list";
-        }
-
-    @ApiOperation(value = "跳转进入新增/编辑页面")
-    @GetMapping("/index/shopMemberWalletRecord/addOrUpdate")
-    public String addOrUpdate() {
-        return "shopmemberwalletrecord/addOrUpdate";
-    }
-
-    @ApiOperation(value = "新增")
-    @PostMapping("shopMemberWalletRecord/add")
-    @RequiresPermissions("shopMemberWalletRecord:add")
-    @LogAnnotation(title = "会员钱包", action = "新增")
-    @ResponseBody
-    public DataResult add(@RequestBody ShopMemberWalletRecordEntity shopMemberWalletRecord){
-        return DataResult.success(shopMemberWalletRecordService.save(shopMemberWalletRecord));
-    }
-
     @ApiOperation(value = "删除")
     @DeleteMapping("shopMemberWalletRecord/delete")
     @RequiresPermissions("shopMemberWalletRecord:delete")
@@ -78,15 +56,6 @@ public class ShopMemberWalletRecordController extends BaseController {
         return DataResult.success(shopMemberWalletRecordService.updateById(shopMemberWalletRecord));
     }
 
-    @ApiOperation(value = "查询全部")
-    @GetMapping("shopMemberWalletRecord/listByAll")
-    @RequiresPermissions("shopMemberWalletRecord:list")
-    @LogAnnotation(title = "会员钱包", action = "查询全部")
-    @ResponseBody
-    public DataResult findListByAll() {
-        return DataResult.success(shopMemberWalletRecordService.list());
-    }
-
     @ApiOperation(value = "查询分页数据")
     @PostMapping("shopMemberWalletRecord/listByPage")
     @RequiresPermissions("shopMemberWalletRecord:list")
@@ -99,8 +68,8 @@ public class ShopMemberWalletRecordController extends BaseController {
         queryWrapper
                 .eq(StringUtils.isNotBlank(shopMemberWalletRecord.getId()), ShopMemberWalletRecordEntity::getId, shopMemberWalletRecord.getId())
                 .orderByDesc(ShopMemberWalletRecordEntity::getCreateTime);
-        // 封装数据权限 - 执行查询 - 封装用户 - 响应前端
-        return DataResult.success(encapsulationUser(shopMemberWalletRecordService.page(new Page<>(shopMemberWalletRecord.getPage(), shopMemberWalletRecord.getLimit()), encapsulationDataRights(shopMemberWalletRecord, queryWrapper, ShopMemberWalletRecordEntity::getCreateId))));
+        // 执行查询 - 响应前端
+        return DataResult.success(shopMemberWalletRecordService.page(new Page<>(shopMemberWalletRecord.getPage(), shopMemberWalletRecord.getLimit()), queryWrapper));
     }
 
 }

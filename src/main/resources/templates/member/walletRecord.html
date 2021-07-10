@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main" shiro:hasPermission="shopMember:list">
+        <form class="layui-form" action="" style="width: 100%;">
+            <input name="memberId" hidden/>
+            <blockquote class="layui-elem-quote">账号信息</blockquote>
+            <blockquote class="layui-elem-quote layui-quote-nm">
+                <table class="layui-table" lay-size="sm">
+                    <thead>
+                        <tr>
+                            <th>会员账号</th>
+                            <th><b style="color: #ff5749;">钱包余额</b></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td th:text="${shopMemberEntity.memberName}"></td>
+                        <td><i class="fa fa-jpy" style="color: #ff5749; font-weight: bold;" th:text="' ' + ${shopMemberWalletEntity.balance}"></i></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </blockquote>
+            <blockquote class="layui-elem-quote">消费记录</blockquote>
+            <blockquote class="layui-elem-quote layui-quote-nm">
+                <!--lay-size="sm"-->
+
+
+
+
+
+            </blockquote>
+        </form>
+    </div>
+</div>
+<script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
+</body>
+</html>
+<script>
+    //获取token
+    var token = CoreUtil.getData("access_token");
+    //地址栏转义token中的#号
+    var tokenQuery = token.replace("#", "%23");
+    var $ = jQuery = layui.jquery;
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form;
+        var layer = layui.layer;
+
+
+
+    });
+
+
+
+</script>
