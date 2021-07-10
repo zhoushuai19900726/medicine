@@ -175,6 +175,8 @@
                             window[layero.find('iframe')[0]['name']].save${className}("submitBtnForUpdate");
                         },
                         success: function (layero, index) {
+                            // 置顶当前窗口
+                            layer.setTop(layero);
                             // 得到iframe页的窗口对象并调用子页面方法
                             window[layero.find('iframe')[0]['name']].assignment(data);
                         }

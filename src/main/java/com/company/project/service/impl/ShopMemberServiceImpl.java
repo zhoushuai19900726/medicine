@@ -2,7 +2,6 @@ package com.company.project.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.company.project.common.exception.code.BusinessResponseCode;
@@ -11,6 +10,7 @@ import com.company.project.entity.*;
 import com.company.project.mapper.*;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
@@ -82,11 +82,17 @@ public class ShopMemberServiceImpl extends ServiceImpl<ShopMemberMapper, ShopMem
         do {
             shopMemberEntity.setMemberInvitationCode(CommonUtils.generateShortUUID());
         } while (Objects.nonNull(shopMemberMapper.findOneByInvitationCode(shopMemberEntity)));
-        // 密码加密
+        // 登陆密码加密
         if (StringUtils.isNotBlank(shopMemberEntity.getMemberPasswd())) {
             shopMemberEntity.setMemberPasswd(PasswordUtils.encode(shopMemberEntity.getMemberPasswd(), PasswordUtils.getSalt()));
         } else {
             shopMemberEntity.setMemberPasswd(PasswordUtils.encode(DelimiterConstants.INIT_PASSWORD, PasswordUtils.getSalt()));
+        }
+        // 支付密码加密
+        if (StringUtils.isNotBlank(shopMemberEntity.getPaymentPasswd())) {
+            shopMemberEntity.setPaymentPasswd(PasswordUtils.encode(shopMemberEntity.getPaymentPasswd(), PasswordUtils.getSalt()));
+        } else {
+            shopMemberEntity.setPaymentPasswd(PasswordUtils.encode(DelimiterConstants.INIT_PASSWORD, PasswordUtils.getSalt()));
         }
         // 默认头像
         if (StringUtils.isBlank(shopMemberEntity.getMemberAvatar())) {
@@ -120,7 +126,7 @@ public class ShopMemberServiceImpl extends ServiceImpl<ShopMemberMapper, ShopMem
         return DataResult.success(shopMemberEntity);
     }
 
-    private ShopRecommendationRelationshipEntity recommendationRelationship(ShopMemberEntity shopMemberEntity, ShopMemberEntity references){
+    private ShopRecommendationRelationshipEntity recommendationRelationship(ShopMemberEntity shopMemberEntity, ShopMemberEntity references) {
         // 推荐关系
         ShopRecommendationRelationshipEntity shopRecommendationRelationshipEntity = new ShopRecommendationRelationshipEntity();
         shopRecommendationRelationshipEntity.setMemberId(shopMemberEntity.getMemberId());
@@ -145,17 +151,17 @@ public class ShopMemberServiceImpl extends ServiceImpl<ShopMemberMapper, ShopMem
         ShopMemberEntity queryResult = shopMemberMapper.selectById(shopMemberEntity.getMemberId());
         if (Objects.nonNull(queryResult)) {
             // 账号校验
-            if(StringUtils.isNotBlank(shopMemberEntity.getMemberName())){
+            if (StringUtils.isNotBlank(shopMemberEntity.getMemberName())) {
                 ShopMemberEntity accountVerification = shopMemberMapper.findOneByMemberName(shopMemberEntity);
                 if (Objects.nonNull(accountVerification)) {
                     return DataResult.fail(BusinessResponseCode.ACCOUNT_REPEAT.getMsg());
                 }
             }
             // 推荐码
-            if(StringUtils.isNotBlank(shopMemberEntity.getMemberInvitationCodeFrom())){
+            if (StringUtils.isNotBlank(shopMemberEntity.getMemberInvitationCodeFrom())) {
                 // 查询推荐人
                 ShopMemberEntity references = shopMemberMapper.findOneByInvitationCode(new ShopMemberEntity(shopMemberEntity.getMemberId(), shopMemberEntity.getMemberInvitationCodeFrom()));
-                if(Objects.nonNull(references)){
+                if (Objects.nonNull(references)) {
                     shopMemberEntity.setMemberFrom(references.getMemberId());
                     // 修改推荐关系
                     shopRecommendationRelationshipMapper.update(recommendationRelationship(shopMemberEntity, references), Wrappers.<ShopRecommendationRelationshipEntity>lambdaQuery().eq(ShopRecommendationRelationshipEntity::getMemberId, shopMemberEntity.getMemberId()));
@@ -167,7 +173,19 @@ public class ShopMemberServiceImpl extends ServiceImpl<ShopMemberMapper, ShopMem
             }
             // 密码加密
             if (StringUtils.isNotBlank(shopMemberEntity.getMemberPasswd())) {
-                shopMemberEntity.setMemberPasswd(PasswordUtils.encode(shopMemberEntity.getMemberPasswd(), PasswordUtils.getSalt()));
+                if(StringUtils.equals(shopMemberEntity.getMemberPasswd(), queryResult.getMemberPasswd())){
+                    shopMemberEntity.setMemberPasswd(null);
+                } else {
+                    shopMemberEntity.setMemberPasswd(PasswordUtils.encode(shopMemberEntity.getMemberPasswd(), PasswordUtils.getSalt()));
+                }
+            }
+            // 支付密码
+            if (StringUtils.isNotBlank(shopMemberEntity.getPaymentPasswd())) {
+                if(StringUtils.equals(shopMemberEntity.getPaymentPasswd(), queryResult.getPaymentPasswd())){
+                    shopMemberEntity.setPaymentPasswd(null);
+                } else {
+                    shopMemberEntity.setPaymentPasswd(PasswordUtils.encode(shopMemberEntity.getPaymentPasswd(), PasswordUtils.getSalt()));
+                }
             }
             // 版本号+1
             shopMemberEntity.setMemberVersion(queryResult.getMemberVersion() + NumberConstants.ONE_L);

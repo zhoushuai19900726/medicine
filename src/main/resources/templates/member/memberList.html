@@ -155,11 +155,11 @@
     <script type="text/html" id="vipInfo">
         <div style="width: 100%;" class="layui-badge-rim">
             <i class="fa fa-shirtsinbulk"></i>
-            {{#  if(d.memberGradeName == null || d.memberGradeName == ''){ }}
+            {{# if(d.memberGradeName == null || d.memberGradeName == ''){ }}
             <i class="fa fa-question-circle"></i>
-            {{#  } else { }}
+            {{# } else { }}
             {{ d.memberGradeName }}
-            {{#  } }}
+            {{# } }}
         </div>
         <br/>
         <span class="layui-badge-rim">
@@ -172,39 +172,84 @@
         </span>
     </script>
     <script type="text/html" id="statusInfo">
-        <input type="checkbox" lay-skin="switch" value="{{d.memberId}}" lay-text="开启|关闭 " lay-filter="memberState" {{d.memberState == 1 ? 'checked' : ''}}/>
+        <input type="checkbox" lay-skin="switch" value="{{d.memberId}}" lay-text="开启|关闭 " lay-filter="memberState" {{d.memberState== 1 ? 'checked' : ''}}/>
         <br/>
         <div style="width: 100%;" class="layui-badge-rim"><i class="fa fa-vimeo-square"></i> {{ '1.0.' + d.memberVersion }}</div>
     </script>
 </div>
 <div id="resetPasswordTpl" hidden>
-    <form class="layui-form layui-form-pane" id="resetPasswordForm" lay-filter="resetPasswordForm" style="margin-top: 10px;">
+    <form class="layui-form layui-form-pane" id="resetPasswordForm" lay-filter="resetPasswordForm">
         <input type="submit" lay-filter="submitBtnForResetPassword" id="submitBtnForResetPassword" lay-submit="" hidden/>
-        <input type="hidden" name="memberId" />
-        <div class="layui-form-item" pane>
-            <label class="layui-form-label">新密码</label>
-            <div class="layui-input-block">
-                <input type="text" name="memberPasswd" lay-verify="required" autocomplete="off" placeholder="请输入新密码" class="layui-input" value="123456" />
-            </div>
-        </div>
-        <div class="layui-form-item" pane>
-            <label class="layui-form-label">再次确认</label>
-            <div class="layui-input-block">
-                <input type="text" lay-verify="required|confirmPass" autocomplete="off" placeholder="请再次输入新密码" class="layui-input" value="123456" />
-            </div>
-        </div>
+        <input type="hidden" name="memberId"/>
+        <blockquote class="layui-elem-quote">登陆信息</blockquote>
+        <blockquote class="layui-elem-quote layui-quote-nm">
+            <table class="layui-table" lay-size="sm">
+                <colgroup>
+                    <col width="100">
+                    <col width="500">
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="required">登陆密码</td>
+                    <td>
+                        <input type="password" name="memberPasswd" lay-verify="required|password" autocomplete="off" placeholder="请输入会员登陆密码" class="layui-input"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="required">确认密码</td>
+                    <td>
+                        <input type="password" name="confirmMemberPasswd" lay-verify="password|confirmPass" autocomplete="off" placeholder="请再次输入会员登陆密码" class="layui-input">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </blockquote>
+        <blockquote class="layui-elem-quote">支付信息</blockquote>
+        <blockquote class="layui-elem-quote layui-quote-nm">
+            <table class="layui-table" lay-size="sm">
+                <colgroup>
+                    <col width="100">
+                    <col width="500">
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td>支付密码</td>
+                    <td>
+                        <input type="password" name="paymentPasswd" autocomplete="off" placeholder="请输入会员支付密码" class="layui-input"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>确认密码</td>
+                    <td>
+                        <input type="password" name="confirmPaymentPasswd" lay-verify="confirmPaymentPass" autocomplete="off" placeholder="请再次输入会员支付密码" class="layui-input">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </blockquote>
     </form>
 </div>
 <div id="resetRecommendTpl" hidden>
-    <form class="layui-form layui-form-pane" id="resetRecommendForm" lay-filter="resetRecommendForm" style="margin-top: 10px;">
+    <form class="layui-form layui-form-pane" id="resetRecommendForm" lay-filter="resetRecommendForm">
         <input type="submit" lay-filter="submitBtnForResetRecommend" id="submitBtnForResetRecommend" lay-submit="" hidden/>
-        <input type="hidden" name="memberId" />
-        <div class="layui-form-item" pane>
-            <label class="layui-form-label">新推荐码</label>
-            <div class="layui-input-block">
-                <input type="text" name="memberInvitationCodeFrom" lay-verify="required|invitationCodeFrom" autocomplete="off" placeholder="请输入新推荐码" class="layui-input" value="A0000001" />
-            </div>
-        </div>
+        <input type="hidden" name="memberId"/>
+        <blockquote class="layui-elem-quote">推荐信息</blockquote>
+        <blockquote class="layui-elem-quote layui-quote-nm">
+            <table class="layui-table" lay-size="sm">
+                <colgroup>
+                    <col width="100">
+                    <col width="500">
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td>新推荐码</td>
+                    <td>
+                        <input type="text" name="memberInvitationCodeFrom" lay-verify="required|invitationCodeFrom" autocomplete="off" placeholder="请输入新推荐码" class="layui-input"/>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </blockquote>
     </form>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
@@ -243,13 +288,16 @@
             confirmPass: function (value) {
                 if (form.val("resetPasswordForm").memberPasswd !== value) return '两次密码输入不一致！';
             },
+            confirmPaymentPass: function (value) {
+                if (form.val("resetPasswordForm").paymentPasswd !== value) return '两次密码输入不一致！';
+            },
             invitationCodeFrom: function (value) {
                 var msg = "无效的推荐码";
                 var memberId = form.val("resetRecommendForm").memberId;
                 var memberInvitationCodeFrom = form.val("resetRecommendForm").memberInvitationCodeFrom;
                 var shopMemberEntity = {memberId: memberId, memberInvitationCode: memberInvitationCodeFrom};
                 CoreUtil.sendSyncGet("/shopMember/findOneByInvitationCode", shopMemberEntity, function (res) {
-                    if(res.data){
+                    if (res.data) {
                         msg = "";
                     }
                 });
@@ -373,11 +421,19 @@
                         , type: 1
                         , title: '<i class="layui-icon">&#xe639;</i> 重置密码'
                         , content: $('#resetPasswordTpl')
-                        , area: ['30%', '220px']
+                        , area: ['30%', '550px']
                         , btn: ['确定', '取消']
                         , yes: function (index, layero) {
-                            form.val("resetPasswordForm",  {memberId: data.memberId});
                             $("#submitBtnForResetPassword").click();
+                        },
+                        success: function (layero, index) {
+                            form.val("resetPasswordForm", {
+                                "memberId": data.memberId,
+                                "memberPasswd": data.memberPasswd,
+                                "confirmMemberPasswd": data.memberPasswd,
+                                "paymentPasswd": data.paymentPasswd,
+                                "confirmPaymentPasswd": data.paymentPasswd
+                            });
                         }
                     });
                     break;
@@ -387,28 +443,39 @@
                         , type: 1
                         , title: '<i class="layui-icon">&#xe639;</i> 重置推荐'
                         , content: $('#resetRecommendTpl')
-                        , area: ['30%', '220px']
+                        , area: ['30%', '300px']
                         , btn: ['确定', '取消']
                         , yes: function (index, layero) {
-                            form.val("resetRecommendForm",  {memberId: data.memberId});
                             $("#submitBtnForResetRecommend").click();
+                        },
+                        success: function (layero, index) {
+                            form.val("resetRecommendForm", {
+                                "memberId": data.memberId,
+                                "memberInvitationCodeFrom": data.memberInvitationCodeFrom
+                            });
                         }
                     });
                     break;
                 case 'edit':
                     layer.open({
-                        id: 'shopMember_update', //设定一个id，防止重复弹出
-                        title: '<i class="layui-icon">&#xe653;</i> 编辑会员',
                         type: 2,
-                        content: '../index/shopMember/addOrUpdate',
-                        btn: ['提交保存', '取消'],
-                        area: ['60%', '85%'],
+                        title: '<i class="layui-icon">&#xe653;</i> 编辑会员',
+                        id: 'shopMember_update',
                         scrollbar: false,
+                        offset: 'r',
+                        anim: 5,
+                        maxmin: true,
+                        area: ['1000px', '100%'],//宽高不影响最大化
+                        content: "../index/shopMember/addOrUpdate",//地址
+                        zIndex: layer.zIndex,
+                        btn: ['提交保存', '返回会员列表'],
                         yes: function (index, layero) {
                             // 得到iframe页的窗口对象并调用子页面方法
-                            window[layero.find('iframe')[0]['name']].saveShopMember("submitBtnForUpdate");
+                            window[layero.find('iframe')[0]['name']].saveShopMember('submitBtnForUpdate');
                         },
                         success: function (layero, index) {
+                            // 置顶当前窗口
+                            layer.setTop(layero);
                             // 得到iframe页的窗口对象并调用子页面方法
                             window[layero.find('iframe')[0]['name']].assignment(data);
                         }
@@ -438,7 +505,7 @@
         /**
          * 监听table内开关操作
          */
-        form.on('switch(memberState)', function(obj){
+        form.on('switch(memberState)', function (obj) {
             var shopMember = {};
             shopMember.memberId = this.value;
             shopMember.memberState = obj.elem.checked ? 1 : 0;

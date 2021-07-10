@@ -36,7 +36,7 @@
                         </td>
                         <td class="required">确认密码</td>
                         <td>
-                            <input type="password" lay-verify="required|password|confirmPass" autocomplete="off" placeholder="请再次输入会员登陆密码" class="layui-input">
+                            <input type="password" name="confirmMemberPasswd" lay-verify="password|confirmPass" autocomplete="off" placeholder="请再次输入会员登陆密码" class="layui-input">
                         </td>
                     </tr>
                     </tbody>
@@ -59,7 +59,7 @@
                         </td>
                         <td>确认密码</td>
                         <td>
-                            <input type="password" lay-verify="confirmPaymentPass" autocomplete="off" placeholder="请再次输入会员支付密码" class="layui-input">
+                            <input type="password" name="confirmPaymentPasswd" lay-verify="confirmPaymentPass" autocomplete="off" placeholder="请再次输入会员支付密码" class="layui-input">
                         </td>
                     </tr>
                     </tbody>
@@ -236,7 +236,7 @@
         form.verify({
             isExist: function (value) {
                 var msg = '账号已存在';
-                CoreUtil.sendSyncGet("/shopMember/findOneByMemberName", {memberName: value}, function (res) {
+                CoreUtil.sendSyncGet("/shopMember/findOneByMemberName", {memberId: form.val("shopMemberForm").memberId, memberName: value}, function (res) {
                     if (!res.data) {
                         msg = '';
                     }
@@ -331,7 +331,37 @@
             layarea = layui.layarea;
         // 表单赋值
         form.val("shopMemberForm", {
-            "id": data.id
+            "memberId": data.memberId,
+            "memberName": data.memberName,
+            "memberPasswd": data.memberPasswd,
+            "confirmMemberPasswd": data.memberPasswd,
+            "paymentPasswd": data.paymentPasswd,
+            "confirmPaymentPasswd": data.paymentPasswd,
+            "memberAvatar": data.memberAvatar,
+            "memberTrueName": data.memberTrueName,
+            "memberNick": data.memberNick,
+            "memberSex": data.memberSex,
+            "memberBirthday": data.memberBirthday,
+            "memberIdentity": data.memberIdentity,
+            "memberAreaInfo": data.memberAreaInfo,
+            "memberMobile": data.memberMobile,
+            "memberEmail": data.memberEmail,
+            "memberQq": data.memberQq,
+            "memberWw": data.memberWw,
+            "wechatName": data.wechatName,
+            "wechatAccountNumber": data.wechatAccountNumber,
+            "alipayName": data.alipayName,
+            "alipayAccountNumber": data.alipayAccountNumber
+        });
+        $("#uploadAvatar").prev().attr("src", data.memberAvatar);
+        // 地址三级联动
+        layarea.render({
+            elem: '#area-picker',
+            data: {
+                province: data.memberProvince,
+                city: data.memberCity,
+                county: data.memberArea
+            }
         });
     }
 
