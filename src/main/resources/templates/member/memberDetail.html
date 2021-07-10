@@ -10,115 +10,119 @@
 </head>
 <body>
 <div class="layuimini-container">
-    <div class="layuimini-main" shiro:hasPermission="shopMember:add">
-        <form class="layui-form" action="" lay-filter="shopMemberForm" id="shopMemberForm" style="width: 100%;">
+    <div class="layuimini-main" shiro:hasPermission="shopMember:list">
+        <form class="layui-form" action="" style="width: 100%;">
             <input name="memberId" hidden/>
             <blockquote class="layui-elem-quote">账号信息</blockquote>
             <blockquote class="layui-elem-quote layui-quote-nm">
                 <table class="layui-table" lay-size="sm">
-                    <colgroup>
-                        <col width="100">
-                        <col width="500">
-                        <col width="100">
-                        <col width="500">
-                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>会员账号</th>
+                            <th>邀请码</th>
+                            <th>推荐人</th>
+                            <th>推荐码</th>
+                        </tr>
+                    </thead>
                     <tbody>
                     <tr>
-                        <td>会员账号</td>
-                        <td colspan="3">
-                            <input type="text" class="layui-input" th:value="${shopMemberEntity.memberName}" disabled />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>钱包余额</td>
-                        <td>
-                            <input type="text" class="layui-input" th:value="${shopMemberWalletEntity.balance}" disabled />
-                        </td>
-                        <td>成长值</td>
-                        <td>
-                            <input type="text" class="layui-input" th:value="${shopMemberGrowthValueEntity.growthValue}" disabled />
-                        </td>
+                        <td th:text="${shopMemberEntity.memberName}"></td>
+                        <td th:text="${shopMemberEntity.memberInvitationCode}"></td>
+                        <td th:text="${references.memberName}"></td>
+                        <td th:text="${shopMemberEntity.memberInvitationCodeFrom}"></td>
                     </tr>
                     </tbody>
+
+                    <thead>
+                    <tr>
+                        <th><b style="color: #ff5749;">钱包余额</b></th>
+                        <th><b style="color: #2b9a3f;">成长值</b></th>
+                        <th>VIP等级</th>
+                        <th>VIP升级日期</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><i class="fa fa-jpy" style="color: #ff5749; font-weight: bold;" th:text="' ' + ${shopMemberWalletEntity.balance}"></i></td>
+                        <td><i class="fa fa-money" style="color: #2b9a3f; font-weight: bold;" th:text="${' ' + shopMemberGrowthValueEntity.growthValue}"></i></td>
+                        <td th:text="${shopMemberEntity.memberGradeName}"></td>
+                        <td th:text="${#dates.format(shopMemberEntity.gradeTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                    </tr>
+                    </tbody>
+
+                    <thead>
+                    <tr>
+                        <th>注册设备</th>
+                        <th>三方平台</th>
+                        <th>会员状态</th>
+                        <th>版本号</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td th:if="${shopMemberEntity.memberIdentification == 0}"><i class="fa fa-desktop"> 电脑(后台管理)</i></td>
+                        <td th:if="${shopMemberEntity.memberIdentification == 1}"><i class="fa fa-mobile"> 手机(移动端APP)</i></td>
+                        <td th:if="${shopMemberEntity.memberIdentification != 0 && shopMemberEntity.memberIdentification != 1}"><i class="fa fa-question-circle"> 其他</i></td>
+
+                        <td th:if="${shopMemberEntity.memberThirdParty == 0}"><i class="fa fa-desktop"> 本站</i></td>
+                        <td th:if="${shopMemberEntity.memberThirdParty == 1}"><i class="fa fa-weixin"> 微信</i></td>
+                        <td th:if="${shopMemberEntity.memberThirdParty == 2}"><i class="fa fa-qq"> QQ</i></td>
+                        <td th:if="${shopMemberEntity.memberThirdParty == 3}"><i class="fa fa-weibo"> 新浪</i></td>
+                        <td th:if="${shopMemberEntity.memberThirdParty != 0 && shopMemberEntity.memberThirdParty != 1 && shopMemberEntity.memberThirdParty != 2 && shopMemberEntity.memberThirdParty != 3}"><i class="fa fa-question-circle"> 其他</i></td>
+
+                        <td th:if="${shopMemberEntity.memberState == 1}"><i class="fa fa-toggle-on"> 开启</i></td>
+                        <td th:if="${shopMemberEntity.memberState == 0}"><i class="fa fa-toggle-off"> 关闭</i></td>
+                        <td th:if="${shopMemberEntity.memberState != 0 && shopMemberEntity.memberState != 1}"><i class="fa fa-desktop"> 异常</i></td>
+
+                        <td><i class="fa fa-vimeo-square" th:text="${' 1.0.' + shopMemberEntity.memberVersion}"></i></td>
+                    </tr>
+                    </tbody>
+
                 </table>
             </blockquote>
             <blockquote class="layui-elem-quote">基本信息</blockquote>
             <blockquote class="layui-elem-quote layui-quote-nm">
                 <table class="layui-table" lay-size="sm">
                     <colgroup>
-                        <col width="100">
-                        <col width="500">
-                        <col width="100">
-                        <col width="500">
+                        <col width="200">
+                        <col width="600">
+                        <col width="200">
+                        <col width="600">
                     </colgroup>
                     <tbody>
                     <tr>
-                        <td>会员头像</td>
-                        <td colspan="3">
+                        <td rowspan="2">会员头像</td>
+                        <td rowspan="2">
                             <img th:src="${shopMemberEntity.memberAvatar}" style="width: 60px; height: 60px;"/>
                         </td>
+                        <td>真实姓名</td>
+                        <td th:text="${shopMemberEntity.memberTrueName}"></td>
                     </tr>
                     <tr>
-                        <td>真实姓名</td>
-                        <td>
-                            <input type="text" class="layui-input" th:value="${shopMemberEntity.memberTrueName}" disabled >
-                        </td>
                         <td>会员昵称</td>
-                        <td>
-                            <input type="text" class="layui-input" th:value="${shopMemberEntity.memberNick}" disabled >
-                        </td>
+                        <td th:text="${shopMemberEntity.memberNick}"></td>
                     </tr>
                     <tr>
                         <td>性别</td>
-                        <td>
-                            <select name="memberSex" th:with="dataResult=${@commonController.findAllSex()}">
-                                <option
-                                        th:each="map : ${dataResult.getData()}"
-                                        th:text="${map.get('name')}"
-                                        th:value="${map.get('id')}"
-                                        th:selected="${map.get('id') == (shopMemberEntity.memberSex + '')}"
-                                        th:disabled="${map.get('id') != (shopMemberEntity.memberSex + '')}"
-                                ></option>
-                            </select>
-                        </td>
+                        <td th:text="${@commonController.getLabelByValue('dict-key-sex', shopMemberEntity.memberSex).data}"></td>
                         <td>出生日期</td>
-                        <td>
-                            <input type="text" readonly class="layui-input" id="memberBirthday" name="memberBirthday" placeholder="请输入出生日期">
-                        </td>
+                        <td th:text="${shopMemberEntity.memberBirthday}"></td>
                     </tr>
                     <tr>
                         <td>身份证</td>
-                        <td colspan="3">
-                            <input type="text" name="memberIdentity" lay-verify="ID_NUMBER" autocomplete="off" placeholder="请输入身份证" class="layui-input">
-                        </td>
+                        <td colspan="3" th:text="${shopMemberEntity.memberIdentity}"></td>
                     </tr>
                     <tr>
                         <td>所在地</td>
                         <td colspan="3">
-                            <div  id="area-picker" class="layui-row">
-                                <div class="layui-col-xs4">
-                                    <select name="memberProvince" class="province-selector" lay-filter="province-1" lay-search>
-                                        <option value="">请选择省</option>
-                                    </select>
-                                </div>
-                                <div class="layui-col-xs4">
-                                    <select name="memberCity" class="city-selector" lay-filter="city-1" lay-search>
-                                        <option value="">请选择市</option>
-                                    </select>
-                                </div>
-                                <div class="layui-col-xs4">
-                                    <select name="memberArea" class="county-selector" lay-filter="county-1" lay-search>
-                                        <option value="">请选择区</option>
-                                    </select>
-                                </div>
-                            </div>
+                            <span th:text="${shopMemberEntity.memberProvince}"></span>
+                            <span th:text="${shopMemberEntity.memberCity}"></span>
+                            <span th:text="${shopMemberEntity.memberArea}"></span>
                         </td>
                     </tr>
                     <tr>
                         <td>详细地址</td>
-                        <td colspan="3">
-                            <textarea name="memberAreaInfo" placeholder="请输入详细地址" class="layui-textarea"></textarea>
-                        </td>
+                        <td colspan="3" th:text="${shopMemberEntity.memberAreaInfo}"></td>
                     </tr>
                     </tbody>
                 </table>
@@ -127,63 +131,44 @@
             <blockquote class="layui-elem-quote layui-quote-nm">
                 <table class="layui-table" lay-size="sm">
                     <colgroup>
-                        <col width="100">
-                        <col width="500">
-                        <col width="100">
-                        <col width="500">
+                        <col width="200">
+                        <col width="600">
+                        <col width="200">
+                        <col width="600">
                     </colgroup>
                     <tbody>
                     <tr>
                         <td>手机号</td>
-                        <td>
-                            <input type="text" name="memberMobile" lay-verify="PHONE" autocomplete="off" placeholder="请输入手机号" class="layui-input">
-                        </td>
+                        <td th:text="${shopMemberEntity.memberMobile}"></td>
                         <td>邮箱</td>
-                        <td>
-                            <input type="text" name="memberEmail" lay-verify="EMAIL" autocomplete="off" placeholder="请输入邮箱" class="layui-input">
-                        </td>
+                        <td th:text="${shopMemberEntity.memberEmail}"></td>
                     </tr>
                     <tr>
                         <td>QQ</td>
-                        <td>
-                            <input type="text" name="memberQq" autocomplete="off" placeholder="请输入QQ号" class="layui-input">
-                        </td>
+                        <td th:text="${shopMemberEntity.memberQq}"></td>
                         <td>阿里旺旺</td>
-                        <td>
-                            <input type="text" name="memberWw" autocomplete="off" placeholder="请输入阿里旺旺号" class="layui-input">
-                        </td>
+                        <td th:text="${shopMemberEntity.memberWw}"></td>
                     </tr>
                     <tr>
                         <td>微信名</td>
-                        <td>
-                            <input type="text" name="wechatName" autocomplete="off" placeholder="请输入微信名" class="layui-input">
-                        </td>
+                        <td th:text="${shopMemberEntity.wechatName}"></td>
                         <td>微信账号</td>
-                        <td>
-                            <input type="text" name="wechatAccountNumber" autocomplete="off" placeholder="请输入微信账号" class="layui-input">
-                        </td>
+                        <td th:text="${shopMemberEntity.wechatAccountNumber}"></td>
                     </tr>
                     <tr>
                         <td>支付宝姓名</td>
-                        <td>
-                            <input type="text" name="alipayName" autocomplete="off" placeholder="请输入支付宝姓名" class="layui-input">
-                        </td>
+                        <td th:text="${shopMemberEntity.alipayName}"></td>
                         <td>支付宝账号</td>
-                        <td>
-                            <input type="text" name="alipayAccountNumber" autocomplete="off" placeholder="请输入支付宝账号" class="layui-input">
-                        </td>
+                        <td th:text="${shopMemberEntity.alipayAccountNumber}"></td>
                     </tr>
                     </tbody>
                 </table>
             </blockquote>
-            <input type="submit" lay-filter="submitBtnForAdd" id="submitBtnForAdd" lay-submit="" hidden/>
-            <input type="submit" lay-filter="submitBtnForUpdate" id="submitBtnForUpdate" lay-submit="" hidden/>
         </form>
     </div>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
 <script th:src="@{/layui2.0/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
-<script th:src="@{/layui2.0/js/lay-config.js(v=2.0.0)}" charset="utf-8"></script>
 </body>
 </html>
 <script>
@@ -192,127 +177,14 @@
     //地址栏转义token中的#号
     var tokenQuery = token.replace("#", "%23");
     var $ = jQuery = layui.jquery;
-    layui.use(['form', 'layer', 'laydate', 'layarea', 'upload'], function () {
+    layui.use(['form', 'layer'], function () {
         var form = layui.form;
         var layer = layui.layer;
-        var laydate = layui.laydate;
-        var layarea = layui.layarea;
-        var upload = layui.upload;
-
-        /**
-         * 日期选择器
-         */
-        laydate.render({
-            elem: '#memberBirthday'
-        });
-
-        /**
-         * 加载三级联动
-         */
-        layarea.render({
-            elem: '#area-picker'
-        });
-
-        form.verify({
-            isExist: function (value) {
-                var msg = '账号已存在';
-                CoreUtil.sendSyncGet("/shopMember/findOneByMemberName", {memberName: value}, function (res) {
-                    if (!res.data) {
-                        msg = '';
-                    }
-                });
-                return msg;
-            },
-            confirmPass: function (value) {
-                if (form.val("shopMemberForm").memberPasswd !== value) return '两次密码输入不一致！';
-            },
-            confirmPaymentPass: function (value) {
-                if (form.val("shopMemberForm").paymentPasswd !== value) return '两次密码输入不一致！';
-            },
-            ID_NUMBER: function (value) {
-                var msg = '';
-                if(value && !CoreUtil.checkIDCard(value)){
-                    msg = '身份证错误';
-                }
-                return msg;
-            },
-            PHONE: function (value) {
-                var msg = '';
-                if(value && !CoreUtil.checkPone(value)){
-                    msg = '手机号错误';
-                }
-                return msg;
-            },
-            EMAIL: function (value) {
-                var msg = '';
-                if(value && !CoreUtil.checkEmail(value)){
-                    msg = '邮箱错误';
-                }
-                return msg;
-            },
-
-        });
 
 
-        upload.render({
-            elem: '#uploadAvatar' //绑定元素
-            , url: '/sysFiles/upload?authorization=' + tokenQuery  // 上传文件的路径
-            , done: function (res) {
-                // 上传完毕回调
-                var index = $(this.item).attr("index");
-                var parentObj = $(this.item).parent();
-                $(parentObj).find("input[name='memberAvatar']").attr("value", res.data.src);
-                $(parentObj).find("img").attr("src", res.data.src);
-            }
-        });
 
-
-        // 表单提交
-        form.on('submit(submitBtnForAdd)', function (data) {
-            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
-            CoreUtil.sendPost("/shopMember/add", data.field, function (res) {
-                layer.msg("保存成功", {time: 500}, function () {
-                    // 刷新父页面列表
-                    parent.layui.table.reload('showTable');
-                    var parentIndex = parent.layer.getFrameIndex(window.name);
-                    parent.layer.close(parentIndex);
-                });
-            });
-            // //阻止表单跳转。如果需要表单跳转，去掉这段即可。
-            return false;
-        });
-        form.on('submit(submitBtnForUpdate)', function (data) {
-            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
-            CoreUtil.sendPut("/shopMember/update", data.field, function (res) {
-                layer.msg("保存成功", {time: 500}, function () {
-                    // 刷新父页面列表
-                    parent.layui.table.reload('showTable');
-                    var parentIndex = parent.layer.getFrameIndex(window.name);
-                    parent.layer.close(parentIndex);
-                });
-            });
-            //阻止表单跳转。如果需要表单跳转，去掉这段即可。
-            return false;
-        });
     });
 
-    /**
-     * 父级页面控制子页面提交表单
-     */
-    function saveShopMember(submitBtn) {
-        $("#" + submitBtn).click();
-    }
 
-    /**
-     * 父级页面控制子页面填充
-     */
-    function assignment(data) {
-        var form = layui.form,
-            layarea = layui.layarea;
-        // 表单赋值
-        form.val("shopMemberForm", {
-            "id": data.id
-        });
-    }
 
 </script>

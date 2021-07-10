@@ -1,12 +1,13 @@
 package com.company.project.controller;
 
 import com.company.project.common.utils.DataResult;
+import com.company.project.common.utils.DelimiterConstants;
 import com.company.project.common.utils.DictionariesKeyConstant;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ import javax.annotation.Resource;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 /**
@@ -62,6 +64,24 @@ public class CommonController {
         return DataResult.success(analysisRedisData(DictionariesKeyConstant.SERVICE_GUARANTEE));
     }
 
+
+    @ApiOperation(value = "根据字典值获取字典名称")
+    @GetMapping("getLabelByValue")
+    @ResponseBody
+    public DataResult getLabelByValue(String dictionariesKey, String value) {
+        AtomicReference<String> label = new AtomicReference<>(DelimiterConstants.EMPTY_STR);
+        redisTemplate.boundHashOps(dictionariesKey).values().forEach(obj -> {
+            try {
+                Map<String, String> map = BeanUtils.describe(obj);
+                if(StringUtils.equals(map.get("value"), value)){
+                    label.set(map.get("label"));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        return DataResult.success(label.get());
+    }
 
     private List<Map<String, String>> analysisRedisData(String key) {
         List<Map<String, String>> result = Lists.newArrayList();

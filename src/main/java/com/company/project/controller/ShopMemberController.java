@@ -68,7 +68,10 @@ public class ShopMemberController extends BaseController {
     @GetMapping("/index/shopMember/detail/{memberId}")
     public String detail(@PathVariable("memberId") String memberId, Model model) {
         // 会员信息
-        model.addAttribute("shopMemberEntity", shopMemberService.findOneByMemberId(memberId));
+        ShopMemberEntity shopMemberEntity = shopMemberService.findOneByMemberId(memberId);
+        model.addAttribute("shopMemberEntity", shopMemberEntity);
+        // 推荐人信息
+        model.addAttribute("references", shopMemberService.findOneByMemberId(shopMemberEntity.getMemberFrom()));
         // 钱包余额
         model.addAttribute("shopMemberWalletEntity", shopMemberWalletService.getOne(Wrappers.<ShopMemberWalletEntity>lambdaQuery().in(ShopMemberWalletEntity::getMemberId, memberId)));
         // 成长值
