@@ -12,28 +12,45 @@
 <div class="layuimini-container">
     <div class="layuimini-main" shiro:hasPermission="shopMember:list">
         <form class="layui-form" action="" style="width: 100%;">
-            <input name="memberId" hidden/>
             <blockquote class="layui-elem-quote">账号信息</blockquote>
+            <table class="layui-table" lay-size="sm">
+                <thead>
+                <tr>
+                    <th>会员账号</th>
+                    <th><b style="color: #ff5749;">钱包余额</b></th>
+                    <th><b style="color: #ff5749;">消费总额</b></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${shopMemberEntity.memberName}"></td>
+                    <td><i class="fa fa-jpy" style="color: #ff5749; font-weight: bold;" th:text="' ' + ${shopMemberWalletEntity.balance}"></i></td>
+                    <td>钱包：微信：支付宝：其他</td>
+                </tr>
+                </tbody>
+            </table>
+            <blockquote class="layui-elem-quote">钱包消费记录</blockquote>
             <blockquote class="layui-elem-quote layui-quote-nm">
-                <table class="layui-table" lay-size="sm">
-                    <thead>
-                        <tr>
-                            <th>会员账号</th>
-                            <th><b style="color: #ff5749;">钱包余额</b></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td th:text="${shopMemberEntity.memberName}"></td>
-                        <td><i class="fa fa-jpy" style="color: #ff5749; font-weight: bold;" th:text="' ' + ${shopMemberWalletEntity.balance}"></i></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </blockquote>
-            <blockquote class="layui-elem-quote">消费记录</blockquote>
-            <blockquote class="layui-elem-quote layui-quote-nm">
+                <fieldset class="table-search-fieldset">
+                    <legend>搜索信息</legend>
+                    <div style="margin: 5px 5px 5px 5px">
+                        <form class="layui-form layui-form-pane" action="">
+                            <div class="layui-form-item">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">支付单号</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="memberName" autocomplete="off" placeholder="请输入支付单号" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-inline">
+                                    <button class="layui-btn layui-btn-primary layui-border-blue" lay-submit lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </fieldset>
                 <!--lay-size="sm"-->
-
+                <table class="layui-table" id="showTable" lay-filter="showTable"></table>
 
 
 
@@ -51,12 +68,41 @@
     var token = CoreUtil.getData("access_token");
     //地址栏转义token中的#号
     var tokenQuery = token.replace("#", "%23");
+    var tableIns1;
     var $ = jQuery = layui.jquery;
-    layui.use(['form', 'layer'], function () {
+    layui.use(['form', 'layer', 'table'], function () {
         var form = layui.form;
         var layer = layui.layer;
+        var table = layui.table;
 
-
+        //加载table
+        tableIns1 = table.render({
+            elem: '#showTable'
+            , contentType: 'application/json'
+            , headers: {"authorization": token}
+            , page: true //开启分页
+            , url: '/shopMember/listByPage' //数据接口
+            , method: 'POST'
+            , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": CoreUtil.isEmpty(res.data) ? 0 : res.data.total, //解析数据长度
+                    "data": CoreUtil.isEmpty(res.data) ? null : res.data.records //解析数据列表
+                }
+            }
+            , cols: [
+                [
+                    {width: 60, type: 'checkbox', fixed: 'left'},
+                    {title: '会员信息', templet: '#memberInfo'},
+                    {title: '注册登录信息', templet: '#registerInfo'},
+                    {title: '识别码', templet: '#identificationCodeInfo'},
+                    {title: '钱包余额', templet: '#walletBalanceInfo'},
+                    {title: '成长值', templet: '#growthValueInfo'},
+                    {title: 'VIP信息', templet: '#vipInfo'},
+                ]
+            ]
+        });
 
     });
 
