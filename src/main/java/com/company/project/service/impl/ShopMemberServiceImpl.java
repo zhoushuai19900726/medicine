@@ -42,7 +42,13 @@ public class ShopMemberServiceImpl extends ServiceImpl<ShopMemberMapper, ShopMem
     private ShopMemberGrowthValueMapper shopMemberGrowthValueMapper;
 
     @Resource
+    private ShopMemberGrowthValueRecordMapper shopMemberGrowthValueRecordMapper;
+
+    @Resource
     private ShopMemberWalletMapper shopMemberWalletMapper;
+
+    @Resource
+    private ShopMemberWalletRecordMapper shopMemberWalletRecordMapper;
 
     @Override
     public ShopMemberEntity findOneByMemberId(String memberId) {
@@ -193,6 +199,25 @@ public class ShopMemberServiceImpl extends ServiceImpl<ShopMemberMapper, ShopMem
             shopMemberMapper.update(shopMemberEntity, Wrappers.<ShopMemberEntity>lambdaQuery().eq(ShopMemberEntity::getMemberId, queryResult.getMemberId()).eq(ShopMemberEntity::getMemberVersion, queryResult.getMemberVersion()));
         }
         return DataResult.success(shopMemberEntity);
+    }
+
+    @Override
+    public DataResult absolutelyDelete(List<String> memberIdList) {
+        // 删除会员信息
+        shopMemberMapper.absolutelyDeleteByMemberIdList(memberIdList);
+        // 删除推荐关系
+        shopRecommendationRelationshipMapper.absolutelyDeleteByMemberIdList(memberIdList);
+        // TODO 删除推荐关系修改记录
+
+        // 删除钱包
+        shopMemberWalletMapper.absolutelyDeleteByMemberIdList(memberIdList);
+        // 删除钱包明细
+        shopMemberWalletRecordMapper.absolutelyDeleteByMemberIdList(memberIdList);
+        // 删除成长值
+        shopMemberGrowthValueMapper.absolutelyDeleteByMemberIdList(memberIdList);
+        // 删除成长值明细
+        shopMemberGrowthValueRecordMapper.absolutelyDeleteByMemberIdList(memberIdList);
+        return DataResult.success();
     }
 
     private IPage<ShopMemberEntity> encapsulatingFieldName(IPage<ShopMemberEntity> iPage) {

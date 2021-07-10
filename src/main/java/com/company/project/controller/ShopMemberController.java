@@ -97,6 +97,15 @@ public class ShopMemberController extends BaseController {
         return DataResult.success(shopMemberService.removeByIds(ids));
     }
 
+    @ApiOperation(value = "删除")
+    @DeleteMapping("shopMember/absolutelyDelete")
+    @RequiresPermissions("shopMember:delete")
+    @LogAnnotation(title = "会员", action = "物理删除")
+    @ResponseBody
+    public DataResult absolutelyDelete(@RequestBody @ApiParam(value = "id集合") List<String> memberIdList) {
+        return shopMemberService.absolutelyDelete(memberIdList);
+    }
+
     @ApiOperation(value = "更新")
     @PutMapping("shopMember/update")
     @RequiresPermissions("shopMember:update")

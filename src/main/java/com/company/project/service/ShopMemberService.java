@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.company.project.common.utils.DataResult;
 import com.company.project.entity.ShopMemberEntity;
 
+import java.util.List;
+
 /**
  * 会员
  *
@@ -28,5 +30,6 @@ public interface ShopMemberService extends IService<ShopMemberEntity> {
 
     DataResult updateShopMemberEntityById(ShopMemberEntity shopMember);
 
+    DataResult absolutelyDelete(List<String> memberIdList);
 }
 

@@ -217,7 +217,7 @@
 
         //删除
         var tipDialog = function (ids) {
-            layer.confirm(' 确定要删除么?', {icon: 3, title: '提示'}, function (index) {
+            layer.confirm('确定要删除么?', {icon: 3, title: '提示'}, function (index) {
                 CoreUtil.sendDelete("/${classname}/delete", ids, function (res) {
                     layer.msg(res.msg, {time: 500}, function () {
                         tableIns1.reload();

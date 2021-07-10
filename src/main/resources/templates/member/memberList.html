@@ -58,7 +58,7 @@
     <script type="text/html" id="toolbar">
         <div class="layui-btn-container">
             <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add" shiro:hasPermission="shopMember:add"><i class="layui-icon">&#xe61f;</i>新增会员</button>
-            <button class="layui-btn layui-btn-sm layui-btn-warm" lay-event="batchDeleted" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe682;</i>批量注销</button>
+            <button class="layui-btn layui-btn-sm layui-btn-warm" lay-event="batchCancelled" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe682;</i>批量注销</button>
             <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe640;</i>批量删除</button>
 
             <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="batchDeleted" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe67d;</i>下载模板</button>
@@ -71,7 +71,7 @@
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="detail" shiro:hasPermission="shopMember:list"><i class="layui-icon">&#xe615;</i>查看会员</a>
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="edit" shiro:hasPermission="shopMember:update"><i class="layui-icon">&#xe642;</i>会员更新</a>
         <br/>
-        <a class="layui-btn layui-btn-primary layui-border-orange layui-btn-xs" lay-event="del" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe682;</i>注销会员</a>
+        <a class="layui-btn layui-btn-primary layui-border-orange layui-btn-xs" lay-event="cancel" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe682;</i>注销会员</a>
         <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe640;</i>删除会员</a>
     </script>
     <script type="text/html" id="config">
@@ -79,9 +79,9 @@
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="resetRecommend" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe639;</i>重置推荐</a>
         <br/>
         <!-- TODO 可查看订单列表 - 进行赠送 -->
-        <a class="layui-btn layui-btn-primary layui-border-blue layui-btn-xs" lay-event="edit" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe627;</i>赠订单额</a>
+        <a class="layui-btn layui-btn-primary layui-border-blue layui-btn-xs" lay-event="freeOrder" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe627;</i>赠订单额</a>
         <!-- TODO 可查看优惠券列表 - 进行赠送 -->
-        <a class="layui-btn layui-btn-primary layui-border-blue layui-btn-xs" lay-event="del" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe627;</i>赠优惠券</a>
+        <a class="layui-btn layui-btn-primary layui-border-blue layui-btn-xs" lay-event="freeCoupon" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe627;</i>赠优惠券</a>
     </script>
     <script type="text/html" id="memberInfo">
         <div class="layui-row">
@@ -381,6 +381,19 @@
                         tipDialog(ids);
                     }
                     break;
+                case 'batchCancelled':
+                    var checkStatus = table.checkStatus(obj.config.id);
+                    var data = checkStatus.data;
+                    if (data.length == 0) {
+                        layer.msg("请选择要批量注销的列");
+                    } else {
+                        var ids = [];
+                        $(data).each(function (index, item) {
+                            ids.push(item.memberId);
+                        });
+                        tipDialog2(ids);
+                    }
+                    break;
                 case 'add':
                     layer.open({
                         type: 2,
@@ -414,6 +427,11 @@
                     var ids = [];
                     ids.push(data.memberId);
                     tipDialog(ids);
+                    break;
+                case 'cancel':
+                    var ids = [];
+                    ids.push(data.memberId);
+                    tipDialog2(ids);
                     break;
                 case 'resetPassword':
                     layer.open({
@@ -499,6 +517,14 @@
                         }
                     });
                     break;
+                case 'freeOrder':
+                    // TODO 赠送订单
+
+                    break;
+                case 'freeCoupon':
+                    // TODO 赠送优惠券
+
+                    break;
             }
         });
 
@@ -532,7 +558,17 @@
 
         //注销
         var tipDialog = function (ids) {
-            layer.confirm(' 确定要注销么?', {icon: 3, title: '提示'}, function (index) {
+            layer.confirm('删除后数据将无法恢复, 确定要删除么?', {icon: 3, title: '提示'}, function (index) {
+                CoreUtil.sendDelete("/shopMember/absolutelyDelete", ids, function (res) {
+                    layer.msg(res.msg, {time: 500}, function () {
+                        tableIns1.reload();
+                    });
+                });
+            });
+        };
+
+        var tipDialog2 = function (ids) {
+            layer.confirm('确定要注销么?', {icon: 3, title: '提示'}, function (index) {
                 CoreUtil.sendDelete("/shopMember/delete", ids, function (res) {
                     layer.msg(res.msg, {time: 500}, function () {
                         tableIns1.reload();

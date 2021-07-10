@@ -2,9 +2,12 @@ package com.company.project.mapper;
 
 import com.company.project.entity.ShopMemberEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * 会员
@@ -24,4 +27,6 @@ public interface ShopMemberMapper extends BaseMapper<ShopMemberEntity> {
     @Select("<script> SELECT * FROM shop_member WHERE member_invitation_code = #{shopMemberEntity.memberInvitationCode} <when test='shopMemberEntity.memberId != null'> AND member_id != #{shopMemberEntity.memberId} LIMIT 1 </when> </script>")
     ShopMemberEntity findOneByInvitationCode(@Param("shopMemberEntity") ShopMemberEntity shopMemberEntity);
 
+    @Delete("<script> DELETE FROM shop_member WHERE member_id IN  <foreach collection ='memberIdList' item ='memberId' index ='index' separator=',' open='(' close=')'  > #{memberId} </foreach> </script>")
+    void absolutelyDeleteByMemberIdList(@Param("memberIdList") List<String> memberIdList);
 }
