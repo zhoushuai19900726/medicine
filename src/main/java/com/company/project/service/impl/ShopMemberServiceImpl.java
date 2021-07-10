@@ -45,8 +45,23 @@ public class ShopMemberServiceImpl extends ServiceImpl<ShopMemberMapper, ShopMem
     private ShopMemberWalletMapper shopMemberWalletMapper;
 
     @Override
+    public ShopMemberEntity findOneByMemberId(String memberId) {
+        return shopMemberMapper.findOneByMemberId(memberId);
+    }
+
+    @Override
     public ShopMemberEntity findOneByMemberName(ShopMemberEntity shopMemberEntity) {
         return shopMemberMapper.findOneByMemberName(shopMemberEntity);
+    }
+
+    @Override
+    public ShopMemberEntity findOneByInvitationCode(ShopMemberEntity shopMemberEntity) {
+        return shopMemberMapper.findOneByInvitationCode(shopMemberEntity);
+    }
+
+    @Override
+    public IPage<ShopMemberEntity> listByPage(Page<ShopMemberEntity> page, LambdaQueryWrapper<ShopMemberEntity> wrapper) {
+        return encapsulatingFieldName(shopMemberMapper.selectPage(page, wrapper));
     }
 
     @Override
@@ -96,6 +111,16 @@ public class ShopMemberServiceImpl extends ServiceImpl<ShopMemberMapper, ShopMem
         shopMemberEntity.setMemberVersion(NumberConstants.ONE_L);
         // 保存会员信息
         shopMemberMapper.insert(shopMemberEntity);
+        // 保存推荐关系
+        shopRecommendationRelationshipMapper.insert(recommendationRelationship(shopMemberEntity, references));
+        // 保存会员钱包
+        shopMemberWalletMapper.insert(new ShopMemberWalletEntity(shopMemberEntity.getMemberId()));
+        // 保存成长值
+        shopMemberGrowthValueMapper.insert(new ShopMemberGrowthValueEntity(shopMemberEntity.getMemberId()));
+        return DataResult.success(shopMemberEntity);
+    }
+
+    private ShopRecommendationRelationshipEntity recommendationRelationship(ShopMemberEntity shopMemberEntity, ShopMemberEntity references){
         // 推荐关系
         ShopRecommendationRelationshipEntity shopRecommendationRelationshipEntity = new ShopRecommendationRelationshipEntity();
         shopRecommendationRelationshipEntity.setMemberId(shopMemberEntity.getMemberId());
@@ -111,18 +136,45 @@ public class ShopMemberServiceImpl extends ServiceImpl<ShopMemberMapper, ShopMem
             shopRecommendationRelationshipMapper.insert(referencesRelationship);
             shopRecommendationRelationshipEntity.setRecommendLevel(NumberConstants.TWO_I);
         }
-        // 保存推荐关系
-        shopRecommendationRelationshipMapper.insert(shopRecommendationRelationshipEntity);
-        // 保存会员钱包
-        shopMemberWalletMapper.insert(new ShopMemberWalletEntity(shopMemberEntity.getMemberId()));
-        // 保存成长值
-        shopMemberGrowthValueMapper.insert(new ShopMemberGrowthValueEntity(shopMemberEntity.getMemberId()));
-        return DataResult.success(shopMemberEntity);
+        return shopRecommendationRelationshipEntity;
     }
 
     @Override
-    public IPage<ShopMemberEntity> listByPage(Page<ShopMemberEntity> page, LambdaQueryWrapper<ShopMemberEntity> wrapper) {
-        return encapsulatingFieldName(shopMemberMapper.selectPage(page, wrapper));
+    public DataResult updateShopMemberEntityById(ShopMemberEntity shopMemberEntity) {
+        // 查询会员信息
+        ShopMemberEntity queryResult = shopMemberMapper.selectById(shopMemberEntity.getMemberId());
+        if (Objects.nonNull(queryResult)) {
+            // 账号校验
+            if(StringUtils.isNotBlank(shopMemberEntity.getMemberName())){
+                ShopMemberEntity accountVerification = shopMemberMapper.findOneByMemberName(shopMemberEntity);
+                if (Objects.nonNull(accountVerification)) {
+                    return DataResult.fail(BusinessResponseCode.ACCOUNT_REPEAT.getMsg());
+                }
+            }
+            // 推荐码
+            if(StringUtils.isNotBlank(shopMemberEntity.getMemberInvitationCodeFrom())){
+                // 查询推荐人
+                ShopMemberEntity references = shopMemberMapper.findOneByInvitationCode(new ShopMemberEntity(shopMemberEntity.getMemberId(), shopMemberEntity.getMemberInvitationCodeFrom()));
+                if(Objects.nonNull(references)){
+                    shopMemberEntity.setMemberFrom(references.getMemberId());
+                    // 修改推荐关系
+                    shopRecommendationRelationshipMapper.update(recommendationRelationship(shopMemberEntity, references), Wrappers.<ShopRecommendationRelationshipEntity>lambdaQuery().eq(ShopRecommendationRelationshipEntity::getMemberId, shopMemberEntity.getMemberId()));
+                    // TODO 保存关系修改记录
+
+                } else {
+                    return DataResult.fail(BusinessResponseCode.INVALID_RECOMMENDATION_CODE.getMsg());
+                }
+            }
+            // 密码加密
+            if (StringUtils.isNotBlank(shopMemberEntity.getMemberPasswd())) {
+                shopMemberEntity.setMemberPasswd(PasswordUtils.encode(shopMemberEntity.getMemberPasswd(), PasswordUtils.getSalt()));
+            }
+            // 版本号+1
+            shopMemberEntity.setMemberVersion(queryResult.getMemberVersion() + NumberConstants.ONE_L);
+            // 保存更新(乐观锁防止并发)
+            shopMemberMapper.update(shopMemberEntity, Wrappers.<ShopMemberEntity>lambdaQuery().eq(ShopMemberEntity::getMemberId, queryResult.getMemberId()).eq(ShopMemberEntity::getMemberVersion, queryResult.getMemberVersion()));
+        }
+        return DataResult.success(shopMemberEntity);
     }
 
     private IPage<ShopMemberEntity> encapsulatingFieldName(IPage<ShopMemberEntity> iPage) {

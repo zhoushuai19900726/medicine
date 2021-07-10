@@ -98,7 +98,7 @@
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="detail" shiro:hasPermission="goods:list"><i class="layui-icon">&#xe615;</i>查看详情</a>
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="reduction" shiro:hasPermission="goods:update"><i class="layui-icon">&#xe9aa;</i>还原商品</a>
         <br/>
-        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="goods:delete"><i class="layui-icon">&#xe640;</i>删除商品</a>
+        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="goods:delete"><i class="layui-icon">&#xe640;</i>彻底删除</a>
     </script>
     <script type="text/html" id="goodsDetailTpl">
         <table class="layui-table" lay-even="" lay-skin="nob">
@@ -131,39 +131,27 @@
     </script>
     <script type="text/html" id="stockTpl">
         <div style="width: 100%;" class="layui-badge-rim">{{ d.saleNum }}</div>
-        <br/>
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>查看库存</a>
     </script>
     <script type="text/html" id="saleTpl">
         <div style="width: 100%;" class="layui-badge-rim">{{ d.saleNum }}</div>
-        <br/>
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>查看订单</a>
     </script>
     <script type="text/html" id="evaluationTpl">
         <div style="width: 100%;" class="layui-badge-rim">{{ d.commentNum }}</div>
-        <br/>
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>查看评价</a>
     </script>
     <script type="text/html" id="isMarketableTpl">
         {{# if(d.isMarketable == 2){ }}
         <div style="width: 100%;" class="layui-badge layui-bg-red">停售中...</div>
         {{# }else { }}
-        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="上架|下架 " lay-filter="upperAndLowerSwitch" {{d.isMarketable== 1 ? 'checked' : ''}}/>
+        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="上架|下架 " lay-filter="upperAndLowerSwitch" disabled {{d.isMarketable== 1 ? 'checked' : ''}}/>
         {{# } }}
-        <br/>
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="operationRecord" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>操作记录</a>
     </script>
     <script type="text/html" id="isEnableSpecTpl">
-        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="启用|关闭" lay-filter="isEnableSpecStr" {{d.isEnableSpec== 1 ? 'checked' : ''}}/>
-        <br/>
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>规格详情</a>
+        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="启用|关闭" lay-filter="isEnableSpecStr" disabled {{d.isEnableSpec== 1 ? 'checked' : ''}}/>
     </script>
     <script type="text/html" id="statusTpl">
         <div style="width: 100%;" class="layui-badge {{d.status == 0 ? 'layui-bg-orange' : d.status == 1 ? 'layui-bg-green' : 'layui-bg-red'}}">{{d.status == 0 ? '待审核' : d.status == 1 ? '审核通过' :
             '审核未通过'}}
         </div>
-        <br/>
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="del" shiro:hasPermission="goods:manager"><i class="layui-icon">&#xe615;</i>审核详情</a>
     </script>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
@@ -236,7 +224,7 @@
                 [
                     {type: 'checkbox'},
                     {align: 'center', width: 80, field: 'id', title: 'ID', sort: true},
-                    {align: 'center', width: 100, field: 'sn', title: '商品货号', edit: 'text'},
+                    {align: 'center', width: 100, field: 'sn', title: '商品货号'},
                     {title: '商品信息', templet: '#goodsDetailTpl'},
                     {width: 150, field: 'category', title: '分类', templet: '#categoryTpl'},
                     {align: 'center', width: 110, field: 'stock', title: '库存', sort: true, templet: '#stockTpl'},
@@ -299,25 +287,6 @@
                         }
                     });
                     break;
-                case 'operationRecord':
-                    // 操作记录
-                    layer.open({
-                        type: 2,
-                        title: '<i class="layui-icon">&#xe62a;</i> 操作记录',
-                        id: 'operationRecord',
-                        scrollbar: false,
-                        offset: 'r',
-                        anim: 5,
-                        maxmin: true,
-                        area: ['1000px', '100%'],//宽高不影响最大化
-                        content: "../../index/shopSpu/operationRecord/" + data.id,//地址
-                        zIndex: layer.zIndex,
-                        success: function (layero, index) {
-                            // 置顶当前窗口
-                            layer.setTop(layero);
-                        }
-                    });
-                    break;
                 case 'reduction':
                     // 还原商品
                     layer.confirm('确定要还原么?', {icon: 3, title: '提示'}, function (index) {
@@ -329,20 +298,6 @@
                     });
                     break;
             }
-        });
-        /**
-         * 监听单元格编辑
-         */
-        table.on('edit(showTable)', function (obj) {
-            var value = obj.value //得到修改后的值
-                , data = obj.data //得到所在行所有键值
-                , field = obj.field; //得到字段
-            var shopSpu = {};
-            shopSpu.id = data.id;
-            shopSpu[field] = util.escape(value);
-            CoreUtil.sendPut("/goods/update", shopSpu, function (res) {
-                tableIns1.reload();
-            });
         });
         /**
          * 监听table内开关操作

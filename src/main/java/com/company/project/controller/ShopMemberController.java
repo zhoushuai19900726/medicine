@@ -4,9 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.company.project.common.aop.annotation.DataScope;
 import com.company.project.common.aop.annotation.LogAnnotation;
+import com.company.project.entity.ShopMemberGrowthValueEntity;
+import com.company.project.entity.ShopMemberWalletEntity;
+import com.company.project.service.ShopMemberGrowthValueService;
+import com.company.project.service.ShopMemberWalletService;
 import io.swagger.annotations.Api;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -40,6 +45,12 @@ public class ShopMemberController extends BaseController {
     @Resource
     private ShopMemberService shopMemberService;
 
+    @Resource
+    private ShopMemberWalletService shopMemberWalletService;
+
+    @Resource
+    private ShopMemberGrowthValueService shopMemberGrowthValueService;
+
 
     @ApiOperation(value = "跳转到会员列表页面")
     @GetMapping("/index/shopMember")
@@ -51,6 +62,18 @@ public class ShopMemberController extends BaseController {
     @GetMapping("/index/shopMember/addOrUpdate")
     public String addOrUpdate() {
         return "member/addOrUpdate";
+    }
+
+    @ApiOperation(value = "跳转进入详情页面")
+    @GetMapping("/index/shopMember/detail/{memberId}")
+    public String detail(@PathVariable("memberId") String memberId, Model model) {
+        // 会员信息
+        model.addAttribute("shopMemberEntity", shopMemberService.findOneByMemberId(memberId));
+        // 钱包余额
+        model.addAttribute("shopMemberWalletEntity", shopMemberWalletService.getOne(Wrappers.<ShopMemberWalletEntity>lambdaQuery().in(ShopMemberWalletEntity::getMemberId, memberId)));
+        // 成长值
+        model.addAttribute("shopMemberGrowthValueEntity", shopMemberGrowthValueService.getOne(Wrappers.<ShopMemberGrowthValueEntity>lambdaQuery().in(ShopMemberGrowthValueEntity::getMemberId, memberId)));
+        return "member/memberDetail";
     }
 
     @ApiOperation(value = "新增")
@@ -77,7 +100,7 @@ public class ShopMemberController extends BaseController {
     @LogAnnotation(title = "会员", action = "更新")
     @ResponseBody
     public DataResult update(@RequestBody ShopMemberEntity shopMember) {
-        return DataResult.success(shopMemberService.updateById(shopMember));
+        return shopMemberService.updateShopMemberEntityById(shopMember);
     }
 
     @ApiOperation(value = "查询全部")
@@ -97,6 +120,15 @@ public class ShopMemberController extends BaseController {
     @ResponseBody
     public DataResult findOneByMemberName(ShopMemberEntity shopMemberEntity) {
         return DataResult.success(shopMemberService.findOneByMemberName(shopMemberEntity));
+    }
+
+    @ApiOperation(value = "根据邀请码查询")
+    @GetMapping("shopMember/findOneByInvitationCode")
+    @RequiresPermissions("shopMember:list")
+    @LogAnnotation(title = "会员", action = "查询全部")
+    @ResponseBody
+    public DataResult findOneByInvitationCode(ShopMemberEntity shopMemberEntity) {
+        return DataResult.success(shopMemberService.findOneByInvitationCode(shopMemberEntity));
     }
 
     @ApiOperation(value = "查询分页数据")

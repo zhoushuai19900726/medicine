@@ -16,10 +16,17 @@ import com.company.project.entity.ShopMemberEntity;
  */
 public interface ShopMemberService extends IService<ShopMemberEntity> {
 
+    ShopMemberEntity findOneByMemberId(String memberId);
+
     ShopMemberEntity findOneByMemberName(ShopMemberEntity shopMemberEntity);
+
+    ShopMemberEntity findOneByInvitationCode(ShopMemberEntity shopMemberEntity);
 
     DataResult saveShopMemberEntity(ShopMemberEntity shopMember);
 
     IPage<ShopMemberEntity> listByPage(Page<ShopMemberEntity> page, LambdaQueryWrapper<ShopMemberEntity> wrapper);
+
+    DataResult updateShopMemberEntityById(ShopMemberEntity shopMember);
+
 }
 

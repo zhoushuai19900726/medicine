@@ -15,6 +15,9 @@ import org.apache.ibatis.annotations.Select;
  */
 public interface ShopMemberMapper extends BaseMapper<ShopMemberEntity> {
 
+    @Select("SELECT * FROM shop_member WHERE member_id = #{memberId}")
+    ShopMemberEntity findOneByMemberId(@Param("memberId") String memberId);
+
     @Select("<script> SELECT * FROM shop_member WHERE member_name = #{shopMemberEntity.memberName} <when test='shopMemberEntity.memberId != null'> AND member_id != #{shopMemberEntity.memberId} </when> LIMIT 1 </script>")
     ShopMemberEntity findOneByMemberName(@Param("shopMemberEntity") ShopMemberEntity shopMemberEntity);
 

@@ -49,7 +49,7 @@ public class CommonController {
     }
 
     @ApiOperation(value = "查询所有商品审核状态")
-    @RequiresPermissions("goods:list")
+    @GetMapping("findAllGoodsExamineStatus")
     @ResponseBody
     public DataResult findAllGoodsExamineStatus() {
         return DataResult.success(analysisRedisData(DictionariesKeyConstant.GOODS_EXAMINE_STATUS));

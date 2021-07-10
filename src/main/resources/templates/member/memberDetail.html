@@ -13,7 +13,7 @@
     <div class="layuimini-main" shiro:hasPermission="shopMember:add">
         <form class="layui-form" action="" lay-filter="shopMemberForm" id="shopMemberForm" style="width: 100%;">
             <input name="memberId" hidden/>
-            <blockquote class="layui-elem-quote">登陆信息</blockquote>
+            <blockquote class="layui-elem-quote">账号信息</blockquote>
             <blockquote class="layui-elem-quote layui-quote-nm">
                 <table class="layui-table" lay-size="sm">
                     <colgroup>
@@ -24,42 +24,19 @@
                     </colgroup>
                     <tbody>
                     <tr>
-                        <td class="required">会员账号</td>
+                        <td>会员账号</td>
                         <td colspan="3">
-                            <input type="text" name="memberName" lay-verify="required|account|isExist" autocomplete="off" placeholder="请输入会员账号" class="layui-input">
+                            <input type="text" class="layui-input" th:value="${shopMemberEntity.memberName}" disabled />
                         </td>
                     </tr>
                     <tr>
-                        <td class="required">登陆密码</td>
+                        <td>钱包余额</td>
                         <td>
-                            <input type="password" name="memberPasswd" lay-verify="required|password" autocomplete="off" placeholder="请输入会员登陆密码" class="layui-input">
+                            <input type="text" class="layui-input" th:value="${shopMemberWalletEntity.balance}" disabled />
                         </td>
-                        <td class="required">确认密码</td>
+                        <td>成长值</td>
                         <td>
-                            <input type="password" lay-verify="required|password|confirmPass" autocomplete="off" placeholder="请再次输入会员登陆密码" class="layui-input">
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </blockquote>
-            <blockquote class="layui-elem-quote">支付信息</blockquote>
-            <blockquote class="layui-elem-quote layui-quote-nm">
-                <table class="layui-table" lay-size="sm">
-                    <colgroup>
-                        <col width="100">
-                        <col width="500">
-                        <col width="100">
-                        <col width="500">
-                    </colgroup>
-                    <tbody>
-                    <tr>
-                        <td>支付密码</td>
-                        <td>
-                            <input type="password" name="paymentPasswd" autocomplete="off" placeholder="请输入会员支付密码" class="layui-input">
-                        </td>
-                        <td>确认密码</td>
-                        <td>
-                            <input type="password" lay-verify="confirmPaymentPass" autocomplete="off" placeholder="请再次输入会员支付密码" class="layui-input">
+                            <input type="text" class="layui-input" th:value="${shopMemberGrowthValueEntity.growthValue}" disabled />
                         </td>
                     </tr>
                     </tbody>
@@ -78,27 +55,30 @@
                     <tr>
                         <td>会员头像</td>
                         <td colspan="3">
-                            <input type="hidden" name="memberAvatar"/>
-                            <img src="http://localhost:8080/files/20210709/ec89c38d64cc40388d5e4487c2320214.jpeg" style="width: 60px; height: 60px;"/>
-                            <a style="position: absolute; left: 80px; bottom: 2px; cursor: pointer;" id="uploadAvatar">修改头像</a>
+                            <img th:src="${shopMemberEntity.memberAvatar}" style="width: 60px; height: 60px;"/>
                         </td>
                     </tr>
                     <tr>
                         <td>真实姓名</td>
                         <td>
-                            <input type="text" name="memberTrueName" autocomplete="off" placeholder="请输入真实姓名" class="layui-input">
+                            <input type="text" class="layui-input" th:value="${shopMemberEntity.memberTrueName}" disabled >
                         </td>
                         <td>会员昵称</td>
                         <td>
-                            <input type="text" name="memberNick" autocomplete="off" placeholder="请输入会员昵称" class="layui-input">
+                            <input type="text" class="layui-input" th:value="${shopMemberEntity.memberNick}" disabled >
                         </td>
                     </tr>
                     <tr>
                         <td>性别</td>
                         <td>
                             <select name="memberSex" th:with="dataResult=${@commonController.findAllSex()}">
-                                <option value="">请选择</option>
-                                <option th:each="map : ${dataResult.getData()}" th:text="${map.get('name')}" th:value="${map.get('id')}"></option>
+                                <option
+                                        th:each="map : ${dataResult.getData()}"
+                                        th:text="${map.get('name')}"
+                                        th:value="${map.get('id')}"
+                                        th:selected="${map.get('id') == (shopMemberEntity.memberSex + '')}"
+                                        th:disabled="${map.get('id') != (shopMemberEntity.memberSex + '')}"
+                                ></option>
                             </select>
                         </td>
                         <td>出生日期</td>
