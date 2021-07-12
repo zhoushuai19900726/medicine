@@ -517,8 +517,23 @@
                     });
                     break;
                 case 'freeOrder':
-                    // TODO 赠送订单
-
+                    // 赠送订单
+                    layer.open({
+                        type: 2,
+                        title: '<i class="layui-icon">&#xe627;</i> 赠送订单',
+                        id: 'freeOrder',
+                        scrollbar: false,
+                        offset: 'r',
+                        anim: 5,
+                        maxmin: true,
+                        area: ['1000px', '100%'],//宽高不影响最大化
+                        content: "../index/shopMember/freeOrder/" + data.memberId,//地址
+                        zIndex: layer.zIndex,
+                        success: function (layero, index) {
+                            // 置顶当前窗口
+                            layer.setTop(layero);
+                        }
+                    });
                     break;
                 case 'freeCoupon':
                     // TODO 赠送优惠券
@@ -544,7 +559,7 @@
                     });
                     break;
                 case 'growthValueRecordList':
-                    // 消费记录
+                    // 成长值记录
                     layer.open({
                         type: 2,
                         title: '<i class="layui-icon">&#xe672;</i> 成长值记录',

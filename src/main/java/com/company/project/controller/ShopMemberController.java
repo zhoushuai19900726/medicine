@@ -99,6 +99,18 @@ public class ShopMemberController extends BaseController {
         return "member/growthValueRecord";
     }
 
+    @ApiOperation(value = "跳转进入赠送订单页面")
+    @GetMapping("/index/shopMember/freeOrder/{memberId}")
+    public String freeOrder(@PathVariable("memberId") String memberId, Model model) {
+        // 会员信息
+        model.addAttribute("shopMemberEntity", shopMemberService.findOneByMemberId(memberId));
+        // 钱包余额
+        model.addAttribute("shopMemberWalletEntity", shopMemberWalletService.getOne(Wrappers.<ShopMemberWalletEntity>lambdaQuery().in(ShopMemberWalletEntity::getMemberId, memberId)));
+        // TODO 订单列表
+
+        return "member/freeOrder";
+    }
+
     @ApiOperation(value = "新增")
     @PostMapping("shopMember/add")
     @RequiresPermissions("shopMember:add")
