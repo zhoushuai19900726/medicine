@@ -64,6 +64,13 @@ public class CommonController {
         return DataResult.success(analysisRedisData(DictionariesKeyConstant.SERVICE_GUARANTEE));
     }
 
+//    @ApiOperation(value = "查询所有钱包明细类型")
+//    @GetMapping("findAllWalletDetailsType")
+//    @ResponseBody
+//    public DataResult findAllWalletDetailsType() {
+//        return DataResult.success(analysisRedisData(DictionariesKeyConstant.WALLET_DETAILS_TYPE));
+//    }
+
 
     @ApiOperation(value = "根据字典值获取字典名称")
     @GetMapping("getLabelByValue")

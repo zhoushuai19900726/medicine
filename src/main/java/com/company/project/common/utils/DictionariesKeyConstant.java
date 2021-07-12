@@ -24,5 +24,7 @@ public class DictionariesKeyConstant {
     public static final String GOODS_STATUS = DICT_KEY_PREFIX.concat("goods_status");
     // 商品审核状态
     public static final String GOODS_EXAMINE_STATUS = DICT_KEY_PREFIX.concat("goods_examine_status");
+    // 钱包明细类型
+    public static final String WALLET_DETAILS_TYPE = DICT_KEY_PREFIX.concat("wallet_details_type");
 
 }

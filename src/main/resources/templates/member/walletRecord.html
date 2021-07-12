@@ -12,7 +12,7 @@
 <div class="layuimini-container">
     <div class="layuimini-main" shiro:hasPermission="shopMember:list">
         <form class="layui-form" action="" style="width: 100%;">
-            <blockquote class="layui-elem-quote">账号信息</blockquote>
+            <input type="hidden" id="memberId" th:value="${shopMemberEntity.memberId}"/>
             <table class="layui-table" lay-size="sm">
                 <thead>
                 <tr>
@@ -25,11 +25,12 @@
                 <tr>
                     <td th:text="${shopMemberEntity.memberName}"></td>
                     <td><i class="fa fa-jpy" style="color: #ff5749; font-weight: bold;" th:text="' ' + ${shopMemberWalletEntity.balance}"></i></td>
+                    <!-- TODO 统计订单 -->
                     <td>钱包：微信：支付宝：其他</td>
                 </tr>
                 </tbody>
             </table>
-            <blockquote class="layui-elem-quote">钱包消费记录</blockquote>
+            <blockquote class="layui-elem-quote">钱包明细</blockquote>
             <blockquote class="layui-elem-quote layui-quote-nm">
                 <fieldset class="table-search-fieldset">
                     <legend>搜索信息</legend>
@@ -39,7 +40,7 @@
                                 <div class="layui-inline">
                                     <label class="layui-form-label">支付单号</label>
                                     <div class="layui-input-inline">
-                                        <input type="text" name="memberName" autocomplete="off" placeholder="请输入支付单号" class="layui-input">
+                                        <input type="text" name="remark" autocomplete="off" placeholder="请输入支付单号/备注" class="layui-input">
                                     </div>
                                 </div>
                                 <div class="layui-inline">
@@ -53,14 +54,16 @@
                 <table class="layui-table" id="showTable" lay-filter="showTable"></table>
 
 
-
-
             </blockquote>
         </form>
     </div>
+    <script type="text/html" id="tool">
+        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe640;</i>删除记录</a>
+    </script>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
 <script th:src="@{/layui2.0/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/js/lay-config.js(v=2.0.0)}" charset="utf-8"></script>
 </body>
 </html>
 <script>
@@ -70,10 +73,11 @@
     var tokenQuery = token.replace("#", "%23");
     var tableIns1;
     var $ = jQuery = layui.jquery;
-    layui.use(['form', 'layer', 'table'], function () {
+    layui.use(['form', 'layer', 'table', 'util'], function () {
         var form = layui.form;
         var layer = layui.layer;
         var table = layui.table;
+        var util = layui.util;
 
         //加载table
         tableIns1 = table.render({
@@ -81,7 +85,10 @@
             , contentType: 'application/json'
             , headers: {"authorization": token}
             , page: true //开启分页
-            , url: '/shopMember/listByPage' //数据接口
+            , url: '/shopMemberWalletRecord/listByPage' //数据接口
+            , where: {
+                memberId: $("#memberId").val()
+            }
             , method: 'POST'
             , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
                 return {
@@ -94,18 +101,75 @@
             , cols: [
                 [
                     {width: 60, type: 'checkbox', fixed: 'left'},
-                    {title: '会员信息', templet: '#memberInfo'},
-                    {title: '注册登录信息', templet: '#registerInfo'},
-                    {title: '识别码', templet: '#identificationCodeInfo'},
-                    {title: '钱包余额', templet: '#walletBalanceInfo'},
-                    {title: '成长值', templet: '#growthValueInfo'},
-                    {title: 'VIP信息', templet: '#vipInfo'},
+                    {width: 100, title: '记录编号', field: 'id'},
+                    {width: 100, title: '类型', field: 'typeName'},
+                    {width: 100, title: '金额', field: 'consume'},
+                    {width: 100, title: '钱包余额', field: 'balance'},
+                    {width: 150, title: '备注', field: 'remark', edit: 'text'},
+                    {width: 180, title: '操作时间', field: 'createTime'},
+                    {width: 120, toolbar: "#tool", title: '操作', fixed: 'right'}
                 ]
             ]
         });
 
-    });
+        //列操作
+        table.on('tool(showTable)', function (obj) {
+            var data = obj.data;
+            switch (obj.event) {
+                case 'del':
+                    var ids = [];
+                    ids.push(data.id);
+                    tipDialog(ids);
+                    break;
+            }
+        });
+        /**
+         * 监听单元格编辑
+         */
+        table.on('edit(showTable)', function (obj) {
+            var value = obj.value //得到修改后的值
+                , data = obj.data //得到所在行所有键值
+                , field = obj.field; //得到字段
+            var shopMemberWalletRecord = {};
+            shopMemberWalletRecord.id = data.id;
+            shopMemberWalletRecord[field] = util.escape(value);
+            CoreUtil.sendPut("/shopMemberWalletRecord/update", shopMemberWalletRecord, function (res) {
 
+            });
+        });
+
+        var tipDialog = function (ids) {
+            layer.confirm('确定要删除么?', {icon: 3, title: '提示'}, function (index) {
+                CoreUtil.sendDelete("/shopMemberWalletRecord/delete", ids, function (res) {
+                    layer.msg(res.msg, {time: 500}, function () {
+                        tableIns1.reload();
+                    });
+                });
+            });
+        };
+
+        /**
+         * 执行查询
+         */
+        form.on('submit(data-search-btn)', function (data) {
+            // 查询条件
+            var where = data.field;
+            where.memberId = $("#memberId").val();
+            // 刷新table
+            tableIns1.reload({
+                where: where,
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                done: function () {
+                    // 清空查询条件缓存
+                    this.where = {};
+                }
+            });
+            return false;
+        });
+
+    });
 
 
 </script>

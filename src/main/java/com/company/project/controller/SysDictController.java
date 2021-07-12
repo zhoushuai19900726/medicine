@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.company.project.common.utils.DataResult;
+import com.company.project.common.utils.DictionariesKeyConstant;
 import com.company.project.entity.SysDictDetailEntity;
 import com.company.project.entity.SysDictEntity;
 import com.company.project.service.SysDictDetailService;
@@ -12,12 +13,17 @@ import com.company.project.service.SysDictService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 /**
@@ -37,6 +43,9 @@ public class SysDictController {
 
     @Resource
     private SysDictDetailService sysDictDetailService;
+
+    @Resource
+    private RedisTemplate redisTemplate;
 
 
     @ApiOperation(value = "新增")
@@ -58,9 +67,15 @@ public class SysDictController {
     @DeleteMapping("/delete")
     @RequiresPermissions("sysDict:delete")
     public DataResult delete(@RequestBody @ApiParam(value = "id集合") List<String> ids) {
-        sysDictService.removeByIds(ids);
-        //删除detail
-        sysDictDetailService.remove(Wrappers.<SysDictDetailEntity>lambdaQuery().in(SysDictDetailEntity::getDictId, ids));
+        List<SysDictEntity> sysDictEntityList = sysDictService.listByIds(ids);
+        if (CollectionUtils.isNotEmpty(sysDictEntityList)) {
+            // 删除字典
+            sysDictService.removeByIds(ids);
+            // 删除字典值
+            sysDictDetailService.remove(Wrappers.<SysDictDetailEntity>lambdaQuery().in(SysDictDetailEntity::getDictId, ids));
+            // 删除缓存
+            sysDictEntityList.forEach(sysDictEntity -> redisTemplate.delete(DictionariesKeyConstant.DICT_KEY_PREFIX.concat(sysDictEntity.getName())));
+        }
         return DataResult.success();
     }
 
@@ -77,7 +92,16 @@ public class SysDictController {
             return DataResult.fail("字典名称已存在");
         }
 
-        sysDictService.updateById(sysDict);
+        SysDictEntity sysDictEntity = sysDictService.getById(sysDict.getId());
+        if (Objects.nonNull(sysDictEntity)) {
+            // 更新缓存
+            List<SysDictDetailEntity> sysDictDetailEntityList = redisTemplate.boundHashOps(DictionariesKeyConstant.DICT_KEY_PREFIX.concat(sysDictEntity.getName())).values();
+            Map<String, SysDictDetailEntity> sysDictDetailEntityMap = sysDictDetailEntityList.stream().collect(Collectors.toMap(SysDictDetailEntity::getId, a -> a, (k1, k2) -> k1));
+            redisTemplate.delete(DictionariesKeyConstant.DICT_KEY_PREFIX.concat(sysDictEntity.getName()));
+            redisTemplate.boundHashOps(DictionariesKeyConstant.DICT_KEY_PREFIX.concat(sysDict.getName())).putAll(sysDictDetailEntityMap);
+            // 保存更新
+            sysDictService.updateById(sysDict);
+        }
         return DataResult.success();
     }
 

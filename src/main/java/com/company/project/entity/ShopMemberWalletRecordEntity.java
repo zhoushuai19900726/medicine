@@ -40,6 +40,14 @@ public class ShopMemberWalletRecordEntity extends BaseEntity implements Serializ
     private String memberId;
 
     /**
+     * 类型
+     */
+    @TableField("type")
+    private Integer type;
+    @TableField(exist = false)
+    private String typeName;
+
+    /**
      * 消费金额
      */
     @TableField("consume")
