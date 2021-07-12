@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <style>
+        table tbody tr td .layui-table-cell {
+            height: 60px;
+            white-space: nowrap;
+        }
+
+        table tbody tr td .laytable-cell-checkbox {
+            line-height: 60px;
+        }
+    </style>
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main" shiro:hasPermission="shopMember:list">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 5px 5px 5px 5px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">会员账号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="memberName" autocomplete="off" placeholder="请输入会员账号" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">会员手机号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="memberMobile" autocomplete="off" placeholder="请输入会员手机号" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">会员邀请码</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="memberInvitationCode" autocomplete="off" placeholder="请输入会员邀请码" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn layui-btn-primary layui-border-blue" lay-submit lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
+                            <button class="layui-btn layui-btn-primary layui-border-green" id="export"><i class="layui-icon">&#xe67d;</i> 导 出</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+    </div>
+    <table class="layui-table" id="showTable" lay-filter="showTable"></table>
+    <script type="text/html" id="toolbar">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add" shiro:hasPermission="shopMemberBlacklist:add"><i class="layui-icon">&#xe61f;</i>新增黑名单</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopMemberBlacklist:delete"><i class="layui-icon">&#xe640;</i>批量移除</button>
+        </div>
+    </script>
+    <script type="text/html" id="tool">
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="detail" shiro:hasPermission="shopMemberBlacklist:list"><i class="layui-icon">&#xe615;</i>查看会员</a>
+        <br/>
+        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="shopMemberBlacklist:delete"><i class="layui-icon">&#xe640;</i>移除黑名单</a>
+    </script>
+    <script type="text/html" id="memberInfo">
+        <div class="layui-row">
+            <div class="layui-col-xs4">
+                <img src="{{ d.memberAvatar }}" style="width: 60px; height: 60px;"/>
+            </div>
+            <div class="layui-col-xs8">
+                <div>
+                    <div class="layui-row">
+                        <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">账号</span> {{ d.memberName }}</span>
+                    </div>
+                    <div class="layui-row">
+                        <span class="layui-badge-rim">
+                            <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">实名</span>
+                            {{#  if(d.memberTrueName == null || d.memberTrueName == ''){ }}
+                            <i class="fa fa-question-circle"></i>
+                            {{#  } else { }}
+                            {{ d.memberTrueName }}
+                            {{#  } }}
+                            {{#  if(d.memberNick != null && d.memberNick != ''){ }}
+                            ({{ d.memberNick }})
+                            {{#  } }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+    <script type="text/html" id="registerInfo">
+        <span class="layui-badge-rim"><span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">注册日期</span> {{ d.createTime }}</span>
+        <br/>
+        <span class="layui-badge-rim">
+            <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">登陆日期</span>
+            {{#  if(d.memberLoginTime == null || d.memberLoginTime == ''){ }}
+            <i class="fa fa-question-circle"></i>
+            {{#  } else { }}
+            {{ d.memberLoginTime }}
+            {{#  } }}
+        </span>
+    </script>
+    <script type="text/html" id="identificationCodeInfo">
+        <span class="layui-badge-rim">
+            <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">邀请码</span>
+            {{#  if(d.memberInvitationCode == null || d.memberInvitationCode == ''){ }}
+            <i class="fa fa-question-circle"></i>
+            {{#  } else { }}
+            {{ d.memberInvitationCode }}
+            {{#  } }}
+        </span>
+        <br/>
+        <span class="layui-badge-rim">
+            <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">推荐码</span>
+            {{#  if(d.memberInvitationCodeFrom == null || d.memberInvitationCodeFrom == ''){ }}
+            <i class="fa fa-question-circle"></i>
+            {{#  } else { }}
+            {{ d.memberInvitationCodeFrom }}
+            {{#  } }}
+        </span>
+    </script>
+    <script type="text/html" id="walletBalanceInfo">
+        <div style="width: 100%;" class="layui-badge-rim"><i class="fa fa-jpy"></i> {{ d.walletBalance }}</div>
+        <br/>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="walletRecordList" shiro:hasPermission="shopMember:manager" style="width: 100%;"><i class="layui-icon">&#xe615;</i>消费记录</a>
+    </script>
+    <script type="text/html" id="growthValueInfo">
+        <div style="width: 100%;" class="layui-badge-rim"><i class="fa fa-money"></i> {{ d.growthValue }}</div>
+        <br/>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="growthValueRecordList" shiro:hasPermission="shopMember:manager" style="width: 100%;"><i class="layui-icon">&#xe615;</i>成长值记录</a>
+    </script>
+    <script type="text/html" id="vipInfo">
+        <div style="width: 100%;" class="layui-badge-rim">
+            <i class="fa fa-shirtsinbulk"></i>
+            {{# if(d.memberGradeName == null || d.memberGradeName == ''){ }}
+            <i class="fa fa-question-circle"></i>
+            {{# } else { }}
+            {{ d.memberGradeName }}
+            {{# } }}
+        </div>
+        <br/>
+        <span class="layui-badge-rim">
+            <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">升级日期</span>
+            {{#  if(d.gradeTime == null || d.gradeTime == ''){ }}
+            <i class="fa fa-question-circle"></i>
+            {{#  } else { }}
+            {{ d.gradeTime }}
+            {{#  } }}
+        </span>
+    </script>
+    <div id="addTpl" hidden>
+        <form class="layui-form layui-form-pane" id="addForm" lay-filter="addForm">
+            <input type="submit" lay-filter="submitBtnForAdd" id="submitBtnForAdd" lay-submit="" hidden/>
+            <blockquote class="layui-elem-quote">账号信息</blockquote>
+            <blockquote class="layui-elem-quote layui-quote-nm">
+                <table class="layui-table" lay-size="sm">
+                    <colgroup>
+                        <col width="100">
+                        <col width="500">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="required">账号</td>
+                        <td>
+                            <input type="text" name="memberName" lay-verify="required|memberName" autocomplete="off" placeholder="请输入账号" class="layui-input"/>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </blockquote>
+        </form>
+    </div>
+</div>
+<script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/layui/layui.all.js}" charset="utf-8"></script>
+</body>
+</html>
+<script>
+    //获取token
+    var token = CoreUtil.getData("access_token");
+    //地址栏转义token中的#号
+    var tokenQuery = token.replace("#", "%23");
+    var tableIns1;
+    var $ = jQuery = layui.jquery;
+    layui.use(['table', 'layer', 'laydate', 'util'], function () {
+        var table = layui.table;
+        var form = layui.form;
+        var layer = layui.layer;
+        var laydate = layui.laydate;
+        var util = layui.util;
+        /**
+         * 日期时间选择器
+         */
+        laydate.render({
+            elem: '#createStartTime'
+            , type: 'datetime'
+        });
+        /**
+         * 日期时间选择器
+         */
+        laydate.render({
+            elem: '#createEndTime'
+            , type: 'datetime'
+        });
+
+        form.verify({
+            memberName: function (value) {
+                var msg = "无效的账号";
+                var shopMemberEntity = {memberName: value};
+                CoreUtil.sendSyncGet("/shopMember/findOneByMemberName", shopMemberEntity, function (res) {
+                    if (res.data) {
+                        msg = "";
+                    }
+                });
+                return msg;
+            },
+        });
+
+        form.on('submit(submitBtnForAdd)', function (data) {
+            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
+            CoreUtil.sendPost("/shopMemberBlacklist/add", data.field, function (res) {
+                layer.msg("保存成功", {time: 500}, function () {
+                    // 刷新父页面列表
+                    table.reload('showTable');
+                    layer.closeAll();
+                });
+            });
+            // //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            return false;
+        });
+
+        //加载table
+        tableIns1 = table.render({
+            elem: '#showTable'
+            , contentType: 'application/json'
+            , headers: {"authorization": token}
+            , page: true //开启分页
+            , url: '/shopMemberBlacklist/listByPage' //数据接口
+            , method: 'POST'
+            , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": CoreUtil.isEmpty(res.data) ? 0 : res.data.total, //解析数据长度
+                    "data": CoreUtil.isEmpty(res.data) ? null : res.data.records //解析数据列表
+                }
+            }
+            , cols: [
+                [
+                    {width: 60, type: 'checkbox', fixed: 'left'},
+                    {title: '会员信息', templet: '#memberInfo'},
+                    {width: 215, title: '注册登录信息', templet: '#registerInfo'},
+                    {width: 165, title: '识别码', templet: '#identificationCodeInfo'},
+                    {align: 'center', width: 150, title: '钱包余额', templet: '#walletBalanceInfo'},
+                    {align: 'center', width: 150, title: '成长值', templet: '#growthValueInfo'},
+                    {width: 215, title: 'VIP信息', templet: '#vipInfo'},
+                    {width: 200, toolbar: "#tool", title: '操作', fixed: 'right'}
+                ]
+            ]
+            , toolbar: '#toolbar'
+        });
+
+
+        //表头工具
+        table.on('toolbar(showTable)', function (obj) {
+            switch (obj.event) {
+                case 'batchDeleted':
+                    var checkStatus = table.checkStatus(obj.config.id);
+                    var data = checkStatus.data;
+                    if (data.length == 0) {
+                        layer.msg("请选择要批量删除的列");
+                    } else {
+                        var ids = [];
+                        $(data).each(function (index, item) {
+                            ids.push(item.memberId);
+                        });
+                        tipDialog(ids);
+                    }
+                    break;
+                case 'add':
+                    layer.open({
+                        id: 'add'
+                        , type: 1
+                        , title: '<i class="layui-icon">&#xe61f;</i> 新增黑名单'
+                        , content: $('#addTpl')
+                        , area: ['30%', '300px']
+                        , btn: ['确定', '取消']
+                        , yes: function (index, layero) {
+                            $("#submitBtnForAdd").click();
+                        }
+                    });
+                    break;
+            }
+        });
+        //列操作
+        table.on('tool(showTable)', function (obj) {
+            var data = obj.data;
+            switch (obj.event) {
+                case 'del':
+                    var ids = [];
+                    ids.push(data.memberId);
+                    tipDialog(ids);
+                    break;
+                case 'detail':
+                    layer.open({
+                        type: 2,
+                        title: '<i class="layui-icon">&#xe615;</i> 会员信息',
+                        id: 'shopMember_detail',
+                        scrollbar: false,
+                        offset: 'r',
+                        anim: 5,
+                        maxmin: true,
+                        area: ['1000px', '100%'],//宽高不影响最大化
+                        content: "../index/shopMember/detail/" + data.memberId,//地址
+                        zIndex: layer.zIndex,
+                        success: function (layero, index) {
+                            // 置顶当前窗口
+                            layer.setTop(layero);
+                        }
+                    });
+                    break;
+                case 'walletRecordList':
+                    // 消费记录
+                    layer.open({
+                        type: 2,
+                        title: '<i class="layui-icon">&#xe65e;</i> 消费记录',
+                        id: 'walletRecordList',
+                        scrollbar: false,
+                        offset: 'r',
+                        anim: 5,
+                        maxmin: true,
+                        area: ['1000px', '100%'],//宽高不影响最大化
+                        content: "../index/shopMember/walletRecord/" + data.memberId,//地址
+                        zIndex: layer.zIndex,
+                        success: function (layero, index) {
+                            // 置顶当前窗口
+                            layer.setTop(layero);
+                        }
+                    });
+                    break;
+                case 'growthValueRecordList':
+                    // 成长值记录
+                    layer.open({
+                        type: 2,
+                        title: '<i class="layui-icon">&#xe672;</i> 成长值记录',
+                        id: 'growthValueRecordList',
+                        scrollbar: false,
+                        offset: 'r',
+                        anim: 5,
+                        maxmin: true,
+                        area: ['1000px', '100%'],//宽高不影响最大化
+                        content: "../index/shopMember/growthValueRecord/" + data.memberId,//地址
+                        zIndex: layer.zIndex,
+                        success: function (layero, index) {
+                            // 置顶当前窗口
+                            layer.setTop(layero);
+                        }
+                    });
+                    break;
+            }
+        });
+
+        //导出
+        $('#export').on('click', function () {
+            //原先分页limit
+            var exportParams = {
+                limit: Number.MAX_VALUE,
+                key: $("#key").val()
+            };
+            CoreUtil.sendPost("/shopMemberBlacklist/listByPage", exportParams, function (res) {
+                //初始化渲染数据
+                if (res.data != null && res.data.records != null) {
+                    table.exportFile(tableIns1.config.id, res.data.records, 'xls');
+                }
+            });
+        });
+
+        //注销
+        var tipDialog = function (ids) {
+            layer.confirm('确定要删除么?', {icon: 3, title: '提示'}, function (index) {
+                CoreUtil.sendDelete("/shopMemberBlacklist/delete", ids, function (res) {
+                    layer.msg(res.msg, {time: 500}, function () {
+                        tableIns1.reload();
+                    });
+                });
+            });
+        };
+
+        /**
+         * 执行查询
+         */
+        form.on('submit(data-search-btn)', function (data) {
+            // 查询条件
+            var where = data.field;
+            // 刷新table
+            tableIns1.reload({
+                where: where,
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                done: function () {
+                    // 清空查询条件缓存
+                    this.where = {};
+                }
+            });
+            return false;
+        });
+
+    });
+</script>

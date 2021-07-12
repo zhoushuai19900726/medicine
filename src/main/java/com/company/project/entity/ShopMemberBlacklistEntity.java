@@ -13,17 +13,17 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
- * 会员
+ * 会员表
  *
  * @author zhoushuai
  * @email zhoushuai_0726@163.com
- * @date 2021-07-08 13:59:46
+ * @date 2021-07-12 13:58:08
  */
 @Accessors(chain = true)
 @NoArgsConstructor
 @Data
-@TableName("shop_member")
-public class ShopMemberEntity extends BaseEntity implements Serializable {
+@TableName("shop_member_blacklist")
+public class ShopMemberBlacklistEntity extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -88,7 +88,7 @@ public class ShopMemberEntity extends BaseEntity implements Serializable {
     private String memberBirthday;
 
     /**
-     * 身份证
+     * 身份证号
      */
     @TableField("member_identity")
     private String memberIdentity;
@@ -166,19 +166,19 @@ public class ShopMemberEntity extends BaseEntity implements Serializable {
     private String memberOldLoginIp;
 
     /**
-     * 地区ID
+     * 地区
      */
     @TableField("member_area")
     private String memberArea;
 
     /**
-     * 城市ID
+     * 城市
      */
     @TableField("member_city")
     private String memberCity;
 
     /**
-     * 省份ID
+     * 省份
      */
     @TableField("member_province")
     private String memberProvince;
@@ -255,6 +255,14 @@ public class ShopMemberEntity extends BaseEntity implements Serializable {
     @TableField("member_version")
     private Long memberVersion;
 
+    // 钱包余额
+    @TableField(exist = false)
+    private BigDecimal walletBalance;
+
+    // 成长值
+    @TableField(exist = false)
+    private BigDecimal growthValue;
+
     /**
      *
      */
@@ -293,35 +301,8 @@ public class ShopMemberEntity extends BaseEntity implements Serializable {
      *
      */
     @TableField(fill = FieldFill.INSERT)
-    @TableLogic // 注释后进行物理删除
+//    @TableLogic // 注释后进行物理删除
     private Integer deleted;
 
-    // 钱包余额
-    @TableField(exist = false)
-    private BigDecimal walletBalance;
 
-    // 成长值
-    @TableField(exist = false)
-    private BigDecimal growthValue;
-
-    public ShopMemberEntity(String memberName) {
-        this.memberName = memberName;
-    }
-
-    public ShopMemberEntity(String memberId, String memberInvitationCode) {
-        this.memberId = memberId;
-        this.memberInvitationCode = memberInvitationCode;
-    }
-
-    public ShopMemberEntity(String memberId, String memberName, String memberNick, String memberPasswd, String paymentPasswd, String memberTrueName, String memberMobile, String memberInvitationCode, String memberAvatar) {
-        this.memberId = memberId;
-        this.memberName = memberName;
-        this.memberNick = memberNick;
-        this.memberPasswd = memberPasswd;
-        this.paymentPasswd = paymentPasswd;
-        this.memberTrueName = memberTrueName;
-        this.memberMobile = memberMobile;
-        this.memberInvitationCode = memberInvitationCode;
-        this.memberAvatar = memberAvatar;
-    }
 }

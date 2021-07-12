@@ -126,7 +126,7 @@ public class ShopMemberController extends BaseController {
     @LogAnnotation(title = "会员", action = "删除")
     @ResponseBody
     public DataResult delete(@RequestBody @ApiParam(value = "id集合") List<String> ids) {
-        return DataResult.success(shopMemberService.removeByIds(ids));
+        return shopMemberService.removeByMemberIds(ids);
     }
 
     @ApiOperation(value = "删除")

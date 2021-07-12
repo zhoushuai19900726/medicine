@@ -31,5 +31,7 @@ public interface ShopMemberService extends IService<ShopMemberEntity> {
     DataResult updateShopMemberEntityById(ShopMemberEntity shopMember);
 
     DataResult absolutelyDelete(List<String> memberIdList);
+
+    DataResult removeByMemberIds(List<String> memberIdList);
 }
 

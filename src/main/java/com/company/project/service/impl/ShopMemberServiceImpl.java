@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.company.project.common.exception.code.BaseResponseCode;
 import com.company.project.common.exception.code.BusinessResponseCode;
 import com.company.project.common.utils.*;
 import com.company.project.entity.*;
@@ -203,6 +204,9 @@ public class ShopMemberServiceImpl extends ServiceImpl<ShopMemberMapper, ShopMem
 
     @Override
     public DataResult absolutelyDelete(List<String> memberIdList) {
+        if(memberIdList.contains(DelimiterConstants.SYS_ADMIN_ID)){
+            return DataResult.fail(BaseResponseCode.PROHIBIT_OPERATION.getMsg());
+        }
         // 删除会员信息
         shopMemberMapper.absolutelyDeleteByMemberIdList(memberIdList);
         // 删除推荐关系
@@ -218,6 +222,14 @@ public class ShopMemberServiceImpl extends ServiceImpl<ShopMemberMapper, ShopMem
         // 删除成长值明细
         shopMemberGrowthValueRecordMapper.absolutelyDeleteByMemberIdList(memberIdList);
         return DataResult.success();
+    }
+
+    @Override
+    public DataResult removeByMemberIds(List<String> memberIdList) {
+        if(memberIdList.contains(DelimiterConstants.SYS_ADMIN_ID)){
+            return DataResult.fail(BaseResponseCode.PROHIBIT_OPERATION.getMsg());
+        }
+        return DataResult.success(shopMemberMapper.deleteBatchIds(memberIdList));
     }
 
     private IPage<ShopMemberEntity> encapsulatingFieldName(IPage<ShopMemberEntity> iPage) {
