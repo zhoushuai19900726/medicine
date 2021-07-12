@@ -4,11 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.company.project.common.enums.TitleAndCodeEnum;
 import com.company.project.common.exception.code.BaseResponseCode;
 import com.company.project.common.exception.code.BusinessResponseCode;
 import com.company.project.common.utils.*;
 import com.company.project.entity.*;
 import com.company.project.mapper.*;
+import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -17,13 +19,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.company.project.service.ShopMemberService;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -70,6 +71,7 @@ public class ShopMemberServiceImpl extends ServiceImpl<ShopMemberMapper, ShopMem
     public IPage<ShopMemberEntity> listByPage(Page<ShopMemberEntity> page, LambdaQueryWrapper<ShopMemberEntity> wrapper) {
         return encapsulatingFieldName(shopMemberMapper.selectPage(page, wrapper));
     }
+
     @Override
     public IPage<ShopMemberEntity> logoutListByPage(Page<ShopMemberEntity> page, LambdaQueryWrapper<ShopMemberEntity> wrapper) {
         wrapper.eq(ShopMemberEntity::getDeleted, NumberConstants.ONE_I);
@@ -190,7 +192,7 @@ public class ShopMemberServiceImpl extends ServiceImpl<ShopMemberMapper, ShopMem
             }
             // 密码加密
             if (StringUtils.isNotBlank(shopMemberEntity.getMemberPasswd())) {
-                if(StringUtils.equals(shopMemberEntity.getMemberPasswd(), queryResult.getMemberPasswd())){
+                if (StringUtils.equals(shopMemberEntity.getMemberPasswd(), queryResult.getMemberPasswd())) {
                     shopMemberEntity.setMemberPasswd(null);
                 } else {
                     shopMemberEntity.setMemberPasswd(PasswordUtils.encode(shopMemberEntity.getMemberPasswd(), PasswordUtils.getSalt()));
@@ -198,7 +200,7 @@ public class ShopMemberServiceImpl extends ServiceImpl<ShopMemberMapper, ShopMem
             }
             // 支付密码
             if (StringUtils.isNotBlank(shopMemberEntity.getPaymentPasswd())) {
-                if(StringUtils.equals(shopMemberEntity.getPaymentPasswd(), queryResult.getPaymentPasswd())){
+                if (StringUtils.equals(shopMemberEntity.getPaymentPasswd(), queryResult.getPaymentPasswd())) {
                     shopMemberEntity.setPaymentPasswd(null);
                 } else {
                     shopMemberEntity.setPaymentPasswd(PasswordUtils.encode(shopMemberEntity.getPaymentPasswd(), PasswordUtils.getSalt()));
@@ -214,7 +216,7 @@ public class ShopMemberServiceImpl extends ServiceImpl<ShopMemberMapper, ShopMem
 
     @Override
     public DataResult absolutelyDelete(List<String> memberIdList) {
-        if(memberIdList.contains(DelimiterConstants.SYS_ADMIN_ID)){
+        if (memberIdList.contains(DelimiterConstants.SYS_ADMIN_ID)) {
             return DataResult.fail(BaseResponseCode.PROHIBIT_OPERATION.getMsg());
         }
         // 删除会员信息
@@ -236,7 +238,7 @@ public class ShopMemberServiceImpl extends ServiceImpl<ShopMemberMapper, ShopMem
 
     @Override
     public DataResult removeByMemberIds(List<String> memberIdList) {
-        if(memberIdList.contains(DelimiterConstants.SYS_ADMIN_ID)){
+        if (memberIdList.contains(DelimiterConstants.SYS_ADMIN_ID)) {
             return DataResult.fail(BaseResponseCode.PROHIBIT_OPERATION.getMsg());
         }
         return DataResult.success(shopMemberMapper.deleteBatchIds(memberIdList));
@@ -271,6 +273,71 @@ public class ShopMemberServiceImpl extends ServiceImpl<ShopMemberMapper, ShopMem
             });
         }
         return iPage;
+    }
+
+    @Override
+    public DataResult saveFile(MultipartFile file, Integer type) {
+        try {
+            // 文件
+            if (Objects.isNull(file) || StringUtils.isBlank(file.getOriginalFilename()) || StringUtils.equalsIgnoreCase(DelimiterConstants.EMPTY_STR, file.getOriginalFilename().trim())) {
+                return DataResult.fail(BusinessResponseCode.FILE_EMPTY.getMsg());
+            }
+            //获取文件名
+            String name = file.getOriginalFilename();
+            // 进一步判断文件是否为空（即判断其大小是否为0或其名称是否为null）验证文件名是否合格
+            if (file.getSize() == NumberConstants.ZERO || !CommonUtils.validateExcel(name)) {
+                return DataResult.fail(BusinessResponseCode.FILE_FORMAT_ERROR.getMsg());
+            }
+            // 1.获取Excel标题-->校对表头
+            List<String> excelTitle = ExcelExportUtil.readExcelTitle(file.getInputStream(), name);
+            List<String> systemTitle = TitleAndCodeEnum.IMPORT_MEMBER.getTitle();
+            if (Objects.isNull(excelTitle) || excelTitle.size() != systemTitle.size()) {
+                return DataResult.fail(BusinessResponseCode.FILE_TITLE_ERROR.getMsg());
+            }
+            // 标题校验
+            StringBuilder sb = new StringBuilder();
+            AtomicInteger i = new AtomicInteger();
+            systemTitle.forEach(title -> {
+                if (!StringUtils.equals(title, ExcelExportUtil.getTitle(excelTitle.get(i.get())))) {
+                    sb.append(BusinessResponseCode.FILE_TITLE_CONTENT_ERROR_FRONT.getMsg()).append(i.get() + NumberConstants.ONE).append(BusinessResponseCode.FILE_TITLE_CONTENT_ERROR_AFTER.getMsg()).append(title).append("\n");
+                }
+                i.getAndIncrement();
+            });
+            if (StringUtils.isNotBlank(sb.toString())) {
+                return DataResult.fail(sb.toString());
+            }
+            // 2.读取Excel数据信息
+            List<String> systemCode = TitleAndCodeEnum.IMPORT_MEMBER.getCode();
+            List<LinkedHashMap<String, Object>> data = ExcelExportUtil.readExcelContent(file.getInputStream(), name, systemCode);
+            if (CollectionUtils.isEmpty(data)) {
+                return DataResult.fail(BusinessResponseCode.FILE_DATA_EMPTY.getMsg());
+            }
+            // memberName集合
+            List<String> memberNameList = data.stream().map(a -> String.valueOf(a.get(TitleAndCodeEnum.IMPORT_MEMBER.getCode().get(NumberConstants.ZERO)))).collect(Collectors.toList());
+            if (CollectionUtils.isEmpty(memberNameList)) {
+                return DataResult.fail(BusinessResponseCode.FILE_DATA_EMPTY.getMsg());
+            }
+            // 根据账号查询
+            List<ShopMemberEntity> shopMemberEntityList = shopMemberMapper.findOneByMemberNameList(memberNameList);
+            switch (type) {
+                case NumberConstants.ONE:
+                    if (CollectionUtils.isNotEmpty(shopMemberEntityList)) {
+                        return DataResult.fail(BusinessResponseCode.ACCOUNT_REPEAT.getMsg().concat(DelimiterConstants.COLON).concat(Joiner.on(DelimiterConstants.COMMA).skipNulls().join(shopMemberEntityList.stream().map(ShopMemberEntity::getMemberName).collect(Collectors.toList()))));
+                    }
+                    // 批量导入
+                    memberNameList.forEach(memberName -> saveShopMemberEntity(new ShopMemberEntity(memberName)));
+                    break;
+                case NumberConstants.TWO:
+                    // 批量注销
+                    return removeByMemberIds(shopMemberEntityList.stream().map(ShopMemberEntity::getMemberId).collect(Collectors.toList()));
+                case NumberConstants.THREE:
+                    // 批量删除
+                    return absolutelyDelete(shopMemberEntityList.stream().map(ShopMemberEntity::getMemberId).collect(Collectors.toList()));
+            }
+            return DataResult.success(data);
+        } catch (Exception e) {
+            return DataResult.fail(e.getMessage());
+        }
     }
 
 

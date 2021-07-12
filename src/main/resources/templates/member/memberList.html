@@ -55,16 +55,18 @@
         </fieldset>
     </div>
     <table class="layui-table" id="showTable" lay-filter="showTable"></table>
+    <input type="hidden" id="uploadBtn1"/>
+    <input type="hidden" id="uploadBtn2"/>
+    <input type="hidden" id="uploadBtn3"/>
     <script type="text/html" id="toolbar">
         <div class="layui-btn-container">
             <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add" shiro:hasPermission="shopMember:add"><i class="layui-icon">&#xe61f;</i>新增会员</button>
             <button class="layui-btn layui-btn-sm layui-btn-warm" lay-event="batchCancelled" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe682;</i>批量注销</button>
             <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe640;</i>批量删除</button>
-
-            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="aaaaa" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe67d;</i>下载模板</button>
-            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="aaaaa" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe681;</i>批量导入</button>
-            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="aaaaa" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe682;</i>批量注销</button>
-            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="aaaaa" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe640;</i>批量删除</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="downloadImportTemplate" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe67d;</i>下载模板</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="batchImportMember" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe681;</i>批量导入</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="batchImportCancelled" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe682;</i>批量注销</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="batchImportDeleted" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe640;</i>批量删除</button>
         </div>
     </script>
     <script type="text/html" id="tool">
@@ -262,12 +264,13 @@
     var tokenQuery = token.replace("#", "%23");
     var tableIns1;
     var $ = jQuery = layui.jquery;
-    layui.use(['table', 'layer', 'laydate', 'util'], function () {
+    layui.use(['table', 'layer', 'laydate', 'util', 'upload'], function () {
         var table = layui.table;
         var form = layui.form;
         var layer = layui.layer;
         var laydate = layui.laydate;
         var util = layui.util;
+        var upload = layui.upload;
         /**
          * 日期时间选择器
          */
@@ -281,6 +284,91 @@
         laydate.render({
             elem: '#createEndTime'
             , type: 'datetime'
+        });
+
+        upload.render({
+            elem: '#uploadBtn1' //绑定元素
+            , accept: 'file' //允许上传的文件类型
+            , url: '/shopMember/upload?authorization=' + tokenQuery // 上传文件的路径
+            , data: {
+                type: 1
+            }
+            , before: function () {
+                layer.load(2);
+            }
+            , done: function (res, index, upload) {
+                if (res.code == 0) {
+                    layer.msg("上传成功", {time: 500}, function () {
+                        // 刷新父页面列表
+                        table.reload('showTable');
+                        layer.closeAll();
+                    });
+                } else {
+                    layer.msg("上传失败, " + res.msg, {time: 5000, icon: 5}, function () {
+                        layer.closeAll();
+                    });
+
+                }
+            }
+            , error: function (index, upload) {
+                layer.msg("上传失败", {time: 5000, icon: 5}, function () {
+                    layer.closeAll();
+                });
+            }
+        });
+
+        upload.render({
+            elem: '#uploadBtn2' //绑定元素
+            , accept: 'file' //允许上传的文件类型
+            , url: '/shopMember/upload?authorization=' + tokenQuery // 上传文件的路径
+            , data: {
+                type: 2
+            }
+            , before: function () {
+                layer.load(2);
+            }
+            , done: function (res, index, upload) {
+                if (res.code == 0) {
+                    layer.msg("上传成功", {time: 500}, function () {
+                        // 刷新父页面列表
+                        table.reload('showTable');
+                        layer.closeAll();
+                    });
+                } else {
+                    layer.msg("上传失败, " + res.msg, {time: 5000, icon: 5});
+                    layer.closeAll();
+                }
+            }
+            , error: function (index, upload) {
+                layer.msg("上传失败", {icon: 5});
+            }
+        });
+
+        upload.render({
+            elem: '#uploadBtn3' //绑定元素
+            , accept: 'file' //允许上传的文件类型
+            , url: '/shopMember/upload?authorization=' + tokenQuery // 上传文件的路径
+            , data: {
+                type: 3
+            }
+            , before: function () {
+                layer.load(2);
+            }
+            , done: function (res, index, upload) {
+                if (res.code == 0) {
+                    layer.msg("上传成功", {time: 500}, function () {
+                        // 刷新父页面列表
+                        table.reload('showTable');
+                        layer.closeAll();
+                    });
+                } else {
+                    layer.msg("上传失败, " + res.msg, {time: 5000, icon: 5});
+                    layer.closeAll();
+                }
+            }
+            , error: function (index, upload) {
+                layer.msg("上传失败", {icon: 5});
+            }
         });
 
         form.verify({
@@ -415,6 +503,18 @@
                             layer.setTop(layero);
                         }
                     });
+                    break;
+                case 'downloadImportTemplate':
+                    window.open("../shopMember/downloadImportTemplate?authorization=" + tokenQuery, "_blank");
+                    break;
+                case 'batchImportMember':
+                    $("#uploadBtn1").click();
+                    break;
+                case 'batchImportCancelled':
+                    $("#uploadBtn2").click();
+                    break;
+                case 'batchImportDeleted':
+                    $("#uploadBtn3").click();
                     break;
             }
         });

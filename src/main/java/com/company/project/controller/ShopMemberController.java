@@ -3,11 +3,14 @@ package com.company.project.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.company.project.common.aop.annotation.LogAnnotation;
+import com.company.project.common.utils.DownFileUtil;
+import com.company.project.common.utils.SystemConstants;
 import com.company.project.entity.ShopMemberGrowthValueEntity;
 import com.company.project.entity.ShopMemberWalletEntity;
 import com.company.project.service.ShopMemberGrowthValueService;
 import com.company.project.service.ShopMemberWalletService;
 import io.swagger.annotations.Api;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.ui.Model;
@@ -25,8 +28,10 @@ import com.company.project.common.utils.DataResult;
 
 import com.company.project.entity.ShopMemberEntity;
 import com.company.project.service.ShopMemberService;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 
 
 /**
@@ -222,5 +227,19 @@ public class ShopMemberController extends BaseController {
         return DataResult.success(shopMemberService.logoutListByPage(new Page<>(shopMember.getPage(), shopMember.getLimit()), queryWrapper));
     }
 
+    @ApiOperation(value = "下载导入模板")
+    @GetMapping(value = "shopMember/downloadImportTemplate")
+    @LogAnnotation(title = "会员", action = "下载导入模板")
+    public void downloadImportTemplate(HttpServletResponse response) {
+        DownFileUtil.downFileByPath(response, SystemConstants.importExport + "/会员模板(批量导入、批量撤销、批量删除).xlsx");
+    }
+
+    @ApiOperation(value = "导入模板")
+    @PostMapping("shopMember/upload")
+    @RequiresPermissions("shopMember:add")
+    @ResponseBody
+    public DataResult batchImport(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "type") Integer type) {
+        return shopMemberService.saveFile(file, type);
+    }
 
 }

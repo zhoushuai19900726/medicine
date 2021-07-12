@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.company.project.common.utils.DataResult;
 import com.company.project.entity.ShopMemberEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -37,5 +38,7 @@ public interface ShopMemberService extends IService<ShopMemberEntity> {
     IPage<ShopMemberEntity> logoutListByPage(Page<ShopMemberEntity> page, LambdaQueryWrapper<ShopMemberEntity> wrapper);
 
     DataResult revokeShopMemberEntityById(ShopMemberEntity shopMember);
+
+    DataResult saveFile(MultipartFile file, Integer type);
 }
 
