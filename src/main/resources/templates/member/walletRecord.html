@@ -18,15 +18,12 @@
                 <tr>
                     <th>会员账号</th>
                     <th><b style="color: #ff5749;">钱包余额</b></th>
-                    <th><b style="color: #ff5749;">消费总额</b></th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
                     <td th:text="${shopMemberEntity.memberName}"></td>
                     <td><i class="fa fa-jpy" style="color: #ff5749; font-weight: bold;" th:text="' ' + ${shopMemberWalletEntity.balance}"></i></td>
-                    <!-- TODO 统计订单 -->
-                    <td>钱包：微信：支付宝：其他</td>
                 </tr>
                 </tbody>
             </table>

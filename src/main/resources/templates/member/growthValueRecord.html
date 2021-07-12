@@ -18,15 +18,12 @@
                 <tr>
                     <th>会员账号</th>
                     <th><b style="color: #ff5749;">成长值</b></th>
-                    <th><b style="color: #ff5749;">已兑换</b></th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
                     <td th:text="${shopMemberEntity.memberName}"></td>
                     <td><i class="fa fa-jpy" style="color: #ff5749; font-weight: bold;" th:text="' ' + ${shopMemberGrowthValueEntity.growthValue}"></i></td>
-                    <!-- TODO 成长值兑换 -->
-                    <td></td>
                 </tr>
                 </tbody>
             </table>
