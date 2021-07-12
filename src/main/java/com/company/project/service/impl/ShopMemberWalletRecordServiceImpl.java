@@ -61,4 +61,6 @@ public class ShopMemberWalletRecordServiceImpl extends ServiceImpl<ShopMemberWal
         });
         return typeName.get();
     }
+
+
 }

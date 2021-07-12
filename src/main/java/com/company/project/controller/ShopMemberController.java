@@ -89,6 +89,16 @@ public class ShopMemberController extends BaseController {
         return "member/walletRecord";
     }
 
+    @ApiOperation(value = "跳转进入成长值记录页面")
+    @GetMapping("/index/shopMember/growthValueRecord/{memberId}")
+    public String growthValueRecord(@PathVariable("memberId") String memberId, Model model) {
+        // 会员信息
+        model.addAttribute("shopMemberEntity", shopMemberService.findOneByMemberId(memberId));
+        // 成长值
+        model.addAttribute("shopMemberGrowthValueEntity", shopMemberGrowthValueService.getOne(Wrappers.<ShopMemberGrowthValueEntity>lambdaQuery().in(ShopMemberGrowthValueEntity::getMemberId, memberId)));
+        return "member/growthValueRecord";
+    }
+
     @ApiOperation(value = "新增")
     @PostMapping("shopMember/add")
     @RequiresPermissions("shopMember:add")

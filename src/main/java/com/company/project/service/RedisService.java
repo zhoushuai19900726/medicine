@@ -2,12 +2,18 @@ package com.company.project.service;
 
 import com.company.project.common.exception.BusinessException;
 import com.company.project.common.exception.code.BaseResponseCode;
+import com.company.project.common.utils.DelimiterConstants;
+import com.company.project.common.utils.DictionariesKeyConstant;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 /**
@@ -19,6 +25,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 public class RedisService {
+
     private final StringRedisTemplate redisTemplate;
 
     public RedisService(StringRedisTemplate redisTemplate) {
@@ -69,6 +76,5 @@ public class RedisService {
             this.redisTemplate.delete(keys);
         }
     }
-
 
 }

@@ -529,13 +529,32 @@
                     layer.open({
                         type: 2,
                         title: '<i class="layui-icon">&#xe65e;</i> 消费记录',
-                        id: 'shopMember_detail',
+                        id: 'walletRecordList',
                         scrollbar: false,
                         offset: 'r',
                         anim: 5,
                         maxmin: true,
                         area: ['1000px', '100%'],//宽高不影响最大化
                         content: "../index/shopMember/walletRecord/" + data.memberId,//地址
+                        zIndex: layer.zIndex,
+                        success: function (layero, index) {
+                            // 置顶当前窗口
+                            layer.setTop(layero);
+                        }
+                    });
+                    break;
+                case 'growthValueRecordList':
+                    // 消费记录
+                    layer.open({
+                        type: 2,
+                        title: '<i class="layui-icon">&#xe672;</i> 成长值记录',
+                        id: 'growthValueRecordList',
+                        scrollbar: false,
+                        offset: 'r',
+                        anim: 5,
+                        maxmin: true,
+                        area: ['1000px', '100%'],//宽高不影响最大化
+                        content: "../index/shopMember/growthValueRecord/" + data.memberId,//地址
                         zIndex: layer.zIndex,
                         success: function (layero, index) {
                             // 置顶当前窗口

@@ -38,31 +38,9 @@ public class ShopMemberGrowthValueRecordController extends BaseController {
     @Resource
     private ShopMemberGrowthValueRecordService shopMemberGrowthValueRecordService;
 
-
-    @ApiOperation(value = "跳转到会员成长值记录列表页面")
-    @GetMapping("/index/shopMemberGrowthValueRecord")
-    public String shopMemberGrowthValueRecord() {
-        return "shopmembergrowthvaluerecord/list";
-        }
-
-    @ApiOperation(value = "跳转进入新增/编辑页面")
-    @GetMapping("/index/shopMemberGrowthValueRecord/addOrUpdate")
-    public String addOrUpdate() {
-        return "shopmembergrowthvaluerecord/addOrUpdate";
-    }
-
-    @ApiOperation(value = "新增")
-    @PostMapping("shopMemberGrowthValueRecord/add")
-    @RequiresPermissions("shopMemberGrowthValueRecord:add")
-    @LogAnnotation(title = "会员成长值记录", action = "新增")
-    @ResponseBody
-    public DataResult add(@RequestBody ShopMemberGrowthValueRecordEntity shopMemberGrowthValueRecord){
-        return DataResult.success(shopMemberGrowthValueRecordService.save(shopMemberGrowthValueRecord));
-    }
-
     @ApiOperation(value = "删除")
     @DeleteMapping("shopMemberGrowthValueRecord/delete")
-    @RequiresPermissions("shopMemberGrowthValueRecord:delete")
+    @RequiresPermissions("shopMember:delete")
     @LogAnnotation(title = "会员成长值记录", action = "删除")
     @ResponseBody
     public DataResult delete(@RequestBody @ApiParam(value = "id集合") List<String> ids){
@@ -71,25 +49,16 @@ public class ShopMemberGrowthValueRecordController extends BaseController {
 
     @ApiOperation(value = "更新")
     @PutMapping("shopMemberGrowthValueRecord/update")
-    @RequiresPermissions("shopMemberGrowthValueRecord:update")
+    @RequiresPermissions("shopMember:update")
     @LogAnnotation(title = "会员成长值记录", action = "更新")
     @ResponseBody
     public DataResult update(@RequestBody ShopMemberGrowthValueRecordEntity shopMemberGrowthValueRecord){
         return DataResult.success(shopMemberGrowthValueRecordService.updateById(shopMemberGrowthValueRecord));
     }
 
-    @ApiOperation(value = "查询全部")
-    @GetMapping("shopMemberGrowthValueRecord/listByAll")
-    @RequiresPermissions("shopMemberGrowthValueRecord:list")
-    @LogAnnotation(title = "会员成长值记录", action = "查询全部")
-    @ResponseBody
-    public DataResult findListByAll() {
-        return DataResult.success(shopMemberGrowthValueRecordService.list());
-    }
-
     @ApiOperation(value = "查询分页数据")
     @PostMapping("shopMemberGrowthValueRecord/listByPage")
-    @RequiresPermissions("shopMemberGrowthValueRecord:list")
+    @RequiresPermissions("shopMember:list")
     @LogAnnotation(title = "会员成长值记录", action = "查询分页数据")
     @DataScope
     @ResponseBody
@@ -97,10 +66,10 @@ public class ShopMemberGrowthValueRecordController extends BaseController {
         // 查询条件
         LambdaQueryWrapper<ShopMemberGrowthValueRecordEntity> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper
-                .eq(StringUtils.isNotBlank(shopMemberGrowthValueRecord.getId()), ShopMemberGrowthValueRecordEntity::getId, shopMemberGrowthValueRecord.getId())
+                .eq(ShopMemberGrowthValueRecordEntity::getMemberId, shopMemberGrowthValueRecord.getMemberId())
+                .like(StringUtils.isNotBlank(shopMemberGrowthValueRecord.getRemark()), ShopMemberGrowthValueRecordEntity::getRemark, shopMemberGrowthValueRecord.getRemark())
                 .orderByDesc(ShopMemberGrowthValueRecordEntity::getCreateTime);
-        // 封装数据权限 - 执行查询 - 封装用户 - 响应前端
-        return DataResult.success(encapsulationUser(shopMemberGrowthValueRecordService.page(new Page<>(shopMemberGrowthValueRecord.getPage(), shopMemberGrowthValueRecord.getLimit()), encapsulationDataRights(shopMemberGrowthValueRecord, queryWrapper, ShopMemberGrowthValueRecordEntity::getCreateId))));
+        return DataResult.success(shopMemberGrowthValueRecordService.listByPage(new Page<>(shopMemberGrowthValueRecord.getPage(), shopMemberGrowthValueRecord.getLimit()), queryWrapper));
     }
 
 }

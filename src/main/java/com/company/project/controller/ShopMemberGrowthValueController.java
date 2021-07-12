@@ -97,7 +97,7 @@ public class ShopMemberGrowthValueController extends BaseController {
         // 查询条件
         LambdaQueryWrapper<ShopMemberGrowthValueEntity> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper
-                .eq(StringUtils.isNotBlank(shopMemberGrowthValue.getId()), ShopMemberGrowthValueEntity::getId, shopMemberGrowthValue.getId())
+                .eq(ShopMemberGrowthValueEntity::getId, shopMemberGrowthValue.getId())
                 .orderByDesc(ShopMemberGrowthValueEntity::getCreateTime);
         // 封装数据权限 - 执行查询 - 封装用户 - 响应前端
         return DataResult.success(encapsulationUser(shopMemberGrowthValueService.page(new Page<>(shopMemberGrowthValue.getPage(), shopMemberGrowthValue.getLimit()), encapsulationDataRights(shopMemberGrowthValue, queryWrapper, ShopMemberGrowthValueEntity::getCreateId))));

@@ -50,12 +50,20 @@ public class ShopMemberGrowthValueRecordEntity extends BaseEntity implements Ser
      */
     @TableField("type")
     private Integer type;
+    @TableField(exist = false)
+    private String typeName;
 
     /**
      * 余额
      */
     @TableField("balance")
     private BigDecimal balance;
+
+    /**
+     * 备注
+     */
+    @TableField("remark")
+    private String remark;
 
     /**
      *
