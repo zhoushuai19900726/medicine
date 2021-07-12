@@ -57,14 +57,14 @@
     <table class="layui-table" id="showTable" lay-filter="showTable"></table>
     <script type="text/html" id="toolbar">
         <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add" shiro:hasPermission="shopMemberBlacklist:add"><i class="layui-icon">&#xe61f;</i>新增黑名单</button>
-            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopMemberBlacklist:delete"><i class="layui-icon">&#xe640;</i>批量移除</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopMember:delete"><i class="layui-icon">&#xe640;</i>批量删除</button>
         </div>
     </script>
     <script type="text/html" id="tool">
-        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="detail" shiro:hasPermission="shopMemberBlacklist:list"><i class="layui-icon">&#xe615;</i>查看会员</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="detail" shiro:hasPermission="shopMember:list"><i class="layui-icon">&#xe615;</i>查看会员</a>
         <br/>
-        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="shopMemberBlacklist:delete"><i class="layui-icon">&#xe640;</i>移除黑名单</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="revoke" shiro:hasPermission="shopMember:update"><i class="layui-icon">&#xe9aa;</i>撤销注销</a>
+        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="shopMember:delete"><i class="layui-icon">&#xe640;</i>删除会员</a>
     </script>
     <script type="text/html" id="memberInfo">
         <div class="layui-row">
@@ -153,28 +153,6 @@
             {{#  } }}
         </span>
     </script>
-    <div id="addTpl" hidden>
-        <form class="layui-form layui-form-pane" id="addForm" lay-filter="addForm">
-            <input type="submit" lay-filter="submitBtnForAdd" id="submitBtnForAdd" lay-submit="" hidden/>
-            <blockquote class="layui-elem-quote">账号信息</blockquote>
-            <blockquote class="layui-elem-quote layui-quote-nm">
-                <table class="layui-table" lay-size="sm">
-                    <colgroup>
-                        <col width="100">
-                        <col width="500">
-                    </colgroup>
-                    <tbody>
-                    <tr>
-                        <td class="required">账号</td>
-                        <td>
-                            <input type="text" name="memberName" lay-verify="required|memberName" autocomplete="off" placeholder="请输入账号" class="layui-input"/>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </blockquote>
-        </form>
-    </div>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
 <script th:src="@{/layui/layui.all.js}" charset="utf-8"></script>
@@ -208,39 +186,13 @@
             , type: 'datetime'
         });
 
-        form.verify({
-            memberName: function (value) {
-                var msg = "无效的账号";
-                var shopMemberEntity = {memberName: value};
-                CoreUtil.sendSyncGet("/shopMember/findOneByMemberName", shopMemberEntity, function (res) {
-                    if (res.data) {
-                        msg = "";
-                    }
-                });
-                return msg;
-            },
-        });
-
-        form.on('submit(submitBtnForAdd)', function (data) {
-            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
-            CoreUtil.sendPost("/shopMemberBlacklist/add", data.field, function (res) {
-                layer.msg("保存成功", {time: 500}, function () {
-                    // 刷新父页面列表
-                    table.reload('showTable');
-                    layer.closeAll();
-                });
-            });
-            // //阻止表单跳转。如果需要表单跳转，去掉这段即可。
-            return false;
-        });
-
         //加载table
         tableIns1 = table.render({
             elem: '#showTable'
             , contentType: 'application/json'
             , headers: {"authorization": token}
             , page: true //开启分页
-            , url: '/shopMemberBlacklist/listByPage' //数据接口
+            , url: '/shopMember/logoutListByPage' //数据接口
             , method: 'POST'
             , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
                 return {
@@ -282,19 +234,6 @@
                         tipDialog(ids);
                     }
                     break;
-                case 'add':
-                    layer.open({
-                        id: 'add'
-                        , type: 1
-                        , title: '<i class="layui-icon">&#xe61f;</i> 新增黑名单'
-                        , content: $('#addTpl')
-                        , area: ['30%', '300px']
-                        , btn: ['确定', '取消']
-                        , yes: function (index, layero) {
-                            $("#submitBtnForAdd").click();
-                        }
-                    });
-                    break;
             }
         });
         //列操作
@@ -316,12 +255,22 @@
                         anim: 5,
                         maxmin: true,
                         area: ['1000px', '100%'],//宽高不影响最大化
-                        content: "../index/shopMember/detail/" + data.memberId,//地址
+                        content: "../../index/shopMember/detail/" + data.memberId,//地址
                         zIndex: layer.zIndex,
                         success: function (layero, index) {
                             // 置顶当前窗口
                             layer.setTop(layero);
                         }
+                    });
+                    break;
+                case 'revoke':
+                    // 撤销注销
+                    layer.confirm('确定要撤销吗?', {icon: 3, title: '提示'}, function (index) {
+                        CoreUtil.sendPut("/shopMember/revoke", {memberId: data.memberId}, function (res) {
+                            layer.msg(res.msg, {time: 500}, function () {
+                                tableIns1.reload();
+                            });
+                        });
                     });
                     break;
                 case 'walletRecordList':
@@ -335,7 +284,7 @@
                         anim: 5,
                         maxmin: true,
                         area: ['1000px', '100%'],//宽高不影响最大化
-                        content: "../index/shopMember/walletRecord/" + data.memberId,//地址
+                        content: "../../index/shopMember/walletRecord/" + data.memberId,//地址
                         zIndex: layer.zIndex,
                         success: function (layero, index) {
                             // 置顶当前窗口
@@ -354,7 +303,7 @@
                         anim: 5,
                         maxmin: true,
                         area: ['1000px', '100%'],//宽高不影响最大化
-                        content: "../index/shopMember/growthValueRecord/" + data.memberId,//地址
+                        content: "../../index/shopMember/growthValueRecord/" + data.memberId,//地址
                         zIndex: layer.zIndex,
                         success: function (layero, index) {
                             // 置顶当前窗口
@@ -372,7 +321,7 @@
                 limit: Number.MAX_VALUE,
                 key: $("#key").val()
             };
-            CoreUtil.sendPost("/shopMemberBlacklist/listByPage", exportParams, function (res) {
+            CoreUtil.sendPost("/shopMember/logoutListByPage", exportParams, function (res) {
                 //初始化渲染数据
                 if (res.data != null && res.data.records != null) {
                     table.exportFile(tableIns1.config.id, res.data.records, 'xls');
@@ -382,8 +331,8 @@
 
         //删除
         var tipDialog = function (ids) {
-            layer.confirm('确定要删除么?', {icon: 3, title: '提示'}, function (index) {
-                CoreUtil.sendDelete("/shopMemberBlacklist/delete", ids, function (res) {
+            layer.confirm('删除后数据将无法恢复, 确定要删除么?', {icon: 3, title: '提示'}, function (index) {
+                CoreUtil.sendDelete("/shopMember/absolutelyDelete", ids, function (res) {
                     layer.msg(res.msg, {time: 500}, function () {
                         tableIns1.reload();
                     });

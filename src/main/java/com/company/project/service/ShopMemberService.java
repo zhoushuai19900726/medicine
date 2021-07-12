@@ -33,5 +33,9 @@ public interface ShopMemberService extends IService<ShopMemberEntity> {
     DataResult absolutelyDelete(List<String> memberIdList);
 
     DataResult removeByMemberIds(List<String> memberIdList);
+
+    IPage<ShopMemberEntity> logoutListByPage(Page<ShopMemberEntity> page, LambdaQueryWrapper<ShopMemberEntity> wrapper);
+
+    DataResult revokeShopMemberEntityById(ShopMemberEntity shopMember);
 }
 

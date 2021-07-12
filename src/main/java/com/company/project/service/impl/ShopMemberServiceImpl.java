@@ -70,6 +70,16 @@ public class ShopMemberServiceImpl extends ServiceImpl<ShopMemberMapper, ShopMem
     public IPage<ShopMemberEntity> listByPage(Page<ShopMemberEntity> page, LambdaQueryWrapper<ShopMemberEntity> wrapper) {
         return encapsulatingFieldName(shopMemberMapper.selectPage(page, wrapper));
     }
+    @Override
+    public IPage<ShopMemberEntity> logoutListByPage(Page<ShopMemberEntity> page, LambdaQueryWrapper<ShopMemberEntity> wrapper) {
+        wrapper.eq(ShopMemberEntity::getDeleted, NumberConstants.ONE_I);
+        return encapsulatingFieldName(shopMemberMapper.selectLogoutPage(page, wrapper));
+    }
+
+    @Override
+    public DataResult revokeShopMemberEntityById(ShopMemberEntity shopMember) {
+        return DataResult.success(shopMemberMapper.revokeShopMemberEntityById(shopMember.getMemberId()));
+    }
 
     @Override
     public DataResult saveShopMemberEntity(ShopMemberEntity shopMemberEntity) {

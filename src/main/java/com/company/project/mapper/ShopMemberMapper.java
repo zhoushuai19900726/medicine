@@ -1,11 +1,11 @@
 package com.company.project.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.company.project.entity.ShopMemberEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -29,4 +29,10 @@ public interface ShopMemberMapper extends BaseMapper<ShopMemberEntity> {
 
     @Delete("<script> DELETE FROM shop_member WHERE member_id IN  <foreach collection ='memberIdList' item ='memberId' index ='index' separator=',' open='(' close=')'  > #{memberId} </foreach> </script>")
     void absolutelyDeleteByMemberIdList(@Param("memberIdList") List<String> memberIdList);
+
+    @Select("SELECT * FROM shop_member ${ew.customSqlSegment}")
+    IPage<ShopMemberEntity> selectLogoutPage(IPage<ShopMemberEntity> page, @Param(Constants.WRAPPER) Wrapper<ShopMemberEntity> wrapper);
+
+    @Update("UPDATE shop_member SET deleted = 0 WHERE member_id = #{memberId}")
+    Integer revokeShopMemberEntityById(@Param("memberId") String memberId);
 }

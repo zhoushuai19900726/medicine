@@ -608,7 +608,7 @@
             });
         });
 
-        //注销
+        //删除
         var tipDialog = function (ids) {
             layer.confirm('删除后数据将无法恢复, 确定要删除么?', {icon: 3, title: '提示'}, function (index) {
                 CoreUtil.sendDelete("/shopMember/absolutelyDelete", ids, function (res) {
@@ -618,7 +618,7 @@
                 });
             });
         };
-
+        // 注销
         var tipDialog2 = function (ids) {
             layer.confirm('确定要注销么?', {icon: 3, title: '提示'}, function (index) {
                 CoreUtil.sendDelete("/shopMember/delete", ids, function (res) {
