@@ -22,6 +22,6 @@ public interface ShopRecommendationRelationshipMapper extends BaseMapper<ShopRec
     void absolutelyDeleteByMemberIdList(@Param("memberIdList") List<String> memberIdList);
 
     @Select("SELECT * FROM shop_recommendation_relationship WHERE FIND_IN_SET(member_id, getParentList(#{memberId})) ORDER BY recommend_level")
-    List<ShopRecommendationRelationshipEntity> recursionQueryDistributorRelationByMemberId(@Param("memberId") String memberId);
+    List<ShopRecommendationRelationshipEntity> recursionUpQueryDistributorRelationByMemberId(@Param("memberId") String memberId);
 
 }

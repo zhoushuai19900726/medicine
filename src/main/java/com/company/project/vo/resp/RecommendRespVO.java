@@ -18,6 +18,7 @@ public class RecommendRespVO {
 
     private String id;
     private String name;
+    private String title = "定制显示内容";
     private String parentId;
     private List<RecommendRespVO> children;
 

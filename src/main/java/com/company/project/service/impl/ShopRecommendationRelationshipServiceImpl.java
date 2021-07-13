@@ -1,5 +1,6 @@
 package com.company.project.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.company.project.common.utils.DelimiterConstants;
 import com.company.project.common.utils.NumberConstants;
 import com.company.project.entity.ShopMemberEntity;
@@ -44,12 +45,16 @@ public class ShopRecommendationRelationshipServiceImpl extends ServiceImpl<ShopR
             switch (direction) {
                 case NumberConstants.ONE:
                     // 向上递归 - 查询推荐关系
-                    shopRecommendationRelationshipEntityList.addAll(shopRecommendationRelationshipMapper.recursionQueryDistributorRelationByMemberId(shopMemberEntity.getMemberId()));
+                    shopRecommendationRelationshipEntityList.addAll(shopRecommendationRelationshipMapper.recursionUpQueryDistributorRelationByMemberId(shopMemberEntity.getMemberId()));
                     break;
                 case NumberConstants.TWO:
                     // 向下递归 - 查询推荐关系
-
-
+                    ShopRecommendationRelationshipEntity shopRecommendationRelationshipEntity = shopRecommendationRelationshipMapper.selectOne(Wrappers.<ShopRecommendationRelationshipEntity>lambdaQuery().eq(ShopRecommendationRelationshipEntity::getMemberId, shopMemberEntity.getMemberId()));
+                    if(Objects.nonNull(shopRecommendationRelationshipEntity)){
+                        shopRecommendationRelationshipEntity.setRecommendId(null);
+                        shopRecommendationRelationshipEntityList.add(shopRecommendationRelationshipEntity);
+                        recursionDownQueryDistributorRelationByMemberId(shopRecommendationRelationshipEntity.getMemberId(), shopRecommendationRelationshipEntityList);
+                    }
                     break;
             }
             if (CollectionUtils.isNotEmpty(shopRecommendationRelationshipEntityList)) {
@@ -72,4 +77,13 @@ public class ShopRecommendationRelationshipServiceImpl extends ServiceImpl<ShopR
         }
         return result.get();
     }
+
+    private void recursionDownQueryDistributorRelationByMemberId(String memberId, List<ShopRecommendationRelationshipEntity> shopRecommendationRelationshipEntityList){
+        List<ShopRecommendationRelationshipEntity> recommendationRelationshipEntityList = shopRecommendationRelationshipMapper.selectList(Wrappers.<ShopRecommendationRelationshipEntity>lambdaQuery().eq(ShopRecommendationRelationshipEntity::getRecommendId, memberId));
+        if(CollectionUtils.isNotEmpty(recommendationRelationshipEntityList)){
+            shopRecommendationRelationshipEntityList.addAll(recommendationRelationshipEntityList);
+            recommendationRelationshipEntityList.forEach(recommendationRelationshipEntity -> recursionDownQueryDistributorRelationByMemberId(recommendationRelationshipEntity.getMemberId(), shopRecommendationRelationshipEntityList));
+        }
+    }
+
 }
