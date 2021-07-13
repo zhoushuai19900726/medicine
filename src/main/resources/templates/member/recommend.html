@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/orgCharts/orgChart.css}" media="all">
+    <style>
+        .layui-input-inline-new {
+            border-radius: 2px 0 0 2px;
+            box-sizing: border-box;
+            border: 1px solid #eee;
+            height: 38px;
+            line-height: 20px;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main" shiro:hasPermission="shopMember:add">
+        <blockquote class="layui-elem-quote">查询推荐关系</blockquote>
+        <blockquote class="layui-elem-quote layui-quote-nm">
+            <form class="layui-form layui-form-pane" action="">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><i class="layui-icon">&#xe66f;</i> 会员账号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="memberName" autocomplete="off" placeholder="请输入会员账号" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label"><i class="layui-icon">&#xe857;</i> 垂直关系</label>
+                        <div class="layui-input-inline layui-input-inline-new">
+                            <input type="radio" name="direction" value="1" title="向上">
+                            <input type="radio" name="direction" value="2" title="向下" checked>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn layui-btn-primary layui-border-blue" lay-submit lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
+                    </div>
+                </div>
+            </form>
+        </blockquote>
+    </div>
+</div>
+<div class="orgWrap" style='border:0; padding-right:20px; height:700px; OVERFLOW: auto; '></div>
+<script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/layui/layui.all.js}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/orgCharts/orgChart.js}" charset="utf-8"></script>
+</body>
+</html>
+<script>
+    //获取token
+    var token = CoreUtil.getData("access_token");
+    //地址栏转义token中的#号
+    var tokenQuery = token.replace("#", "%23");
+    var tableIns1;
+    var $ = jQuery = layui.jquery;
+    layui.use(['form', 'layer'], function () {
+
+        var form = layui.form;
+        var layer = layui.layer;
+
+        form.on('submit(data-search-btn)', function (data) {
+            var memberName = $("#memberName").val();
+            var direction = $("input[type='radio'][name='direction']:checked").val();
+            if (memberName) {
+                CoreUtil.sendSyncGet("/shopRecommendationRelationship/recommendationRelationship", {memberName: memberName, direction: direction}, function (res) {
+                    if (res.data) {
+                        orgChart(res.data);
+                    }
+                });
+            }
+            return false;
+        });
+
+    });
+
+    function orgChart(data) {
+        var orgChart = layui.orgChart;
+        orgChart.render({
+            elm: '.orgWrap',
+            data: data,
+            drag: false,//是否可以拖动
+            depth: Number.MAX_VALUE,//初始展开的部门层数,推荐为2 或者3
+            renderdata: function (data, $dom) {
+                var value = data;
+                if (value && Object.keys(value).length) {
+                    var $name = $('<div class="name"></div>');
+                    !!(value.name) && $name.text(value.name);
+                    $dom.append($name);
+                    $dom.addClass('organization');
+                }
+            },
+            callback: function () {
+
+            }
+        });
+    }
+</script>

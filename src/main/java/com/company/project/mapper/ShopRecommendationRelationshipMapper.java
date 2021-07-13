@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -19,4 +20,8 @@ public interface ShopRecommendationRelationshipMapper extends BaseMapper<ShopRec
 
     @Delete("<script> DELETE FROM shop_recommendation_relationship WHERE member_id IN  <foreach collection ='memberIdList' item ='memberId' index ='index' separator=',' open='(' close=')'  > #{memberId} </foreach> </script>")
     void absolutelyDeleteByMemberIdList(@Param("memberIdList") List<String> memberIdList);
+
+    @Select("SELECT * FROM shop_recommendation_relationship WHERE FIND_IN_SET(member_id, getParentList(#{memberId})) ORDER BY recommend_level")
+    List<ShopRecommendationRelationshipEntity> recursionQueryDistributorRelationByMemberId(@Param("memberId") String memberId);
+
 }

@@ -37,6 +37,8 @@ public class ShopRecommendationRelationshipEntity extends BaseEntity implements 
      */
     @TableField("member_id")
     private String memberId;
+    @TableField(exist = false)
+    private String memberName;
 
     /**
      * 推荐人ID

@@ -318,7 +318,7 @@ public class ShopMemberServiceImpl extends ServiceImpl<ShopMemberMapper, ShopMem
                 return DataResult.fail(BusinessResponseCode.FILE_DATA_EMPTY.getMsg());
             }
             // 根据账号查询
-            List<ShopMemberEntity> shopMemberEntityList = shopMemberMapper.findOneByMemberNameList(memberNameList);
+            List<ShopMemberEntity> shopMemberEntityList = shopMemberMapper.findListByMemberNameList(memberNameList);
             switch (type) {
                 case NumberConstants.ONE:
                     if (CollectionUtils.isNotEmpty(shopMemberEntityList)) {

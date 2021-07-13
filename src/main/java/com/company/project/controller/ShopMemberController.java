@@ -10,15 +10,12 @@ import com.company.project.entity.ShopMemberWalletEntity;
 import com.company.project.service.ShopMemberGrowthValueService;
 import com.company.project.service.ShopMemberWalletService;
 import io.swagger.annotations.Api;
-import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
@@ -73,6 +70,12 @@ public class ShopMemberController extends BaseController {
     @GetMapping("/index/shopMember/addOrUpdate")
     public String addOrUpdate() {
         return "member/addOrUpdate";
+    }
+
+    @ApiOperation(value = "跳转进入推荐关系页面")
+    @GetMapping("/index/shopMember/recommend")
+    public String recommend() {
+        return "member/recommend";
     }
 
     @ApiOperation(value = "跳转进入详情页面")
