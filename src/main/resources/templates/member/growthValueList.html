@@ -59,17 +59,13 @@
         </fieldset>
     </div>
     <table class="layui-table" id="showTable" lay-filter="showTable"></table>
-    <script type="text/html" id="toolbar">
-        <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopMember:delete"><i class="layui-icon">&#xe640;</i>批量删除</button>
-        </div>
-    </script>
+
     <script type="text/html" id="tool">
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="detail" shiro:hasPermission="shopMember:list"><i class="layui-icon">&#xe615;</i>查看会员</a>
         <br/>
-        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="revoke" shiro:hasPermission="shopMember:update"><i class="layui-icon">&#xe9aa;</i>撤销注销</a>
-        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="shopMember:delete"><i class="layui-icon">&#xe640;</i>删除会员</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="edit" shiro:hasPermission="shopMember:update"><i class="layui-icon">&#xe642;</i>修改成长值</a>
     </script>
+
     <script type="text/html" id="memberInfo">
         <div class="layui-row">
             <div class="layui-col-xs2">
@@ -128,11 +124,6 @@
             {{#  } }}
         </span>
     </script>
-    <script type="text/html" id="walletBalanceInfo">
-        <div style="width: 100%;" class="layui-badge-rim"><i class="fa fa-jpy"></i> {{ d.walletBalance }}</div>
-        <br/>
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="walletRecordList" shiro:hasPermission="shopMember:manager" style="width: 100%;"><i class="layui-icon">&#xe615;</i>消费记录</a>
-    </script>
     <script type="text/html" id="growthValueInfo">
         <div style="width: 100%;" class="layui-badge-rim"><i class="fa fa-money"></i> {{ d.growthValue }}</div>
         <br/>
@@ -157,6 +148,40 @@
             {{#  } }}
         </span>
     </script>
+    <script type="text/html" id="statusInfo">
+        <input type="checkbox" lay-skin="switch" value="{{d.memberId}}" lay-text="开启|关闭 " lay-filter="memberState" disabled {{d.memberState== 1 ? 'checked' : ''}}/>
+        <br/>
+        <div style="width: 100%;" class="layui-badge-rim"><i class="fa fa-vimeo-square"></i> {{ '1.0.' + d.memberVersion }}</div>
+    </script>
+</div>
+<div id="modifyGrowthValueTpl" hidden>
+    <form class="layui-form layui-form-pane" id="modifyGrowthValueForm" lay-filter="modifyGrowthValueForm">
+        <input type="submit" lay-filter="submitBtnForGrowthValue" id="submitBtnForGrowthValue" lay-submit="" hidden/>
+        <input type="hidden" name="memberId"/>
+        <blockquote class="layui-elem-quote">成长值</blockquote>
+        <blockquote class="layui-elem-quote layui-quote-nm">
+            <table class="layui-table" lay-size="sm">
+                <colgroup>
+                    <col width="200">
+                    <col width="600">
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="required">调整成长值</td>
+                    <td>
+                        <input type="text" name="growthValue" lay-verify="required|number" autocomplete="off" placeholder="请输入需要调整的成长值(可为负数)" class="layui-input"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>备注</td>
+                    <td>
+                        <textarea name="remark" placeholder="请输入备注" class="layui-textarea"></textarea>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </blockquote>
+    </form>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
 <script th:src="@{/layui/layui.all.js}" charset="utf-8"></script>
@@ -169,12 +194,13 @@
     var tokenQuery = token.replace("#", "%23");
     var tableIns1;
     var $ = jQuery = layui.jquery;
-    layui.use(['table', 'layer', 'laydate', 'util'], function () {
+    layui.use(['table', 'layer', 'laydate', 'util', 'upload'], function () {
         var table = layui.table;
         var form = layui.form;
         var layer = layui.layer;
         var laydate = layui.laydate;
         var util = layui.util;
+        var upload = layui.upload;
         /**
          * 日期时间选择器
          */
@@ -190,13 +216,26 @@
             , type: 'datetime'
         });
 
+        form.on('submit(submitBtnForGrowthValue)', function (data) {
+            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
+            CoreUtil.sendPost("/shopMemberGrowthValueRecord/add", data.field, function (res) {
+                layer.msg("保存成功", {time: 500}, function () {
+                    // 刷新父页面列表
+                    table.reload('showTable');
+                    layer.closeAll();
+                });
+            });
+            // //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            return false;
+        });
+
         //加载table
         tableIns1 = table.render({
             elem: '#showTable'
             , contentType: 'application/json'
             , headers: {"authorization": token}
             , page: true //开启分页
-            , url: '/shopMember/logoutListByPage' //数据接口
+            , url: '/shopMember/listByPage' //数据接口
             , method: 'POST'
             , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
                 return {
@@ -211,45 +250,21 @@
                     {width: 60, type: 'checkbox', fixed: 'left'},
                     {width: 60, title: '序号', type: 'numbers', fixed: 'left'},
                     {title: '会员信息', templet: '#memberInfo'},
-                    {width: 215, title: '注册登录信息', templet: '#registerInfo'},
-                    {width: 165, title: '识别码', templet: '#identificationCodeInfo'},
-                    {align: 'center', width: 150, title: '钱包余额', templet: '#walletBalanceInfo'},
-                    {align: 'center', width: 150, title: '成长值', templet: '#growthValueInfo'},
-                    {width: 215, title: 'VIP信息', templet: '#vipInfo'},
+                    {width: 220, title: '注册登录信息', templet: '#registerInfo'},
+                    {width: 180, title: '识别码', templet: '#identificationCodeInfo'},
+                    {align: 'center', width: 200, title: '成长值', templet: '#growthValueInfo'},
+                    {width: 220, title: 'VIP信息', templet: '#vipInfo'},
+                    {align: 'center', width: 100, field: 'memberState', title: '状态', templet: '#statusInfo', fixed: 'right'},
                     {width: 200, toolbar: "#tool", title: '操作', fixed: 'right'}
                 ]
             ]
-            , toolbar: '#toolbar'
         });
 
 
-        //表头工具
-        table.on('toolbar(showTable)', function (obj) {
-            switch (obj.event) {
-                case 'batchDeleted':
-                    var checkStatus = table.checkStatus(obj.config.id);
-                    var data = checkStatus.data;
-                    if (data.length == 0) {
-                        layer.msg("请选择要批量删除的列");
-                    } else {
-                        var ids = [];
-                        $(data).each(function (index, item) {
-                            ids.push(item.memberId);
-                        });
-                        tipDialog(ids);
-                    }
-                    break;
-            }
-        });
         //列操作
         table.on('tool(showTable)', function (obj) {
             var data = obj.data;
             switch (obj.event) {
-                case 'del':
-                    var ids = [];
-                    ids.push(data.memberId);
-                    tipDialog(ids);
-                    break;
                 case 'detail':
                     layer.open({
                         type: 2,
@@ -268,32 +283,21 @@
                         }
                     });
                     break;
-                case 'revoke':
-                    // 撤销注销
-                    layer.confirm('确定要撤销吗?', {icon: 3, title: '提示'}, function (index) {
-                        CoreUtil.sendPut("/shopMember/revoke", {memberId: data.memberId}, function (res) {
-                            layer.msg(res.msg, {time: 500}, function () {
-                                tableIns1.reload();
-                            });
-                        });
-                    });
-                    break;
-                case 'walletRecordList':
-                    // 消费记录
+                case 'edit':
                     layer.open({
-                        type: 2,
-                        title: '<i class="layui-icon">&#xe65e;</i> 消费记录',
-                        id: 'walletRecordList',
-                        scrollbar: false,
-                        offset: 'r',
-                        anim: 5,
-                        maxmin: true,
-                        area: ['1000px', '100%'],//宽高不影响最大化
-                        content: "../../index/shopMember/walletRecord/" + data.memberId,//地址
-                        zIndex: layer.zIndex,
+                        id: 'modifyGrowthValue'
+                        , type: 1
+                        , title: '<i class="layui-icon">&#xe639;</i> 修改成长值'
+                        , content: $('#modifyGrowthValueTpl')
+                        , area: ['30%', '400px']
+                        , btn: ['确定', '取消']
+                        , yes: function (index, layero) {
+                            $("#submitBtnForGrowthValue").click();
+                        },
                         success: function (layero, index) {
-                            // 置顶当前窗口
-                            layer.setTop(layero);
+                            form.val("modifyGrowthValueForm", {
+                                "memberId": data.memberId
+                            });
                         }
                     });
                     break;
@@ -319,6 +323,7 @@
             }
         });
 
+
         //导出
         $('#export').on('click', function () {
             //原先分页limit
@@ -326,24 +331,13 @@
                 limit: Number.MAX_VALUE,
                 key: $("#key").val()
             };
-            CoreUtil.sendPost("/shopMember/logoutListByPage", exportParams, function (res) {
+            CoreUtil.sendPost("/shopMember/listByPage", exportParams, function (res) {
                 //初始化渲染数据
                 if (res.data != null && res.data.records != null) {
                     table.exportFile(tableIns1.config.id, res.data.records, 'xls');
                 }
             });
         });
-
-        //删除
-        var tipDialog = function (ids) {
-            layer.confirm('删除后数据将无法恢复, 确定要删除么?', {icon: 3, title: '提示'}, function (index) {
-                CoreUtil.sendDelete("/shopMember/absolutelyDelete", ids, function (res) {
-                    layer.msg(res.msg, {time: 500}, function () {
-                        tableIns1.reload();
-                    });
-                });
-            });
-        };
 
         /**
          * 执行查询

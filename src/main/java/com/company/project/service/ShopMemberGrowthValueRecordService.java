@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.company.project.common.utils.DataResult;
 import com.company.project.entity.ShopMemberGrowthValueRecordEntity;
 
 import java.util.List;
@@ -18,6 +19,8 @@ import java.util.List;
 public interface ShopMemberGrowthValueRecordService extends IService<ShopMemberGrowthValueRecordEntity> {
 
     IPage<ShopMemberGrowthValueRecordEntity> listByPage(Page<ShopMemberGrowthValueRecordEntity> page, LambdaQueryWrapper<ShopMemberGrowthValueRecordEntity> wrapper);
+
+    DataResult saveShopMemberGrowthValueRecordEntity(ShopMemberGrowthValueRecordEntity shopMemberGrowthValueRecord);
 
 }
 

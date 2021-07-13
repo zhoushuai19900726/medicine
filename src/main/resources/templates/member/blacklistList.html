@@ -16,6 +16,10 @@
         table tbody tr td .laytable-cell-checkbox {
             line-height: 60px;
         }
+
+        table tbody tr td .laytable-cell-numbers {
+            line-height: 60px;
+        }
     </style>
 </head>
 <body>
@@ -253,6 +257,7 @@
             , cols: [
                 [
                     {width: 60, type: 'checkbox', fixed: 'left'},
+                    {width: 60, title: '序号', type: 'numbers', fixed: 'left'},
                     {title: '会员信息', templet: '#memberInfo'},
                     {width: 215, title: '注册登录信息', templet: '#registerInfo'},
                     {width: 165, title: '识别码', templet: '#identificationCodeInfo'},

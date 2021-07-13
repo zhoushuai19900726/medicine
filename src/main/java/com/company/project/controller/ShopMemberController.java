@@ -52,13 +52,17 @@ public class ShopMemberController extends BaseController {
     @Resource
     private ShopMemberGrowthValueService shopMemberGrowthValueService;
 
-
     @ApiOperation(value = "跳转到会员列表页面")
     @GetMapping("/index/shopMember")
     public String shopMember() {
         return "member/memberList";
     }
 
+    @ApiOperation(value = "跳转到会员成长值列表页面")
+    @GetMapping("/index/shopMember/growthValueList")
+    public String growthValueList() {
+        return "member/growthValueList";
+    }
 
     @ApiOperation(value = "跳转到注销会员列表页面")
     @GetMapping("/index/shopMember/logoutList")

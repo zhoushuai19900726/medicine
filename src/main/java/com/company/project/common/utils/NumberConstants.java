@@ -48,6 +48,7 @@ public class NumberConstants {
     public static final Integer ONE_HUNDRED_AND_TEN_I = 110;
     public static final int THIRTY_TWO = 32;
     public static final int FIFTY = 50;
+    public static final Integer NINE_HUNDRED_AND_NINETY_NINE = 999;
     public static final Integer ONE_THOUSAND_I = 1000;
     public static final Integer FIVE_THOUSAND_I = 5000;
     public static final Integer TEN_THOUSAND_I = 10000;

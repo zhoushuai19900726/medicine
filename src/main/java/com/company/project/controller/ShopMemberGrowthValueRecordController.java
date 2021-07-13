@@ -38,6 +38,15 @@ public class ShopMemberGrowthValueRecordController extends BaseController {
     @Resource
     private ShopMemberGrowthValueRecordService shopMemberGrowthValueRecordService;
 
+    @ApiOperation(value = "新增")
+    @PostMapping("shopMemberGrowthValueRecord/add")
+    @RequiresPermissions("shopMember:add")
+    @LogAnnotation(title = "会员成长值记录", action = "新增")
+    @ResponseBody
+    public DataResult add(@RequestBody ShopMemberGrowthValueRecordEntity shopMemberGrowthValueRecord) {
+        return shopMemberGrowthValueRecordService.saveShopMemberGrowthValueRecordEntity(shopMemberGrowthValueRecord);
+    }
+
     @ApiOperation(value = "删除")
     @DeleteMapping("shopMemberGrowthValueRecord/delete")
     @RequiresPermissions("shopMember:delete")

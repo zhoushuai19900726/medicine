@@ -2,9 +2,19 @@ package com.company.project.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.company.project.common.exception.code.BusinessResponseCode;
+import com.company.project.common.utils.DataResult;
 import com.company.project.common.utils.DelimiterConstants;
 import com.company.project.common.utils.DictionariesKeyConstant;
+import com.company.project.common.utils.NumberConstants;
+import com.company.project.entity.ShopMemberEntity;
+import com.company.project.entity.ShopMemberGradeEntity;
+import com.company.project.entity.ShopMemberGrowthValueEntity;
+import com.company.project.mapper.ShopMemberGrowthValueMapper;
+import com.company.project.mapper.ShopMemberMapper;
+import com.company.project.service.ShopMemberGradeService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -15,18 +25,31 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.company.project.mapper.ShopMemberGrowthValueRecordMapper;
 import com.company.project.entity.ShopMemberGrowthValueRecordEntity;
 import com.company.project.service.ShopMemberGrowthValueRecordService;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
-
+@Transactional
 @Service("shopMemberGrowthValueRecordService")
 public class ShopMemberGrowthValueRecordServiceImpl extends ServiceImpl<ShopMemberGrowthValueRecordMapper, ShopMemberGrowthValueRecordEntity> implements ShopMemberGrowthValueRecordService {
 
     @Resource
+    private ShopMemberGrowthValueMapper shopMemberGrowthValueMapper;
+
+    @Resource
     private ShopMemberGrowthValueRecordMapper shopMemberGrowthValueRecordMapper;
+
+    @Resource
+    private ShopMemberMapper shopMemberMapper;
+
+    @Resource
+    private ShopMemberGradeService shopMemberGradeService;
 
     @Resource
     private RedisTemplate redisTemplate;
@@ -34,6 +57,37 @@ public class ShopMemberGrowthValueRecordServiceImpl extends ServiceImpl<ShopMemb
     @Override
     public IPage<ShopMemberGrowthValueRecordEntity> listByPage(Page<ShopMemberGrowthValueRecordEntity> page, LambdaQueryWrapper<ShopMemberGrowthValueRecordEntity> wrapper) {
         return encapsulatingFieldName(shopMemberGrowthValueRecordMapper.selectPage(page, wrapper));
+    }
+
+    @Override
+    public DataResult saveShopMemberGrowthValueRecordEntity(ShopMemberGrowthValueRecordEntity shopMemberGrowthValueRecord) {
+        // 查询会员
+        ShopMemberEntity shopMemberEntity = shopMemberMapper.findOneByMemberId(shopMemberGrowthValueRecord.getMemberId());
+        if (Objects.nonNull(shopMemberEntity)) {
+            // 成长值
+            ShopMemberGrowthValueEntity shopMemberGrowthValueEntity = shopMemberGrowthValueMapper.selectOne(Wrappers.<ShopMemberGrowthValueEntity>lambdaQuery().eq(ShopMemberGrowthValueEntity::getMemberId, shopMemberEntity.getMemberId()));
+            if (Objects.nonNull(shopMemberGrowthValueEntity)) {
+                // 类型：管理员修改
+                shopMemberGrowthValueRecord.setType(NumberConstants.NINE_HUNDRED_AND_NINETY_NINE);
+                // 计算余额
+                BigDecimal balance = shopMemberGrowthValueEntity.getGrowthValue().add(shopMemberGrowthValueRecord.getGrowthValue()).setScale(NumberConstants.TWO, BigDecimal.ROUND_HALF_UP);
+                shopMemberGrowthValueEntity.setGrowthValue(balance);
+                shopMemberGrowthValueMapper.updateById(shopMemberGrowthValueEntity);
+                shopMemberGrowthValueRecord.setBalance(balance);
+                // VIP升级
+                ShopMemberGradeEntity shopMemberGradeEntity = shopMemberGradeService.calculationMemberGradeByGrowthValue(shopMemberGrowthValueEntity);
+                if(!StringUtils.equals(shopMemberGradeEntity.getId(), shopMemberEntity.getMemberGradeId())){
+                    ShopMemberEntity updShopMemberEntity = new ShopMemberEntity();
+                    updShopMemberEntity.setMemberId(shopMemberEntity.getMemberId());
+                    updShopMemberEntity.setMemberGradeId(shopMemberGradeEntity.getId());
+                    updShopMemberEntity.setMemberGradeName(shopMemberGradeEntity.getName());
+                    updShopMemberEntity.setGradeTime(new Date());
+                    shopMemberMapper.updateById(updShopMemberEntity);
+                }
+                return DataResult.success(shopMemberGrowthValueRecordMapper.insert(shopMemberGrowthValueRecord));
+            }
+        }
+        return DataResult.fail(BusinessResponseCode.INVALID_ACCOUNT.getMsg());
     }
 
     private IPage<ShopMemberGrowthValueRecordEntity> encapsulatingFieldName(IPage<ShopMemberGrowthValueRecordEntity> iPage) {
