@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <style>
+        small {
+            color: #bebebe;
+        }
+
+        .floatRight {
+            float: right;
+        }
+    </style>
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main" shiro:hasPermission="shopMember:list">
+        <form class="layui-form layui-form-pane" action="">
+            <input type="hidden" name="id" th:value="${taskRewardSettingsEntity.id}"/>
+            <blockquote class="layui-elem-quote">任务奖励设置</blockquote>
+            <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">新手任务</li>
+                    <li>日常任务</li>
+                    <li>规则设置</li>
+                </ul>
+                <div class="layui-tab-content">
+                    <div class="layui-tab-item layui-show">
+                        <blockquote class="layui-elem-quote layui-quote-nm">
+                            <i class="fa fa-bookmark"></i> 新手任务
+                            <small>新手任务每个用户只奖励一次，相关值必须为大于0的整数</small>
+                        </blockquote>
+                        <blockquote class="layui-elem-quote layui-quote-nm">
+                            <table class="layui-table" lay-size="sm">
+                                <colgroup>
+                                    <col width="100">
+                                    <col width="1000">
+                                </colgroup>
+                                <tbody>
+                                <tr>
+                                    <td align="right">新手欢迎奖励</td>
+                                    <td>
+                                        <div class="layui-inline">
+                                            <label class="layui-form-label">成长值:</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="noviceWelcomeAward" autocomplete="off" class="layui-input" th:value="${taskRewardSettingsEntity.noviceWelcomeAward}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">分</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">设置头像</td>
+                                    <td>
+                                        <div class="layui-inline">
+                                            <label class="layui-form-label">成长值:</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="setUpAvatar" autocomplete="off" class="layui-input" th:value="${taskRewardSettingsEntity.setUpAvatar}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">分</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">设置昵称</td>
+                                    <td>
+                                        <div class="layui-inline">
+                                            <label class="layui-form-label">成长值:</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="setUpNickname" autocomplete="off" class="layui-input" th:value="${taskRewardSettingsEntity.setUpNickname}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">分</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">完善个人信息</td>
+                                    <td>
+                                        <div class="layui-inline">
+                                            <label class="layui-form-label">成长值:</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="improvePersonalInformation" autocomplete="off" class="layui-input"
+                                                       th:value="${taskRewardSettingsEntity.improvePersonalInformation}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">分</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">成功关注一位达人</td>
+                                    <td>
+                                        <div class="layui-inline">
+                                            <label class="layui-form-label">成长值:</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="focusOnTalent" autocomplete="off" class="layui-input" th:value="${taskRewardSettingsEntity.focusOnTalent}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">分</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">首次分享商品或专题</td>
+                                    <td>
+                                        <div class="layui-inline">
+                                            <label class="layui-form-label">成长值:</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="firstShareProducts" autocomplete="off" class="layui-input" th:value="${taskRewardSettingsEntity.firstShareProducts}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">分</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">首次收藏商品或专题</td>
+                                    <td>
+                                        <div class="layui-inline">
+                                            <label class="layui-form-label">成长值:</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="firstCollectionProducts" autocomplete="off" class="layui-input"
+                                                       th:value="${taskRewardSettingsEntity.firstCollectionProducts}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">分</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">首次购物成功</td>
+                                    <td>
+                                        <div class="layui-inline">
+                                            <label class="layui-form-label">成长值:</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="firstShopping" autocomplete="off" class="layui-input" th:value="${taskRewardSettingsEntity.firstShopping}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">分</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">首次完成评价</td>
+                                    <td>
+                                        <div class="layui-inline">
+                                            <label class="layui-form-label">成长值:</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="firstEvaluation" autocomplete="off" class="layui-input" th:value="${taskRewardSettingsEntity.firstEvaluation}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">分</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </blockquote>
+                    </div>
+                    <div class="layui-tab-item">
+                        <blockquote class="layui-elem-quote layui-quote-nm">
+                            <i class="fa fa-bookmark"></i> 日常任务
+                            <small>日常任务可以奖励多次，相关值必须为大于0的整数</small>
+                        </blockquote>
+                        <blockquote class="layui-elem-quote layui-quote-nm">
+                            <table class="layui-table" lay-size="sm">
+                                <colgroup>
+                                    <col width="100">
+                                    <col width="1000">
+                                </colgroup>
+                                <tbody>
+                                <tr>
+                                    <td align="right">每日登录</td>
+                                    <td>
+                                        <div class="layui-inline">
+                                            <label class="layui-form-label">成长值:</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="dailyLogin" autocomplete="off" class="layui-input" th:value="${taskRewardSettingsEntity.dailyLogin}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">分</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">每日签到</td>
+                                    <td>
+                                        <div class="layui-inline">
+                                            <label class="layui-form-label">成长值:</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="dailySign" autocomplete="off" class="layui-input" th:value="${taskRewardSettingsEntity.dailySign}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">分</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">分享商品或专题</td>
+                                    <td>
+                                        <div class="layui-inline">
+                                            <label class="layui-form-label">成长值:</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="shareProducts" autocomplete="off" class="layui-input" th:value="${taskRewardSettingsEntity.shareProducts}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">分</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">邀请好友</td>
+                                    <td>
+                                        <div class="layui-inline">
+                                            <label class="layui-form-label">成长值:</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="inviteFriends" autocomplete="off" class="layui-input" th:value="${taskRewardSettingsEntity.inviteFriends}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">分</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">好友首次下单成功</td>
+                                    <td>
+                                        <div class="layui-inline">
+                                            <label class="layui-form-label">成长值:</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="friendsFirstShopping" autocomplete="off" class="layui-input" th:value="${taskRewardSettingsEntity.friendsFirstShopping}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">分</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">购买天数达标</td>
+                                    <td>
+                                        <div class="layui-inline">
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="standardDays" autocomplete="off" class="layui-input" th:value="${taskRewardSettingsEntity.standardDays}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">天</label>
+                                        </div>
+                                        <div class="layui-inline">
+                                            <label class="layui-form-label">成长值:</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="standardReward" autocomplete="off" class="layui-input" th:value="${taskRewardSettingsEntity.standardReward}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">分</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </blockquote>
+                    </div>
+                    <div class="layui-tab-item">
+                        <blockquote class="layui-elem-quote layui-quote-nm">
+                            <i class="fa fa-bookmark"></i> 规则设置
+                        </blockquote>
+                        <blockquote class="layui-elem-quote layui-quote-nm">
+                            <table class="layui-table" lay-size="sm">
+                                <colgroup>
+                                    <col width="100">
+                                    <col width="1000">
+                                </colgroup>
+                                <tbody>
+                                <tr>
+                                    <td align="right">每连续签到</td>
+                                    <td>
+                                        <div class="layui-inline">
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="continuitySignDays" autocomplete="off" class="layui-input" th:value="${taskRewardSettingsEntity.continuitySignDays}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">天</label>
+                                        </div>
+                                        <div class="layui-inline">
+                                            <label class="layui-form-label">额外奖励:</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="continuitySignReward" autocomplete="off" class="layui-input" th:value="${taskRewardSettingsEntity.continuitySignReward}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">分</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">购物消费</td>
+                                    <td>
+                                        <div class="layui-inline">
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="shoppingConsumption" autocomplete="off" class="layui-input" th:value="${taskRewardSettingsEntity.shoppingConsumption}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">元</label>
+                                        </div>
+                                        <div class="layui-inline">
+                                            <h5>奖励1分成长值（不含运费）</h5>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">商品单价低于</td>
+                                    <td>
+                                        <div class="layui-inline">
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="itemPricing" autocomplete="off" class="layui-input" th:value="${taskRewardSettingsEntity.itemPricing}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">元</label>
+                                        </div>
+                                        <div class="layui-inline">
+                                            <h5>评价不送成长值</h5>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">订单实际支付金额低于</td>
+                                    <td>
+                                        <div class="layui-inline">
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="actualPayment" autocomplete="off" class="layui-input" th:value="${taskRewardSettingsEntity.actualPayment}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">元</label>
+                                        </div>
+                                        <div class="layui-inline">
+                                            <h5>不送成长值</h5>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">单件商品最高可获得</td>
+                                    <td>
+                                        <div class="layui-inline">
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="highestCommodity" autocomplete="off" class="layui-input" th:value="${taskRewardSettingsEntity.highestCommodity}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">分</label>
+                                        </div>
+                                        <div class="layui-inline">
+                                            <h5>成长值</h5>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+            <button class="layui-btn layui-btn-primary layui-border-blue" lay-submit lay-filter="data-save-btn"><i class="layui-icon">&#xe609;</i> 提交配置</button>
+        </form>
+    </div>
+</div>
+<script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/layui/layui.all.js}" charset="utf-8"></script>
+</body>
+</html>
+<script>
+    //获取token
+    var token = CoreUtil.getData("access_token");
+    //地址栏转义token中的#号
+    var tokenQuery = token.replace("#", "%23");
+    var tableIns1;
+    var $ = jQuery = layui.jquery;
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form;
+        var layer = layui.layer;
+
+        // 表单提交
+        form.on('submit(data-save-btn)', function (data) {
+            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
+            CoreUtil.sendPost("/taskRewardSettings/addOrUpdate", data.field, function (res) {
+                layer.msg("保存成功");
+            });
+            // //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            return false;
+        });
+    });
+</script>
