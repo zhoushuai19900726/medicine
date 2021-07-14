@@ -34,7 +34,8 @@ public class AddressLibraryServiceImpl extends ServiceImpl<AddressLibraryMapper,
     @Override
     public DataResult saveAddressLibraryEntity(AddressLibraryEntity addressLibraryEntity) {
         addressLibraryMapper.insert(addressLibraryEntity);
-        redisTemplate.boundHashOps(DictionariesKeyConstant.ADDRESS_LIBRARY_KEY_PREFIX.concat(addressLibraryEntity.getParentId())).put(addressLibraryEntity.getId(), addressLibraryEntity);
+        AddressLibraryEntity queryResult = addressLibraryMapper.selectById(addressLibraryEntity.getId());
+        redisTemplate.boundHashOps(DictionariesKeyConstant.ADDRESS_LIBRARY_KEY_PREFIX.concat(queryResult.getParentId())).put(queryResult.getId(), queryResult);
         return DataResult.success(addressLibraryEntity);
     }
 
