@@ -1,8 +1,10 @@
 package com.company.project.common.filter;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.company.project.common.utils.Constant;
 import com.company.project.common.utils.DictionariesKeyConstant;
+import com.company.project.common.utils.NumberConstants;
 import com.company.project.entity.AddressLibraryEntity;
 import com.company.project.entity.SysDictDetailEntity;
 import com.company.project.entity.SysDictEntity;
@@ -72,7 +74,7 @@ public class LoadPublicDictionary implements CommandLineRunner {
         long dictionaryGroupEndTime = System.currentTimeMillis();
         log.info("缓存管理-->缓存初始化:【数据字典】加载完成, 用时" + (dictionaryGroupEndTime - dictionaryGroupStartTime) + "ms!");
         log.info("/** ==============================  【地址库】 ============================== **/");
-        List<AddressLibraryEntity> addressLibraryEntityList = addressLibraryService.list();
+        List<AddressLibraryEntity> addressLibraryEntityList = addressLibraryService.list(Wrappers.<AddressLibraryEntity>lambdaQuery().eq(AddressLibraryEntity::getIsShow, NumberConstants.ONE_STR));
         if (CollectionUtils.isNotEmpty(addressLibraryEntityList)) {
             Map<String, List<AddressLibraryEntity>> groupBy = addressLibraryEntityList.stream().collect(Collectors.groupingBy(AddressLibraryEntity::getParentId));
             groupBy.forEach((k, v) -> {

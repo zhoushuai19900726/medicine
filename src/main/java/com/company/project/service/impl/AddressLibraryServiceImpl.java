@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.company.project.common.utils.DataResult;
 import com.company.project.common.utils.DelimiterConstants;
 import com.company.project.common.utils.DictionariesKeyConstant;
+import com.company.project.common.utils.NumberConstants;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,11 @@ public class AddressLibraryServiceImpl extends ServiceImpl<AddressLibraryMapper,
     public DataResult updateAddressLibraryEntityById(AddressLibraryEntity addressLibraryEntity) {
         addressLibraryMapper.updateById(addressLibraryEntity);
         AddressLibraryEntity queryResult = addressLibraryMapper.selectById(addressLibraryEntity.getId());
-        redisTemplate.boundHashOps(DictionariesKeyConstant.ADDRESS_LIBRARY_KEY_PREFIX.concat(queryResult.getParentId())).put(queryResult.getId(), queryResult);
+        if (StringUtils.equals(NumberConstants.ONE_STR, addressLibraryEntity.getIsShow())){
+            redisTemplate.boundHashOps(DictionariesKeyConstant.ADDRESS_LIBRARY_KEY_PREFIX.concat(queryResult.getParentId())).put(queryResult.getId(), queryResult);
+        } else {
+            redisTemplate.boundHashOps(DictionariesKeyConstant.ADDRESS_LIBRARY_KEY_PREFIX.concat(queryResult.getParentId())).delete(queryResult.getId());
+        }
         return DataResult.success(addressLibraryEntity);
     }
 
