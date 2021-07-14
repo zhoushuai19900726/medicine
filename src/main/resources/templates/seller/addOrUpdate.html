@@ -56,6 +56,12 @@
                 </div>
             </div>
             <div class="layui-form-item">
+                <label class="layui-form-label required">登陆密码</label>
+                <div class="layui-input-block">
+                    <input type="password" name="password" placeholder="请输入登录密码" lay-verify="required|password" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
                 <label class="layui-form-label required">开馆状态</label>
                 <div class="layui-input-block">
                     <input type="checkbox" name="statusStr" lay-skin="switch" lay-text="开馆|闭馆">
@@ -160,8 +166,10 @@
         form.val("sellerForm", {
             "id": data.id,
             "sellerName": data.sellerName,
+            "shortCode": data.shortCode,
             "address": data.address,
-            "contactNumber": data.contactNumber
+            "contactNumber": data.contactNumber,
+            "password": data.password
         });
         // 地址三级联动
         layarea.render({

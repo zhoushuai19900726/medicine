@@ -61,6 +61,9 @@ public class ShopSellerEntity extends BaseEntity implements Serializable {
     @TableField("contact_number")
     private String contactNumber;
 
+    @TableField("password")
+    private String password;
+
     @TableField("status")
     private Integer status;
     // 页面参数封装

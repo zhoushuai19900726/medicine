@@ -54,7 +54,7 @@ public class ShopSellerController extends BaseController {
     @LogAnnotation(title = "商家管理", action = "新增商家")
     @ResponseBody
     public DataResult add(@RequestBody ShopSellerEntity shopSeller) {
-        return DataResult.success(sellerService.save(shopSeller));
+        return sellerService.saveShopSellerEntity(shopSeller);
     }
 
     @ApiOperation(value = "删除")
@@ -72,7 +72,7 @@ public class ShopSellerController extends BaseController {
     @LogAnnotation(title = "商家管理", action = "更新商家")
     @ResponseBody
     public DataResult update(@RequestBody ShopSellerEntity shopSeller) {
-        return DataResult.success(sellerService.updateById(shopSeller));
+        return sellerService.updateShopSellerEntityById(shopSeller);
     }
 
     @ApiOperation(value = "查询全部")
