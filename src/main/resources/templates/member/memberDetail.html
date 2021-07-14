@@ -115,9 +115,9 @@
                     <tr>
                         <td>所在地</td>
                         <td colspan="3">
-                            <span th:text="${shopMemberEntity.memberProvince}"></span>
-                            <span th:text="${shopMemberEntity.memberCity}"></span>
-                            <span th:text="${shopMemberEntity.memberArea}"></span>
+                            <span  th:text="${@commonController.getNameById(shopMemberEntity.memberProvince, '0').data}"></span>
+                            <span  th:text="${@commonController.getNameById(shopMemberEntity.memberCity, shopMemberEntity.memberProvince).data}"></span>
+                            <span  th:text="${@commonController.getNameById(shopMemberEntity.memberArea, shopMemberEntity.memberCity).data}"></span>
                         </td>
                     </tr>
                     <tr>

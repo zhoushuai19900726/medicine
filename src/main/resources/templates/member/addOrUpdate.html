@@ -117,17 +117,18 @@
                         <td colspan="3">
                             <div  id="area-picker" class="layui-row">
                                 <div class="layui-col-xs4">
-                                    <select name="memberProvince" class="province-selector" lay-filter="province-1" lay-search>
+                                    <select name="memberProvince" lay-filter="province" lay-search th:with="addressLibraryList=${@commonController.findAllSubordinateAddressLibrary('0').data}">
                                         <option value="">请选择省</option>
+                                        <option th:each="addressLibrary : ${addressLibraryList}" th:text="${addressLibrary.name}" th:value="${addressLibrary.id}"></option>
                                     </select>
                                 </div>
                                 <div class="layui-col-xs4">
-                                    <select name="memberCity" class="city-selector" lay-filter="city-1" lay-search>
+                                    <select name="memberCity" lay-filter="city" lay-search>
                                         <option value="">请选择市</option>
                                     </select>
                                 </div>
                                 <div class="layui-col-xs4">
-                                    <select name="memberArea" class="county-selector" lay-filter="county-1" lay-search>
+                                    <select name="memberArea" lay-filter="county" lay-search>
                                         <option value="">请选择区</option>
                                     </select>
                                 </div>
@@ -229,8 +230,16 @@
         /**
          * 加载三级联动
          */
-        layarea.render({
-            elem: '#area-picker'
+        // layarea.render({
+        //     elem: '#area-picker'
+        // });
+
+        form.on('select(province)', function (data) {
+            loadCity(data.value, null);
+        });
+
+        form.on('select(city)', function (data) {
+            loadCounty(data.value, null);
         });
 
         form.verify({
@@ -316,6 +325,54 @@
         });
     });
 
+    function loadCity(province, city) {
+        var form = layui.form;
+        $("select[name='memberCity']").empty();
+        $("select[name='memberCity']").append("<option value=''>请选择市</option>");
+        $("select[name='memberArea']").empty();
+        $("select[name='memberArea']").append("<option value=''>请选择区</option>");
+        if (province) {
+            CoreUtil.sendSyncGet("/common/findAllSubordinateAddressLibrary/" + province, null, function (res) {
+                if (res.data) {
+                    var selectObj = $("select[name='memberCity']");
+                    $(selectObj).empty();
+                    $(selectObj).append("<option value=''>请选择市</option>");
+                    $(res.data).each(function (index, item) {
+                        if (city && city == item.id) {
+                            $(selectObj).append("<option value='" + item.id + "' selected>" + item.name + "</option>");
+                        } else {
+                            $(selectObj).append("<option value='" + item.id + "'>" + item.name + "</option>");
+                        }
+                    });
+                }
+            });
+        }
+        form.render('select');
+    }
+
+    function loadCounty(city, county) {
+        var form = layui.form;
+        $("select[name='memberArea']").empty();
+        $("select[name='memberArea']").append("<option value=''>请选择区</option>");
+        if (city) {
+            CoreUtil.sendSyncGet("/common/findAllSubordinateAddressLibrary/" + city, null, function (res) {
+                if (res.data) {
+                    var selectObj = $("select[name='memberArea']");
+                    $(selectObj).empty();
+                    $(selectObj).append("<option value=''>请选择区</option>");
+                    $(res.data).each(function (index, item) {
+                        if (county && county == item.id) {
+                            $(selectObj).append("<option value='" + item.id + "' selected>" + item.name + "</option>");
+                        } else {
+                            $(selectObj).append("<option value='" + item.id + "'>" + item.name + "</option>");
+                        }
+                    });
+                }
+            });
+        }
+        form.render('select');
+    }
+
     /**
      * 父级页面控制子页面提交表单
      */
@@ -343,6 +400,7 @@
             "memberSex": data.memberSex,
             "memberBirthday": data.memberBirthday,
             "memberIdentity": data.memberIdentity,
+            "memberProvince": data.memberProvince,
             "memberAreaInfo": data.memberAreaInfo,
             "memberMobile": data.memberMobile,
             "memberEmail": data.memberEmail,
@@ -354,15 +412,17 @@
             "alipayAccountNumber": data.alipayAccountNumber
         });
         $("#uploadAvatar").prev().attr("src", data.memberAvatar);
-        // 地址三级联动
-        layarea.render({
-            elem: '#area-picker',
-            data: {
-                province: data.memberProvince,
-                city: data.memberCity,
-                county: data.memberArea
-            }
-        });
+        // // 地址三级联动
+        // layarea.render({
+        //     elem: '#area-picker',
+        //     data: {
+        //         province: data.memberProvince,
+        //         city: data.memberCity,
+        //         county: data.memberArea
+        //     }
+        // });
+        loadCity(data.memberProvince, data.memberCity);
+        loadCounty(data.memberCity, data.memberArea);
     }
 
 </script>

@@ -160,7 +160,7 @@
         $("select[name='county']").empty();
         $("select[name='county']").append("<option value=''>请选择区</option>");
         if (province) {
-            CoreUtil.sendGet("/common/findAllSubordinateAddressLibrary/" + province, null, function (res) {
+            CoreUtil.sendSyncGet("/common/findAllSubordinateAddressLibrary/" + province, null, function (res) {
                 if (res.data) {
                     var selectObj = $("select[name='city']");
                     $(selectObj).empty();
@@ -172,10 +172,10 @@
                             $(selectObj).append("<option value='" + item.id + "'>" + item.name + "</option>");
                         }
                     });
-                    form.render('select');
                 }
             });
         }
+        form.render('select');
     }
 
     function loadCounty(city, county) {
@@ -183,7 +183,7 @@
         $("select[name='county']").empty();
         $("select[name='county']").append("<option value=''>请选择区</option>");
         if (city) {
-            CoreUtil.sendGet("/common/findAllSubordinateAddressLibrary/" + city, null, function (res) {
+            CoreUtil.sendSyncGet("/common/findAllSubordinateAddressLibrary/" + city, null, function (res) {
                 if (res.data) {
                     var selectObj = $("select[name='county']");
                     $(selectObj).empty();
@@ -195,10 +195,10 @@
                             $(selectObj).append("<option value='" + item.id + "'>" + item.name + "</option>");
                         }
                     });
-                    form.render('select');
                 }
             });
         }
+        form.render('select');
     }
 
     /**

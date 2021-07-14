@@ -83,17 +83,35 @@ public class CommonController {
     @ResponseBody
     public DataResult getLabelByValue(String dictionariesKey, String value) {
         AtomicReference<String> label = new AtomicReference<>(DelimiterConstants.EMPTY_STR);
-        redisTemplate.boundHashOps(dictionariesKey).values().forEach(obj -> {
-            try {
-                Map<String, String> map = BeanUtils.describe(obj);
-                if (StringUtils.equals(map.get("value"), value)) {
-                    label.set(map.get("label"));
+        if(StringUtils.isNotBlank(dictionariesKey) && StringUtils.isNotBlank(value)){
+            redisTemplate.boundHashOps(dictionariesKey).values().forEach(obj -> {
+                try {
+                    Map<String, String> map = BeanUtils.describe(obj);
+                    if (StringUtils.equals(map.get("value"), value)) {
+                        label.set(map.get("label"));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+            });
+        }
         return DataResult.success(label.get());
+    }
+
+    @ApiOperation(value = "根据地区ID获取地区名称")
+    @GetMapping("getNameById")
+    @ResponseBody
+    public DataResult getNameById(String id, String parentId) {
+        AtomicReference<String> name = new AtomicReference<>(DelimiterConstants.EMPTY_STR);
+        if(StringUtils.isNotBlank(id) && StringUtils.isNotBlank(parentId)){
+            redisTemplate.boundHashOps(DictionariesKeyConstant.ADDRESS_LIBRARY_KEY_PREFIX.concat(parentId)).values().forEach(obj -> {
+                AddressLibraryEntity addressLibraryEntity = (AddressLibraryEntity) obj;
+                if(StringUtils.equals(addressLibraryEntity.getId(), id)){
+                    name.set(addressLibraryEntity.getName());
+                }
+            });
+        }
+        return DataResult.success(name.get());
     }
 
     private List<Map<String, String>> analysisRedisData(String key) {

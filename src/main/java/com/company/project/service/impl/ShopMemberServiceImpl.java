@@ -69,6 +69,7 @@ public class ShopMemberServiceImpl extends ServiceImpl<ShopMemberMapper, ShopMem
 
     @Override
     public IPage<ShopMemberEntity> listByPage(Page<ShopMemberEntity> page, LambdaQueryWrapper<ShopMemberEntity> wrapper) {
+        wrapper.ne(ShopMemberEntity::getMemberId, DelimiterConstants.SYS_ADMIN_ID);
         return encapsulatingFieldName(shopMemberMapper.selectPage(page, wrapper));
     }
 
