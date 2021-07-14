@@ -110,11 +110,4 @@ public class ShopSellerEntity extends BaseEntity implements Serializable {
         }
     }
 
-    public void setSellerAddress(String sellerAddress) {
-        this.sellerAddress = StringUtils.isNotBlank(sellerAddress) ? sellerAddress :
-                ((StringUtils.isNotBlank(this.province) ? this.province : StringUtils.EMPTY) +
-                        (StringUtils.isNotBlank(this.city) ? this.city : StringUtils.EMPTY) +
-                        (StringUtils.isNotBlank(this.county) ? this.county : StringUtils.EMPTY) +
-                        (StringUtils.isNotBlank(this.address) ? this.address : StringUtils.EMPTY));
-    }
 }

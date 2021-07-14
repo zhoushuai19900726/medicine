@@ -35,6 +35,7 @@ public class AddressLibraryController extends BaseController {
     @Resource
     private AddressLibraryService addressLibraryService;
 
+
     @ApiOperation(value = "跳转到地址库列表页面")
     @GetMapping("/index/addressLibrary")
     public String addressLibrary() {
@@ -47,7 +48,7 @@ public class AddressLibraryController extends BaseController {
     @LogAnnotation(title = "地址库", action = "新增")
     @ResponseBody
     public DataResult add(@RequestBody AddressLibraryEntity addressLibrary) {
-        return DataResult.success(addressLibraryService.save(addressLibrary));
+        return addressLibraryService.saveAddressLibraryEntity(addressLibrary);
     }
 
     @ApiOperation(value = "删除")
@@ -55,8 +56,8 @@ public class AddressLibraryController extends BaseController {
     @RequiresPermissions("addressLibrary:delete")
     @LogAnnotation(title = "地址库", action = "删除")
     @ResponseBody
-    public DataResult delete(@RequestBody @ApiParam(value = "id集合") List<String> ids) {
-        return DataResult.success(addressLibraryService.removeByIds(ids));
+    public DataResult delete(@RequestBody @ApiParam(value = "id集合") List<String> idList) {
+        return addressLibraryService.removeByIdlist(idList);
     }
 
     @ApiOperation(value = "更新")
@@ -65,16 +66,7 @@ public class AddressLibraryController extends BaseController {
     @LogAnnotation(title = "地址库", action = "更新")
     @ResponseBody
     public DataResult update(@RequestBody AddressLibraryEntity addressLibrary) {
-        return DataResult.success(addressLibraryService.updateById(addressLibrary));
-    }
-
-    @ApiOperation(value = "查询全部")
-    @GetMapping("addressLibrary/listByAll")
-    @RequiresPermissions("addressLibrary:list")
-    @LogAnnotation(title = "地址库", action = "查询全部")
-    @ResponseBody
-    public DataResult findListByAll() {
-        return DataResult.success(addressLibraryService.list());
+        return addressLibraryService.updateAddressLibraryEntityById(addressLibrary);
     }
 
     @ApiOperation(value = "查询分页数据")

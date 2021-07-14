@@ -41,17 +41,18 @@
                         <div class="layui-inline" id="area-picker">
                             <label class="layui-form-label">商家地址</label>
                             <div class="layui-input-inline">
-                                <select name="province" class="province-selector" lay-filter="province-1" lay-search>
+                                <select name="province" lay-filter="province" lay-search th:with="addressLibraryList=${@commonController.findAllSubordinateAddressLibrary('0').data}">
                                     <option value="">请选择省</option>
+                                    <option th:each="addressLibrary : ${addressLibraryList}" th:text="${addressLibrary.name}" th:value="${addressLibrary.id}"></option>
                                 </select>
                             </div>
                             <div class="layui-input-inline">
-                                <select name="city" class="city-selector" lay-filter="city-1" lay-search>
+                                <select name="city" lay-filter="city" lay-search>
                                     <option value="">请选择市</option>
                                 </select>
                             </div>
                             <div class="layui-input-inline">
-                                <select name="county" class="county-selector" lay-filter="county-1" lay-search>
+                                <select name="county" lay-filter="county" lay-search>
                                     <option value="">请选择区</option>
                                 </select>
                             </div>
@@ -99,7 +100,7 @@
         <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="del" shiro:hasPermission="seller:delete"><i class="layui-icon">&#xe640;</i>删除</a>
     </script>
     <script type="text/html" id="switchTpl">
-        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="开馆|闭馆" lay-filter="statusStr" {{d.status == 1 ? 'checked' : ''}}/>
+        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="开馆|闭馆" lay-filter="statusStr" {{d.status== 1 ? 'checked' : ''}}/>
     </script>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
@@ -119,12 +120,51 @@
             laydate = layui.laydate,
             layarea = layui.layarea,
             util = layui.util;
+
         /**
          * 加载三级联动
-         */
-        layarea.render({
+         layarea.render({
             elem: '#area-picker'
+        });*/
+
+        form.on('select(province)', function (data) {
+            $("select[name='city']").empty();
+            $("select[name='city']").append("<option value=''>请选择市</option>");
+            $("select[name='county']").empty();
+            $("select[name='county']").append("<option value=''>请选择区</option>");
+            if (data.value) {
+                CoreUtil.sendGet("/common/findAllSubordinateAddressLibrary/" + data.value, null, function (res) {
+                    if (res.data) {
+                        var selectObj = $("select[name='city']");
+                        $(selectObj).empty();
+                        $(selectObj).append("<option value=''>请选择市</option>");
+                        $(res.data).each(function (index, item) {
+                            $(selectObj).append("<option value='" + item.id + "'>" + item.name + "</option>");
+                        });
+                        form.render('select');
+                    }
+                });
+            }
         });
+        form.on('select(city)', function (data) {
+            $("select[name='county']").empty();
+            $("select[name='county']").append("<option value=''>请选择区</option>");
+            if (data.value) {
+                CoreUtil.sendGet("/common/findAllSubordinateAddressLibrary/" + data.value, null, function (res) {
+                    if (res.data) {
+                        var selectObj = $("select[name='county']");
+                        $(selectObj).empty();
+                        $(selectObj).append("<option value=''>请选择区</option>");
+                        $(res.data).each(function (index, item) {
+                            $(selectObj).append("<option value='" + item.id + "'>" + item.name + "</option>");
+                        });
+                        form.render('select');
+                    }
+                });
+            }
+        });
+
+
         /**
          * 日期时间选择器
          */
@@ -259,7 +299,7 @@
         /**
          * 监听table内开关操作
          */
-        form.on('switch(statusStr)', function(obj){
+        form.on('switch(statusStr)', function (obj) {
             // console.log(obj)
             var seller = {};
             seller.id = this.value;
@@ -309,6 +349,9 @@
                 statusList.push($(this).val());
             });
             where.statusList = statusList;
+
+            console.log(where)
+
             // 刷新table
             tableIns1.reload({
                 where: where,

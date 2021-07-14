@@ -3,8 +3,10 @@ package com.company.project.common.filter;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.company.project.common.utils.Constant;
 import com.company.project.common.utils.DictionariesKeyConstant;
+import com.company.project.entity.AddressLibraryEntity;
 import com.company.project.entity.SysDictDetailEntity;
 import com.company.project.entity.SysDictEntity;
+import com.company.project.service.AddressLibraryService;
 import com.company.project.service.SysDictDetailService;
 import com.company.project.service.SysDictService;
 import lombok.extern.slf4j.Slf4j;
@@ -41,12 +43,15 @@ public class LoadPublicDictionary implements CommandLineRunner {
     private SysDictDetailService sysDictDetailService;
 
     @Resource
+    private AddressLibraryService addressLibraryService;
+
+    @Resource
     private RedisTemplate redisTemplate;
 
     @Override
     public void run(String... var1) {
         log.info("缓存管理-->缓存初始化:服务启动!");
-        log.info("/** ==============================  数据字典 ============================== **/");
+        log.info("/** ==============================  【数据字典】 ============================== **/");
         // 获取【数据字典】加载开始时间
         long dictionaryGroupStartTime = System.currentTimeMillis();
         List<SysDictDetailEntity> sysDictDetailEntityList = sysDictDetailService.list();
@@ -66,7 +71,20 @@ public class LoadPublicDictionary implements CommandLineRunner {
         // 获取【数据字典】加载结束时间
         long dictionaryGroupEndTime = System.currentTimeMillis();
         log.info("缓存管理-->缓存初始化:【数据字典】加载完成, 用时" + (dictionaryGroupEndTime - dictionaryGroupStartTime) + "ms!");
-
+        log.info("/** ==============================  【地址库】 ============================== **/");
+        List<AddressLibraryEntity> addressLibraryEntityList = addressLibraryService.list();
+        if (CollectionUtils.isNotEmpty(addressLibraryEntityList)) {
+            Map<String, List<AddressLibraryEntity>> groupBy = addressLibraryEntityList.stream().collect(Collectors.groupingBy(AddressLibraryEntity::getParentId));
+            groupBy.forEach((k, v) -> {
+                // 清空缓存
+                redisTemplate.delete(DictionariesKeyConstant.ADDRESS_LIBRARY_KEY_PREFIX.concat(k));
+                // 加入缓存
+                redisTemplate.boundHashOps(DictionariesKeyConstant.ADDRESS_LIBRARY_KEY_PREFIX.concat(k)).putAll(v.stream().collect(Collectors.toMap(AddressLibraryEntity::getId, a -> a, (k1, k2) -> k1)));
+            });
+        }
+        // 获取【数据字典】加载结束时间
+        long addressLibraryEndTime = System.currentTimeMillis();
+        log.info("缓存管理-->缓存初始化:【地址库】加载完成, 用时" + (addressLibraryEndTime - dictionaryGroupEndTime) + "ms!");
         log.info("缓存管理-->缓存初始化:服务结束!");
     }
 

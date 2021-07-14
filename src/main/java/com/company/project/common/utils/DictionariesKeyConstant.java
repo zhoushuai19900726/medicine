@@ -14,6 +14,10 @@ public class DictionariesKeyConstant {
      */
     public static final String DICT_KEY_PREFIX = "dict-key-";
     /**
+     * 地址库相关
+     */
+    public static final String ADDRESS_LIBRARY_KEY_PREFIX = "address-library-key-";
+    /**
      * 字典KEY
      */
     // 性别
