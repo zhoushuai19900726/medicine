@@ -22,8 +22,7 @@
     layui.config({
         base: '/layui-ext/'
     }).extend({
-        treetable: 'treetable-lay/treetable',
-        iconPicker: 'icon/iconPicker'
+        treetable: 'treetable-lay/treetable'
     }).use(['treetable', 'form'], function () {
         var reloadTreeTable = function () {
             CoreUtil.sendGet("/shopCategory/listAll", null, function (res) {

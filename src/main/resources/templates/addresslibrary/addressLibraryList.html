@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+
+    <div class="layui-row">
+        <div class="layui-col-xs6 layui-col-sm6 layui-col-md4">
+            <table class="layui-table" id="showTable1" lay-filter="showTable1"></table>
+        </div>
+        <div class="layui-col-xs6 layui-col-sm6 layui-col-md4">
+            <table class="layui-table" id="showTable2" lay-filter="showTable2"></table>
+        </div>
+        <div class="layui-col-xs4 layui-col-sm12 layui-col-md4">
+            <table class="layui-table" id="showTable3" lay-filter="showTable3"></table>
+        </div>
+    </div>
+
+
+    <script type="text/html" id="tool">
+        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="addressLibrary:delete"><i class="layui-icon">&#xe640;</i>删除</a>
+    </script>
+    <script type="text/html" id="showTpl">
+        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="开启|关闭" lay-filter="isShow" {{d.isShow== 1 ? 'checked' : ''}}/>
+    </script>
+
+    <script type="text/html" id="toolbar1">
+        <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add" shiro:hasPermission="addressLibrary:add"><i class="layui-icon">&#xe61f;</i>新增一级地址库</button>
+    </script>
+    <script type="text/html" id="toolbar2">
+        <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add" shiro:hasPermission="addressLibrary:add"><i class="layui-icon">&#xe61f;</i>新增二级地址库</button>
+    </script>
+    <script type="text/html" id="toolbar3">
+        <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add" shiro:hasPermission="addressLibrary:add"><i class="layui-icon">&#xe61f;</i>新增三级地址库</button>
+    </script>
+
+    <div id="addTpl" hidden>
+        <form class="layui-form layui-form-pane" id="addForm" lay-filter="addForm">
+            <input type="hidden" name="parentId"/>
+            <blockquote class="layui-elem-quote">地区信息</blockquote>
+            <blockquote class="layui-elem-quote layui-quote-nm">
+                <table class="layui-table" lay-size="sm">
+                    <colgroup>
+                        <col width="100">
+                        <col width="500">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="required">地区名称</td>
+                        <td>
+                            <input type="text" name="name" lay-verify="required" autocomplete="off" placeholder="请输入地区名称" class="layui-input"/>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </blockquote>
+        </form>
+    </div>
+</div>
+<script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/layui/layui.all.js}" charset="utf-8"></script>
+</body>
+</html>
+<script>
+    //获取token
+    var token = CoreUtil.getData("access_token");
+    //地址栏转义token中的#号
+    var tokenQuery = token.replace("#", "%23");
+    var tableIns1, tableIns2, tableIns3;
+    var $ = jQuery = layui.jquery;
+    layui.use(['table', 'layer', 'util'], function () {
+        var table = layui.table;
+        var form = layui.form;
+        var layer = layui.layer;
+        var util = layui.util;
+
+        //加载table
+        tableIns1 = table.render({
+            elem: '#showTable1'
+            , contentType: 'application/json'
+            , headers: {"authorization": token}
+            , page: true //开启分页
+            , limit: 15
+            , url: '/addressLibrary/listByPage' //数据接口
+            , where: {
+                parentId: '0'
+            }
+            , method: 'POST'
+            , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": CoreUtil.isEmpty(res.data) ? 0 : res.data.total, //解析数据长度
+                    "data": CoreUtil.isEmpty(res.data) ? null : res.data.records //解析数据列表
+                }
+            }
+            , cols: [
+                [
+                    {type: 'radio', fixed: 'left'},
+                    {field: 'name', title: '地区名称', edit: 'text'},
+                    {field: 'seq', title: '排序', edit: 'text'},
+                    {width: 100, field: 'isShow', title: '是否显示', templet: '#showTpl'},
+                    {width: 100, toolbar: "#tool", title: '操作'}
+                ]
+            ]
+            , toolbar: '#toolbar1'
+            , done: function (res, curr, count) {
+                $(".layui-table-view[lay-id='showTable1'] .layui-table-body tr[data-index='0'] .layui-form-radio").click();
+            }
+        });
+        table.on('radio(showTable1)', function (obj) {
+            tableIns2.reload({
+                    url: '/addressLibrary/listByPage', //数据接口
+                    where: {parentId: obj.data.id}
+                }
+            );
+            tableIns3.reload({
+                    url: '/addressLibrary/listByPage', //数据接口
+                    where: {parentId: '-1'},
+                }
+            );
+        });
+        //表头工具
+        table.on('toolbar(showTable1)', function (obj) {
+            switch (obj.event) {
+                case 'add':
+                    layer.open({
+                        id: 'add'
+                        , type: 1
+                        , title: '<i class="layui-icon">&#xe61f;</i> 新增一级地址库'
+                        , content: $('#addTpl')
+                        , area: ['30%', '300px']
+                        , btn: ['确定', '取消']
+                        , yes: function (index, layero) {
+                            CoreUtil.sendPost("/addressLibrary/add", form.val("addForm"), function (res) {
+                                layer.msg("保存成功", {time: 500}, function () {
+                                    // 刷新父页面列表
+                                    tableIns1.reload();
+                                    layer.close(index);
+                                });
+                            });
+                        }
+                        , success: function (layero, index) {
+                            form.val("addForm", {
+                                "parentId": '0',
+                            });
+                        }
+                    });
+                    break;
+            }
+        });
+        //列操作
+        table.on('tool(showTable1)', function (obj) {
+            var data = obj.data;
+            switch (obj.event) {
+                case 'del':
+                    var ids = [];
+                    ids.push(data.id);
+                    tipDialog(ids);
+                    break;
+            }
+        });
+
+        /**
+         * 监听单元格编辑
+         */
+        table.on('edit(showTable1)', function (obj) {
+            var value = obj.value //得到修改后的值
+                , data = obj.data //得到所在行所有键值
+                , field = obj.field; //得到字段
+            var para = {};
+            para.id = data.id;
+            para[field] = util.escape(value);
+            CoreUtil.sendPut("/addressLibrary/update", para, function (res) {
+                tableIns1.reload();
+            });
+        });
+        /**
+         * 监听table内开关操作
+         */
+        form.on('switch(isShow)', function (obj) {
+            var para = {};
+            para.id = this.value;
+            para.isShow = obj.elem.checked ? 1 : 0;
+            CoreUtil.sendPut("/addressLibrary/update", para, function (res) {
+                layer.tips(obj.elem.checked ? "开启成功" : "关闭成功", obj.othis);
+            });
+        });
+
+
+        //删除
+        var tipDialog = function (ids, tableIns) {
+            layer.confirm('确定要删除么?', {icon: 3, title: '提示'}, function (index) {
+                CoreUtil.sendDelete("/addressLibrary/delete", ids, function (res) {
+                    layer.msg(res.msg, {time: 500}, function () {
+                        tableIns.reload();
+                    });
+                });
+            });
+        };
+
+        //加载table
+        tableIns2 = table.render({
+            elem: '#showTable2'
+            , contentType: 'application/json'
+            , headers: {"authorization": token}
+            , page: true //开启分页
+            , limit: 15
+            , data: []
+            , method: 'POST'
+            , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": CoreUtil.isEmpty(res.data) ? 0 : res.data.total, //解析数据长度
+                    "data": CoreUtil.isEmpty(res.data) ? null : res.data.records //解析数据列表
+                }
+            }
+            , cols: [
+                [
+                    {type: 'radio', fixed: 'left'},
+                    {field: 'name', title: '地区名称', edit: 'text'},
+                    {field: 'seq', title: '排序', edit: 'text'},
+                    {width: 100, field: 'isShow', title: '是否显示', templet: '#showTpl'},
+                    {width: 100, toolbar: "#tool", title: '操作'}
+                ]
+            ]
+            , toolbar: '#toolbar2'
+            , done: function (res, curr, count) {
+                $(".layui-table-view[lay-id='showTable2'] .layui-table-body tr[data-index='0'] .layui-form-radio").click();
+            }
+        });
+        table.on('radio(showTable2)', function (obj) {
+            tableIns3.reload({
+                    url: '/addressLibrary/listByPage', //数据接口
+                    where: {parentId: obj.data.id}
+                }
+            );
+        });
+        //表头工具
+        table.on('toolbar(showTable2)', function (obj) {
+            switch (obj.event) {
+                case 'add':
+                    layer.open({
+                        id: 'add'
+                        , type: 1
+                        , title: '<i class="layui-icon">&#xe61f;</i> 新增二级地址库'
+                        , content: $('#addTpl')
+                        , area: ['30%', '300px']
+                        , btn: ['确定', '取消']
+                        , yes: function (index, layero) {
+                            CoreUtil.sendPost("/addressLibrary/add", form.val("addForm"), function (res) {
+                                layer.msg("保存成功", {time: 500}, function () {
+                                    // 刷新父页面列表
+                                    tableIns2.reload();
+                                    layer.close(index);
+                                });
+                            });
+                        }
+                        , success: function (layero, index) {
+                            var checkStatus = table.checkStatus('showTable1'); //idTest 即为基础参数 id 对应的值
+                            form.val("addForm", {
+                                "parentId": checkStatus.data[0].id,
+                            });
+                        }
+                    });
+                    break;
+            }
+        });
+        //列操作
+        table.on('tool(showTable2)', function (obj) {
+            var data = obj.data;
+            switch (obj.event) {
+                case 'del':
+                    var ids = [];
+                    ids.push(data.id);
+                    tipDialog(ids, tableIns2);
+                    break;
+            }
+        });
+        /**
+         * 监听单元格编辑
+         */
+        table.on('edit(showTable2)', function (obj) {
+            var value = obj.value //得到修改后的值
+                , data = obj.data //得到所在行所有键值
+                , field = obj.field; //得到字段
+            var para = {};
+            para.id = data.id;
+            para[field] = util.escape(value);
+            CoreUtil.sendPut("/addressLibrary/update", para, function (res) {
+                tableIns2.reload();
+            });
+        });
+
+
+        //加载table
+        tableIns3 = table.render({
+            elem: '#showTable3'
+            , contentType: 'application/json'
+            , headers: {"authorization": token}
+            , page: true //开启分页
+            , limit: 15
+            , data: []
+            , method: 'POST'
+            , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": CoreUtil.isEmpty(res.data) ? 0 : res.data.total, //解析数据长度
+                    "data": CoreUtil.isEmpty(res.data) ? null : res.data.records //解析数据列表
+                }
+            }
+            , cols: [
+                [
+                    {type: 'radio', fixed: 'left'},
+                    {field: 'name', title: '地区名称', edit: 'text'},
+                    {field: 'seq', title: '排序', edit: 'text'},
+                    {width: 100, field: 'isShow', title: '是否显示', templet: '#showTpl'},
+                    {width: 100, toolbar: "#tool", title: '操作'}
+                ]
+            ]
+            , toolbar: '#toolbar3'
+            , done: function (res, curr, count) {
+                $(".layui-table-view[lay-id='showTable3'] .layui-table-body tr[data-index='0'] .layui-form-radio").click();
+            }
+        });
+
+        //表头工具
+        table.on('toolbar(showTable3)', function (obj) {
+            switch (obj.event) {
+                case 'add':
+                    layer.open({
+                        id: 'add'
+                        , type: 1
+                        , title: '<i class="layui-icon">&#xe61f;</i> 新增三级地址库'
+                        , content: $('#addTpl')
+                        , area: ['30%', '300px']
+                        , btn: ['确定', '取消']
+                        , yes: function (index, layero) {
+                            CoreUtil.sendPost("/addressLibrary/add", form.val("addForm"), function (res) {
+                                layer.msg("保存成功", {time: 500}, function () {
+                                    // 刷新父页面列表
+                                    tableIns3.reload();
+                                    layer.close(index);
+                                });
+                            });
+                        }
+                        , success: function (layero, index) {
+                            var checkStatus = table.checkStatus('showTable2'); //idTest 即为基础参数 id 对应的值
+                            form.val("addForm", {
+                                "parentId": checkStatus.data[0].id,
+                            });
+                        }
+                    });
+                    break;
+            }
+        });
+
+        //列操作
+        table.on('tool(showTable3)', function (obj) {
+            var data = obj.data;
+            switch (obj.event) {
+                case 'del':
+                    var ids = [];
+                    ids.push(data.id);
+                    tipDialog(ids, tableIns3);
+                    break;
+            }
+        });
+        /**
+         * 监听单元格编辑
+         */
+        table.on('edit(showTable3)', function (obj) {
+            var value = obj.value //得到修改后的值
+                , data = obj.data //得到所在行所有键值
+                , field = obj.field; //得到字段
+            var para = {};
+            para.id = data.id;
+            para[field] = util.escape(value);
+            CoreUtil.sendPut("/addressLibrary/update", para, function (res) {
+                tableIns3.reload();
+            });
+        });
+
+        /**
+         * 执行查询
+
+         form.on('submit(data-search-btn)', function (data) {
+            // 查询条件
+            var where = data.field;
+            // 刷新table
+            tableIns1.reload({
+                where: where,
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                done: function () {
+                    // 清空查询条件缓存
+                    this.where = {};
+                }
+            });
+            return false;
+        });*/
+
+    });
+</script>
