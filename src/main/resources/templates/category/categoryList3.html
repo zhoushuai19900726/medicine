@@ -51,6 +51,9 @@
         <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit" shiro:hasPermission="shopCategory:update"><i class="layui-icon">&#xe642;</i>编辑</a>
         <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="del" shiro:hasPermission="shopCategory:delete"><i class="layui-icon">&#xe640;</i>删除</a>
     </script>
+    <script type="text/html" id="iconTpl">
+        <img src="{{ d.icon }}"/>
+    </script>
     <script type="text/html" id="isShowSwitchTpl">
         <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="是|否" lay-filter="isShowSwitch" {{d.isShow== 1 ? 'checked' : ''}}/>
     </script>
@@ -100,6 +103,7 @@
                     {type: 'checkbox', fixed: 'left'},
                     {width: 120, field: 'id', title: 'ID', sort: true},
                     {field: 'name', title: '分类名称', edit: 'text'},
+                    {field: 'icon', title: '图标', templet: '#iconTpl'},
                     {width: 80, field: 'level', title: '级别'},
                     {width: 120, field: 'goodsNum', title: '商品数量', sort: true},
                     {width: 100, field: 'isShow', title: '是否显示', templet: '#isShowSwitchTpl'},
@@ -136,7 +140,7 @@
                         type: 2,
                         content: '../index/shopCategory/addOrUpdate3/' + grandParentId,
                         btn: ['提交保存', '取消'],
-                        area: ['70%', '70%'],
+                        area: ['70%', '75%'],
                         scrollbar: false,
                         yes: function (index, layero) {
                             // 得到iframe页的窗口对象并调用子页面方法
@@ -170,9 +174,9 @@
                         id: 'shopCategory_update', //设定一个id，防止重复弹出
                         title: '<i class="layui-icon">&#xe653;</i> 编辑三级商品分类',
                         type: 2,
-                        content: '../index/shopCategory/addOrUpdate2',
+                        content: '../index/shopCategory/addOrUpdate3/' + grandParentId,
                         btn: ['提交保存', '取消'],
-                        area: ['50%', '70%'],
+                        area: ['70%', '75%'],
                         scrollbar: false,
                         yes: function (index, layero) {
                             // 得到iframe页的窗口对象并调用子页面方法
@@ -180,6 +184,7 @@
                         },
                         success: function (layero, index) {
                             // 得到iframe页的窗口对象并调用子页面方法
+                            data.grandParentId = grandParentId;
                             window[layero.find('iframe')[0]['name']].assignment(data);
                         }
                     });
@@ -262,7 +267,7 @@
         form.on('submit(data-search-btn)', function (data) {
             // 查询条件
             var where = data.field;
-            where.parentId  = parentId;
+            where.parentId = parentId;
             // 刷新table
             tableIns1.reload({
                 where: where,

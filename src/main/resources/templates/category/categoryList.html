@@ -63,6 +63,9 @@
         <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit" shiro:hasPermission="shopCategory:update"><i class="layui-icon">&#xe642;</i>编辑</a>
         <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="del" shiro:hasPermission="shopCategory:delete"><i class="layui-icon">&#xe640;</i>删除</a>
     </script>
+    <script type="text/html" id="iconTpl">
+        <img src="{{ d.icon }}"/>
+    </script>
     <script type="text/html" id="isShowSwitchTpl">
         <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="是|否" lay-filter="isShowSwitch" {{d.isShow== 1 ? 'checked' : ''}}/>
     </script>
@@ -123,6 +126,7 @@
                     {type: 'checkbox', fixed: 'left'},
                     {width: 120, field: 'id', title: 'ID', sort: true},
                     {field: 'name', title: '分类名称', edit: 'text'},
+                    {field: 'icon', title: '图标', templet: '#iconTpl'},
                     {width: 80, field: 'level', title: '级别'},
                     {width: 120, field: 'goodsNum', title: '商品数量', sort: true},
                     {width: 100, field: 'isShow', title: '是否显示', templet: '#isShowSwitchTpl'},

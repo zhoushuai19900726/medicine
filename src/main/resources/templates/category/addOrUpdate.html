@@ -21,6 +21,14 @@
                 </div>
             </div>
             <div class="layui-form-item">
+                <label class="layui-form-label required">图标</label>
+                <div class="layui-input-inline">
+                    <input type="hidden" name="icon"/>
+                    <img src="http://localhost:8080/files/20210709/ec89c38d64cc40388d5e4487c2320214.jpeg" style="width: 60px; height: 60px;"/>
+                    <a style="position: absolute; left: 80px; bottom: 2px; cursor: pointer;" id="uploadIcon">上传图标</a>
+                </div>
+            </div>
+            <div class="layui-form-item">
                 <label class="layui-form-label required">排序</label>
                 <div class="layui-input-inline">
                     <input type="text" name="seq" placeholder="请输入排序" lay-verify="required|number" autocomplete="off" class="layui-input">
@@ -62,9 +70,10 @@
     //地址栏转义token中的#号
     var tokenQuery = token.replace("#", "%23");
     var $ = jQuery = layui.jquery;
-    layui.use(['form', 'layer'], function () {
+    layui.use(['form', 'layer', 'upload'], function () {
         var form = layui.form;
         var layer = layui.layer;
+        var upload = layui.upload;
         // 表单提交
         form.on('submit(submitBtnForAdd)', function (data) {
             if(!data.field["isShowStr"]){
@@ -120,6 +129,19 @@
             //阻止表单跳转。如果需要表单跳转，去掉这段即可。
             return false;
         });
+
+        upload.render({
+            elem: '#uploadIcon' //绑定元素
+            , url: '/sysFiles/upload?authorization=' + tokenQuery  // 上传文件的路径
+            , done: function (res) {
+                // 上传完毕回调
+                var index = $(this.item).attr("index");
+                var parentObj = $(this.item).parent();
+                $(parentObj).find("input[name='icon']").attr("value", res.data.src);
+                $(parentObj).find("img").attr("src", res.data.src);
+            }
+        });
+
     });
 
     /**
@@ -138,9 +160,11 @@
         form.val("shopCategoryForm", {
             "id": data.id,
             "name": data.name,
+            "icon": data.icon,
             "seq": data.seq,
             "templateId": data.templateId,
         });
+        $("#uploadIcon").prev().attr("src", data.icon);
         // 是否显示开关
         $("input[type='checkbox'][name='isShowStr']").prop("checked", data.isShow == 1);
         // 是否导航开关

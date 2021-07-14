@@ -43,6 +43,12 @@ public class ShopCategoryEntity extends BaseEntity implements Serializable {
     private String name;
 
     /**
+     * 图标
+     */
+    @TableField("icon")
+    private String icon;
+
+    /**
      * 商品数量
      */
     @TableField("goods_num")

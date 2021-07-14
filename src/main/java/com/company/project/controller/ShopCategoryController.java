@@ -39,6 +39,12 @@ public class ShopCategoryController extends BaseController {
     @Resource
     private ShopCategoryService shopCategoryService;
 
+    @ApiOperation(value = "跳转到展示类目列表页面(运营专用)")
+    @GetMapping("/index/displayCategory")
+    public String displayCategory() {
+        return "category/displayCategory";
+    }
+
     @ApiOperation(value = "跳转到一级列表页面")
     @GetMapping("/index/shopCategory")
     public String shopCategory() {
@@ -129,6 +135,15 @@ public class ShopCategoryController extends BaseController {
     @ResponseBody
     public DataResult listByAll() {
         return DataResult.success(shopCategoryService.listByAll());
+    }
+
+    @ApiOperation(value = "查询所有分类(运营专用)")
+    @GetMapping("shopCategory/listAll")
+    @RequiresPermissions("shopCategory:list")
+    @LogAnnotation(title = "商品分类", action = "查询所有分类")
+    @ResponseBody
+    public DataResult listAll() {
+        return DataResult.success(encapsulationUser(shopCategoryService.list()));
     }
 
     @ApiOperation(value = "查询分页数据")
