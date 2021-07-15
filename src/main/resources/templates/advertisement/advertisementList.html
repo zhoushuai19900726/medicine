@@ -24,9 +24,9 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label">广告名称</label>
+                            <label class="layui-form-label">广告标题</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="name" autocomplete="off" placeholder="请输入广告名称" class="layui-input">
+                                <input type="text" name="title" autocomplete="off" placeholder="请输入广告标题" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline">
@@ -57,6 +57,12 @@
     <script type="text/html" id="tool">
         <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit" shiro:hasPermission="shopAdvertisement:update"><i class="layui-icon">&#xe642;</i>编辑</a>
         <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" shiro:hasPermission="shopAdvertisement:delete"><i class="layui-icon">&#xe640;</i>删除</a>
+    </script>
+    <script type="text/html" id="isShowSwitchTpl">
+        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="是|否" lay-filter="isShowSwitch" {{d.isShow== 1 ? 'checked' : ''}}/>
+    </script>
+    <script type="text/html" id="imgTpl">
+        <img src="{{ d.resUrl }}" />
     </script>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
@@ -109,22 +115,21 @@
             , cols: [
                 [
                     {type: 'checkbox', fixed: 'left'},
-                                            {field: 'id', title: 'ID', sort: true},
-                                            {field: 'spaceId', title: '广告位ID', sort: true},
-                                            {field: 'title', title: '标题', sort: true},
-                                            {field: 'resUrl', title: '资源图片路径', sort: true},
-                                            {field: 'advUrl', title: '广告内容(跳转路径)', sort: true},
-                                            {field: 'startDate', title: '广告开始时间', sort: true},
-                                            {field: 'endDate', title: '广告结束时间', sort: true},
-                                            {field: 'clickNum', title: '广告点击率', sort: true},
-                                            {field: 'isShow', title: '是否显示', sort: true},
-                                            {field: 'seq', title: '排序', sort: true},
-                                            {field: 'createId', title: '', sort: true},
-                                            {field: 'createTime', title: '', sort: true},
-                                            {field: 'updateId', title: '', sort: true},
-                                            {field: 'updateTime', title: '', sort: true},
-                                            {field: 'deleted', title: '', sort: true},
-                                        {width: 150, toolbar: "#tool", title: '操作'}
+                    {width: 100, field: 'id', title: 'ID', sort: true},
+                    {width: 200, field: 'title', title: '标题', edit: 'text'},
+                    {width: 120, field: 'spaceName', title: '广告位'},
+                    {width: 120, field: 'resUrl', title: '资源图片', templet: '#imgTpl'},
+                    {width: 200, field: 'advUrl', title: '广告内容'},
+                    {width: 200, field: 'startDate', title: '广告开始时间', sort: true},
+                    {width: 200, field: 'endDate', title: '广告结束时间', sort: true},
+                    {width: 120, field: 'clickNum', title: '广告点击率'},
+                    {width: 100, field: 'isShow', title: '是否显示', templet: '#isShowSwitchTpl'},
+                    {width: 100, field: 'seq', title: '排序', sort: true},
+                    {width: 100, field: 'createName', title: '创建人'},
+                    {width: 200, field: 'createTime', title: '创建时间', sort: true},
+                    {width: 100, field: 'updateName', title: '修改人'},
+                    {width: 200, field: 'updateTime', title: '修改时间', sort: true},
+                    {width: 150, toolbar: "#tool", title: '操作', fixed: 'right'}
                 ]
             ]
             , toolbar: '#toolbar'
@@ -202,12 +207,25 @@
          */
         table.on('edit(showTable)', function (obj) {
             var value = obj.value //得到修改后的值
-                    , data = obj.data //得到所在行所有键值
-                    , field = obj.field; //得到字段
+                , data = obj.data //得到所在行所有键值
+                , field = obj.field; //得到字段
             var para = {};
             para.id = data.id;
             para[field] = util.escape(value);
             CoreUtil.sendPut("/shopAdvertisement/update", para, function (res) {
+                tableIns1.reload();
+            });
+        });
+        /**
+         * 监听table内开关操作
+         */
+        form.on('switch(isShowSwitch)', function (obj) {
+            // console.log(obj)
+            var param = {};
+            param.id = this.value;
+            param.isShow = obj.elem.checked ? 1 : 0;
+            CoreUtil.sendPut("/shopAdvertisement/update", param, function (res) {
+                layer.tips(obj.elem.checked ? "开启成功" : "关闭成功", obj.othis);
                 tableIns1.reload();
             });
         });

@@ -37,6 +37,8 @@ public class ShopAdvertisementEntity extends BaseEntity implements Serializable 
      */
     @TableField("space_id")
     private String spaceId;
+    @TableField(exist = false)
+    private String spaceName;
 
     /**
      * 标题
@@ -60,13 +62,13 @@ public class ShopAdvertisementEntity extends BaseEntity implements Serializable 
      * 广告开始时间
      */
     @TableField("start_date")
-    private Long startDate;
+    private Date startDate;
 
     /**
      * 广告结束时间
      */
     @TableField("end_date")
-    private Long endDate;
+    private Date endDate;
 
     /**
      * 广告点击率

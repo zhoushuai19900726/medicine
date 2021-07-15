@@ -7,6 +7,7 @@ import com.company.project.common.aop.annotation.LogAnnotation;
 import io.swagger.annotations.Api;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -39,6 +40,9 @@ public class ShopAdvertisingSpaceController extends BaseController {
 
     @Resource
     private ShopAdvertisingSpaceService shopAdvertisingSpaceService;
+
+    @Resource
+    private RedisTemplate redisTemplate;
 
 
     @ApiOperation(value = "跳转到广告位列表页面")
