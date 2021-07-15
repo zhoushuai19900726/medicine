@@ -470,5 +470,14 @@ public class ShopSpuServiceImpl extends ServiceImpl<ShopSpuMapper, ShopSpuEntity
         return param;
     }
 
+    @Override
+    public List<ShopSpuEntity> listByIdList(List<String> spuIdList) {
+        List<ShopSpuEntity> shopSpuEntityList = shopSpuMapper.listByCondition(Wrappers.<ShopSpuEntity>lambdaQuery().in(ShopSpuEntity::getId, spuIdList));
+        IPage<ShopSpuEntity> iPage = new Page<>();
+        iPage.setRecords(shopSpuEntityList);
+        encapsulatingFieldName(iPage);
+        return shopSpuEntityList;
+    }
+
 
 }

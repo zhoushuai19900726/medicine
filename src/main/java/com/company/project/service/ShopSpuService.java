@@ -39,5 +39,8 @@ public interface ShopSpuService extends IService<ShopSpuEntity> {
     ShopSpuEntity copyGoods(ShopSpuEntity shopSpu);
 
     ShopSpuEntity tansferGoods(ShopSpuEntity shopSpu);
+
+    List<ShopSpuEntity> listByIdList(List<String> spuIdList);
+
 }
 

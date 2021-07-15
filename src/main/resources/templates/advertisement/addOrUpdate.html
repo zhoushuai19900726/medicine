@@ -193,7 +193,7 @@
             if (res.data) {
                 $(selectObj).append("<option value=''>请选择商品</option>");
                 $(res.data).each(function (index, item) {
-                    if (jumpContent == item.id) {
+                    if (jumpContent && jumpContent == item.id) {
                         $(selectObj).append("<option value='" + item.id + "' selected>" + item.name + "</option>");
                     } else {
                         $(selectObj).append("<option value='" + item.id + "'>" + item.name + "</option>");
