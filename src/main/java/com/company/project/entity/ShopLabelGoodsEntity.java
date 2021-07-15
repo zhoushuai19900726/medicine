@@ -92,5 +92,8 @@ public class ShopLabelGoodsEntity extends BaseEntity implements Serializable {
     @TableLogic // 注释后进行物理删除
     private Integer deleted;
 
-
+    public ShopLabelGoodsEntity(String labelId, String spuId) {
+        this.labelId = labelId;
+        this.spuId = spuId;
+    }
 }

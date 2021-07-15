@@ -59,14 +59,22 @@ public class ShopLabelGoodsController extends BaseController {
         return "label/viewProduct";
     }
 
-//    @ApiOperation(value = "新增")
-//    @PostMapping("shopLabelGoods/add")
-//    @RequiresPermissions("shopLabel:add")
-//    @LogAnnotation(title = "标签商品", action = "新增")
-//    @ResponseBody
-//    public DataResult add(@RequestBody ShopLabelGoodsEntity shopLabelGoods){
-//        return DataResult.success(shopLabelGoodsService.save(shopLabelGoods));
-//    }
+
+    @ApiOperation(value = "跳转进入关联商品页面")
+    @GetMapping("/index/shopLabelGoods/relationProduct/{labelId}")
+    public String relationProduct(@PathVariable("labelId") String labelId, Model model) {
+        model.addAttribute("labelId", labelId);
+        return "label/relationProduct";
+    }
+
+    @ApiOperation(value = "新增")
+    @PostMapping("shopLabelGoods/add")
+    @RequiresPermissions("shopLabel:add")
+    @LogAnnotation(title = "标签商品", action = "新增")
+    @ResponseBody
+    public DataResult add(@RequestBody ShopLabelGoodsEntity shopLabelGoods){
+        return DataResult.success(shopLabelGoodsService.saveBatch(shopLabelGoods.getSpuIdList().stream().map(spuId ->  new ShopLabelGoodsEntity(shopLabelGoods.getLabelId(), spuId)).collect(Collectors.toList())));
+    }
 
     @ApiOperation(value = "删除")
     @DeleteMapping("shopLabelGoods/delete")
@@ -77,41 +85,17 @@ public class ShopLabelGoodsController extends BaseController {
         return DataResult.success(shopLabelGoodsService.remove(Wrappers.<ShopLabelGoodsEntity>lambdaQuery().eq(ShopLabelGoodsEntity::getLabelId, shopLabelGoods.getLabelId()).in(ShopLabelGoodsEntity::getSpuId, shopLabelGoods.getSpuIdList())));
     }
 
-//    @ApiOperation(value = "更新")
-//    @PutMapping("shopLabelGoods/update")
-//    @RequiresPermissions("shopLabel:update")
-//    @LogAnnotation(title = "标签商品", action = "更新")
-//    @ResponseBody
-//    public DataResult update(@RequestBody ShopLabelGoodsEntity shopLabelGoods){
-//        return DataResult.success(shopLabelGoodsService.updateById(shopLabelGoods));
-//    }
-//
-//    @ApiOperation(value = "查询全部")
-//    @GetMapping("shopLabelGoods/listByAll")
-//    @RequiresPermissions("shopLabel:list")
-//    @LogAnnotation(title = "标签商品", action = "查询全部")
-//    @ResponseBody
-//    public DataResult findListByAll() {
-//        return DataResult.success(shopLabelGoodsService.list());
-//    }
-
-    @ApiOperation(value = "查询分页数据")
+    @ApiOperation(value = "查询分页数据(查询已关联商品)")
     @PostMapping("shopLabelGoods/listByPage")
     @RequiresPermissions("shopLabel:list")
     @LogAnnotation(title = "标签商品", action = "查询分页数据")
     @DataScope
     @ResponseBody
     public DataResult findListByPage(@RequestBody ShopLabelGoodsEntity shopLabelGoods) {
+        // 封装查询条件
+        packagingConditions(shopLabelGoods);
         // 查询条件
         LambdaQueryWrapper<ShopLabelGoodsEntity> queryWrapper = Wrappers.lambdaQuery();
-        if (StringUtils.isNotBlank(shopLabelGoods.getSn())) {
-            ShopSpuEntity shopSpuEntity = new ShopSpuEntity();
-            shopSpuEntity.setSn(shopLabelGoods.getSn());
-            ShopSpuEntity result = shopSpuService.getShopSpuEntityByUnique(shopSpuEntity);
-            if (Objects.nonNull(result)) {
-                shopLabelGoods.setSpuId(result.getId());
-            }
-        }
         queryWrapper
                 .eq(ShopLabelGoodsEntity::getLabelId, shopLabelGoods.getLabelId())
                 .eq(StringUtils.isNotBlank(shopLabelGoods.getSpuId()), ShopLabelGoodsEntity::getSpuId, shopLabelGoods.getSpuId())
@@ -132,4 +116,36 @@ public class ShopLabelGoodsController extends BaseController {
         return DataResult.success(iPage2);
     }
 
+    @ApiOperation(value = "查询分页数据(所有可关联商品)")
+    @PostMapping("shopLabelGoods/listByPage2")
+    @RequiresPermissions("shopLabel:list")
+    @LogAnnotation(title = "标签商品", action = "查询分页数据")
+    @DataScope
+    @ResponseBody
+    public DataResult findListByPage2(@RequestBody ShopLabelGoodsEntity shopLabelGoods) {
+        // 封装查询条件
+        packagingConditions(shopLabelGoods);
+        // 查询当前标签已关联商品
+        List<ShopLabelGoodsEntity> shopLabelGoodsEntityList = shopLabelGoodsService.list(Wrappers.<ShopLabelGoodsEntity>lambdaQuery().eq(ShopLabelGoodsEntity::getLabelId, shopLabelGoods.getLabelId()));
+        List<String> spuIdList = shopLabelGoodsEntityList.stream().map(ShopLabelGoodsEntity::getSpuId).collect(Collectors.toList());
+        // 查询条件
+        LambdaQueryWrapper<ShopSpuEntity> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper
+                .eq(StringUtils.isNotBlank(shopLabelGoods.getSpuId()), ShopSpuEntity::getId, shopLabelGoods.getSpuId())
+                .notIn(CollectionUtils.isNotEmpty(spuIdList), ShopSpuEntity::getId, spuIdList)
+                .orderByDesc(ShopSpuEntity::getCreateTime);
+        // 执行查询
+        return DataResult.success(shopSpuService.listByPage(new Page<>(shopLabelGoods.getPage(), shopLabelGoods.getLimit()), queryWrapper));
+    }
+
+    private void packagingConditions(ShopLabelGoodsEntity shopLabelGoods){
+        if (StringUtils.isNotBlank(shopLabelGoods.getSn())) {
+            ShopSpuEntity shopSpuEntity = new ShopSpuEntity();
+            shopSpuEntity.setSn(shopLabelGoods.getSn());
+            ShopSpuEntity result = shopSpuService.getShopSpuEntityByUnique(shopSpuEntity);
+            if (Objects.nonNull(result)) {
+                shopLabelGoods.setSpuId(result.getId());
+            }
+        }
+    }
 }

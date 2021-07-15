@@ -215,7 +215,23 @@
                     });
                     break;
                 case 'relatedProduct':
-
+                    // 关联商品
+                    layer.open({
+                        type: 2,
+                        title: '<i class="layui-icon">&#xe674;</i> 关联商品',
+                        id: 'viewProduct',
+                        scrollbar: false,
+                        offset: 'r',
+                        anim: 5,
+                        maxmin: true,
+                        area: ['1000px', '100%'],//宽高不影响最大化
+                        content: "../../index/shopLabelGoods/relationProduct/" + data.id,//地址
+                        zIndex: layer.zIndex,
+                        success: function (layero, index) {
+                            // 置顶当前窗口
+                            layer.setTop(layero);
+                        }
+                    });
                     break;
             }
         });
