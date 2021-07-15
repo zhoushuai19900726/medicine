@@ -4,18 +4,22 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.company.project.common.aop.annotation.DataScope;
 import com.company.project.common.aop.annotation.LogAnnotation;
+import com.company.project.common.utils.DictionariesKeyConstant;
 import io.swagger.annotations.Api;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.company.project.common.utils.DataResult;
 
@@ -40,7 +44,6 @@ public class ShopAdvertisementController extends BaseController {
     @Resource
     private ShopAdvertisementService shopAdvertisementService;
 
-
     @ApiOperation(value = "跳转到广告列表页面")
     @GetMapping("/index/shopAdvertisement")
     public String shopAdvertisement() {
@@ -59,7 +62,7 @@ public class ShopAdvertisementController extends BaseController {
     @LogAnnotation(title = "广告", action = "新增")
     @ResponseBody
     public DataResult add(@RequestBody ShopAdvertisementEntity shopAdvertisement) {
-        return DataResult.success(shopAdvertisementService.save(shopAdvertisement));
+        return shopAdvertisementService.saveShopAdvertisementEntity(shopAdvertisement);
     }
 
     @ApiOperation(value = "删除")
@@ -68,7 +71,7 @@ public class ShopAdvertisementController extends BaseController {
     @LogAnnotation(title = "广告", action = "删除")
     @ResponseBody
     public DataResult delete(@RequestBody @ApiParam(value = "id集合") List<String> ids) {
-        return DataResult.success(shopAdvertisementService.removeByIds(ids));
+        return shopAdvertisementService.removeShopAdvertisementEntityByIds(ids);
     }
 
     @ApiOperation(value = "更新")
@@ -77,7 +80,7 @@ public class ShopAdvertisementController extends BaseController {
     @LogAnnotation(title = "广告", action = "更新")
     @ResponseBody
     public DataResult update(@RequestBody ShopAdvertisementEntity shopAdvertisement) {
-        return DataResult.success(shopAdvertisementService.updateById(shopAdvertisement));
+        return shopAdvertisementService.updateShopAdvertisementEntityById(shopAdvertisement);
     }
 
     @ApiOperation(value = "查询全部")

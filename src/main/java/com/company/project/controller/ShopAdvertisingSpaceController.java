@@ -7,12 +7,9 @@ import com.company.project.common.aop.annotation.LogAnnotation;
 import io.swagger.annotations.Api;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
@@ -41,10 +38,6 @@ public class ShopAdvertisingSpaceController extends BaseController {
     @Resource
     private ShopAdvertisingSpaceService shopAdvertisingSpaceService;
 
-    @Resource
-    private RedisTemplate redisTemplate;
-
-
     @ApiOperation(value = "跳转到广告位列表页面")
     @GetMapping("/index/shopAdvertisingSpace")
     public String shopAdvertisingSpace() {
@@ -63,7 +56,7 @@ public class ShopAdvertisingSpaceController extends BaseController {
     @LogAnnotation(title = "广告位", action = "新增")
     @ResponseBody
     public DataResult add(@RequestBody ShopAdvertisingSpaceEntity shopAdvertisingSpace) {
-        return DataResult.success(shopAdvertisingSpaceService.save(shopAdvertisingSpace));
+        return shopAdvertisingSpaceService.saveShopAdvertisingSpaceEntity(shopAdvertisingSpace);
     }
 
     @ApiOperation(value = "删除")
@@ -72,7 +65,7 @@ public class ShopAdvertisingSpaceController extends BaseController {
     @LogAnnotation(title = "广告位", action = "删除")
     @ResponseBody
     public DataResult delete(@RequestBody @ApiParam(value = "id集合") List<String> ids) {
-        return DataResult.success(shopAdvertisingSpaceService.removeByIds(ids));
+        return shopAdvertisingSpaceService.removeShopAdvertisingSpaceEntityByIds(ids);
     }
 
     @ApiOperation(value = "更新")
@@ -81,7 +74,20 @@ public class ShopAdvertisingSpaceController extends BaseController {
     @LogAnnotation(title = "广告位", action = "更新")
     @ResponseBody
     public DataResult update(@RequestBody ShopAdvertisingSpaceEntity shopAdvertisingSpace) {
-        return DataResult.success(shopAdvertisingSpaceService.updateById(shopAdvertisingSpace));
+        return shopAdvertisingSpaceService.updateShopAdvertisingSpaceEntityById(shopAdvertisingSpace);
+    }
+
+    @ApiOperation(value = "根据唯一索引查询")
+    @PostMapping("shopAdvertisingSpace/findOneByUnique")
+    @RequiresPermissions("shopAdvertisingSpace:list")
+    @LogAnnotation(title = "根据SPU商品货号查询", action = "查询")
+    @ResponseBody
+    public DataResult findOneByUnique(@RequestBody ShopAdvertisingSpaceEntity shopAdvertisingSpace) {
+        LambdaQueryWrapper<ShopAdvertisingSpaceEntity> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper
+                .eq(ShopAdvertisingSpaceEntity::getGetTag, shopAdvertisingSpace.getGetTag())
+                .ne(StringUtils.isNotBlank(shopAdvertisingSpace.getId()), ShopAdvertisingSpaceEntity::getId, shopAdvertisingSpace.getId());
+        return DataResult.success(shopAdvertisingSpaceService.getOne(queryWrapper));
     }
 
     @ApiOperation(value = "查询全部")

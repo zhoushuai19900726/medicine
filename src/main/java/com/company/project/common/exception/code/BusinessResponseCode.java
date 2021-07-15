@@ -40,8 +40,14 @@ public enum BusinessResponseCode implements ResponseCodeInterface {
     FILE_TITLE_CONTENT_ERROR_FRONT(930004, "表头名字和系统不对应,第一行第"),
     FILE_TITLE_CONTENT_ERROR_AFTER(930005, "个单元格应为:"),
     FILE_DATA_EMPTY(930006, "文件数据为空"),
-    ;
 
+
+    /**
+     * 错误码 - 广告模块
+     */
+    GET_TAG_REPEAT(940001, "获取标记已存在"),
+
+    ;
     /**
      * 错误码
      */

@@ -2,15 +2,10 @@ package com.company.project.common.filter;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.company.project.common.utils.Constant;
 import com.company.project.common.utils.DictionariesKeyConstant;
 import com.company.project.common.utils.NumberConstants;
-import com.company.project.entity.AddressLibraryEntity;
-import com.company.project.entity.SysDictDetailEntity;
-import com.company.project.entity.SysDictEntity;
-import com.company.project.service.AddressLibraryService;
-import com.company.project.service.SysDictDetailService;
-import com.company.project.service.SysDictService;
+import com.company.project.entity.*;
+import com.company.project.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
@@ -45,6 +40,12 @@ public class LoadPublicDictionary implements CommandLineRunner {
     private SysDictDetailService sysDictDetailService;
 
     @Resource
+    private ShopAdvertisementService shopAdvertisementService;
+
+    @Resource
+    private ShopAdvertisingSpaceService shopAdvertisingSpaceService;
+
+    @Resource
     private AddressLibraryService addressLibraryService;
 
     @Resource
@@ -73,9 +74,20 @@ public class LoadPublicDictionary implements CommandLineRunner {
             Map<String, List<AddressLibraryEntity>> groupBy = addressLibraryEntityList.stream().collect(Collectors.groupingBy(AddressLibraryEntity::getParentId));
             groupBy.forEach((k, v) -> redisTemplate.boundHashOps(DictionariesKeyConstant.ADDRESS_LIBRARY_KEY_PREFIX.concat(k)).putAll(v.stream().collect(Collectors.toMap(AddressLibraryEntity::getId, a -> a, (k1, k2) -> k1))));
         }
-        // 获取【数据字典】加载结束时间
+        // 获取【地址库】加载结束时间
         long addressLibraryEndTime = System.currentTimeMillis();
         log.info("缓存管理-->缓存初始化:【地址库】加载完成, 用时" + (addressLibraryEndTime - dictionaryGroupEndTime) + "ms!");
+        log.info("/** ==============================  【广告】 ============================== **/");
+        List<ShopAdvertisementEntity> shopAdvertisementEntityList = shopAdvertisementService.list();
+        if (CollectionUtils.isNotEmpty(shopAdvertisementEntityList)) {
+            Map<String, List<ShopAdvertisementEntity>> groupBy = shopAdvertisementEntityList.stream().collect(Collectors.groupingBy(ShopAdvertisementEntity::getSpaceId));
+            List<ShopAdvertisingSpaceEntity> shopAdvertisingSpaceEntityList = shopAdvertisingSpaceService.listByIds(groupBy.keySet());
+            Map<String, String> shopAdvertisingSpaceEntityMap = shopAdvertisingSpaceEntityList.stream().collect(Collectors.toMap(ShopAdvertisingSpaceEntity::getId, ShopAdvertisingSpaceEntity::getGetTag, (k1, k2) -> k1));
+            groupBy.forEach((k, v) -> redisTemplate.boundHashOps(DictionariesKeyConstant.ADV_KEY_PREFIX.concat(shopAdvertisingSpaceEntityMap.get(k))).putAll(v.stream().collect(Collectors.toMap(ShopAdvertisementEntity::getId, a -> a, (k1, k2) -> k1))));
+        }
+        // 获取【广告】加载结束时间
+        long shopAdvertisementEndTime = System.currentTimeMillis();
+        log.info("缓存管理-->缓存初始化:【广告】加载完成, 用时" + (shopAdvertisementEndTime - addressLibraryEndTime) + "ms!");
         log.info("缓存管理-->缓存初始化:服务结束!");
     }
 

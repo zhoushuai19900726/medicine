@@ -907,7 +907,7 @@
         form.verify({
             'SPU_SN': function (value, item) {
                 var checkResult = 'SPU商品货号已存在';
-                CoreUtil.sendSyncPut("/goods/findOneByUnique", {id: form.val("shopSpuEntity").id, sn: value.trim()}, function (res) {
+                CoreUtil.sendSyncPost("/goods/findOneByUnique", {id: form.val("shopSpuEntity").id, sn: value.trim()}, function (res) {
                     if (!res.data) {
                         checkResult = '';
                     }

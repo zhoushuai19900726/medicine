@@ -257,8 +257,8 @@ public class ShopSpuController extends BaseController {
     }
 
     @ApiOperation(value = "根据唯一索引查询")
-    @GetMapping("goods/findOneByUnique")
-    @RequiresPermissions("goods:update")
+    @PostMapping("goods/findOneByUnique")
+    @RequiresPermissions("goods:list")
     @LogAnnotation(title = "根据SPU商品货号查询", action = "查询")
     @ResponseBody
     public DataResult findOneByUnique(@RequestBody ShopSpuEntity shopSpuEntity) {
@@ -267,7 +267,7 @@ public class ShopSpuController extends BaseController {
 
     @ApiOperation(value = "根据商家生成唯一商品货号")
     @GetMapping("goods/getUniqueSnBySeller/{sellerId}")
-    @RequiresPermissions("goods:update")
+    @RequiresPermissions("goods:list")
     @LogAnnotation(title = "根据商家生成唯一商品货号", action = "查询")
     @ResponseBody
     public DataResult getUniqueSnBySeller(@PathVariable("sellerId") String sellerId) {

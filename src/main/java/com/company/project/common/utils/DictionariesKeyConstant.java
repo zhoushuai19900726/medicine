@@ -14,6 +14,10 @@ public class DictionariesKeyConstant {
      */
     public static final String DICT_KEY_PREFIX = "dict-key-";
     /**
+     * 广告相关
+     */
+    public static final String ADV_KEY_PREFIX = "adv-key-";
+    /**
      * 地址库相关
      */
     // key: parentId value: List<地址库子集>
