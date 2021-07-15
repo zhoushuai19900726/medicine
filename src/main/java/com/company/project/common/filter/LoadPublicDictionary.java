@@ -61,14 +61,7 @@ public class LoadPublicDictionary implements CommandLineRunner {
             Map<String, List<SysDictDetailEntity>> groupBy = sysDictDetailEntityList.stream().collect(Collectors.groupingBy(SysDictDetailEntity::getDictId));
             List<SysDictEntity> sysDictEntityList = sysDictService.listByIds(groupBy.keySet());
             Map<String, String> sysDictEntityMMap = sysDictEntityList.stream().collect(Collectors.toMap(SysDictEntity::getId, SysDictEntity::getName, (k1, k2) -> k1));
-            groupBy.forEach((k, v) -> {
-                if (sysDictEntityMMap.containsKey(k)) {
-                    // 清空缓存
-                    redisTemplate.delete(DictionariesKeyConstant.DICT_KEY_PREFIX.concat(sysDictEntityMMap.get(k)));
-                    // 加入缓存
-                    redisTemplate.boundHashOps(DictionariesKeyConstant.DICT_KEY_PREFIX.concat(sysDictEntityMMap.get(k))).putAll(v.stream().collect(Collectors.toMap(SysDictDetailEntity::getId, a -> a, (k1, k2) -> k1)));
-                }
-            });
+            groupBy.forEach((k, v) -> redisTemplate.boundHashOps(DictionariesKeyConstant.DICT_KEY_PREFIX.concat(sysDictEntityMMap.get(k))).putAll(v.stream().collect(Collectors.toMap(SysDictDetailEntity::getId, a -> a, (k1, k2) -> k1))));
         }
         // 获取【数据字典】加载结束时间
         long dictionaryGroupEndTime = System.currentTimeMillis();
@@ -76,13 +69,9 @@ public class LoadPublicDictionary implements CommandLineRunner {
         log.info("/** ==============================  【地址库】 ============================== **/");
         List<AddressLibraryEntity> addressLibraryEntityList = addressLibraryService.list(Wrappers.<AddressLibraryEntity>lambdaQuery().eq(AddressLibraryEntity::getIsShow, NumberConstants.ONE_STR));
         if (CollectionUtils.isNotEmpty(addressLibraryEntityList)) {
+            addressLibraryEntityList.forEach(addressLibraryEntity -> redisTemplate.boundValueOps(DictionariesKeyConstant.ADDRESS_LIBRARY_KEY2_PREFIX.concat(addressLibraryEntity.getId())).set(addressLibraryEntity));
             Map<String, List<AddressLibraryEntity>> groupBy = addressLibraryEntityList.stream().collect(Collectors.groupingBy(AddressLibraryEntity::getParentId));
-            groupBy.forEach((k, v) -> {
-                // 清空缓存
-                redisTemplate.delete(DictionariesKeyConstant.ADDRESS_LIBRARY_KEY_PREFIX.concat(k));
-                // 加入缓存
-                redisTemplate.boundHashOps(DictionariesKeyConstant.ADDRESS_LIBRARY_KEY_PREFIX.concat(k)).putAll(v.stream().collect(Collectors.toMap(AddressLibraryEntity::getId, a -> a, (k1, k2) -> k1)));
-            });
+            groupBy.forEach((k, v) -> redisTemplate.boundHashOps(DictionariesKeyConstant.ADDRESS_LIBRARY_KEY_PREFIX.concat(k)).putAll(v.stream().collect(Collectors.toMap(AddressLibraryEntity::getId, a -> a, (k1, k2) -> k1))));
         }
         // 获取【数据字典】加载结束时间
         long addressLibraryEndTime = System.currentTimeMillis();

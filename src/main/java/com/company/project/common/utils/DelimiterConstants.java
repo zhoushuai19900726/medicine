@@ -79,6 +79,7 @@ public class DelimiterConstants {
     public static final String VERSION = "version";
 
     public static final String INDEX_TITLE = "级指标";
+    public static final String CURRENCY = "通用";
 
     // TODO 系统配置中设置默认头像
     public static final String DEFAULT_AVATAR = "http://localhost:8080/files/20210709/ec89c38d64cc40388d5e4487c2320214.jpeg";

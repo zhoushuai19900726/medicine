@@ -16,7 +16,10 @@ public class DictionariesKeyConstant {
     /**
      * 地址库相关
      */
+    // key: parentId value: List<地址库子集>
     public static final String ADDRESS_LIBRARY_KEY_PREFIX = "address-library-key-";
+    // key: id value: 当前地址库对象
+    public static final String ADDRESS_LIBRARY_KEY2_PREFIX = "address-library-key2-";
     /**
      * 字典KEY
      */
@@ -32,5 +35,9 @@ public class DictionariesKeyConstant {
     public static final String WALLET_DETAILS_TYPE = DICT_KEY_PREFIX.concat("wallet_details_type");
     // 成长值明细类型
     public static final String GROWTH_VALUE_DETAILS_TYPE = DICT_KEY_PREFIX.concat("growth_value_details_type");
+    // 广告类别
+    public static final String ADVERTISING_CATEGORY = DICT_KEY_PREFIX.concat("advertising_category");
+    // 广告展示方式
+    public static final String ADVERTISING_DISPLAY = DICT_KEY_PREFIX.concat("advertising_display");
 
 }

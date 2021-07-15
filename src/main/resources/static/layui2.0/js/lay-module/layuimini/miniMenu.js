@@ -177,17 +177,17 @@ layui.define(["element", "laytpl", "jquery"], function (exports) {
                 $(".layuimini-menu-left .layui-nav.layui-nav-tree.layui-this.layui-hide").removeClass('layui-this');
                 $("#" + menuId).removeClass('layui-hide');
                 $("#" + menuId).addClass('layui-this');
-                var first;
-                $("#" + menuId).find("a[name='menuA']").each(function (index, item) {
-                    if ($(item).attr("layuimini-href") != undefined) {
-                        if (!first) {
-                            first = item;
-                        }
-                    }
-                });
-                if (first) {
-                    $(first).click();
-                }
+                // var first;
+                // $("#" + menuId).find("a[name='menuA']").each(function (index, item) {
+                //     if ($(item).attr("layuimini-href") != undefined) {
+                //         if (!first) {
+                //             first = item;
+                //         }
+                //     }
+                // });
+                // if (first) {
+                //     $(first).click();
+                // }
                 layer.close(loading);
             });
 

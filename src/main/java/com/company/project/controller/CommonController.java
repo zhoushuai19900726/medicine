@@ -68,6 +68,20 @@ public class CommonController {
         return DataResult.success(analysisRedisData(DictionariesKeyConstant.SERVICE_GUARANTEE));
     }
 
+    @ApiOperation(value = "查询所有广告类别")
+    @GetMapping("findAllAdvertisingCategory")
+    @ResponseBody
+    public DataResult findAllAdvertisingCategory() {
+        return DataResult.success(analysisRedisData(DictionariesKeyConstant.ADVERTISING_CATEGORY));
+    }
+
+    @ApiOperation(value = "查询所有广告展示方式")
+    @GetMapping("findAllAdvertisingDisplay")
+    @ResponseBody
+    public DataResult findAllAdvertisingDisplay() {
+        return DataResult.success(analysisRedisData(DictionariesKeyConstant.ADVERTISING_DISPLAY));
+    }
+
     @ApiOperation(value = "查询所有下级地址库")
     @GetMapping("findAllSubordinateAddressLibrary/{parentId}")
     @ResponseBody
@@ -110,6 +124,20 @@ public class CommonController {
                     name.set(addressLibraryEntity.getName());
                 }
             });
+        }
+        return DataResult.success(name.get());
+    }
+
+    @ApiOperation(value = "根据地区ID获取地区名称")
+    @GetMapping("getNameById2")
+    @ResponseBody
+    public DataResult getNameById2(String id) {
+        AtomicReference<String> name = new AtomicReference<>(DelimiterConstants.EMPTY_STR);
+        if(StringUtils.isNotBlank(id)){
+            AddressLibraryEntity addressLibraryEntity = (AddressLibraryEntity) redisTemplate.boundValueOps(DictionariesKeyConstant.ADDRESS_LIBRARY_KEY2_PREFIX.concat(id)).get();
+            if(Objects.nonNull(addressLibraryEntity) &&  StringUtils.equals(addressLibraryEntity.getId(), id)){
+                name.set(addressLibraryEntity.getName());
+            }
         }
         return DataResult.success(name.get());
     }
