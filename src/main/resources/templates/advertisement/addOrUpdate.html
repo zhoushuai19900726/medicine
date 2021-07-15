@@ -14,87 +14,61 @@
         <form class="layui-form" action="" lay-filter="shopAdvertisementForm" id="shopAdvertisementForm" style="width: 100%;">
             <input name="id" hidden/>
             <div class="layui-form-item">
-                <label class="layui-form-label required">广告位ID</label>
-                <div class="layui-input-block">
-                    <input type="text" name="spaceId" lay-verify="required" placeholder="请输入广告位ID" autocomplete="off" class="layui-input">
+                <label class="layui-form-label required">广告位</label>
+                <div class="layui-input-inline">
+                    <select name="spaceId" lay-search th:with="shopAdvertisingSpaceList=${@shopAdvertisingSpaceService.list()}" lay-verify="required">
+                        <option value="">请选择广告位</option>
+                        <option th:each="shopAdvertisingSpace : ${shopAdvertisingSpaceList}" th:text="${shopAdvertisingSpace.name}" th:value="${shopAdvertisingSpace.id}"></option>
+                    </select>
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label required">标题</label>
-                <div class="layui-input-block">
-                    <input type="text" name="title" lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+                <div class="layui-input-inline">
+                    <textarea name="title" lay-verify="required" placeholder="请输入简介" class="layui-textarea"></textarea>
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label required">资源图片路径</label>
+                <label class="layui-form-label required">资源图片</label>
                 <div class="layui-input-block">
-                    <input type="text" name="resUrl" lay-verify="required" placeholder="请输入资源图片路径" autocomplete="off" class="layui-input">
+                    <input type="hidden" name="resUrl"/>
+                    <img src="http://localhost:8080/files/20210709/ec89c38d64cc40388d5e4487c2320214.jpeg" style="width: 190px; height: 60px;"/>
+                    <a style="position: absolute; left: 190px; bottom: 2px; cursor: pointer;" id="uploadIcon">上传资源图片</a>
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label required">广告内容(跳转路径)</label>
-                <div class="layui-input-block">
-                    <input type="text" name="advUrl" lay-verify="required" placeholder="请输入广告内容(跳转路径)" autocomplete="off" class="layui-input">
+                <label class="layui-form-label required">广告内容</label>
+                <div class="layui-input-inline">
+                    <select lay-verify="required" name="jumpType" lay-filter="jumpType" th:with="dataResult=${@commonController.findAllJumpType()}">
+                        <option value="">请选择跳转方式</option>
+                        <option th:each="map : ${dataResult.getData()}" th:text="${map.get('name')}" th:value="${map.get('id')}"></option>
+                    </select>
+                </div>
+                <div class="layui-input-inline">
+                    <select lay-verify="required" name="jumpContent" lay-filter="jumpContent" lay-search>
+                        <option value="">请选择</option>
+                    </select>
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label required">广告开始时间</label>
-                <div class="layui-input-block">
-                    <input type="text" name="startDate" lay-verify="required" placeholder="请输入广告开始时间" autocomplete="off" class="layui-input">
+                <label class="layui-form-label required">展示时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" readonly lay-verify="required" class="layui-input" id="startDate" name="startDate" autocomplete="off" placeholder="请输入广告开始时间">
                 </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label required">广告结束时间</label>
-                <div class="layui-input-block">
-                    <input type="text" name="endDate" lay-verify="required" placeholder="请输入广告结束时间" autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label required">广告点击率</label>
-                <div class="layui-input-block">
-                    <input type="text" name="clickNum" lay-verify="required" placeholder="请输入广告点击率" autocomplete="off" class="layui-input">
+                <div class="layui-input-inline">
+                    <input type="text" readonly lay-verify="required" class="layui-input" id="endDate" name="endDate" autocomplete="off" placeholder="请输入请输入广告结束时间">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label required">是否显示</label>
                 <div class="layui-input-block">
-                    <input type="text" name="isShow" lay-verify="required" placeholder="请输入是否显示" autocomplete="off" class="layui-input">
+                    <input type="checkbox" lay-skin="switch" lay-text="是|否" lay-filter="isShowStr" name="isShowStr" checked/>
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label required">排序</label>
-                <div class="layui-input-block">
-                    <input type="text" name="seq" lay-verify="required" placeholder="请输入排序" autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label required"></label>
-                <div class="layui-input-block">
-                    <input type="text" name="createId" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label required"></label>
-                <div class="layui-input-block">
-                    <input type="text" name="createTime" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label required"></label>
-                <div class="layui-input-block">
-                    <input type="text" name="updateId" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label required"></label>
-                <div class="layui-input-block">
-                    <input type="text" name="updateTime" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label required"></label>
-                <div class="layui-input-block">
-                    <input type="text" name="deleted" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                <div class="layui-input-inline">
+                    <input type="number" name="seq" lay-verify="required" placeholder="请输入排序" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <input type="submit" lay-filter="submitBtnForAdd" id="submitBtnForAdd" lay-submit="" hidden/>
@@ -112,11 +86,59 @@
     //地址栏转义token中的#号
     var tokenQuery = token.replace("#", "%23");
     var $ = jQuery = layui.jquery;
-    layui.use(['form', 'layer'], function () {
+    layui.use(['form', 'layer', 'laydate', 'upload'], function () {
         var form = layui.form;
         var layer = layui.layer;
+        var laydate = layui.laydate;
+        var upload = layui.upload;
+
+
+        /**
+         * 日期时间选择器
+         */
+        laydate.render({
+            elem: '#startDate'
+            , type: 'datetime'
+        });
+        /**
+         * 日期时间选择器
+         */
+        laydate.render({
+            elem: '#endDate'
+            , type: 'datetime'
+        });
+
+        upload.render({
+            elem: '#uploadIcon' //绑定元素
+            , url: '/sysFiles/upload?authorization=' + tokenQuery  // 上传文件的路径
+            , done: function (res) {
+                // 上传完毕回调
+                var parentObj = $(this.item).parent();
+                $(parentObj).find("input[name='resUrl']").attr("value", res.data.src);
+                $(parentObj).find("img").attr("src", res.data.src);
+            }
+        });
+
+        form.on('select(jumpType)', function (data) {
+
+            switch (parseInt(data.value)) {
+                case 1:
+                    // 商品
+                    loadSpu(null);
+                    break;
+                case 2:
+                    // 文章
+
+                    break;
+            }
+
+        });
+
         // 表单提交
         form.on('submit(submitBtnForAdd)', function (data) {
+            var jumpType = $("select[name='jumpType']").val();
+            var jumpContent = $("select[name='jumpContent']").val();
+            data.field["advUrl"] = jumpType + "/" + jumpContent;
             // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
             CoreUtil.sendPost("/shopAdvertisement/add", data.field, function (res) {
                 // 刷新父页面列表
@@ -147,6 +169,9 @@
             return false;
         });
         form.on('submit(submitBtnForUpdate)', function (data) {
+            var jumpType = $("select[name='jumpType']").val();
+            var jumpContent = $("select[name='jumpContent']").val();
+            data.field["advUrl"] = jumpType + "/" + jumpContent;
             // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
             CoreUtil.sendPut("/shopAdvertisement/update", data.field, function (res) {
                 // 刷新父页面列表
@@ -159,6 +184,25 @@
             return false;
         });
     });
+
+    function loadSpu(jumpContent) {
+        var form = layui.form;
+        var selectObj = $("select[name='jumpContent']");
+        $(selectObj).empty();
+        CoreUtil.sendSyncGet("/goods/listByAll", null, function (res) {
+            if (res.data) {
+                $(selectObj).append("<option value=''>请选择商品</option>");
+                $(res.data).each(function (index, item) {
+                    if (jumpContent == item.id) {
+                        $(selectObj).append("<option value='" + item.id + "' selected>" + item.name + "</option>");
+                    } else {
+                        $(selectObj).append("<option value='" + item.id + "'>" + item.name + "</option>");
+                    }
+                });
+            }
+        });
+        form.render('select');
+    }
 
     /**
      * 父级页面控制子页面提交表单
@@ -173,10 +217,24 @@
     function assignment(data) {
         var form = layui.form,
             layarea = layui.layarea;
+        var jumpType = data.advUrl.split('/')[0];
+        var jumpContent = data.advUrl.split('/')[1];
         // 表单赋值
         form.val("shopAdvertisementForm", {
-            "id": data.id
+            "id": data.id,
+            "spaceId": data.spaceId,
+            "title": data.title,
+            "resUrl": data.resUrl,
+            "jumpType": jumpType,
+            "startDate": data.startDate,
+            "endDate": data.endDate,
+            "seq": data.seq,
         });
+        $("#uploadIcon").prev().attr("src", data.resUrl);
+        loadSpu(jumpContent);
+        // 开关状态开关
+        $("input[type='checkbox'][name='isShowStr']").prop("checked", data.isShow == 1);
+        form.render("checkbox");
     }
 
 </script>

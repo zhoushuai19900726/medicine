@@ -22,7 +22,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label required">广告类别</label>
                 <div class="layui-input-block">
-                    <select name="type" th:with="dataResult=${@commonController.findAllAdvertisingCategory()}">
+                    <select name="type" lay-verify="required" th:with="dataResult=${@commonController.findAllAdvertisingCategory()}">
                         <option value="">请选择</option>
                         <option th:each="map : ${dataResult.getData()}" th:text="${map.get('name')}" th:value="${map.get('id')}"></option>
                     </select>
@@ -31,14 +31,14 @@
             <div class="layui-form-item">
                 <label class="layui-form-label required">广告展示方式</label>
                 <div class="layui-input-block">
-                    <select name="display" th:with="dataResult=${@commonController.findAllAdvertisingDisplay()}">
+                    <select name="display" lay-verify="required" th:with="dataResult=${@commonController.findAllAdvertisingDisplay()}">
                         <option value="">请选择</option>
                         <option th:each="map : ${dataResult.getData()}" th:text="${map.get('name')}" th:value="${map.get('id')}"></option>
                     </select>
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label required">展示地区</label>
+                <label class="layui-form-label">展示地区</label>
                 <div class="layui-input-inline">
                     <select name="province" lay-filter="province" lay-search th:with="addressLibraryList=${@commonController.findAllSubordinateAddressLibrary('0').data}">
                         <option value="">请选择省</option>
@@ -65,7 +65,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label required">排序</label>
                 <div class="layui-input-block">
-                    <input type="text" name="seq" lay-verify="required" placeholder="请输入排序" autocomplete="off" class="layui-input">
+                    <input type="number" name="seq" lay-verify="required" placeholder="请输入排序" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">

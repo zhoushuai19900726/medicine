@@ -1,5 +1,6 @@
 package com.company.project.entity;
 
+import com.company.project.common.utils.DelimiterConstants;
 import com.company.project.entity.BaseEntity;
 import com.baomidou.mybatisplus.annotation.*;
 
@@ -10,6 +11,7 @@ import java.util.Date;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * 广告
@@ -80,7 +82,21 @@ public class ShopAdvertisementEntity extends BaseEntity implements Serializable 
      * 是否显示
      */
     @TableField("is_show")
-    private String isShow;
+    private Integer isShow;
+    // 页面参数封装
+    @TableField(exist = false)
+    private String isShowStr;
+
+    public void setIsShowStr(String isShowStr) {
+        this.isShowStr = isShowStr;
+        if (StringUtils.isNotBlank(isShowStr)) {
+            if(StringUtils.equals(isShowStr, DelimiterConstants.ON)){
+                this.isShow = 1;
+            } else if (StringUtils.equals(isShowStr, DelimiterConstants.OFF)){
+                this.isShow = 0;
+            }
+        }
+    }
 
     /**
      * 排序

@@ -39,5 +39,7 @@ public class DictionariesKeyConstant {
     public static final String ADVERTISING_CATEGORY = DICT_KEY_PREFIX.concat("advertising_category");
     // 广告展示方式
     public static final String ADVERTISING_DISPLAY = DICT_KEY_PREFIX.concat("advertising_display");
+    // 跳转类型
+    public static final String JUMP_TYPE = DICT_KEY_PREFIX.concat("jump_type");
 
 }

@@ -103,7 +103,7 @@ public class ShopAdvertisementController extends BaseController {
                 .like(StringUtils.isNotBlank(shopAdvertisement.getTitle()), ShopAdvertisementEntity::getTitle, shopAdvertisement.getTitle())
                 .apply(StringUtils.isNotBlank(shopAdvertisement.getCreateStartTime()), "UNIX_TIMESTAMP(create_time) >= UNIX_TIMESTAMP('" + shopAdvertisement.getCreateStartTime() + "')")
                 .apply(StringUtils.isNotBlank(shopAdvertisement.getCreateEndTime()), "UNIX_TIMESTAMP(create_time) <= UNIX_TIMESTAMP('" + shopAdvertisement.getCreateEndTime() + "')")
-                .orderByDesc(ShopAdvertisementEntity::getCreateTime);
+                .orderByAsc(ShopAdvertisementEntity::getSeq);
         // 封装数据权限 - 执行查询 - 封装用户 - 响应前端
         return DataResult.success(encapsulationUser(shopAdvertisementService.listByPage(new Page<>(shopAdvertisement.getPage(), shopAdvertisement.getLimit()), encapsulationDataRights(shopAdvertisement, queryWrapper, ShopAdvertisementEntity::getCreateId))));
     }

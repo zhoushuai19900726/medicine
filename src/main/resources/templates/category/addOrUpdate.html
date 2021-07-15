@@ -135,7 +135,6 @@
             , url: '/sysFiles/upload?authorization=' + tokenQuery  // 上传文件的路径
             , done: function (res) {
                 // 上传完毕回调
-                var index = $(this.item).attr("index");
                 var parentObj = $(this.item).parent();
                 $(parentObj).find("input[name='icon']").attr("value", res.data.src);
                 $(parentObj).find("img").attr("src", res.data.src);

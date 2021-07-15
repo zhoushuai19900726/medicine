@@ -294,6 +294,15 @@ public class ShopSpuController extends BaseController {
         return DataResult.success(encapsulationUser(shopSpuService.recycleBinListByPage(new Page<>(shopSpu.getPage(), shopSpu.getLimit()), encapsulationDataRights(shopSpu, encapsulatingQueryCriteria(shopSpu), ShopSpuEntity::getCreateId))));
     }
 
+    @ApiOperation(value = "查询所有数据")
+    @GetMapping("goods/listByAll")
+    @RequiresPermissions("goods:list")
+    @LogAnnotation(title = "商品SPU", action = "查询所有数据")
+    @ResponseBody
+    public DataResult findListByAll() {
+        return DataResult.success(shopSpuService.list());
+    }
+
     /**
      * 封装查询条件
      *

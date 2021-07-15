@@ -82,6 +82,13 @@ public class CommonController {
         return DataResult.success(analysisRedisData(DictionariesKeyConstant.ADVERTISING_DISPLAY));
     }
 
+    @ApiOperation(value = "查询所有跳转方式")
+    @GetMapping("findAllJumpType")
+    @ResponseBody
+    public DataResult findAllJumpType() {
+        return DataResult.success(analysisRedisData(DictionariesKeyConstant.JUMP_TYPE));
+    }
+
     @ApiOperation(value = "查询所有下级地址库")
     @GetMapping("findAllSubordinateAddressLibrary/{parentId}")
     @ResponseBody
