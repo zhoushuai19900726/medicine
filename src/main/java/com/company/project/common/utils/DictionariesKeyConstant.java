@@ -18,6 +18,10 @@ public class DictionariesKeyConstant {
      */
     public static final String ADV_KEY_PREFIX = "adv-key-";
     /**
+     * Banner导航相关
+     */
+    public static final String BANNER_KEY = "banner-key";
+    /**
      * 地址库相关
      */
     // key: parentId value: List<地址库子集>
@@ -45,5 +49,9 @@ public class DictionariesKeyConstant {
     public static final String ADVERTISING_DISPLAY = DICT_KEY_PREFIX.concat("advertising_display");
     // 跳转类型
     public static final String JUMP_TYPE = DICT_KEY_PREFIX.concat("jump_type");
+    // 导航类型
+    public static final String BANNER_TYPE = DICT_KEY_PREFIX.concat("banner_type");
+    // 展示途径
+    public static final String SHOW_WAYS = DICT_KEY_PREFIX.concat("show_ways");
 
 }

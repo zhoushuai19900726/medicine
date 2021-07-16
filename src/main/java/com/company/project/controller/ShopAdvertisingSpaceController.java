@@ -115,7 +115,7 @@ public class ShopAdvertisingSpaceController extends BaseController {
                 .apply(StringUtils.isNotBlank(shopAdvertisingSpace.getCreateEndTime()), "UNIX_TIMESTAMP(create_time) <= UNIX_TIMESTAMP('" + shopAdvertisingSpace.getCreateEndTime() + "')")
                 .orderByAsc(ShopAdvertisingSpaceEntity::getSeq);
         // 封装数据权限 - 执行查询 - 封装用户 - 响应前端
-        return DataResult.success(encapsulationUser(shopAdvertisingSpaceService.listByPage(new Page<>(shopAdvertisingSpace.getPage(), shopAdvertisingSpace.getLimit()), encapsulationDataRights(shopAdvertisingSpace, queryWrapper, ShopAdvertisingSpaceEntity::getCreateId))));
+        return DataResult.success(encapsulationUser(shopAdvertisingSpaceService.page(new Page<>(shopAdvertisingSpace.getPage(), shopAdvertisingSpace.getLimit()), encapsulationDataRights(shopAdvertisingSpace, queryWrapper, ShopAdvertisingSpaceEntity::getCreateId))));
     }
 
 }

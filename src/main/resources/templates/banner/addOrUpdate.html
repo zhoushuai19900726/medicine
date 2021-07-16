@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main" shiro:hasPermission="shopBanner:add">
+        <form class="layui-form" action="" lay-filter="shopBannerForm" id="shopBannerForm" style="width: 100%;">
+            <input name="id" hidden/>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="name" lay-verify="required" placeholder="请输入名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">标题</label>
+                <div class="layui-input-inline">
+                    <textarea name="title" lay-verify="required" placeholder="请输入标题" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">图标</label>
+                <div class="layui-input-block">
+                    <input type="hidden" name="icon"/>
+                    <img src="http://localhost:8080/files/20210709/ec89c38d64cc40388d5e4487c2320214.jpeg" style="width: 80px; height: 80px;"/>
+                    <a style="position: absolute; left: 80px; bottom: 2px; cursor: pointer;" id="uploadIcon">上传图标</a>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">背景</label>
+                <div class="layui-input-block">
+                    <input type="hidden" name="background" value="#8294e8"/>
+                    <div id="colorPicker"></div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">导航类型</label>
+                <div class="layui-input-block">
+                    <span th:with="dataResult=${@commonController.findAllBannerType()}">
+                        <input type="radio" name="type" th:each="map : ${dataResult.getData()}" th:value="${map.get('id')}" th:title="${map.get('name')}"/>
+                    </span>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">展示途径</label>
+                <div class="layui-input-block">
+                    <span th:with="dataResult=${@commonController.findAllShowWays()}">
+                        <input type="radio" name="source" th:each="map : ${dataResult.getData()}" th:value="${map.get('id')}" th:title="${map.get('name')}"/>
+                    </span>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">排序</label>
+                <div class="layui-input-inline">
+                    <input type="number" name="seq" lay-verify="required" placeholder="请输入排序" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">是否显示</label>
+                <div class="layui-input-inline">
+                    <input type="checkbox" lay-skin="switch" lay-text="是|否" lay-filter="isShowStr" name="isShowStr" checked/>
+                </div>
+            </div>
+            <input type="submit" lay-filter="submitBtnForAdd" id="submitBtnForAdd" lay-submit="" hidden/>
+            <input type="submit" lay-filter="submitBtnForUpdate" id="submitBtnForUpdate" lay-submit="" hidden/>
+        </form>
+    </div>
+</div>
+<script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
+</body>
+</html>
+<script>
+    //获取token
+    var token = CoreUtil.getData("access_token");
+    //地址栏转义token中的#号
+    var tokenQuery = token.replace("#", "%23");
+    var $ = jQuery = layui.jquery;
+    layui.use(['form', 'layer', 'upload', 'colorpicker'], function () {
+        var form = layui.form;
+        var layer = layui.layer;
+        var upload = layui.upload;
+        var colorpicker = layui.colorpicker;
+
+        upload.render({
+            elem: '#uploadIcon' //绑定元素
+            , url: '/sysFiles/upload?authorization=' + tokenQuery  // 上传文件的路径
+            , done: function (res) {
+                // 上传完毕回调
+                var parentObj = $(this.item).parent();
+                $(parentObj).find("input[name='icon']").attr("value", res.data.src);
+                $(parentObj).find("img").attr("src", res.data.src);
+            }
+        });
+
+        colorpicker.render({
+            elem: '#colorPicker'  //绑定元素
+            , color: '#8294e8'
+            , done: function (color) {
+                //color 赋值给表单
+                form.val("shopBannerForm", {
+                    "background": color
+                });
+            }
+        });
+
+        // 表单提交
+        form.on('submit(submitBtnForAdd)', function (data) {
+            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
+            CoreUtil.sendPost("/shopBanner/add", data.field, function (res) {
+                // 刷新父页面列表
+                parent.layui.table.reload('showTable');
+                // 提示
+                layer.open({
+                    content: '<i class="layui-icon layui-icon-face-smile" style="color: green;"></i> 保存成功'
+                    , btn: ['继续添加', '返回列表']
+                    , yes: function (index, layero) {
+                        // 清空表单 （“brandForm”是表单的id）
+                        $("#shopBannerForm")[0].reset();
+                        form.render();
+                        layer.close(index);
+                    }, btn2: function (index, layero) {
+                        //按钮【按钮二】的回调
+                        var parentIndex = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(parentIndex);
+                        //return false 开启该代码可禁止点击该按钮关闭
+                    }, cancel: function () {
+                        //右上角关闭回调
+                        var parentIndex = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(parentIndex);
+                        //return false 开启该代码可禁止点击该按钮关闭
+                    }
+                });
+            });
+            //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            return false;
+        });
+        form.on('submit(submitBtnForUpdate)', function (data) {
+            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
+            CoreUtil.sendPut("/shopBanner/update", data.field, function (res) {
+                // 刷新父页面列表
+                parent.layui.table.reload('showTable');
+                parent.layer.msg("修改成功");
+                var parentIndex = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(parentIndex);
+            });
+            //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            return false;
+        });
+    });
+
+    /**
+     * 父级页面控制子页面提交表单
+     */
+    function saveShopBanner(submitBtn) {
+        $("#" + submitBtn).click();
+    }
+
+    /**
+     * 父级页面控制子页面填充
+     */
+    function assignment(data) {
+        var form = layui.form;
+        var colorpicker = layui.colorpicker;
+        // 表单赋值
+        form.val("shopBannerForm", {
+            "id": data.id,
+            "name": data.name,
+            "title": data.title,
+            "icon": data.icon,
+            "background": data.background,
+            "type": data.type,
+            "source": data.source,
+            "seq": data.seq,
+        });
+        $("#uploadIcon").prev().attr("src", data.icon);
+        colorpicker.render({
+            elem: '#colorPicker'  //绑定元素
+            , color: data.background
+            , done: function (color) {
+                //color 赋值给表单
+                form.val("shopBannerForm", {
+                    "background": color
+                });
+            }
+        });
+        // 开关状态开关
+        $("input[type='checkbox'][name='isShowStr']").prop("checked", data.isShow == 1);
+        form.render("checkbox");
+    }
+
+</script>

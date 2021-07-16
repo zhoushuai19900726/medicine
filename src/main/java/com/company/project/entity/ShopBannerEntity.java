@@ -14,17 +14,17 @@ import lombok.experimental.Accessors;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * 广告位
+ * Banner导航
  *
  * @author zhoushuai
  * @email zhoushuai_0726@163.com
- * @date 2021-07-15 09:28:30
+ * @date 2021-07-16 09:10:18
  */
 @Accessors(chain = true)
 @NoArgsConstructor
 @Data
-@TableName("shop_advertising_space")
-public class ShopAdvertisingSpaceEntity extends BaseEntity implements Serializable {
+@TableName("shop_banner")
+public class ShopBannerEntity extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -41,35 +41,40 @@ public class ShopAdvertisingSpaceEntity extends BaseEntity implements Serializab
     private String name;
 
     /**
-     * 简介
+     * 标题
      */
-    @TableField("introduction")
-    private String introduction;
+    @TableField("title")
+    private String title;
 
     /**
-     * 广告类别：0图片
+     * 图标
+     */
+    @TableField("icon")
+    private String icon;
+
+    /**
+     * 背景
+     */
+    @TableField("background")
+    private String background;
+
+    /**
+     * 1.文章 2.商品分类 3.推广专区 4.积分专区 5.进货专区
      */
     @TableField("type")
     private Integer type;
+
     /**
-     * 广告展示方式：1多广告展示2单广告展示
+     * 展示途径 1 APP  2小程序
      */
-    @TableField("display")
-    private Integer display;
+    @TableField("source")
+    private Integer source;
 
-    @TableField("province")
-    private String province;
-    @TableField(exist = false)
-    private String provinceName;
-    @TableField("city")
-    private String city;
-    @TableField(exist = false)
-    private String cityName;
-    @TableField("county")
-    private String county;
-    @TableField(exist = false)
-    private String countyName;
-
+    /**
+     * 排序
+     */
+    @TableField("seq")
+    private Integer seq;
 
     /**
      * 是否显示
@@ -90,18 +95,6 @@ public class ShopAdvertisingSpaceEntity extends BaseEntity implements Serializab
             }
         }
     }
-
-    /**
-     * 排序
-     */
-    @TableField("seq")
-    private Integer seq;
-
-    /**
-     * 获取标记
-     */
-    @TableField("get_tag")
-    private String getTag;
 
     /**
      *

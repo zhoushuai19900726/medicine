@@ -104,7 +104,7 @@ layui.define(["jquery", "miniMenu", "element", "miniTab", "miniTheme"], function
                     if (XMLHttpRequest.status == 404) {
                         top.window.location.href = "/index/404";
                     } else {
-                        layer.msg("服务器好像除了点问题！请稍后试试");
+                        layer.msg("服务器好像出了点问题！请稍后试试");
                     }
                 }
             });

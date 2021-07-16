@@ -110,7 +110,13 @@
                 [
                     {type: 'checkbox', fixed: 'left'},
                     #foreach($column in $columns)
-                        {field: '${column.attrname}', title: '${column.comments}', sort: true},
+                        #if($column.attrname == $customize.A)
+                            {width: 100, field: 'createName', title: '创建人'},
+                        #elseif($column.attrname == $customize.B)
+                            {width: 100, field: 'updateName', title: '修改人'},
+                        #elseif($column.attrname != $customize.C)
+                            {field: '${column.attrname}', title: '${column.comments}', sort: true},
+                        #end
                     #end
                     {width: 150, toolbar: "#tool", title: '操作'}
                 ]

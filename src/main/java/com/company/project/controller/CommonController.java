@@ -8,14 +8,10 @@ import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Comparator;
@@ -89,6 +85,21 @@ public class CommonController {
         return DataResult.success(analysisRedisData(DictionariesKeyConstant.JUMP_TYPE));
     }
 
+
+    @ApiOperation(value = "查询所有导航类型")
+    @GetMapping("findAllBannerType")
+    @ResponseBody
+    public DataResult findAllBannerType() {
+        return DataResult.success(analysisRedisData(DictionariesKeyConstant.BANNER_TYPE));
+    }
+
+    @ApiOperation(value = "查询所有展示途径")
+    @GetMapping("findAllShowWays")
+    @ResponseBody
+    public DataResult findAllShowWays() {
+        return DataResult.success(analysisRedisData(DictionariesKeyConstant.SHOW_WAYS));
+    }
+
     @ApiOperation(value = "查询所有下级地址库")
     @GetMapping("findAllSubordinateAddressLibrary/{parentId}")
     @ResponseBody
@@ -102,7 +113,7 @@ public class CommonController {
     @ApiOperation(value = "根据字典值获取字典名称")
     @GetMapping("getLabelByValue")
     @ResponseBody
-    public DataResult getLabelByValue(String dictionariesKey, String value) {
+    public DataResult getLabelByValue(@RequestParam(value = "dictionariesKey") String dictionariesKey, @RequestParam(value = "value") String value) {
         AtomicReference<String> label = new AtomicReference<>(DelimiterConstants.EMPTY_STR);
         if(StringUtils.isNotBlank(dictionariesKey) && StringUtils.isNotBlank(value)){
             redisTemplate.boundHashOps(dictionariesKey).values().forEach(obj -> {
@@ -122,7 +133,7 @@ public class CommonController {
     @ApiOperation(value = "根据地区ID获取地区名称")
     @GetMapping("getNameById")
     @ResponseBody
-    public DataResult getNameById(String id, String parentId) {
+    public DataResult getNameById(@RequestParam(value = "id") String id, @RequestParam(value = "parentId") String parentId) {
         AtomicReference<String> name = new AtomicReference<>(DelimiterConstants.EMPTY_STR);
         if(StringUtils.isNotBlank(id) && StringUtils.isNotBlank(parentId)){
             redisTemplate.boundHashOps(DictionariesKeyConstant.ADDRESS_LIBRARY_KEY_PREFIX.concat(parentId)).values().forEach(obj -> {
@@ -138,7 +149,7 @@ public class CommonController {
     @ApiOperation(value = "根据地区ID获取地区名称")
     @GetMapping("getNameById2")
     @ResponseBody
-    public DataResult getNameById2(String id) {
+    public DataResult getNameById2(@RequestParam(value = "id") String id) {
         AtomicReference<String> name = new AtomicReference<>(DelimiterConstants.EMPTY_STR);
         if(StringUtils.isNotBlank(id)){
             AddressLibraryEntity addressLibraryEntity = (AddressLibraryEntity) redisTemplate.boundValueOps(DictionariesKeyConstant.ADDRESS_LIBRARY_KEY2_PREFIX.concat(id)).get();

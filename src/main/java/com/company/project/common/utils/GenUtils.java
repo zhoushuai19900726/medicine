@@ -3,6 +3,7 @@ package com.company.project.common.utils;
 import com.company.project.common.exception.BusinessException;
 import com.company.project.entity.ColumnEntity;
 import com.company.project.entity.TableEntity;
+import com.google.common.collect.Maps;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -122,6 +123,13 @@ public class GenUtils {
         map.put("updateId", idWorker.nextId());
         map.put("deleteId", idWorker.nextId());
         map.put("selectId", idWorker.nextId());
+        // 自定义
+        Map<String, String> customize = Maps.newHashMap();
+        customize.put("A", "createId");
+        customize.put("B", "updateId");
+        customize.put("C", "deleted");
+        map.put("customize", customize);
+
         VelocityContext context = new VelocityContext(map);
 
         //获取模板列表

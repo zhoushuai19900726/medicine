@@ -1,8 +1,5 @@
 package com.company.project.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.company.project.common.utils.DataResult;
 import com.company.project.entity.ShopAdvertisingSpaceEntity;
@@ -18,13 +15,11 @@ import java.util.List;
  */
 public interface ShopAdvertisingSpaceService extends IService<ShopAdvertisingSpaceEntity> {
 
-    IPage<ShopAdvertisingSpaceEntity> listByPage(Page<ShopAdvertisingSpaceEntity> page, LambdaQueryWrapper<ShopAdvertisingSpaceEntity> wrapper);
-
     DataResult saveShopAdvertisingSpaceEntity(ShopAdvertisingSpaceEntity shopAdvertisingSpace);
 
     DataResult updateShopAdvertisingSpaceEntityById(ShopAdvertisingSpaceEntity shopAdvertisingSpace);
 
-
     DataResult removeShopAdvertisingSpaceEntityByIds(List<String> ids);
+
 }
 
