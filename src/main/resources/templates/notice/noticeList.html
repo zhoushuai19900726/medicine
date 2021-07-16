@@ -10,7 +10,7 @@
 </head>
 <body>
 <div class="layuimini-container">
-    <div class="layuimini-main" shiro:hasPermission="shopBanner:list">
+    <div class="layuimini-main" shiro:hasPermission="shopNotice:list">
 
         <fieldset class="table-search-fieldset">
             <legend>搜索信息</legend>
@@ -18,15 +18,15 @@
                 <form class="layui-form layui-form-pane" action="">
                     <div class="layui-form-item">
                         <div class="layui-inline">
-                            <label class="layui-form-label">导航ID</label>
+                            <label class="layui-form-label">公告ID</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="id" autocomplete="off" placeholder="请输入Banner导航ID" class="layui-input">
+                                <input type="text" name="id" autocomplete="off" placeholder="请输入公告ID" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label">导航名称</label>
+                            <label class="layui-form-label">公告名称</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="name" autocomplete="off" placeholder="请输入Banner导航名称" class="layui-input">
+                                <input type="text" name="title" autocomplete="off" placeholder="请输入公告名称" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline">
@@ -50,16 +50,13 @@
     <table class="layui-table" id="showTable" lay-filter="showTable"></table>
     <script type="text/html" id="toolbar">
         <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add" shiro:hasPermission="shopBanner:add"><i class="layui-icon">&#xe61f;</i>新增Banner导航</button>
-            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopBanner:delete"><i class="layui-icon">&#xe640;</i>批量删除</button>
+            <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add" shiro:hasPermission="shopNotice:add"><i class="layui-icon">&#xe61f;</i>新增公告</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopNotice:delete"><i class="layui-icon">&#xe640;</i>批量删除</button>
         </div>
     </script>
     <script type="text/html" id="tool">
-        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit" shiro:hasPermission="shopBanner:update"><i class="layui-icon">&#xe642;</i>编辑</a>
-        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" shiro:hasPermission="shopBanner:delete"><i class="layui-icon">&#xe640;</i>删除</a>
-    </script>
-    <script type="text/html" id="iconTpl">
-        <img src="{{ d.icon }}"/>
+        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit" shiro:hasPermission="shopNotice:update"><i class="layui-icon">&#xe642;</i>编辑</a>
+        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" shiro:hasPermission="shopNotice:delete"><i class="layui-icon">&#xe640;</i>删除</a>
     </script>
     <script type="text/html" id="isShowSwitchTpl">
         <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="是|否" lay-filter="isShowSwitch" {{d.isShow== 1 ? 'checked' : ''}}/>
@@ -102,7 +99,7 @@
             , contentType: 'application/json'
             , headers: {"authorization": token}
             , page: true //开启分页
-            , url: '/shopBanner/listByPage' //数据接口
+            , url: '/shopNotice/listByPage' //数据接口
             , method: 'POST'
             , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
                 return {
@@ -116,44 +113,13 @@
                 [
                     {type: 'checkbox', fixed: 'left'},
                     {field: 'id', title: 'ID', sort: true},
-                    {field: 'name', title: '名称', edit: 'text'},
                     {field: 'title', title: '标题', edit: 'text'},
-                    {width: 130, field: 'icon', title: '图标', templet: '#iconTpl'},
-                    {
-                        field: 'background', title: '背景色', templet: function (item) {
-                            return "<div style='width: 100%; height: 100%; background: " + item.background + ";'></div>";
-                        }
-                    },
-                    {
-                        field: 'type', title: '导航类型', templet: function (item) {
-                            var param = {};
-                            param.dictionariesKey = "dict-key-banner_type";
-                            param.value = item.type;
-                            var result = "";
-                            CoreUtil.sendSyncGet("/common/getLabelByValue", param, function (res) {
-                                result = res.data;
-                            });
-                            return result;
-                        }
-                    },
-                    {
-                        field: 'source', title: '展示途径', templet: function (item) {
-                            var param = {};
-                            param.dictionariesKey = "dict-key-show_ways";
-                            param.value = item.source;
-                            var result = "";
-                            CoreUtil.sendSyncGet("/common/getLabelByValue", param, function (res) {
-                                result = res.data;
-                            });
-                            return result;
-                        }
-                    },
-                    {field: 'seq', title: '排序', sort: true, edit: 'text'},
+                    {field: 'seq', title: '排序', sort: true},
                     {field: 'isShow', title: '是否显示', templet: '#isShowSwitchTpl'},
                     {width: 100, field: 'createName', title: '创建人'},
-                    {field: 'createTime', title: '创建时间', sort: true},
+                    {field: 'createTime', title: '', sort: true},
                     {width: 100, field: 'updateName', title: '修改人'},
-                    {field: 'updateTime', title: '修改时间', sort: true},
+                    {field: 'updateTime', title: '', sort: true},
                     {width: 150, toolbar: "#tool", title: '操作'}
                 ]
             ]
@@ -179,16 +145,16 @@
                     break;
                 case 'add':
                     layer.open({
-                        id: 'shopBanner_add', //设定一个id，防止重复弹出
-                        title: '<i class="layui-icon">&#xe653;</i> 新增Banner导航',
+                        id: 'shopNotice_add', //设定一个id，防止重复弹出
+                        title: '<i class="layui-icon">&#xe653;</i> 新增公告',
                         type: 2,
-                        content: '../index/shopBanner/addOrUpdate',
+                        content: '../index/shopNotice/addOrUpdate',
                         btn: ['提交保存', '取消'],
                         area: ['60%', '85%'],
                         scrollbar: false,
                         yes: function (index, layero) {
                             // 得到iframe页的窗口对象并调用子页面方法
-                            window[layero.find('iframe')[0]['name']].saveShopBanner("submitBtnForAdd");
+                            window[layero.find('iframe')[0]['name']].saveShopNotice("submitBtnForAdd");
                         }
                     });
                     break;
@@ -205,16 +171,16 @@
                     break;
                 case 'edit':
                     layer.open({
-                        id: 'shopBanner_update', //设定一个id，防止重复弹出
-                        title: '<i class="layui-icon">&#xe653;</i> 编辑Banner导航',
+                        id: 'shopNotice_update', //设定一个id，防止重复弹出
+                        title: '<i class="layui-icon">&#xe653;</i> 编辑公告',
                         type: 2,
-                        content: '../index/shopBanner/addOrUpdate',
+                        content: '../index/shopNotice/addOrUpdate',
                         btn: ['提交保存', '取消'],
                         area: ['60%', '85%'],
                         scrollbar: false,
                         yes: function (index, layero) {
                             // 得到iframe页的窗口对象并调用子页面方法
-                            window[layero.find('iframe')[0]['name']].saveShopBanner("submitBtnForUpdate");
+                            window[layero.find('iframe')[0]['name']].saveShopNotice("submitBtnForUpdate");
                         },
                         success: function (layero, index) {
                             // 置顶当前窗口
@@ -237,7 +203,7 @@
             var para = {};
             para.id = data.id;
             para[field] = util.escape(value);
-            CoreUtil.sendPut("/shopBanner/update", para, function (res) {
+            CoreUtil.sendPut("/shopNotice/update", para, function (res) {
                 tableIns1.reload();
             });
         });
@@ -245,11 +211,10 @@
          * 监听table内开关操作
          */
         form.on('switch(isShowSwitch)', function (obj) {
-            // console.log(obj)
             var param = {};
             param.id = this.value;
             param.isShow = obj.elem.checked ? 1 : 0;
-            CoreUtil.sendPut("/shopBanner/update", param, function (res) {
+            CoreUtil.sendPut("/shopNotice/update", param, function (res) {
                 layer.tips(obj.elem.checked ? "开启成功" : "关闭成功", obj.othis);
                 tableIns1.reload();
             });
@@ -262,7 +227,7 @@
                 limit: Number.MAX_VALUE,
                 key: $("#key").val()
             };
-            CoreUtil.sendPost("/shopBanner/listByPage", exportParams, function (res) {
+            CoreUtil.sendPost("/shopNotice/listByPage", exportParams, function (res) {
                 //初始化渲染数据
                 if (res.data != null && res.data.records != null) {
                     table.exportFile(tableIns1.config.id, res.data.records, 'xls');
@@ -273,7 +238,7 @@
         //删除
         var tipDialog = function (ids) {
             layer.confirm('确定要删除么?', {icon: 3, title: '提示'}, function (index) {
-                CoreUtil.sendDelete("/shopBanner/delete", ids, function (res) {
+                CoreUtil.sendDelete("/shopNotice/delete", ids, function (res) {
                     layer.msg(res.msg, {time: 500}, function () {
                         tableIns1.reload();
                     });

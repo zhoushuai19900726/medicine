@@ -94,15 +94,12 @@ public class RoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impleme
         }
         List<PermissionRespNode> permissionRespNodes = permissionService.selectAllByTree();
         LambdaQueryWrapper<SysRolePermission> queryWrapper = Wrappers.<SysRolePermission>lambdaQuery().select(SysRolePermission::getPermissionId).eq(SysRolePermission::getRoleId, sysRole.getId());
-        Set<Object> checkList =
-                new HashSet<>(rolePermissionService.listObjs(queryWrapper));
+        Set<Object> checkList = new HashSet<>(rolePermissionService.listObjs(queryWrapper));
         setChecked(permissionRespNodes, checkList);
         sysRole.setPermissionRespNodes(permissionRespNodes);
-
         LambdaQueryWrapper<SysRoleDeptEntity> queryWrapperDept = Wrappers.<SysRoleDeptEntity>lambdaQuery().select(SysRoleDeptEntity::getDeptId).eq(SysRoleDeptEntity::getRoleId, sysRole.getId());
         List<DeptRespNodeVO> deptRespNodes = deptService.deptTreeList(null, true);
-        Set<Object> checkDeptList =
-                new HashSet<>(sysRoleDeptService.listObjs(queryWrapperDept));
+        Set<Object> checkDeptList = new HashSet<>(sysRoleDeptService.listObjs(queryWrapperDept));
         setCheckedDept(deptRespNodes, checkDeptList);
         sysRole.setDeptRespNodes(deptRespNodes);
         return sysRole;

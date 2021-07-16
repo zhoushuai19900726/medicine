@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.company.project.common.exception.BusinessException;
 import com.company.project.common.exception.code.BaseResponseCode;
+import com.company.project.common.utils.DelimiterConstants;
 import com.company.project.entity.SysPermission;
 import com.company.project.entity.SysRolePermission;
 import com.company.project.entity.SysUserRole;
@@ -15,17 +16,15 @@ import com.company.project.service.RolePermissionService;
 import com.company.project.service.UserRoleService;
 import com.company.project.vo.resp.PermissionRespNode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 菜单权限
@@ -110,13 +109,16 @@ public class PermissionServiceImpl extends ServiceImpl<SysPermissionMapper, SysP
     @Override
     public List<SysPermission> selectAll() {
         List<SysPermission> result = sysPermissionMapper.selectList(Wrappers.<SysPermission>lambdaQuery().orderByAsc(SysPermission::getOrderNum));
-        if (!CollectionUtils.isEmpty(result)) {
-            for (SysPermission sysPermission : result) {
-                SysPermission parent = sysPermissionMapper.selectById(sysPermission.getPid());
-                if (parent != null) {
-                    sysPermission.setPidName(parent.getName());
-                }
-            }
+        if (CollectionUtils.isNotEmpty(result)) {
+            Map<String, String> resultMap = result.stream().collect(Collectors.toMap(SysPermission::getId, SysPermission::getName, (k1, k2) -> k1));
+
+            result.forEach(r -> r.setPidName(resultMap.getOrDefault(r.getPid(), DelimiterConstants.EMPTY_STR)));
+//            for (SysPermission sysPermission : result) {
+//                SysPermission parent = sysPermissionMapper.selectById(sysPermission.getPid());
+//                if (parent != null) {
+//                    sysPermission.setPidName(parent.getName());
+//                }
+//            }
         }
         return result;
     }
