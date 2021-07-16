@@ -22,6 +22,10 @@ public class DictionariesKeyConstant {
      */
     public static final String BANNER_KEY = "banner-key";
     /**
+     * 轮播图相关
+     */
+    public static final String CAROUSEL_MAP_KEY = "carousel_map-key";
+    /**
      * 地址库相关
      */
     // key: parentId value: List<地址库子集>
@@ -53,5 +57,7 @@ public class DictionariesKeyConstant {
     public static final String BANNER_TYPE = DICT_KEY_PREFIX.concat("banner_type");
     // 展示途径
     public static final String SHOW_WAYS = DICT_KEY_PREFIX.concat("show_ways");
+    // 轮播图位置
+    public static final String CAROUSEL_MAP_LOCATION = DICT_KEY_PREFIX.concat("carousel_map_location");
 
 }

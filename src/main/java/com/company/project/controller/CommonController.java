@@ -85,7 +85,6 @@ public class CommonController {
         return DataResult.success(analysisRedisData(DictionariesKeyConstant.JUMP_TYPE));
     }
 
-
     @ApiOperation(value = "查询所有导航类型")
     @GetMapping("findAllBannerType")
     @ResponseBody
@@ -98,6 +97,13 @@ public class CommonController {
     @ResponseBody
     public DataResult findAllShowWays() {
         return DataResult.success(analysisRedisData(DictionariesKeyConstant.SHOW_WAYS));
+    }
+
+    @ApiOperation(value = "查询所有轮播图位置")
+    @GetMapping("findAllCarouselMapLocation")
+    @ResponseBody
+    public DataResult findAllCarouselMapLocation() {
+        return DataResult.success(analysisRedisData(DictionariesKeyConstant.CAROUSEL_MAP_LOCATION));
     }
 
     @ApiOperation(value = "查询所有下级地址库")
