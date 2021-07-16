@@ -46,6 +46,15 @@ public class LoadPublicDictionary implements CommandLineRunner {
     private ShopAdvertisingSpaceService shopAdvertisingSpaceService;
 
     @Resource
+    private ShopBannerService shopBannerService;
+
+    @Resource
+    private ShopNoticeService shopNoticeService;
+
+    @Resource
+    private ShopCarouselMapService shopCarouselMapService;
+
+    @Resource
     private AddressLibraryService addressLibraryService;
 
     @Resource
@@ -88,6 +97,32 @@ public class LoadPublicDictionary implements CommandLineRunner {
         // 获取【广告】加载结束时间
         long shopAdvertisementEndTime = System.currentTimeMillis();
         log.info("缓存管理-->缓存初始化:【广告】加载完成, 用时" + (shopAdvertisementEndTime - addressLibraryEndTime) + "ms!");
+        log.info("/** ==============================  【Banner导航】 ============================== **/");
+        List<ShopBannerEntity> shopBannerEntityList = shopBannerService.list();
+        if(CollectionUtils.isNotEmpty(shopBannerEntityList)){
+            redisTemplate.boundHashOps(DictionariesKeyConstant.BANNER_KEY).putAll(shopBannerEntityList.stream().collect(Collectors.toMap(ShopBannerEntity::getId, a -> a, (k1, k2) -> k1)));
+        }
+        // 获取【Banner导航】加载结束时间
+        long shopBannerEndTime = System.currentTimeMillis();
+        log.info("缓存管理-->缓存初始化:【Banner导航】加载完成, 用时" + (shopBannerEndTime - shopAdvertisementEndTime) + "ms!");
+        log.info("/** ==============================  【公告】 ============================== **/");
+        List<ShopNoticeEntity> shopNoticeEntityList = shopNoticeService.list();
+        if(CollectionUtils.isNotEmpty(shopNoticeEntityList)){
+            redisTemplate.boundHashOps(DictionariesKeyConstant.NOTICE_KEY).putAll(shopNoticeEntityList.stream().collect(Collectors.toMap(ShopNoticeEntity::getId, a -> a, (k1, k2) -> k1)));
+        }
+        // 获取【公告】加载结束时间
+        long shopNoticeEndTime = System.currentTimeMillis();
+        log.info("缓存管理-->缓存初始化:【公告】加载完成, 用时" + (shopNoticeEndTime - shopBannerEndTime) + "ms!");
+        log.info("/** ==============================  【轮播图】 ============================== **/");
+        List<ShopCarouselMapEntity> shopCarouselMapEntityList = shopCarouselMapService.list();
+        if(CollectionUtils.isNotEmpty(shopCarouselMapEntityList)){
+            redisTemplate.boundHashOps(DictionariesKeyConstant.CAROUSEL_MAP_KEY).putAll(shopCarouselMapEntityList.stream().collect(Collectors.toMap(ShopCarouselMapEntity::getId, a -> a, (k1, k2) -> k1)));
+        }
+        // 获取【轮播图】加载结束时间
+        long shopCarouselMapEndTime = System.currentTimeMillis();
+        log.info("缓存管理-->缓存初始化:【轮播图】加载完成, 用时" + (shopCarouselMapEndTime - shopNoticeEndTime) + "ms!");
+
+
         log.info("缓存管理-->缓存初始化:服务结束!");
     }
 

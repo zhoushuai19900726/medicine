@@ -22,6 +22,10 @@ public class DictionariesKeyConstant {
      */
     public static final String BANNER_KEY = "banner-key";
     /**
+     * 公告相关
+     */
+    public static final String NOTICE_KEY = "notice-key";
+    /**
      * 轮播图相关
      */
     public static final String CAROUSEL_MAP_KEY = "carousel_map-key";

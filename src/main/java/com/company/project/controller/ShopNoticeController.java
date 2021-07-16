@@ -1,29 +1,23 @@
-package com.company.project.service;
+package com.company.project.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.company.project.common.aop.annotation.DataScope;
 import com.company.project.common.aop.annotation.LogAnnotation;
-import com.company.project.controller.BaseController;
-import io.swagger.annotations.Api;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.stereotype.Controller;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-
-import java.util.List;
-
 import com.company.project.common.utils.DataResult;
-
 import com.company.project.entity.ShopNoticeEntity;
 import com.company.project.service.ShopNoticeService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 
 /**
@@ -60,7 +54,7 @@ public class ShopNoticeController extends BaseController {
     @LogAnnotation(title = "公告", action = "新增")
     @ResponseBody
     public DataResult add(@RequestBody ShopNoticeEntity shopNotice) {
-        return DataResult.success(shopNoticeService.save(shopNotice));
+        return shopNoticeService.saveShopNoticeEntity(shopNotice);
     }
 
     @ApiOperation(value = "删除")
@@ -69,7 +63,7 @@ public class ShopNoticeController extends BaseController {
     @LogAnnotation(title = "公告", action = "删除")
     @ResponseBody
     public DataResult delete(@RequestBody @ApiParam(value = "id集合") List<String> ids) {
-        return DataResult.success(shopNoticeService.removeByIds(ids));
+        return shopNoticeService.removeShopNoticeEntityByIds(ids);
     }
 
     @ApiOperation(value = "更新")
@@ -78,7 +72,7 @@ public class ShopNoticeController extends BaseController {
     @LogAnnotation(title = "公告", action = "更新")
     @ResponseBody
     public DataResult update(@RequestBody ShopNoticeEntity shopNotice) {
-        return DataResult.success(shopNoticeService.updateById(shopNotice));
+        return shopNoticeService.updateShopNoticeEntityById(shopNotice);
     }
 
     @ApiOperation(value = "查询全部")

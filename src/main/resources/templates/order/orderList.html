@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <style>
+        table tbody tr td .layui-table-cell {
+            height: 85px;
+            white-space: nowrap;
+        }
+
+        table tbody tr td .laytable-cell-checkbox {
+            line-height: 85px;
+        }
+    </style>
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main" shiro:hasPermission="shopOrder:list">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 5px 5px 5px 5px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">订单编号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="id" autocomplete="off" placeholder="请输入订单编号" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">支付单号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="transactionId" autocomplete="off" placeholder="请输入支付单号" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">流水单号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="serialNumber" autocomplete="off" placeholder="请输入流水号" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">下单日期</label>
+                            <div class="layui-input-inline">
+                                <input type="text" readonly class="layui-input" id="createStartTime" name="createStartTime" placeholder="开始时间">
+                            </div>
+                            <div class="layui-input-inline">
+                                <input type="text" readonly class="layui-input" id="createEndTime" name="createEndTime" placeholder="结束时间">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">会员账号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="serialNumber" autocomplete="off" placeholder="请输入会员账号" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">支付方式</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="id" autocomplete="off" placeholder="请输入支付方式" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">订单状态</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="id" autocomplete="off" placeholder="请输入订单状态" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">支付日期</label>
+                            <div class="layui-input-inline">
+                                <input type="text" readonly class="layui-input" id="payStartTime" name="payStartTime" placeholder="开始时间">
+                            </div>
+                            <div class="layui-input-inline">
+                                <input type="text" readonly class="layui-input" id="payEndTime" name="payEndTime" placeholder="结束时间">
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </fieldset>
+    </div>
+    <table class="layui-table" id="showTable" lay-filter="showTable"></table>
+    <script type="text/html" id="toolbar">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-normal layui-btn-sm" lay-submit lay-filter="data-search-btn" shiro:hasPermission="shopOrder:add"><i class="layui-icon">&#xe615;</i>立即搜索</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe639;</i>批量关闭</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe640;</i>批量删除</button>
+            <button class="layui-btn layui-btn-sm layui-btn-warm" lay-event="batchDeleted" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe640;</i>批量退款退货</button>
+            <button class="layui-btn layui-btn-sm" id="export" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe67d;</i> 导出订单</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="batchDeleted" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe67d;</i> 导出赠单模板</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="batchDeleted" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe681;</i> 导入赠送订单</button>
+        </div>
+    </script>
+    <script type="text/html" id="tool">
+        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit" shiro:hasPermission="shopOrder:update"><i class="layui-icon">&#xe642;</i>订单详情</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="resetRecommend" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe639;</i>订单跟踪</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="resetRecommend" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe639;</i>订单跟踪</a>
+        <br/>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="resetPassword" shiro:hasPermission="shopMember:update"><i class="layui-icon">&#xe639;</i>信息变更</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="resetRecommend" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe639;</i>退款退货</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="resetRecommend" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe639;</i>退款退货</a>
+        <br/>
+        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit" shiro:hasPermission="shopOrder:update"><i class="layui-icon">&#xe642;</i>关闭订单</a>
+        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" shiro:hasPermission="shopOrder:delete"><i class="layui-icon">&#xe640;</i>删除订单</a>
+        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" shiro:hasPermission="shopOrder:delete"><i class="layui-icon">&#xe640;</i>删除订单</a>
+    </script>
+
+
+    <script type="text/html" id="orderInfo">
+        <div class="layui-row">
+            <span class="layui-badge-rim">
+                <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
+                    <i class="fa fa-shirtsinbulk"></i> 流水单号
+                </span>
+                {{ d.serialNumber }}
+            </span>
+        </div>
+        <div class="layui-row">
+            <span class="layui-badge-rim">
+                <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
+                    <i class="fa fa-shirtsinbulk"></i> 订单编号
+                </span>
+                {{ d.id }}
+            </span>
+        </div>
+        <div class="layui-row">
+            <span class="layui-badge-rim">
+                <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
+                    <i class="fa fa-shirtsinbulk"></i> 支付单号
+                </span>
+                {{ d.transactionId }}
+            </span>
+        </div>
+    </script>
+
+
+    <script type="text/html" id="payInfo">
+        <div class="layui-row">
+            <div class="layui-col-xs6">
+                <div class="layui-row">
+                    <span class="layui-badge-rim">
+                        <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
+                            <i class="fa fa-cc-paypal"></i> 订单金额
+                        </span>
+                        <i class="fa fa-jpy"></i> {{ d.totalMoney.toFixed(2) }}
+                    </span>
+                </div>
+                <div class="layui-row">
+                    <span class="layui-badge-rim">
+                        <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
+                            <i class="fa fa-cc-paypal"></i> 优惠金额
+                        </span>
+                        <i class="fa fa-jpy"></i> {{ d.preMoney.toFixed(2) }}
+                    </span>
+                </div>
+                <div class="layui-row">
+                    <span class="layui-badge-rim">
+                        <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
+                            <i class="fa fa-cc-paypal"></i> 商品运费
+                        </span>
+                        <i class="fa fa-jpy"></i> {{ d.postFee.toFixed(2) }}
+                    </span>
+                </div>
+            </div>
+            <div class="layui-col-xs6">
+                <div class="layui-row">
+                    <span class="layui-badge-rim">
+                        <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
+                            <i class="fa fa-cc-paypal"></i> 实付金额
+                        </span>
+                        <i class="fa fa-jpy"></i> {{ d.payMoney.toFixed(2) }}
+                    </span>
+                </div>
+
+                <div class="layui-row">
+                    <span class="layui-badge-rim">
+                        <span class="layui-badge layui-bg-cyan" style="margin-left: -6px;">
+                            <i class="fa fa-money"></i> 会员账号
+                        </span>
+                        {{ d.buyerName }}
+                    </span>
+                </div>
+                <div class="layui-row">
+                    <span class="layui-badge-rim">
+                        <span class="layui-badge layui-bg-cyan" style="margin-left: -6px;">
+                            <i class="fa fa-money"></i> 支付方式
+                        </span>
+                        <i class="fa fa-weixin"></i> 微信
+                    </span>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script type="text/html" id="timeInfo">
+        <div class="layui-row">
+            <span class="layui-badge-rim">
+                <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
+                    <i class="fa fa-clock-o"></i> 下单时间
+                </span>
+                {{ d.createTime }}
+            </span>
+        </div>
+        <div class="layui-row">
+            <span class="layui-badge-rim">
+                <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
+                    <i class="fa fa-clock-o"></i> 付款时间
+                </span>
+                {{ d.payTime }}
+            </span>
+        </div>
+        <div class="layui-row">
+            <span class="layui-badge-rim">
+                <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
+                    <i class="fa fa-clock-o"></i> 关闭时间
+                </span>
+                {{ d.closeTime }}
+            </span>
+        </div>
+    </script>
+
+    <script type="text/html" id="logisticsInfo">
+        <div class="layui-row">
+            <span class="layui-badge-rim">
+                <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
+                    <i class="fa fa-truck"></i> 物流名称
+                </span>
+                {{ d.shippingName }}
+            </span>
+        </div>
+        <div class="layui-row">
+            <span class="layui-badge-rim">
+                <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
+                    <i class="fa fa-shirtsinbulk"></i> 物流单号
+                </span>
+                {{ d.shippingCode }}
+            </span>
+        </div>
+        <div class="layui-row">
+            <span class="layui-badge-rim">
+                <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
+                    <i class="fa fa-clock-o"></i> 发货时间
+                </span>
+                {{ d.consignTime }}
+            </span>
+        </div>
+    </script>
+
+    <script type="text/html" id="statusInfo">
+        <div class="layui-row">
+            <span class="layui-badge-rim">
+                <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
+                    <i class="fa fa-bell-o"></i> 订单状态
+                </span>
+                <b style="color: red;">未完成</b>
+            </span>
+        </div>
+        <div class="layui-row">
+            <span class="layui-badge-rim">
+                <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
+                    <i class="fa fa-bell-o"></i> 支付状态
+                </span>
+                 <b style="color: green;">已支付</b>
+            </span>
+        </div>
+        <div class="layui-row">
+            <span class="layui-badge-rim">
+                <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
+                    <i class="fa fa-bell-o"></i> 发货状态
+                </span>
+                 <b style="color: red;">未发货</b>
+            </span>
+        </div>
+    </script>
+
+</div>
+<script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/layui/layui.all.js}" charset="utf-8"></script>
+</body>
+</html>
+<script>
+    //获取token
+    var token = CoreUtil.getData("access_token");
+    //地址栏转义token中的#号
+    var tokenQuery = token.replace("#", "%23");
+    var tableIns1;
+    var $ = jQuery = layui.jquery;
+    layui.use(['table', 'layer', 'laydate', 'util'], function () {
+        var table = layui.table;
+        var form = layui.form;
+        var layer = layui.layer;
+        var laydate = layui.laydate;
+        var util = layui.util;
+        /**
+         * 日期时间选择器
+         */
+        laydate.render({
+            elem: '#createStartTime'
+            , type: 'datetime'
+        });
+        /**
+         * 日期时间选择器
+         */
+        laydate.render({
+            elem: '#createEndTime'
+            , type: 'datetime'
+        });
+        /**
+         * 日期时间选择器
+         */
+        laydate.render({
+            elem: '#payStartTime'
+            , type: 'datetime'
+        });
+        /**
+         * 日期时间选择器
+         */
+        laydate.render({
+            elem: '#payEndTime'
+            , type: 'datetime'
+        });
+        //加载table
+        tableIns1 = table.render({
+            elem: '#showTable'
+            , contentType: 'application/json'
+            , headers: {"authorization": token}
+            , page: true //开启分页
+            , url: '/shopOrder/listByPage' //数据接口
+            , method: 'POST'
+            , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": CoreUtil.isEmpty(res.data) ? 0 : res.data.total, //解析数据长度
+                    "data": CoreUtil.isEmpty(res.data) ? null : res.data.records //解析数据列表
+                }
+            }
+            , cols: [
+                [
+                    {type: 'checkbox', fixed: 'left'},
+                    {width: 330, field: 'id', title: '订单信息', templet: '#orderInfo'},
+                    {width: 360, field: 'id', title: '支付信息', templet: '#payInfo'},
+                    {width: 230, field: 'id', title: '订单时间', templet: '#timeInfo'},
+                    {width: 250, field: 'id', title: '物流信息', templet: '#logisticsInfo'},
+                    {width: 160, field: 'id', title: '状态信息', templet: '#statusInfo'},
+                    {width: 300, toolbar: "#tool", title: '操作', fixed: 'right'}
+                ]
+            ]
+            , toolbar: '#toolbar'
+        });
+
+
+        //表头工具
+        table.on('toolbar(showTable)', function (obj) {
+            switch (obj.event) {
+                case 'batchDeleted':
+                    var checkStatus = table.checkStatus(obj.config.id);
+                    var data = checkStatus.data;
+                    if (data.length == 0) {
+                        layer.msg("请选择要批量删除的列");
+                    } else {
+                        var ids = [];
+                        $(data).each(function (index, item) {
+                            ids.push(item.id);
+                        });
+                        tipDialog(ids);
+                    }
+                    break;
+                case 'add':
+                    layer.open({
+                        id: 'shopOrder_add', //设定一个id，防止重复弹出
+                        title: '<i class="layui-icon">&#xe653;</i> 新增订单表',
+                        type: 2,
+                        content: '../index/shopOrder/addOrUpdate',
+                        btn: ['提交保存', '取消'],
+                        area: ['60%', '85%'],
+                        scrollbar: false,
+                        yes: function (index, layero) {
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            window[layero.find('iframe')[0]['name']].saveShopOrder("submitBtnForAdd");
+                        }
+                    });
+                    break;
+            }
+        });
+        //列操作
+        table.on('tool(showTable)', function (obj) {
+            var data = obj.data;
+            switch (obj.event) {
+                case 'del':
+                    var ids = [];
+                    ids.push(data.id);
+                    tipDialog(ids);
+                    break;
+                case 'edit':
+                    layer.open({
+                        id: 'shopOrder_update', //设定一个id，防止重复弹出
+                        title: '<i class="layui-icon">&#xe653;</i> 编辑订单表',
+                        type: 2,
+                        content: '../index/shopOrder/addOrUpdate',
+                        btn: ['提交保存', '取消'],
+                        area: ['60%', '85%'],
+                        scrollbar: false,
+                        yes: function (index, layero) {
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            window[layero.find('iframe')[0]['name']].saveShopOrder("submitBtnForUpdate");
+                        },
+                        success: function (layero, index) {
+                            // 置顶当前窗口
+                            layer.setTop(layero);
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            window[layero.find('iframe')[0]['name']].assignment(data);
+                        }
+                    });
+                    break;
+            }
+        });
+
+        /**
+         * 监听单元格编辑
+         */
+        table.on('edit(showTable)', function (obj) {
+            var value = obj.value //得到修改后的值
+                , data = obj.data //得到所在行所有键值
+                , field = obj.field; //得到字段
+            var para = {};
+            para.id = data.id;
+            para[field] = util.escape(value);
+            CoreUtil.sendPut("/shopOrder/update", para, function (res) {
+                tableIns1.reload();
+            });
+        });
+
+        //导出
+        $('#export').on('click', function () {
+            //原先分页limit
+            var exportParams = {
+                limit: Number.MAX_VALUE,
+                key: $("#key").val()
+            };
+            CoreUtil.sendPost("/shopOrder/listByPage", exportParams, function (res) {
+                //初始化渲染数据
+                if (res.data != null && res.data.records != null) {
+                    table.exportFile(tableIns1.config.id, res.data.records, 'xls');
+                }
+            });
+        });
+
+        //删除
+        var tipDialog = function (ids) {
+            layer.confirm('确定要删除么?', {icon: 3, title: '提示'}, function (index) {
+                CoreUtil.sendDelete("/shopOrder/delete", ids, function (res) {
+                    layer.msg(res.msg, {time: 500}, function () {
+                        tableIns1.reload();
+                    });
+                });
+            });
+        };
+
+        /**
+         * 执行查询
+         */
+        form.on('submit(data-search-btn)', function (data) {
+            // 查询条件
+            var where = data.field;
+            // 刷新table
+            tableIns1.reload({
+                where: where,
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                done: function () {
+                    // 清空查询条件缓存
+                    this.where = {};
+                }
+            });
+            return false;
+        });
+
+    });
+</script>
