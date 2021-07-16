@@ -9,12 +9,16 @@
     <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
     <style>
         table tbody tr td .layui-table-cell {
-            height: 85px;
+            height: 90px;
             white-space: nowrap;
         }
 
         table tbody tr td .laytable-cell-checkbox {
-            line-height: 85px;
+            line-height: 90px;
+        }
+
+        table tbody tr td .laytable-cell-numbers {
+            line-height: 90px;
         }
     </style>
 </head>
@@ -349,11 +353,12 @@
             , cols: [
                 [
                     {type: 'checkbox', fixed: 'left'},
+                    {type: 'numbers', title: '序号', fixed: 'left'},
                     {width: 330, field: 'id', title: '订单信息', templet: '#orderInfo'},
-                    {width: 360, field: 'id', title: '支付信息', templet: '#payInfo'},
+                    {width: 350, field: 'id', title: '支付信息', templet: '#payInfo'},
                     {width: 230, field: 'id', title: '订单时间', templet: '#timeInfo'},
-                    {width: 250, field: 'id', title: '物流信息', templet: '#logisticsInfo'},
-                    {width: 160, field: 'id', title: '状态信息', templet: '#statusInfo'},
+                    {width: 220, field: 'id', title: '物流信息', templet: '#logisticsInfo'},
+                    {width: 150, field: 'id', title: '状态信息', templet: '#statusInfo'},
                     {width: 300, toolbar: "#tool", title: '操作', fixed: 'right'}
                 ]
             ]
