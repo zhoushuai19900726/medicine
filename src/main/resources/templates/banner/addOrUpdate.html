@@ -113,6 +113,9 @@
 
         // 表单提交
         form.on('submit(submitBtnForAdd)', function (data) {
+            if(!data.field["isShowStr"]){
+                data.field["isShowStr"] = "off";
+            }
             // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
             CoreUtil.sendPost("/shopBanner/add", data.field, function (res) {
                 // 刷新父页面列表
@@ -143,6 +146,9 @@
             return false;
         });
         form.on('submit(submitBtnForUpdate)', function (data) {
+            if(!data.field["isShowStr"]){
+                data.field["isShowStr"] = "off";
+            }
             // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
             CoreUtil.sendPut("/shopBanner/update", data.field, function (res) {
                 // 刷新父页面列表

@@ -136,6 +136,9 @@
 
         // 表单提交
         form.on('submit(submitBtnForAdd)', function (data) {
+            if(!data.field["isShowStr"]){
+                data.field["isShowStr"] = "off";
+            }
             var jumpType = $("select[name='jumpType']").val();
             var jumpContent = $("select[name='jumpContent']").val();
             data.field["advUrl"] = jumpType + "/" + jumpContent;
@@ -169,6 +172,9 @@
             return false;
         });
         form.on('submit(submitBtnForUpdate)', function (data) {
+            if(!data.field["isShowStr"]){
+                data.field["isShowStr"] = "off";
+            }
             var jumpType = $("select[name='jumpType']").val();
             var jumpContent = $("select[name='jumpContent']").val();
             data.field["advUrl"] = jumpType + "/" + jumpContent;
