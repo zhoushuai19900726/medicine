@@ -14,7 +14,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+
 import java.util.List;
+
 import com.company.project.common.utils.DataResult;
 
 import com.company.project.entity.ShopOrderEntity;
@@ -43,7 +45,7 @@ public class ShopOrderController extends BaseController {
     @GetMapping("/index/shopOrder")
     public String shopOrder() {
         return "order/orderList";
-        }
+    }
 
 //    @ApiOperation(value = "跳转进入新增/编辑页面")
 //    @GetMapping("/index/shopOrder/addOrUpdate")
@@ -84,13 +86,17 @@ public class ShopOrderController extends BaseController {
     @LogAnnotation(title = "订单表", action = "查询分页数据")
     @DataScope
     @ResponseBody
-    public DataResult findListByPage(@RequestBody ShopOrderEntity shopOrder){
+    public DataResult findListByPage(@RequestBody ShopOrderEntity shopOrder) {
         // 查询条件
         LambdaQueryWrapper<ShopOrderEntity> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper
                 .eq(StringUtils.isNotBlank(shopOrder.getId()), ShopOrderEntity::getId, shopOrder.getId())
-        // .apply(StringUtils.isNotBlank(shopOrder.getCreateStartTime()), "UNIX_TIMESTAMP(create_time) >= UNIX_TIMESTAMP('" + shopOrder.getCreateStartTime() + "')")
-        // .apply(StringUtils.isNotBlank(shopOrder.getCreateEndTime()), "UNIX_TIMESTAMP(create_time) <= UNIX_TIMESTAMP('" + shopOrder.getCreateEndTime() + "')")
+                .eq(StringUtils.isNotBlank(shopOrder.getTransactionId()), ShopOrderEntity::getTransactionId, shopOrder.getTransactionId())
+                .eq(StringUtils.isNotBlank(shopOrder.getBuyerName()), ShopOrderEntity::getBuyerName, shopOrder.getBuyerName())
+//                .apply(StringUtils.isNotBlank(shopOrder.getCreateStartTime()), "UNIX_TIMESTAMP(create_time) >= UNIX_TIMESTAMP('" + shopOrder.getCreateStartTime() + "')")
+//                .apply(StringUtils.isNotBlank(shopOrder.getCreateEndTime()), "UNIX_TIMESTAMP(create_time) <= UNIX_TIMESTAMP('" + shopOrder.getCreateEndTime() + "')")
+                .apply(StringUtils.isNotBlank(shopOrder.getPayStartTime()), "UNIX_TIMESTAMP(pay_time) >= UNIX_TIMESTAMP('" + shopOrder.getPayStartTime() + "')")
+                .apply(StringUtils.isNotBlank(shopOrder.getPayEndTime()), "UNIX_TIMESTAMP(pay_time) <= UNIX_TIMESTAMP('" + shopOrder.getPayEndTime() + "')")
                 .orderByDesc(ShopOrderEntity::getCreateTime);
         return DataResult.success(shopOrderService.page(new Page<>(shopOrder.getPage(), shopOrder.getLimit()), queryWrapper));
     }
