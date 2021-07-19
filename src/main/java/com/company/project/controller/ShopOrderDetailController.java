@@ -47,5 +47,4 @@ public class ShopOrderDetailController extends BaseController {
         return "order/orderDetail";
     }
 
-
 }

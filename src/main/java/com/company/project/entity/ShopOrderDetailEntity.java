@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.*;
 
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import lombok.Data;
@@ -36,19 +37,19 @@ public class ShopOrderDetailEntity extends BaseEntity implements Serializable {
      * 1级分类
      */
     @TableField("category_id1")
-    private Integer categoryId1;
+    private String categoryId1;
 
     /**
      * 2级分类
      */
     @TableField("category_id2")
-    private Integer categoryId2;
+    private String categoryId2;
 
     /**
      * 3级分类
      */
     @TableField("category_id3")
-    private Integer categoryId3;
+    private String categoryId3;
 
     /**
      * SPU_ID
@@ -78,7 +79,7 @@ public class ShopOrderDetailEntity extends BaseEntity implements Serializable {
      * 单价
      */
     @TableField("price")
-    private Integer price;
+    private BigDecimal price;
 
     /**
      * 数量
@@ -90,13 +91,13 @@ public class ShopOrderDetailEntity extends BaseEntity implements Serializable {
      * 总金额
      */
     @TableField("money")
-    private Integer money;
+    private BigDecimal money;
 
     /**
      * 实付金额
      */
     @TableField("pay_money")
-    private Integer payMoney;
+    private BigDecimal payMoney;
 
     /**
      * 图片地址
@@ -108,13 +109,13 @@ public class ShopOrderDetailEntity extends BaseEntity implements Serializable {
      * 重量
      */
     @TableField("weight")
-    private Integer weight;
+    private BigDecimal weight;
 
     /**
      * 运费
      */
     @TableField("post_fee")
-    private Integer postFee;
+    private BigDecimal postFee;
 
     /**
      * 是否退货,0:未退货，1：已退货

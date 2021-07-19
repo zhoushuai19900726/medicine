@@ -4,6 +4,7 @@ import com.company.project.common.utils.DataResult;
 import com.company.project.common.utils.DelimiterConstants;
 import com.company.project.common.utils.DictionariesKeyConstant;
 import com.company.project.entity.AddressLibraryEntity;
+import com.company.project.entity.ShopLogisticsCompanyEntity;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -113,6 +114,28 @@ public class CommonController {
         return DataResult.success(analysisRedisData(DictionariesKeyConstant.PAY_TYPE));
     }
 
+
+    @ApiOperation(value = "查询所有订单状态")
+    @GetMapping("findAllOrderStatus")
+    @ResponseBody
+    public DataResult findAllOrderStatus() {
+        return DataResult.success(analysisRedisData(DictionariesKeyConstant.ORDER_STATUS));
+    }
+
+    @ApiOperation(value = "查询所有支付状态")
+    @GetMapping("findAllPayStatus")
+    @ResponseBody
+    public DataResult findAllPayStatus() {
+        return DataResult.success(analysisRedisData(DictionariesKeyConstant.PAY_STATUS));
+    }
+
+    @ApiOperation(value = "查询所有发货状态")
+    @GetMapping("findAllConsignStatus")
+    @ResponseBody
+    public DataResult findAllConsignStatus() {
+        return DataResult.success(analysisRedisData(DictionariesKeyConstant.CONSIGN_STATUS));
+    }
+
     @ApiOperation(value = "查询所有下级地址库")
     @GetMapping("findAllSubordinateAddressLibrary/{parentId}")
     @ResponseBody
@@ -166,8 +189,22 @@ public class CommonController {
         AtomicReference<String> name = new AtomicReference<>(DelimiterConstants.EMPTY_STR);
         if(StringUtils.isNotBlank(id)){
             AddressLibraryEntity addressLibraryEntity = (AddressLibraryEntity) redisTemplate.boundValueOps(DictionariesKeyConstant.ADDRESS_LIBRARY_KEY2_PREFIX.concat(id)).get();
-            if(Objects.nonNull(addressLibraryEntity) &&  StringUtils.equals(addressLibraryEntity.getId(), id)){
+            if(Objects.nonNull(addressLibraryEntity)){
                 name.set(addressLibraryEntity.getName());
+            }
+        }
+        return DataResult.success(name.get());
+    }
+
+    @ApiOperation(value = "根据物流公司ID获取物流公司名称")
+    @GetMapping("getLogisticsNameById")
+    @ResponseBody
+    public DataResult getLogisticsNameById(@RequestParam(value = "id") String id) {
+        AtomicReference<String> name = new AtomicReference<>(DelimiterConstants.EMPTY_STR);
+        if(StringUtils.isNotBlank(id)){
+            ShopLogisticsCompanyEntity shopLogisticsCompanyEntity = (ShopLogisticsCompanyEntity) redisTemplate.boundHashOps(DictionariesKeyConstant.LOGISTICS_COMPANY_KEY).get(id);
+            if(Objects.nonNull(shopLogisticsCompanyEntity)){
+                name.set(shopLogisticsCompanyEntity.getName());
             }
         }
         return DataResult.success(name.get());

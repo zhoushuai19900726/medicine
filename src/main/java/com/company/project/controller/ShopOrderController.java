@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.company.project.common.aop.annotation.DataScope;
 import com.company.project.common.aop.annotation.LogAnnotation;
+import com.company.project.entity.ShopOrderDetailEntity;
 import io.swagger.annotations.Api;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.commons.lang.StringUtils;
@@ -47,6 +48,16 @@ public class ShopOrderController extends BaseController {
         return "order/orderList";
     }
 
+    @ApiOperation(value = "跳转进入订单变更页面")
+    @GetMapping("/index/shopOrder/orderChange/{orderId}")
+    public String orderChange(@PathVariable("orderId") String orderId, Model model) {
+        // 订单信息
+        ShopOrderEntity shopOrderEntity = shopOrderService.getById(orderId);
+        model.addAttribute("shopOrderEntity", shopOrderEntity);
+        return "order/orderChange";
+    }
+
+
 //    @ApiOperation(value = "跳转进入新增/编辑页面")
 //    @GetMapping("/index/shopOrder/addOrUpdate")
 //    public String addOrUpdate() {
@@ -70,15 +81,15 @@ public class ShopOrderController extends BaseController {
 //    public DataResult delete(@RequestBody @ApiParam(value = "id集合") List<String> ids){
 //        return DataResult.success(shopOrderService.removeByIds(ids));
 //    }
-//
-//    @ApiOperation(value = "更新")
-//    @PutMapping("shopOrder/update")
-//    @RequiresPermissions("shopOrder:update")
-//    @LogAnnotation(title = "订单表", action = "更新")
-//    @ResponseBody
-//    public DataResult update(@RequestBody ShopOrderEntity shopOrder){
-//        return DataResult.success(shopOrderService.updateById(shopOrder));
-//    }
+
+    @ApiOperation(value = "更新")
+    @PutMapping("shopOrder/update")
+    @RequiresPermissions("shopOrder:update")
+    @LogAnnotation(title = "订单表", action = "更新")
+    @ResponseBody
+    public DataResult update(@RequestBody ShopOrderEntity shopOrder){
+        return DataResult.success(shopOrderService.updateById(shopOrder));
+    }
 
     @ApiOperation(value = "查询分页数据")
     @PostMapping("shopOrder/listByPage")

@@ -55,6 +55,9 @@ public class LoadPublicDictionary implements CommandLineRunner {
     private ShopCarouselMapService shopCarouselMapService;
 
     @Resource
+    private ShopLogisticsCompanyService shopLogisticsCompanyService;
+
+    @Resource
     private AddressLibraryService addressLibraryService;
 
     @Resource
@@ -121,8 +124,14 @@ public class LoadPublicDictionary implements CommandLineRunner {
         // 获取【轮播图】加载结束时间
         long shopCarouselMapEndTime = System.currentTimeMillis();
         log.info("缓存管理-->缓存初始化:【轮播图】加载完成, 用时" + (shopCarouselMapEndTime - shopNoticeEndTime) + "ms!");
-
-
+        log.info("/** ==============================  【物流公司】 ============================== **/");
+        List<ShopLogisticsCompanyEntity> shopLogisticsCompanyEntityList = shopLogisticsCompanyService.list();
+        if(CollectionUtils.isNotEmpty(shopLogisticsCompanyEntityList)){
+            redisTemplate.boundHashOps(DictionariesKeyConstant.LOGISTICS_COMPANY_KEY).putAll(shopLogisticsCompanyEntityList.stream().collect(Collectors.toMap(ShopLogisticsCompanyEntity::getId, a -> a, (k1, k2) -> k1)));
+        }
+        // 获取【物流公司】加载结束时间
+        long shopLogisticsCompanyEndTime = System.currentTimeMillis();
+        log.info("缓存管理-->缓存初始化:【物流公司】加载完成, 用时" + (shopLogisticsCompanyEndTime - shopCarouselMapEndTime) + "ms!");
         log.info("缓存管理-->缓存初始化:服务结束!");
     }
 

@@ -30,6 +30,10 @@ public class DictionariesKeyConstant {
      */
     public static final String CAROUSEL_MAP_KEY = "carousel_map-key";
     /**
+     * 物流公司相关
+     */
+    public static final String LOGISTICS_COMPANY_KEY = "logistics_company-key";
+    /**
      * 地址库相关
      */
     // key: parentId value: List<地址库子集>

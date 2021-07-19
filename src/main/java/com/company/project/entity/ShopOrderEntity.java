@@ -144,8 +144,8 @@ public class ShopOrderEntity extends BaseEntity implements Serializable {
     /**
      * 物流名称
      */
-    @TableField("shipping_name")
-    private String shippingName;
+    @TableField("shipping_id")
+    private String shippingId;
 
     /**
      * 物流单号
@@ -218,6 +218,12 @@ public class ShopOrderEntity extends BaseEntity implements Serializable {
      */
     @TableField("consign_status")
     private Integer consignStatus;
+
+    /**
+     * 紧急发货标记,0:非紧急，1：紧急
+     */
+    @TableField("urgent_delivery")
+    private Integer urgentDelivery;
 
     /**
      * 是否删除

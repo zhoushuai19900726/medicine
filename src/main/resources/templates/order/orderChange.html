@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <style>
+        .lay-step {
+            padding-left: 100px !important;
+        }
+    </style>
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main" shiro:hasPermission="shopOrder:list">
+        <form class="layui-form" action="" style="width: 100%;">
+            <input type="hidden" name="id" th:value="${shopOrderEntity.id}" />
+            <blockquote class="layui-elem-quote">订单信息</blockquote>
+            <table class="layui-table" lay-size="sm">
+                <thead>
+                <tr>
+                    <th>商家店铺</th>
+                    <th>订单编号</th>
+                    <th>支付单号</th>
+                    <th>流水单号</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${shopOrderEntity.sellerName}"></td>
+                    <td th:text="${shopOrderEntity.id}"></td>
+                    <td th:text="${shopOrderEntity.transactionId}"></td>
+                    <td th:text="${shopOrderEntity.serialNumber}"></td>
+                </tr>
+                </tbody>
+
+
+                <thead>
+                <tr>
+                    <th>订单金额</th>
+                    <th>优惠金额</th>
+                    <th><b style="color: red;">商品运费</b></th>
+                    <th><b style="color: red;">实付金额</b></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${shopOrderEntity.totalMoney}"></td>
+                    <td th:text="${shopOrderEntity.preMoney}"></td>
+                    <td><input type="number" name="postFee" autocomplete="off" placeholder="请输入" class="layui-input" th:value="${shopOrderEntity.postFee}"/></td>
+                    <td><input type="number" name="payMoney" autocomplete="off" placeholder="请输入" class="layui-input" th:value="${shopOrderEntity.payMoney}"/></td>
+                </tr>
+                </tbody>
+
+
+                <thead>
+                <tr>
+                    <th>会员账号</th>
+                    <th>支付方式</th>
+                    <th>下单时间</th>
+                    <th>付款时间</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${shopOrderEntity.buyerName}"></td>
+                    <td th:text="${@commonController.getLabelByValue('dict-key-pay_type', shopOrderEntity.payType).data}"></td>
+                    <td th:text="${#dates.format(shopOrderEntity.createTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                    <td th:text="${#dates.format(shopOrderEntity.payTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                </tr>
+                </tbody>
+
+
+                <thead>
+                <tr>
+                    <th colspan="4"><b style="color: red;">买家留言</b></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td colspan="4">
+                        <textarea name="buyerMessage" placeholder="请输入" class="layui-textarea" th:text="${shopOrderEntity.buyerMessage}"></textarea>
+                    </td>
+                </tr>
+                </tbody>
+
+
+                <thead>
+                <tr>
+                    <th>关闭时间</th>
+                    <th><b style="color: red;">订单状态</b></th>
+                    <th><b style="color: red;">支付状态</b></th>
+                    <th><b style="color: red;">发货状态</b></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${#dates.format(shopOrderEntity.closeTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                    <td>
+                        <select name="orderStatus" th:with="dataResult=${@commonController.findAllOrderStatus()}">
+                            <option value="">请选择</option>
+                            <option th:each="map : ${dataResult.getData()}" th:utext="${map.get('name')}" th:value="${map.get('id')}" th:selected="${map.get('id') == (shopOrderEntity.orderStatus + '')}"></option>
+                        </select>
+                    </td>
+                    <td>
+                        <select name="payStatus" th:with="dataResult=${@commonController.findAllPayStatus()}">
+                            <option value="">请选择</option>
+                            <option th:each="map : ${dataResult.getData()}" th:utext="${map.get('name')}" th:value="${map.get('id')}" th:selected="${map.get('id') == (shopOrderEntity.payStatus + '')}"></option>
+                        </select>
+                    </td>
+                    <td>
+                        <select name="consignStatus" th:with="dataResult=${@commonController.findAllConsignStatus()}">
+                            <option value="">请选择</option>
+                            <option th:each="map : ${dataResult.getData()}" th:utext="${map.get('name')}" th:value="${map.get('id')}" th:selected="${map.get('id') == (shopOrderEntity.consignStatus + '')}"></option>
+                        </select>
+                    </td>
+                </tr>
+                </tbody>
+
+
+            </table>
+
+
+            <blockquote class="layui-elem-quote">物流信息</blockquote>
+            <table class="layui-table" lay-size="sm">
+
+                <thead>
+                <tr>
+                    <th><b style="color: red;">物流名称</b></th>
+                    <th><b style="color: red;">物流单号</b></th>
+                    <th><b style="color: red;">发货时间</b></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <select name="shippingId" lay-search th:with="dataResult=${@shopLogisticsCompanyController.findListByAll()}">
+                            <option value="">请选择</option>
+                            <option th:each="shopLogisticsCompany : ${dataResult.getData()}" th:text="${shopLogisticsCompany.name}" th:value="${shopLogisticsCompany.id}" th:selected="${shopLogisticsCompany.id == shopOrderEntity.shippingId}"></option>
+                        </select>
+                    </td>
+                    <td><input type="text" name="shippingCode" autocomplete="off" placeholder="请输入" class="layui-input" th:value="${shopOrderEntity.shippingCode}"/></td>
+                    <td><input type="text" readonly class="layui-input" id="consignTime" name="consignTime" placeholder="发货时间" th:value="${#dates.format(shopOrderEntity.consignTime,'yyyy-MM-dd HH:mm:ss')}"/></td>
+                </tr>
+                </tbody>
+
+
+                <thead>
+                <tr>
+                    <th><b style="color: red;">收货人</b></th>
+                    <th><b style="color: red;">收货人手机</b></th>
+                    <th>完成时间</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><input type="text" name="receiverContact" autocomplete="off" placeholder="请输入" class="layui-input" th:value="${shopOrderEntity.receiverContact}"/></td>
+                    <td><input type="text" name="receiverMobile" autocomplete="off" placeholder="请输入" class="layui-input" th:value="${shopOrderEntity.receiverMobile}"/></td>
+                    <td th:text="${#dates.format(shopOrderEntity.endTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                </tr>
+                </tbody>
+
+
+                <thead>
+                <tr>
+                    <th colspan="4"><b style="color: red;">收货人地址</b></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td colspan="4">
+                        <textarea name="receiverAddress" placeholder="请输入" class="layui-textarea" th:text="${shopOrderEntity.receiverAddress}"></textarea>
+                    </td>
+                </tr>
+                </tbody>
+
+            </table>
+
+
+
+            <input type="submit" lay-filter="submitBtnForUpdate" id="submitBtnForUpdate" lay-submit="" hidden/>
+
+        </form>
+    </div>
+</div>
+<script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/js/lay-config.js(v=2.0.0)}" charset="utf-8"></script>
+</body>
+</html>
+<script>
+    //获取token
+    var token = CoreUtil.getData("access_token");
+    //地址栏转义token中的#号
+    var tokenQuery = token.replace("#", "%23");
+    var $ = jQuery = layui.jquery;
+    layui.use(['form', 'layer', 'laydate'], function () {
+        var form = layui.form;
+        var layer = layui.layer;
+        var laydate = layui.laydate;
+
+        /**
+         * 日期时间选择器
+         */
+        laydate.render({
+            elem: '#consignTime'
+            , type: 'datetime'
+        });
+
+        form.on('submit(submitBtnForUpdate)', function (data) {
+            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
+            CoreUtil.sendPut("/shopOrder/update", data.field, function (res) {
+                layer.msg("保存成功", {time: 500}, function () {
+                    // 刷新父页面列表
+                    parent.layui.table.reload('showTable');
+                    var parentIndex = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(parentIndex);
+                });
+            });
+            //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            return false;
+        });
+
+    });
+
+    function saveShopOrder() {
+        $("#submitBtnForUpdate").click();
+    }
+
+
+
+
+</script>
