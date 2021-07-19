@@ -63,5 +63,13 @@ public class DictionariesKeyConstant {
     public static final String SHOW_WAYS = DICT_KEY_PREFIX.concat("show_ways");
     // 轮播图位置
     public static final String CAROUSEL_MAP_LOCATION = DICT_KEY_PREFIX.concat("carousel_map_location");
+    // 支付类型
+    public static final String PAY_TYPE = DICT_KEY_PREFIX.concat("pay_type");
+    // 订单状态
+    public static final String ORDER_STATUS = DICT_KEY_PREFIX.concat("order_status");
+    // 支付状态
+    public static final String PAY_STATUS = DICT_KEY_PREFIX.concat("pay_status");
+    // 发货状态
+    public static final String CONSIGN_STATUS = DICT_KEY_PREFIX.concat("consign_status");
 
 }

@@ -171,66 +171,8 @@
         </div>
     </script>
 
-
-    <script type="text/html" id="payInfo">
-        <div class="layui-row">
-            <div class="layui-col-xs6">
-                <div class="layui-row">
-                    <span class="layui-badge-rim">
-                        <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
-                            <i class="fa fa-cc-paypal"></i> 订单金额
-                        </span>
-                        <i class="fa fa-jpy"></i> {{ d.totalMoney.toFixed(2) }}
-                    </span>
-                </div>
-                <div class="layui-row">
-                    <span class="layui-badge-rim">
-                        <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
-                            <i class="fa fa-cc-paypal"></i> 优惠金额
-                        </span>
-                        <i class="fa fa-jpy"></i> {{ d.preMoney.toFixed(2) }}
-                    </span>
-                </div>
-                <div class="layui-row">
-                    <span class="layui-badge-rim">
-                        <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
-                            <i class="fa fa-cc-paypal"></i> 商品运费
-                        </span>
-                        <i class="fa fa-jpy"></i> {{ d.postFee.toFixed(2) }}
-                    </span>
-                </div>
-            </div>
-            <div class="layui-col-xs6">
-                <div class="layui-row">
-                    <span class="layui-badge-rim">
-                        <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
-                            <i class="fa fa-cc-paypal"></i> 实付金额
-                        </span>
-                        <i class="fa fa-jpy"></i> {{ d.payMoney.toFixed(2) }}
-                    </span>
-                </div>
-
-                <div class="layui-row">
-                    <span class="layui-badge-rim">
-                        <span class="layui-badge layui-bg-cyan" style="margin-left: -6px;">
-                            <i class="fa fa-money"></i> 会员账号
-                        </span>
-                        {{ d.buyerName }}
-                    </span>
-                </div>
-                <div class="layui-row">
-                    <span class="layui-badge-rim">
-                        <span class="layui-badge layui-bg-cyan" style="margin-left: -6px;">
-                            <i class="fa fa-money"></i> 支付方式
-                        </span>
-                        <i class="fa fa-weixin"></i> 微信
-                    </span>
-                </div>
-            </div>
-        </div>
-    </script>
-
     <script type="text/html" id="timeInfo">
+        {{#  if(d.createTime != null){ }}
         <div class="layui-row">
             <span class="layui-badge-rim">
                 <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
@@ -239,6 +181,8 @@
                 {{ d.createTime }}
             </span>
         </div>
+        {{#  } }}
+        {{#  if(d.payTime != null){ }}
         <div class="layui-row">
             <span class="layui-badge-rim">
                 <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
@@ -247,6 +191,8 @@
                 {{ d.payTime }}
             </span>
         </div>
+        {{#  } }}
+        {{#  if(d.closeTime != null){ }}
         <div class="layui-row">
             <span class="layui-badge-rim">
                 <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
@@ -255,6 +201,7 @@
                 {{ d.closeTime }}
             </span>
         </div>
+        {{#  } }}
     </script>
 
     <script type="text/html" id="logisticsInfo">
@@ -280,33 +227,6 @@
                     <i class="fa fa-clock-o"></i> 发货时间
                 </span>
                 {{ d.consignTime }}
-            </span>
-        </div>
-    </script>
-
-    <script type="text/html" id="statusInfo">
-        <div class="layui-row">
-            <span class="layui-badge-rim">
-                <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
-                    <i class="fa fa-bell-o"></i> 订单状态
-                </span>
-                <b style="color: red;">未完成</b>
-            </span>
-        </div>
-        <div class="layui-row">
-            <span class="layui-badge-rim">
-                <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
-                    <i class="fa fa-bell-o"></i> 支付状态
-                </span>
-                 <b style="color: green;">已支付</b>
-            </span>
-        </div>
-        <div class="layui-row">
-            <span class="layui-badge-rim">
-                <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
-                    <i class="fa fa-bell-o"></i> 发货状态
-                </span>
-                 <b style="color: red;">未发货</b>
             </span>
         </div>
     </script>
@@ -378,10 +298,113 @@
                     {type: 'checkbox', fixed: 'left'},
                     {type: 'numbers', title: '序号', fixed: 'left'},
                     {width: 330, field: 'id', title: '订单信息', templet: '#orderInfo'},
-                    {width: 350, field: 'id', title: '支付信息', templet: '#payInfo'},
-                    {width: 230, field: 'id', title: '订单时间', templet: '#timeInfo'},
-                    {width: 220, field: 'id', title: '物流信息', templet: '#logisticsInfo'},
-                    {width: 150, field: 'id', title: '状态信息', templet: '#statusInfo'},
+                    // {width: 350, field: 'payType', title: '支付信息', templet: '#payInfo'},
+                    {
+                        width: 350, field: 'payType', title: '支付信息', templet: function (item) {
+                            var param = {};
+                            param.dictionariesKey = "dict-key-pay_type";
+                            param.value = item.payType;
+                            var payType = "";
+                            CoreUtil.sendSyncGet("/common/getLabelByValue", param, function (res) {
+                                payType = res.data;
+                            });
+                            return "<div class=\"layui-row\">\n" +
+                                "            <div class=\"layui-col-xs6\">\n" +
+                                "                <div class=\"layui-row\">\n" +
+                                "                    <span class=\"layui-badge-rim\">\n" +
+                                "                        <span class=\"layui-badge layui-bg-cyan2\" style=\"margin-left: -6px;\">\n" +
+                                "                            <i class=\"fa fa-cc-paypal\"></i> 订单金额\n" +
+                                "                        </span>\n" +
+                                "                        <i class=\"fa fa-jpy\"></i> " + item.totalMoney.toFixed(2) +
+                                "                    </span>\n" +
+                                "                </div>\n" +
+                                "                <div class=\"layui-row\">\n" +
+                                "                    <span class=\"layui-badge-rim\">\n" +
+                                "                        <span class=\"layui-badge layui-bg-cyan3\" style=\"margin-left: -6px;\">\n" +
+                                "                            <i class=\"fa fa-cc-paypal\"></i> 优惠金额\n" +
+                                "                        </span>\n" +
+                                "                        <i class=\"fa fa-jpy\"></i> " + item.preMoney.toFixed(2) +
+                                "                    </span>\n" +
+                                "                </div>\n" +
+                                "                <div class=\"layui-row\">\n" +
+                                "                    <span class=\"layui-badge-rim\">\n" +
+                                "                        <span class=\"layui-badge layui-bg-cyan2\" style=\"margin-left: -6px;\">\n" +
+                                "                            <i class=\"fa fa-cc-paypal\"></i> 商品运费\n" +
+                                "                        </span>\n" +
+                                "                        <i class=\"fa fa-jpy\"></i> " + item.postFee.toFixed(2) +
+                                "                    </span>\n" +
+                                "                </div>\n" +
+                                "            </div>\n" +
+                                "            <div class=\"layui-col-xs6\">\n" +
+                                "                <div class=\"layui-row\">\n" +
+                                "                    <span class=\"layui-badge-rim\">\n" +
+                                "                        <span class=\"layui-badge layui-bg-cyan2\" style=\"margin-left: -6px;\">\n" +
+                                "                            <i class=\"fa fa-cc-paypal\"></i> 实付金额\n" +
+                                "                        </span>\n" +
+                                "                        <i class=\"fa fa-jpy\"></i> " + item.payMoney.toFixed(2) +
+                                "                    </span>\n" +
+                                "                </div>\n" +
+                                "                <div class=\"layui-row\">\n" +
+                                "                    <span class=\"layui-badge-rim\">\n" +
+                                "                        <span class=\"layui-badge layui-bg-cyan\" style=\"margin-left: -6px;\">\n" +
+                                "                            <i class=\"fa fa-money\"></i> 会员账号\n" +
+                                "                        </span>\n" + item.buyerName +
+                                "                    </span>\n" +
+                                "                </div>\n" +
+                                "                <div class=\"layui-row\">\n" +
+                                "                    <span class=\"layui-badge-rim\">\n" +
+                                "                        <span class=\"layui-badge layui-bg-cyan\" style=\"margin-left: -6px;\">\n" +
+                                "                            <i class=\"fa fa-money\"></i> 支付方式\n" +
+                                "                        </span>\n" + payType +
+                                "                    </span>\n" +
+                                "                </div>\n" +
+                                "            </div>\n" +
+                                "        </div>";
+                        }
+                    },
+                    {width: 230, field: 'createTime', title: '订单时间', templet: '#timeInfo'},
+                    {width: 220, field: 'shippingName', title: '物流信息', templet: '#logisticsInfo'},
+                    // {width: 150, field: 'id', title: '状态信息', templet: '#statusInfo'},
+                    {
+                        width: 150, field: 'orderStatus', title: '状态信息', templet: function (item) {
+                            var orderStatus = "";
+                            var payStatus = "";
+                            var consignStatus = "";
+                            CoreUtil.sendSyncGet("/common/getLabelByValue", {dictionariesKey: 'dict-key-order_status', value: item.orderStatus}, function (res) {
+                                orderStatus = res.data;
+                            });
+                            CoreUtil.sendSyncGet("/common/getLabelByValue", {dictionariesKey: 'dict-key-pay_status', value: item.payStatus}, function (res) {
+                                payStatus = res.data;
+                            });
+                            CoreUtil.sendSyncGet("/common/getLabelByValue", {dictionariesKey: 'dict-key-consign_status', value: item.consignStatus}, function (res) {
+                                consignStatus = res.data;
+                            });
+                            return "<div class=\"layui-row\">\n" +
+                                "            <span class=\"layui-badge-rim\">\n" +
+                                "                <span class=\"layui-badge layui-bg-cyan2\" style=\"margin-left: -6px;\">\n" +
+                                "                    <i class=\"fa fa-bell-o\"></i> 订单状态\n" +
+                                "                </span>\n" +
+                                "                <b>" + orderStatus + "</b>\n" +
+                                "            </span>\n" +
+                                "        </div>\n" +
+                                "        <div class=\"layui-row\">\n" +
+                                "            <span class=\"layui-badge-rim\">\n" +
+                                "                <span class=\"layui-badge layui-bg-cyan2\" style=\"margin-left: -6px;\">\n" +
+                                "                    <i class=\"fa fa-bell-o\"></i> 支付状态\n" +
+                                "                </span>\n" +
+                                "                 <b>" + payStatus + "</b>\n" +
+                                "            </span>\n" +
+                                "        </div>\n" +
+                                "        <div class=\"layui-row\">\n" +
+                                "            <span class=\"layui-badge-rim\">\n" +
+                                "                <span class=\"layui-badge layui-bg-cyan2\" style=\"margin-left: -6px;\">\n" +
+                                "                    <i class=\"fa fa-bell-o\"></i> 发货状态\n" +
+                                "                </span>\n" +
+                                "                 <b>" + consignStatus + "</b>\n" +
+                                "            </span>\n" +
+                                "        </div>";
+                        }
+                    },
                     {width: 300, toolbar: "#tool", title: '操作', fixed: 'right'}
                 ]
             ]
@@ -431,26 +454,44 @@
                     ids.push(data.id);
                     tipDialog(ids);
                     break;
-                case 'edit':
+                case 'detail':
                     layer.open({
-                        id: 'shopOrder_update', //设定一个id，防止重复弹出
-                        title: '<i class="layui-icon">&#xe653;</i> 编辑订单表',
                         type: 2,
-                        content: '../index/shopOrder/addOrUpdate',
-                        btn: ['提交保存', '取消'],
-                        area: ['60%', '85%'],
+                        title: '<i class="layui-icon">&#xe615;</i> 订单信息',
+                        id: 'order_detail',
                         scrollbar: false,
-                        yes: function (index, layero) {
-                            // 得到iframe页的窗口对象并调用子页面方法
-                            window[layero.find('iframe')[0]['name']].saveShopOrder("submitBtnForUpdate");
-                        },
+                        offset: 'r',
+                        anim: 5,
+                        maxmin: true,
+                        area: ['1000px', '100%'],//宽高不影响最大化
+                        content: "../index/shopOrderDetail/" + data.id,//地址
+                        zIndex: layer.zIndex,
                         success: function (layero, index) {
                             // 置顶当前窗口
                             layer.setTop(layero);
-                            // 得到iframe页的窗口对象并调用子页面方法
-                            window[layero.find('iframe')[0]['name']].assignment(data);
                         }
                     });
+                    break;
+                case 'edit':
+                    // layer.open({
+                    //     id: 'shopOrder_update', //设定一个id，防止重复弹出
+                    //     title: '<i class="layui-icon">&#xe653;</i> 编辑订单表',
+                    //     type: 2,
+                    //     content: '../index/shopOrder/addOrUpdate',
+                    //     btn: ['提交保存', '取消'],
+                    //     area: ['60%', '85%'],
+                    //     scrollbar: false,
+                    //     yes: function (index, layero) {
+                    //         // 得到iframe页的窗口对象并调用子页面方法
+                    //         window[layero.find('iframe')[0]['name']].saveShopOrder("submitBtnForUpdate");
+                    //     },
+                    //     success: function (layero, index) {
+                    //         // 置顶当前窗口
+                    //         layer.setTop(layero);
+                    //         // 得到iframe页的窗口对象并调用子页面方法
+                    //         window[layero.find('iframe')[0]['name']].assignment(data);
+                    //     }
+                    // });
                     break;
             }
         });

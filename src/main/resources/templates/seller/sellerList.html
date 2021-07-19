@@ -294,7 +294,7 @@
             seller.id = data.id;
             seller[field] = util.escape(value);
             CoreUtil.sendPut("/seller/update", seller, function (res) {
-
+                tableIns1.reload();
             });
         });
         /**

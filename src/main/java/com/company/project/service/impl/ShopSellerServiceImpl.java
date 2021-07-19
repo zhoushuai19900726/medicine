@@ -47,12 +47,14 @@ public class ShopSellerServiceImpl extends ServiceImpl<ShopSellerMapper, ShopSel
             shopSellerEntity.setPassword(PasswordUtils.encode(DelimiterConstants.INIT_PASSWORD, PasswordUtils.getSalt()));
         }
         // 商家地址
-        List<AddressLibraryEntity> addressLibraryEntityList = addressLibraryMapper.selectList(Wrappers.lambdaQuery());
-        Map<String, String> addressLibraryEntityMap = addressLibraryEntityList.stream().collect(Collectors.toMap(AddressLibraryEntity::getId, AddressLibraryEntity::getName, (k1, k2) -> k1));
-        shopSellerEntity.setSellerAddress(addressLibraryEntityMap.getOrDefault(shopSellerEntity.getProvince(), DelimiterConstants.EMPTY_STR) +
-                addressLibraryEntityMap.getOrDefault(shopSellerEntity.getCity(), DelimiterConstants.EMPTY_STR) +
-                addressLibraryEntityMap.getOrDefault(shopSellerEntity.getCounty(), DelimiterConstants.EMPTY_STR) +
-                shopSellerEntity.getAddress());
+        if(StringUtils.isNotBlank(shopSellerEntity.getProvince()) && StringUtils.isNotBlank(shopSellerEntity.getCity()) && StringUtils.isNotBlank(shopSellerEntity.getCounty())){
+            List<AddressLibraryEntity> addressLibraryEntityList = addressLibraryMapper.selectList(Wrappers.lambdaQuery());
+            Map<String, String> addressLibraryEntityMap = addressLibraryEntityList.stream().collect(Collectors.toMap(AddressLibraryEntity::getId, AddressLibraryEntity::getName, (k1, k2) -> k1));
+            shopSellerEntity.setSellerAddress(addressLibraryEntityMap.getOrDefault(shopSellerEntity.getProvince(), DelimiterConstants.EMPTY_STR) +
+                    addressLibraryEntityMap.getOrDefault(shopSellerEntity.getCity(), DelimiterConstants.EMPTY_STR) +
+                    addressLibraryEntityMap.getOrDefault(shopSellerEntity.getCounty(), DelimiterConstants.EMPTY_STR) +
+                    shopSellerEntity.getAddress());
+        }
         return DataResult.success(shopSellerMapper.insert(shopSellerEntity));
     }
 
@@ -64,12 +66,14 @@ public class ShopSellerServiceImpl extends ServiceImpl<ShopSellerMapper, ShopSel
             shopSellerEntity.setPassword(PasswordUtils.encode(shopSellerEntity.getPassword(), PasswordUtils.getSalt()));
         }
         // 商家地址
-        List<AddressLibraryEntity> addressLibraryEntityList = addressLibraryMapper.selectList(Wrappers.lambdaQuery());
-        Map<String, String> addressLibraryEntityMap = addressLibraryEntityList.stream().collect(Collectors.toMap(AddressLibraryEntity::getId, AddressLibraryEntity::getName, (k1, k2) -> k1));
-        shopSellerEntity.setSellerAddress(addressLibraryEntityMap.getOrDefault(shopSellerEntity.getProvince(), DelimiterConstants.EMPTY_STR) +
-                addressLibraryEntityMap.getOrDefault(shopSellerEntity.getCity(), DelimiterConstants.EMPTY_STR) +
-                addressLibraryEntityMap.getOrDefault(shopSellerEntity.getCounty(), DelimiterConstants.EMPTY_STR) +
-                shopSellerEntity.getAddress());
+        if(StringUtils.isNotBlank(shopSellerEntity.getProvince()) && StringUtils.isNotBlank(shopSellerEntity.getCity()) && StringUtils.isNotBlank(shopSellerEntity.getCounty())){
+            List<AddressLibraryEntity> addressLibraryEntityList = addressLibraryMapper.selectList(Wrappers.lambdaQuery());
+            Map<String, String> addressLibraryEntityMap = addressLibraryEntityList.stream().collect(Collectors.toMap(AddressLibraryEntity::getId, AddressLibraryEntity::getName, (k1, k2) -> k1));
+            shopSellerEntity.setSellerAddress(addressLibraryEntityMap.getOrDefault(shopSellerEntity.getProvince(), DelimiterConstants.EMPTY_STR) +
+                    addressLibraryEntityMap.getOrDefault(shopSellerEntity.getCity(), DelimiterConstants.EMPTY_STR) +
+                    addressLibraryEntityMap.getOrDefault(shopSellerEntity.getCounty(), DelimiterConstants.EMPTY_STR) +
+                    shopSellerEntity.getAddress());
+        }
         return DataResult.success(shopSellerMapper.updateById(shopSellerEntity));
     }
 

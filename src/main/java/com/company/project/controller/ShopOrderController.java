@@ -7,6 +7,7 @@ import com.company.project.common.aop.annotation.LogAnnotation;
 import io.swagger.annotations.Api;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -39,7 +40,6 @@ public class ShopOrderController extends BaseController {
 
     @Resource
     private ShopOrderService shopOrderService;
-
 
     @ApiOperation(value = "跳转到订单表列表页面")
     @GetMapping("/index/shopOrder")

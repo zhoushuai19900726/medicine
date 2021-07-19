@@ -106,6 +106,13 @@ public class CommonController {
         return DataResult.success(analysisRedisData(DictionariesKeyConstant.CAROUSEL_MAP_LOCATION));
     }
 
+    @ApiOperation(value = "查询所有支付类型")
+    @GetMapping("findAllPayType")
+    @ResponseBody
+    public DataResult findAllPayType() {
+        return DataResult.success(analysisRedisData(DictionariesKeyConstant.PAY_TYPE));
+    }
+
     @ApiOperation(value = "查询所有下级地址库")
     @GetMapping("findAllSubordinateAddressLibrary/{parentId}")
     @ResponseBody
