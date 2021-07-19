@@ -1,6 +1,7 @@
 package com.company.project.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.company.project.common.utils.DataResult;
 import com.company.project.entity.ShopOrderEntity;
 
 /**
@@ -11,6 +12,8 @@ import com.company.project.entity.ShopOrderEntity;
  * @date 2021-07-16 15:52:54
  */
 public interface ShopOrderService extends IService<ShopOrderEntity> {
+
+    DataResult updateShopOrderEntityById(ShopOrderEntity shopOrder);
 
 }
 

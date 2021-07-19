@@ -99,7 +99,7 @@ public class ShopOrderController extends BaseController {
     @LogAnnotation(title = "订单表", action = "更新")
     @ResponseBody
     public DataResult update(@RequestBody ShopOrderEntity shopOrder) {
-        return DataResult.success(shopOrderService.updateById(shopOrder));
+        return shopOrderService.updateShopOrderEntityById(shopOrder);
     }
 
     @ApiOperation(value = "查询分页数据")

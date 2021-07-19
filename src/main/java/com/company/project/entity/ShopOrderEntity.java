@@ -138,7 +138,7 @@ public class ShopOrderEntity extends BaseEntity implements Serializable {
     /**
      * 交易关闭时间
      */
-    @TableField("close_time")
+    @TableField(value = "close_time", updateStrategy = FieldStrategy.IGNORED)
     private Date closeTime;
 
     /**
