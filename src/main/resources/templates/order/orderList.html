@@ -119,29 +119,35 @@
     <table class="layui-table" id="showTable" lay-filter="showTable"></table>
     <script type="text/html" id="toolbar">
         <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-sm layui-btn-warm" lay-event="batchDeleted" shiro:hasPermission="shopOrder:manager"><i class="fa fa-exclamation-triangle"></i> 批量退款退货</button>
-            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopOrder:manager"><i class="fa fa-times-circle"></i> 批量关闭</button>
+            <button class="layui-btn layui-btn-sm layui-btn-warm" lay-event="" shiro:hasPermission="shopOrder:manager"><i class="fa fa-exclamation-triangle"></i> 批量退款退货</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchClosed" shiro:hasPermission="shopOrder:manager"><i class="fa fa-times-circle"></i> 批量关闭</button>
             <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe640;</i>批量删除</button>
 
             <button class="layui-btn layui-btn-sm" id="export" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe67d;</i> 导出订单</button>
-            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="batchDeleted" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe67d;</i> 导出赠单模板</button>
-            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="batchDeleted" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe681;</i> 导入赠送订单</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe67d;</i> 导出赠单模板</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe681;</i> 导入赠送订单</button>
         </div>
     </script>
     <script type="text/html" id="tool">
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="detail" shiro:hasPermission="shopOrder:list"><i class="layui-icon">&#xe615;</i>订单详情</a>
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="orderTracking" shiro:hasPermission="shopMember:manager"><i class="fa fa-truck"></i> 订单跟踪</a>
+        {{#  if(d.orderStatus != -1 && d.orderStatus != 4 && d.payStatus == 1 && d.consignStatus == 0){ }}
         {{#  if(d.urgentDelivery == 1){ }}
         <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="cancelUrgentDelivery" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe609;</i>取消紧急</a>
         {{# }else { }}
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="urgentDelivery" shiro:hasPermission="shopMember:manager"><i class="layui-icon">&#xe609;</i>紧急发货</a>
         {{# } }}
+        {{# } }}
         <br/>
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="orderChange" shiro:hasPermission="shopMember:manager"><i class="fa fa-edit"></i> 订单变更</a>
-        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="resetRecommend" shiro:hasPermission="shopMember:manager"><i class="fa fa-recycle"></i> 订单换货</a>
-        <a class="layui-btn layui-btn-primary layui-border-orange layui-btn-xs" lay-event="del" shiro:hasPermission="shopOrder:delete"><i class="fa fa-exclamation-triangle"></i> 退款退货</a>
+        {{#  if(d.orderStatus != -1 && d.orderStatus != 4 && d.payStatus == 1){ }}
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="" shiro:hasPermission="shopMember:manager"><i class="fa fa-recycle"></i> 订单换货</a>
+        <a class="layui-btn layui-btn-primary layui-border-orange layui-btn-xs" lay-event="" shiro:hasPermission="shopOrder:delete"><i class="fa fa-exclamation-triangle"></i> 退款退货</a>
+        {{# } }}
         <br/>
-        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="edit" shiro:hasPermission="shopOrder:update"><i class="fa fa-times-circle"></i> 关闭订单</a>
+        {{#  if(d.orderStatus != 4){ }}
+        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="close" shiro:hasPermission="shopOrder:update"><i class="fa fa-times-circle"></i> 关闭订单</a>
+        {{# } }}
         <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="del" shiro:hasPermission="shopOrder:delete"><i class="layui-icon">&#xe640;</i>删除订单</a>
     </script>
 
@@ -273,7 +279,6 @@
                     {type: 'checkbox', fixed: 'left'},
                     {type: 'numbers', title: '序号', fixed: 'left'},
                     {width: 330, field: 'id', title: '订单信息', templet: '#orderInfo'},
-                    // {width: 350, field: 'payType', title: '支付信息', templet: '#payInfo'},
                     {
                         width: 350, field: 'payType', title: '支付信息', templet: function (item) {
                             var param = {};
@@ -344,7 +349,7 @@
                             CoreUtil.sendSyncGet("/common/getLogisticsNameById", {id: item.shippingId}, function (res) {
                                 logisticsCompany = res.data;
                             });
-                            return  "<div class=\"layui-row\">\n" +
+                            return "<div class=\"layui-row\">\n" +
                                 "            <span class=\"layui-badge-rim\">\n" +
                                 "                <span class=\"layui-badge layui-bg-cyan2\" style=\"margin-left: -6px;\">\n" +
                                 "                    <i class=\"fa fa-truck\"></i> 物流名称\n" +
@@ -367,7 +372,6 @@
                                 "        </div>";
                         }
                     },
-                    // {width: 150, field: 'id', title: '状态信息', templet: '#statusInfo'},
                     {
                         width: 150, field: 'orderStatus', title: '状态信息', templet: function (item) {
                             var orderStatus = "";
@@ -418,6 +422,19 @@
         //表头工具
         table.on('toolbar(showTable)', function (obj) {
             switch (obj.event) {
+                case 'batchClosed':
+                    var checkStatus = table.checkStatus(obj.config.id);
+                    var data = checkStatus.data;
+                    if (data.length == 0) {
+                        layer.msg("请选择要批量关闭的列");
+                    } else {
+                        var ids = [];
+                        $(data).each(function (index, item) {
+                            ids.push(item.id);
+                        });
+                        tipDialogForClose(ids);
+                    }
+                    break;
                 case 'batchDeleted':
                     var checkStatus = table.checkStatus(obj.config.id);
                     var data = checkStatus.data;
@@ -428,7 +445,7 @@
                         $(data).each(function (index, item) {
                             ids.push(item.id);
                         });
-                        tipDialog(ids);
+                        tipDialogForDelete(ids);
                     }
                     break;
                 case 'add':
@@ -452,10 +469,15 @@
         table.on('tool(showTable)', function (obj) {
             var data = obj.data;
             switch (obj.event) {
+                case 'close':
+                    var ids = [];
+                    ids.push(data.id);
+                    tipDialogForClose(ids);
+                    break;
                 case 'del':
                     var ids = [];
                     ids.push(data.id);
-                    tipDialog(ids);
+                    tipDialogForDelete(ids);
                     break;
                 case 'detail':
                     layer.open({
@@ -575,9 +597,20 @@
             });
         });
 
+        //关闭
+        var tipDialogForClose = function (ids) {
+            layer.confirm('确定要关闭订单么?', {icon: 3, title: '提示'}, function (index) {
+                CoreUtil.sendDelete("/shopOrder/close", ids, function (res) {
+                    layer.msg(res.msg, {time: 500}, function () {
+                        tableIns1.reload();
+                    });
+                });
+            });
+        };
+
         //删除
-        var tipDialog = function (ids) {
-            layer.confirm('确定要删除么?', {icon: 3, title: '提示'}, function (index) {
+        var tipDialogForDelete = function (ids) {
+            layer.confirm('确定要删除订单么?', {icon: 3, title: '提示'}, function (index) {
                 CoreUtil.sendDelete("/shopOrder/delete", ids, function (res) {
                     layer.msg(res.msg, {time: 500}, function () {
                         tableIns1.reload();

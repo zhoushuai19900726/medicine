@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.company.project.common.aop.annotation.DataScope;
 import com.company.project.common.aop.annotation.LogAnnotation;
+import com.company.project.common.utils.NumberConstants;
 import com.company.project.entity.ShopOrderDetailEntity;
 import io.swagger.annotations.Api;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -17,6 +18,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+import java.util.Date;
 import java.util.List;
 
 import com.company.project.common.utils.DataResult;
@@ -72,22 +74,31 @@ public class ShopOrderController extends BaseController {
 //    public DataResult add(@RequestBody ShopOrderEntity shopOrder){
 //        return DataResult.success(shopOrderService.save(shopOrder));
 //    }
-//
-//    @ApiOperation(value = "删除")
-//    @DeleteMapping("shopOrder/delete")
-//    @RequiresPermissions("shopOrder:delete")
-//    @LogAnnotation(title = "订单表", action = "删除")
-//    @ResponseBody
-//    public DataResult delete(@RequestBody @ApiParam(value = "id集合") List<String> ids){
-//        return DataResult.success(shopOrderService.removeByIds(ids));
-//    }
+
+    @ApiOperation(value = "删除")
+    @DeleteMapping("shopOrder/delete")
+    @RequiresPermissions("shopOrder:delete")
+    @LogAnnotation(title = "订单表", action = "删除")
+    @ResponseBody
+    public DataResult delete(@RequestBody @ApiParam(value = "id集合") List<String> ids) {
+        return DataResult.success(shopOrderService.removeByIds(ids));
+    }
+
+    @ApiOperation(value = "关闭")
+    @DeleteMapping("shopOrder/close")
+    @RequiresPermissions("shopOrder:update")
+    @LogAnnotation(title = "订单表", action = "关闭")
+    @ResponseBody
+    public DataResult close(@RequestBody @ApiParam(value = "id集合") List<String> ids) {
+        return DataResult.success(shopOrderService.update(new ShopOrderEntity(new Date(), NumberConstants.FOUR_I), Wrappers.<ShopOrderEntity>lambdaQuery().in(ShopOrderEntity::getId, ids)));
+    }
 
     @ApiOperation(value = "更新")
     @PutMapping("shopOrder/update")
     @RequiresPermissions("shopOrder:update")
     @LogAnnotation(title = "订单表", action = "更新")
     @ResponseBody
-    public DataResult update(@RequestBody ShopOrderEntity shopOrder){
+    public DataResult update(@RequestBody ShopOrderEntity shopOrder) {
         return DataResult.success(shopOrderService.updateById(shopOrder));
     }
 

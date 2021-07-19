@@ -33,7 +33,7 @@ public class NumberConstants {
     public static final int THREE = 3;
     public static final Integer THREE_I = 3;
     public static final int FOUR = 4;
-    public static final int FOUR_I = 4;
+    public static final Integer FOUR_I = 4;
     public static final short SHORT_FOUR = 4;
     public static final int FIVE = 5;
     public static final int SIX = 6;
