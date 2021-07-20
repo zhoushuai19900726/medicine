@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <style>
+        small {
+            color: #bebebe;
+        }
+
+        .floatRight {
+            float: right;
+        }
+    </style>
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main" shiro:hasPermission="shopMember:list">
+        <form class="layui-form layui-form-pane" action="">
+            <input type="hidden" name="id" th:value="${shopOrderConfigEntity.id}"/>
+            <blockquote class="layui-elem-quote">订单设置</blockquote>
+            <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">订单设置</li>
+                </ul>
+                <div class="layui-tab-content">
+                    <div class="layui-tab-item layui-show">
+                        <blockquote class="layui-elem-quote layui-quote-nm">
+                            <table class="layui-table" lay-size="sm">
+                                <colgroup>
+                                    <col width="100">
+                                    <col width="1000">
+                                </colgroup>
+                                <tbody>
+                                <tr>
+                                    <td align="right" class="required">秒杀订单超过：</td>
+                                    <td>
+                                        <div class="layui-inline">
+                                            <div class="layui-input-inline">
+                                                <input type="number" name="seckillTimeout" autocomplete="off" class="layui-input" th:value="${shopOrderConfigEntity.seckillTimeout}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">分</label>
+                                        </div>
+                                        <div class="layui-input-inline">
+                                            未付款，订单自动关闭
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right" class="required">正常订单超过</td>
+                                    <td>
+                                        <div class="layui-inline">
+                                            <div class="layui-input-inline">
+                                                <input type="number" name="orderTimeout" autocomplete="off" class="layui-input" th:value="${shopOrderConfigEntity.orderTimeout}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">分</label>
+                                        </div>
+                                        <div class="layui-input-inline">
+                                            未付款，订单自动关闭
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right" class="required">发货超过</td>
+                                    <td>
+                                        <div class="layui-inline">
+                                            <div class="layui-input-inline">
+                                                <input type="number" name="takeTimeout" autocomplete="off" class="layui-input" th:value="${shopOrderConfigEntity.takeTimeout}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">天</label>
+                                        </div>
+                                        <div class="layui-input-inline">
+                                            未收货，订单自动完成
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right" class="required">订单完成超过：</td>
+                                    <td>
+                                        <div class="layui-inline">
+                                            <div class="layui-input-inline">
+                                                <input type="number" name="serviceTimeout" autocomplete="off" class="layui-input" th:value="${shopOrderConfigEntity.serviceTimeout}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">天</label>
+                                        </div>
+                                        <div class="layui-input-inline">
+                                            自动结束交易，不能申请售后
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right" class="required">订单完成超过：</td>
+                                    <td>
+                                        <div class="layui-inline">
+                                            <div class="layui-input-inline">
+                                                <input type="number" name="commentTimeout" autocomplete="off" class="layui-input" th:value="${shopOrderConfigEntity.commentTimeout}">
+                                            </div>
+                                            <label class="layui-form-label floatRight">天</label>
+                                        </div>
+                                        <div class="layui-input-inline">
+                                            自动五星好评
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </blockquote>
+                    </div>
+
+
+                </div>
+            </div>
+            <button class="layui-btn layui-btn-primary layui-border-blue" lay-submit lay-filter="data-save-btn"><i class="layui-icon">&#xe609;</i> 提交配置</button>
+        </form>
+    </div>
+</div>
+<script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/layui/layui.all.js}" charset="utf-8"></script>
+</body>
+</html>
+<script>
+    //获取token
+    var token = CoreUtil.getData("access_token");
+    //地址栏转义token中的#号
+    var tokenQuery = token.replace("#", "%23");
+    var tableIns1;
+    var $ = jQuery = layui.jquery;
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form;
+        var layer = layui.layer;
+
+        // 表单提交
+        form.on('submit(data-save-btn)', function (data) {
+            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
+            CoreUtil.sendPost("/shopOrderConfig/addOrUpdate", data.field, function (res) {
+                layer.msg("保存成功");
+            });
+            // //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            return false;
+        });
+    });
+</script>
