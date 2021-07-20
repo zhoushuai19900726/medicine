@@ -64,9 +64,12 @@ public class ShopTransportServiceImpl extends ServiceImpl<ShopTransportMapper, S
 
     @Override
     public DataResult updateShopTransportEntityById(ShopTransportEntity shopTransport) {
-        // 只保留一个默认
-        if(Objects.nonNull(shopTransport.getIsDefault()) && NumberConstants.ONE_I.equals(shopTransport.getIsDefault())){
-            shopTransportMapper.update(new ShopTransportEntity().setIsDefault(NumberConstants.ZERO_I), Wrappers.lambdaQuery());
+        // 一个店铺只保留一个默认
+        if (Objects.nonNull(shopTransport.getIsDefault()) && NumberConstants.ONE_I.equals(shopTransport.getIsDefault())) {
+            ShopTransportEntity result = shopTransportMapper.selectById(shopTransport.getId());
+            if (Objects.nonNull(result) && StringUtils.isNotBlank(result.getSellerId())) {
+                shopTransportMapper.update(new ShopTransportEntity().setIsDefault(NumberConstants.ZERO_I), Wrappers.<ShopTransportEntity>lambdaQuery().eq(ShopTransportEntity::getSellerId, result.getSellerId()));
+            }
         }
         return DataResult.success(shopTransportMapper.updateById(shopTransport));
     }

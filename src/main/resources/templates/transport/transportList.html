@@ -114,8 +114,20 @@
                     {type: 'checkbox', fixed: 'left'},
                     {field: 'id', title: 'ID', sort: true},
                     {field: 'name', title: '名称', edit: 'text'},
-                    {field: 'sellerName', title: '店铺'},
+                    {
+                        field: 'pricingMethod', title: '计价方式', templet: function (item) {
+                            var param = {};
+                            param.dictionariesKey = "dict-key-pricing_method";
+                            param.value = item.pricingMethod;
+                            var result = "";
+                            CoreUtil.sendSyncGet("/common/getLabelByValue", param, function (res) {
+                                result = res.data;
+                            });
+                            return result;
+                        }
+                    },
                     {field: 'isDefault', title: '是否默认', templet: '#isDefaultTpl'},
+                    {field: 'sellerName', title: '店铺'},
                     {width: 100, field: 'createName', title: '创建人'},
                     {field: 'createTime', title: '创建时间', sort: true},
                     {width: 100, field: 'updateName', title: '修改人'},

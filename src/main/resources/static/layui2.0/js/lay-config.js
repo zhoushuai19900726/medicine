@@ -27,5 +27,6 @@ layui.config({
     echartsTheme: 'echarts/echartsTheme', // echarts图表主题扩展
     wangEditor: 'wangEditor/wangEditor', // wangEditor富文本扩展
     layarea: 'layarea/layarea', //  省市县区三级联动下拉选择器
+    regionCheckBox: 'regionCheckBox/regionCheckBox', //  地址库复选框
     // drawer: 'drawer/drawer', //  drawer 抽屉组件
 });

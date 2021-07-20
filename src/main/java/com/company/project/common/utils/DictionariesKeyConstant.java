@@ -79,5 +79,9 @@ public class DictionariesKeyConstant {
     public static final String PAY_STATUS = DICT_KEY_PREFIX.concat("pay_status");
     // 发货状态
     public static final String CONSIGN_STATUS = DICT_KEY_PREFIX.concat("consign_status");
+    // 计价方式
+    public static final String PRICING_METHOD = DICT_KEY_PREFIX.concat("pricing_method");
+    // 配送方式
+    public static final String SHIPPING_METHOD = DICT_KEY_PREFIX.concat("shipping_method");
 
 }

@@ -47,6 +47,12 @@ public class ShopTransportEntity extends BaseEntity implements Serializable {
     private String sellerName;
 
     /**
+     * 计价方式
+     */
+    @TableField("pricing_method")
+    private Integer pricingMethod;
+
+    /**
      * 是否默认
      */
     @TableField("is_default")

@@ -136,6 +136,20 @@ public class CommonController {
         return DataResult.success(analysisRedisData(DictionariesKeyConstant.CONSIGN_STATUS));
     }
 
+    @ApiOperation(value = "查询所有计价方式")
+    @GetMapping("findAllPricingMethod")
+    @ResponseBody
+    public DataResult findAllPricingMethod() {
+        return DataResult.success(analysisRedisData(DictionariesKeyConstant.PRICING_METHOD));
+    }
+
+    @ApiOperation(value = "查询所有配送方式")
+    @GetMapping("findAllShippingMethod")
+    @ResponseBody
+    public DataResult findAllShippingMethod() {
+        return DataResult.success(analysisRedisData(DictionariesKeyConstant.SHIPPING_METHOD));
+    }
+
     @ApiOperation(value = "查询所有下级地址库")
     @GetMapping("findAllSubordinateAddressLibrary/{parentId}")
     @ResponseBody
