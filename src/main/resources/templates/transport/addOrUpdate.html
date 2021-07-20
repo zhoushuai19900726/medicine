@@ -17,7 +17,7 @@
                 <label class="layui-form-label required">经营店铺</label>
                 <div class="layui-input-block">
                     <select name="sellerId" lay-filter="sellerId" lay-search lay-verify="required" th:with="sellerList=${@sellerService.list()}">
-                        <option value="">请选择运营商家</option>
+                        <!--<option value="">请选择运营商家</option>-->
                         <option th:each="seller : ${sellerList}" th:text="${seller.sellerName}" th:value="${seller.id}"></option>
                     </select>
                 </div>
@@ -28,6 +28,14 @@
                     <input type="text" name="name" lay-verify="required" placeholder="请输入名称" autocomplete="off" class="layui-input">
                 </div>
             </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label required">宝贝地址</label>
+                <div class="layui-input-block">
+                    <input type="text" name="" lay-verify="required" placeholder="请输入宝贝地址" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
             <div class="layui-form-item">
                 <label class="layui-form-label required">计价方式</label>
                 <div class="layui-input-block">
@@ -44,23 +52,156 @@
                     </span>
                 </div>
             </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+
+                    <div class="layui-card">
+                        <div class="layui-card-header">快递</div>
+                        <div class="layui-card-body">
+                            <table class="layui-table" lay-size="sm">
+                                <colgroup>
+                                    <col width="150">
+                                    <col width="200">
+                                    <col>
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>昵称</th>
+                                    <th>加入时间</th>
+                                    <th>签名</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>贤心</td>
+                                    <td>2016-11-29</td>
+                                    <td>人生就像是一场修行</td>
+                                </tr>
+                                <tr>
+                                    <td>许闲心</td>
+                                    <td>2016-11-28</td>
+                                    <td>于千万人之中遇见你所遇见的人，于千万年之中，时间的无涯的荒野里…</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="layui-card">
+                        <div class="layui-card-header">EMS</div>
+                        <div class="layui-card-body">
+                            <table class="layui-table" lay-size="sm">
+                                <colgroup>
+                                    <col width="150">
+                                    <col width="200">
+                                    <col>
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>昵称</th>
+                                    <th>加入时间</th>
+                                    <th>签名</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>贤心</td>
+                                    <td>2016-11-29</td>
+                                    <td>人生就像是一场修行</td>
+                                </tr>
+                                <tr>
+                                    <td>许闲心</td>
+                                    <td>2016-11-28</td>
+                                    <td>于千万人之中遇见你所遇见的人，于千万年之中，时间的无涯的荒野里…</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+                    <div class="layui-card">
+                        <div class="layui-card-header">平邮</div>
+                        <div class="layui-card-body">
+                            <table class="layui-table" lay-size="sm">
+                                <colgroup>
+                                    <col width="150">
+                                    <col width="200">
+                                    <col>
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>昵称</th>
+                                    <th>加入时间</th>
+                                    <th>签名</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>贤心</td>
+                                    <td>2016-11-29</td>
+                                    <td>人生就像是一场修行</td>
+                                </tr>
+                                <tr>
+                                    <td>许闲心</td>
+                                    <td>2016-11-28</td>
+                                    <td>于千万人之中遇见你所遇见的人，于千万年之中，时间的无涯的荒野里…</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </div>
 
             <input type="submit" lay-filter="submitBtnForAdd" id="submitBtnForAdd" lay-submit="" hidden/>
             <input type="submit" lay-filter="submitBtnForUpdate" id="submitBtnForUpdate" lay-submit="" hidden/>
         </form>
 
 
-        <div class="layui-form-item">
-            <label class="layui-form-label required">特殊地区不配送</label>
-            <div class="layui-input-block">
-                <div id="regionTest"></div>
+
+
+
+    </div>
+
+    <div class="layui-container">
+        <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 特殊地区不配送</blockquote>
+        <div class="layui-row">
+            <div class="layui-col-md4">
+                <div id="regionTest" style="margin-top: 10px; margin-left: -5px;"></div>
+            </div>
+            <div class="layui-col-md8">
+                <table class="layui-table" lay-size="sm">
+                    <colgroup>
+                        <col width="150">
+                        <col width="200">
+                        <col>
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>昵称</th>
+                        <th>加入时间</th>
+                        <th>签名</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>贤心</td>
+                        <td>2016-11-29</td>
+                        <td>人生就像是一场修行</td>
+                    </tr>
+                    <tr>
+                        <td>许闲心</td>
+                        <td>2016-11-28</td>
+                        <td>于千万人之中遇见你所遇见的人，于千万年之中，时间的无涯的荒野里…</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
-
-
-
-
-
 
 
     </div>
@@ -87,7 +228,6 @@
                 '天津': [],
                 '河北': ['石家庄', '唐山', '秦皇岛', '邯郸', '邢台', '保定', '张家界', '承德', '廊坊', '衡水', '沧州'],
                 '山西': ['太原', '大同', '阳泉', '长治', '晋城', '朔州', '晋中', '运城', '忻州', '临汾', '吕梁'],
-                '内蒙古': ['呼和浩特', '包头', '乌海', '赤峰', '通辽', '鄂尔多斯', '呼伦贝尔', '乌兰察布盟', '锡林郭勒盟', '巴彦淖尔盟', '阿拉善盟', '兴安盟'],
                 '上海': [],
                 '江苏': ['南京', '徐州', '连云港', '淮安', '宿迁', '盐城', '扬州', '泰州', '南通', '镇江', '常州', '无锡', '苏州'],
                 '浙江': ['杭州', '宁波', '温州', '嘉兴', '湖州', '绍兴', '金华', '衢州', '舟山', '台州', '丽水'],
@@ -113,10 +253,11 @@
                 '新疆': ['乌鲁木齐', '克拉玛依', '石河子', '阿拉尔', '图木舒克', '五家渠', '吐鲁番', '哈密', '和田', '阿克苏', '喀什', '克孜勒苏柯尔克孜自治州', '巴音郭楞蒙古自治州', '昌吉回族自治州', '博尔塔拉蒙古自治州', '伊犁哈萨克自治州', '塔城', '阿勒泰'],
                 '辽宁': ['沈阳', '大连', '鞍山', '抚顺', '本溪', '丹东', '锦州', '葫芦岛', '营口', '盘锦', '阜新', '辽阳', '铁岭', '朝阳'],
                 '吉林': ['长春', '吉林', '四平', '辽源', '通化', '白山', '延边朝鲜族自治州', '白城', '松原'],
-                '黑龙江': ['哈尔滨', '齐齐哈尔', '鹤岗', '双鸭山', '鸡西', '大庆', '伊春', '牡丹江', '佳木斯', '七台河', '黑河', '绥化', '大兴安岭'],
                 '香港': [],
                 '澳门': [],
-                '台湾': []
+                '台湾': [],
+                '黑龙江': ['哈尔滨', '齐齐哈尔', '鹤岗', '双鸭山', '鸡西', '大庆', '伊春', '牡丹江', '佳木斯', '七台河', '黑河', '绥化', '大兴安岭'],
+                '内蒙古': ['呼和浩特', '包头', '乌海', '赤峰', '通辽', '鄂尔多斯', '呼伦贝尔', '乌兰察布盟', '锡林郭勒盟', '巴彦淖尔盟', '阿拉善盟', '兴安盟'],
             },
         };
 
@@ -127,7 +268,7 @@
             name: 'region', // 对应input name
             data: regionList,
             value: ['北京', '内蒙古', '江西-九江'], // 赋初始值，'北京,内蒙古,江西-九江'也可以
-            width: '80%', // 默认550px
+            width: '100%', // 默认550px
             border: true, // 默认true
             // 初始化完成时执行
             ready: function () {
