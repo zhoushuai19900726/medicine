@@ -1,9 +1,12 @@
 package com.company.project.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.company.project.common.aop.annotation.DataScope;
 import com.company.project.common.aop.annotation.LogAnnotation;
+import com.company.project.common.enums.OrderStatusEnum;
+import com.company.project.common.exception.code.BusinessResponseCode;
 import com.company.project.common.utils.DownFileUtil;
 import com.company.project.common.utils.NumberConstants;
 import com.company.project.common.utils.SystemConstants;
@@ -22,6 +25,7 @@ import io.swagger.annotations.ApiParam;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.company.project.common.utils.DataResult;
 
@@ -94,7 +98,11 @@ public class ShopOrderController extends BaseController {
     @LogAnnotation(title = "订单", action = "关闭")
     @ResponseBody
     public DataResult close(@RequestBody @ApiParam(value = "id集合") List<String> ids) {
-        return DataResult.success(shopOrderService.update(new ShopOrderEntity(new Date(), NumberConstants.FOUR_I), Wrappers.<ShopOrderEntity>lambdaQuery().in(ShopOrderEntity::getId, ids)));
+        List<ShopOrderEntity> shopOrderEntityList = shopOrderService.list(Wrappers.<ShopOrderEntity>lambdaQuery().in(ShopOrderEntity::getId, ids).ne(ShopOrderEntity::getOrderStatus, OrderStatusEnum.CLOSED.getType()));
+        if(CollectionUtils.isNotEmpty(shopOrderEntityList)){
+            return DataResult.success(shopOrderService.update(new ShopOrderEntity(new Date(), OrderStatusEnum.CLOSED.getType()), Wrappers.<ShopOrderEntity>lambdaQuery().in(ShopOrderEntity::getId, shopOrderEntityList.stream().map(ShopOrderEntity::getId).collect(Collectors.toList()))));
+        }
+        return DataResult.fail(BusinessResponseCode.NO_ORDERS_TO_CLOSE.getMsg());
     }
 
     @ApiOperation(value = "更新")

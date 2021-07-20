@@ -47,6 +47,11 @@ public enum BusinessResponseCode implements ResponseCodeInterface {
      */
     GET_TAG_REPEAT(940001, "获取标记已存在"),
 
+    /**
+     * 错误码 - 订单模块
+     */
+    NO_ORDERS_TO_CLOSE(950001, "没有找到需要关闭的订单"),
+
     ;
     /**
      * 错误码
