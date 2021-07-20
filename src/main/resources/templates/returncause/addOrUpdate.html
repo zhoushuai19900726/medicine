@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main" shiro:hasPermission="shopReturnCause:add">
+        <form class="layui-form" action="" lay-filter="shopReturnCauseForm" id="shopReturnCauseForm" style="width: 100%;">
+            <input name="id" hidden/>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">原因</label>
+                <div class="layui-input-block">
+                    <input type="text" name="cause" lay-verify="required" placeholder="请输入原因" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">排序</label>
+                <div class="layui-input-block">
+                    <input type="text" name="seq" lay-verify="required" placeholder="请输入排序" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">是否显示</label>
+                <div class="layui-input-block">
+                    <input type="checkbox" lay-skin="switch" lay-text="是|否" lay-filter="isShowStr" name="isShowStr" checked/>
+                </div>
+            </div>
+
+
+            <input type="submit" lay-filter="submitBtnForAdd" id="submitBtnForAdd" lay-submit="" hidden/>
+            <input type="submit" lay-filter="submitBtnForUpdate" id="submitBtnForUpdate" lay-submit="" hidden/>
+        </form>
+    </div>
+</div>
+<script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
+</body>
+</html>
+<script>
+    //获取token
+    var token = CoreUtil.getData("access_token");
+    //地址栏转义token中的#号
+    var tokenQuery = token.replace("#", "%23");
+    var $ = jQuery = layui.jquery;
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form;
+        var layer = layui.layer;
+        // 表单提交
+        form.on('submit(submitBtnForAdd)', function (data) {
+            if(!data.field["isShowStr"]){
+                data.field["isShowStr"] = "off";
+            }
+            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
+            CoreUtil.sendPost("/shopReturnCause/add", data.field, function (res) {
+                // 刷新父页面列表
+                parent.layui.table.reload('showTable');
+                // 提示
+                layer.open({
+                    content: '<i class="layui-icon layui-icon-face-smile" style="color: green;"></i> 保存成功'
+                    , btn: ['继续添加', '返回列表']
+                    , yes: function (index, layero) {
+                        // 清空表单 （“brandForm”是表单的id）
+                        $("#shopReturnCauseForm")[0].reset();
+                        form.render();
+                        layer.close(index);
+                    }, btn2: function (index, layero) {
+                        //按钮【按钮二】的回调
+                        var parentIndex = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(parentIndex);
+                        //return false 开启该代码可禁止点击该按钮关闭
+                    }, cancel: function () {
+                        //右上角关闭回调
+                        var parentIndex = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(parentIndex);
+                        //return false 开启该代码可禁止点击该按钮关闭
+                    }
+                });
+            });
+            //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            return false;
+        });
+        form.on('submit(submitBtnForUpdate)', function (data) {
+            if(!data.field["isShowStr"]){
+                data.field["isShowStr"] = "off";
+            }
+            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
+            CoreUtil.sendPut("/shopReturnCause/update", data.field, function (res) {
+                // 刷新父页面列表
+                parent.layui.table.reload('showTable');
+                parent.layer.msg("修改成功");
+                var parentIndex = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(parentIndex);
+            });
+            //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            return false;
+        });
+    });
+
+    /**
+     * 父级页面控制子页面提交表单
+     */
+    function saveShopReturnCause(submitBtn) {
+        $("#" + submitBtn).click();
+    }
+
+    /**
+     * 父级页面控制子页面填充
+     */
+    function assignment(data) {
+        var form = layui.form,
+            layarea = layui.layarea;
+        // 表单赋值
+        form.val("shopReturnCauseForm", {
+            "id": data.id,
+            "cause": data.cause,
+            "seq": data.seq,
+        });
+        // 开关状态开关
+        $("input[type='checkbox'][name='isShowStr']").prop("checked", data.isShow == 1);
+        form.render("checkbox");
+    }
+
+</script>

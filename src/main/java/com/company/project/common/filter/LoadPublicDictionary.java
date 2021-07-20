@@ -58,6 +58,9 @@ public class LoadPublicDictionary implements CommandLineRunner {
     private ShopLogisticsCompanyService shopLogisticsCompanyService;
 
     @Resource
+    private ShopReturnCauseService shopReturnCauseService;
+
+    @Resource
     private AddressLibraryService addressLibraryService;
 
     @Resource
@@ -132,6 +135,14 @@ public class LoadPublicDictionary implements CommandLineRunner {
         // 获取【物流公司】加载结束时间
         long shopLogisticsCompanyEndTime = System.currentTimeMillis();
         log.info("缓存管理-->缓存初始化:【物流公司】加载完成, 用时" + (shopLogisticsCompanyEndTime - shopCarouselMapEndTime) + "ms!");
+        log.info("/** ==============================  【退货原因】 ============================== **/");
+        List<ShopReturnCauseEntity> shopReturnCauseEntityList = shopReturnCauseService.list();
+        if(CollectionUtils.isNotEmpty(shopReturnCauseEntityList)){
+            redisTemplate.boundHashOps(DictionariesKeyConstant.RETURN_REASON_KEY).putAll(shopReturnCauseEntityList.stream().collect(Collectors.toMap(ShopReturnCauseEntity::getId, a -> a, (k1, k2) -> k1)));
+        }
+        // 获取【退货原因】加载结束时间
+        long shopReturnCauseEndTime = System.currentTimeMillis();
+        log.info("缓存管理-->缓存初始化:【退货原因】加载完成, 用时" + (shopReturnCauseEndTime - shopLogisticsCompanyEndTime) + "ms!");
         log.info("缓存管理-->缓存初始化:服务结束!");
     }
 

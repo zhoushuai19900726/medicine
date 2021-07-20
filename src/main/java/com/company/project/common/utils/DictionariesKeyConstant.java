@@ -34,6 +34,10 @@ public class DictionariesKeyConstant {
      */
     public static final String LOGISTICS_COMPANY_KEY = "logistics_company-key";
     /**
+     * 退货原因相关
+     */
+    public static final String RETURN_REASON_KEY = "return_reason-key";
+    /**
      * 地址库相关
      */
     // key: parentId value: List<地址库子集>
