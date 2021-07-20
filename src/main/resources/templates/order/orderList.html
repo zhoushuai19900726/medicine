@@ -25,7 +25,7 @@
 <body>
 <div class="layuimini-container">
     <div class="layuimini-main" shiro:hasPermission="shopOrder:list">
-
+        <input type="hidden" id="uploadBtn"/>
         <fieldset class="table-search-fieldset">
             <legend>搜索信息</legend>
             <div style="margin: 5px 5px 5px 5px">
@@ -124,8 +124,8 @@
             <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe640;</i>批量删除</button>
 
             <button class="layui-btn layui-btn-sm" id="export" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe67d;</i> 导出订单</button>
-            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe67d;</i> 导出赠单模板</button>
-            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe681;</i> 导入赠送订单</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="downloadFreeBillTemplate" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe67d;</i> 导出赠单模板</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="importFreeBill" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe681;</i> 导入赠送订单</button>
         </div>
     </script>
     <script type="text/html" id="tool">
@@ -203,7 +203,7 @@
         {{#  if(d.closeTime != null){ }}
         <div class="layui-row">
             <span class="layui-badge-rim">
-                <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
+                <span class="layui-badge layui-bg-cyan4" style="margin-left: -6px;">
                     <i class="fa fa-clock-o"></i> 关闭时间
                 </span>
                 {{ d.closeTime }}
@@ -224,12 +224,14 @@
     var tokenQuery = token.replace("#", "%23");
     var tableIns1;
     var $ = jQuery = layui.jquery;
-    layui.use(['table', 'layer', 'laydate', 'util'], function () {
+    layui.use(['table', 'layer', 'laydate', 'util', 'upload'], function () {
         var table = layui.table;
         var form = layui.form;
         var layer = layui.layer;
         var laydate = layui.laydate;
         var util = layui.util;
+        var upload = layui.upload;
+
         /**
          * 日期时间选择器
          */
@@ -258,6 +260,34 @@
             elem: '#payEndTime'
             , type: 'datetime'
         });
+
+        upload.render({
+            elem: '#uploadBtn' //绑定元素
+            , accept: 'file' //允许上传的文件类型
+            , url: '/shopOrder/uploadFreeBill?authorization=' + tokenQuery // 上传文件的路径
+            , before: function () {
+                layer.load(2);
+            }
+            , done: function (res, index, upload) {
+                if (res.code == 0) {
+                    layer.msg("上传成功", {time: 500}, function () {
+                        // 刷新父页面列表
+                        table.reload('showTable');
+                        layer.closeAll();
+                    });
+                } else {
+                    layer.msg("上传失败, " + res.msg, {time: 5000, icon: 5}, function () {
+                        layer.closeAll();
+                    });
+                }
+            }
+            , error: function (index, upload) {
+                layer.msg("上传失败", {time: 5000, icon: 5}, function () {
+                    layer.closeAll();
+                });
+            }
+        });
+
         //加载table
         tableIns1 = table.render({
             elem: '#showTable'
@@ -346,30 +376,35 @@
                     {
                         width: 220, field: 'shippingName', title: '物流信息', templet: function (item) {
                             var logisticsCompany = "";
-                            CoreUtil.sendSyncGet("/common/getLogisticsNameById", {id: item.shippingId}, function (res) {
-                                logisticsCompany = res.data;
-                            });
-                            return "<div class=\"layui-row\">\n" +
-                                "            <span class=\"layui-badge-rim\">\n" +
-                                "                <span class=\"layui-badge layui-bg-cyan2\" style=\"margin-left: -6px;\">\n" +
-                                "                    <i class=\"fa fa-truck\"></i> 物流名称\n" +
-                                "                </span>\n" + logisticsCompany +
-                                "            </span>\n" +
-                                "        </div>\n" +
-                                "        <div class=\"layui-row\">\n" +
-                                "            <span class=\"layui-badge-rim\">\n" +
-                                "                <span class=\"layui-badge layui-bg-cyan2\" style=\"margin-left: -6px;\">\n" +
-                                "                    <i class=\"fa fa-shirtsinbulk\"></i> 物流单号\n" +
-                                "                </span>\n" + item.shippingCode +
-                                "            </span>\n" +
-                                "        </div>\n" +
-                                "        <div class=\"layui-row\">\n" +
-                                "            <span class=\"layui-badge-rim\">\n" +
-                                "                <span class=\"layui-badge layui-bg-cyan2\" style=\"margin-left: -6px;\">\n" +
-                                "                    <i class=\"fa fa-clock-o\"></i> 发货时间\n" +
-                                "                </span>\n" + item.consignTime +
-                                "            </span>\n" +
-                                "        </div>";
+                            if(item.shippingId){
+                                CoreUtil.sendSyncGet("/common/getLogisticsNameById", {id: item.shippingId}, function (res) {
+                                    logisticsCompany = res.data;
+                                });
+                            }
+                            if(logisticsCompany){
+                                return "<div class=\"layui-row\">\n" +
+                                    "            <span class=\"layui-badge-rim\">\n" +
+                                    "                <span class=\"layui-badge layui-bg-cyan2\" style=\"margin-left: -6px;\">\n" +
+                                    "                    <i class=\"fa fa-truck\"></i> 物流名称\n" +
+                                    "                </span>\n" + logisticsCompany +
+                                    "            </span>\n" +
+                                    "        </div>\n" +
+                                    "        <div class=\"layui-row\">\n" +
+                                    "            <span class=\"layui-badge-rim\">\n" +
+                                    "                <span class=\"layui-badge layui-bg-cyan2\" style=\"margin-left: -6px;\">\n" +
+                                    "                    <i class=\"fa fa-shirtsinbulk\"></i> 物流单号\n" +
+                                    "                </span>\n" + item.shippingCode +
+                                    "            </span>\n" +
+                                    "        </div>\n" +
+                                    "        <div class=\"layui-row\">\n" +
+                                    "            <span class=\"layui-badge-rim\">\n" +
+                                    "                <span class=\"layui-badge layui-bg-cyan2\" style=\"margin-left: -6px;\">\n" +
+                                    "                    <i class=\"fa fa-clock-o\"></i> 发货时间\n" +
+                                    "                </span>\n" + item.consignTime +
+                                    "            </span>\n" +
+                                    "        </div>";
+                            }
+                            return "<div class='layui-row' style='text-align: center; line-height: 90px;'><i class='fa fa-slideshare'></i> <em>暂无物流信息</em></div>";
                         }
                     },
                     {
@@ -462,6 +497,12 @@
                             window[layero.find('iframe')[0]['name']].saveShopOrder("submitBtnForAdd");
                         }
                     });
+                    break;
+                case 'downloadFreeBillTemplate':
+                    window.open("../shopOrder/downloadFreeBillTemplate?authorization=" + tokenQuery, "_blank");
+                    break;
+                case 'importFreeBill':
+                    $("#uploadBtn").click();
                     break;
             }
         });

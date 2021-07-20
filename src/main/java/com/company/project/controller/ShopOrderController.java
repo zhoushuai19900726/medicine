@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.company.project.common.aop.annotation.DataScope;
 import com.company.project.common.aop.annotation.LogAnnotation;
+import com.company.project.common.utils.DownFileUtil;
 import com.company.project.common.utils.NumberConstants;
+import com.company.project.common.utils.SystemConstants;
 import com.company.project.entity.ShopOrderDetailEntity;
 import io.swagger.annotations.Api;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -25,8 +27,10 @@ import com.company.project.common.utils.DataResult;
 
 import com.company.project.entity.ShopOrderEntity;
 import com.company.project.service.ShopOrderService;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 
 
 /**
@@ -69,7 +73,7 @@ public class ShopOrderController extends BaseController {
 //    @ApiOperation(value = "新增")
 //    @PostMapping("shopOrder/add")
 //    @RequiresPermissions("shopOrder:add")
-//    @LogAnnotation(title = "订单表", action = "新增")
+//    @LogAnnotation(title = "订单", action = "新增")
 //    @ResponseBody
 //    public DataResult add(@RequestBody ShopOrderEntity shopOrder){
 //        return DataResult.success(shopOrderService.save(shopOrder));
@@ -78,7 +82,7 @@ public class ShopOrderController extends BaseController {
     @ApiOperation(value = "删除")
     @DeleteMapping("shopOrder/delete")
     @RequiresPermissions("shopOrder:delete")
-    @LogAnnotation(title = "订单表", action = "删除")
+    @LogAnnotation(title = "订单", action = "删除")
     @ResponseBody
     public DataResult delete(@RequestBody @ApiParam(value = "id集合") List<String> ids) {
         return DataResult.success(shopOrderService.removeByIds(ids));
@@ -87,7 +91,7 @@ public class ShopOrderController extends BaseController {
     @ApiOperation(value = "关闭")
     @DeleteMapping("shopOrder/close")
     @RequiresPermissions("shopOrder:update")
-    @LogAnnotation(title = "订单表", action = "关闭")
+    @LogAnnotation(title = "订单", action = "关闭")
     @ResponseBody
     public DataResult close(@RequestBody @ApiParam(value = "id集合") List<String> ids) {
         return DataResult.success(shopOrderService.update(new ShopOrderEntity(new Date(), NumberConstants.FOUR_I), Wrappers.<ShopOrderEntity>lambdaQuery().in(ShopOrderEntity::getId, ids)));
@@ -96,7 +100,7 @@ public class ShopOrderController extends BaseController {
     @ApiOperation(value = "更新")
     @PutMapping("shopOrder/update")
     @RequiresPermissions("shopOrder:update")
-    @LogAnnotation(title = "订单表", action = "更新")
+    @LogAnnotation(title = "订单", action = "更新")
     @ResponseBody
     public DataResult update(@RequestBody ShopOrderEntity shopOrder) {
         return shopOrderService.updateShopOrderEntityById(shopOrder);
@@ -105,7 +109,7 @@ public class ShopOrderController extends BaseController {
     @ApiOperation(value = "查询分页数据")
     @PostMapping("shopOrder/listByPage")
     @RequiresPermissions("shopOrder:list")
-    @LogAnnotation(title = "订单表", action = "查询分页数据")
+    @LogAnnotation(title = "订单", action = "查询分页数据")
     @DataScope
     @ResponseBody
     public DataResult findListByPage(@RequestBody ShopOrderEntity shopOrder) {
@@ -122,5 +126,22 @@ public class ShopOrderController extends BaseController {
                 .orderByDesc(ShopOrderEntity::getCreateTime);
         return DataResult.success(shopOrderService.page(new Page<>(shopOrder.getPage(), shopOrder.getLimit()), queryWrapper));
     }
+
+    @ApiOperation(value = "下载赠单模板")
+    @GetMapping(value = "shopOrder/downloadFreeBillTemplate")
+    @LogAnnotation(title = "订单", action = "下载赠单模板")
+    public void downloadImportTemplate(HttpServletResponse response) {
+        DownFileUtil.downFileByPath(response, SystemConstants.importExport + "/赠单模板.xlsx");
+    }
+
+    @ApiOperation(value = "导入赠单")
+    @PostMapping("shopOrder/uploadFreeBill")
+    @RequiresPermissions("shopOrder:add")
+    @LogAnnotation(title = "订单", action = "导入赠单")
+    @ResponseBody
+    public DataResult uploadFreeBill(@RequestParam(value = "file") MultipartFile file) {
+        return shopOrderService.uploadFreeBill(file);
+    }
+
 
 }

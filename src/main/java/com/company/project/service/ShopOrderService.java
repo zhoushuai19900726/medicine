@@ -3,6 +3,7 @@ package com.company.project.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.company.project.common.utils.DataResult;
 import com.company.project.entity.ShopOrderEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 订单表
@@ -14,6 +15,8 @@ import com.company.project.entity.ShopOrderEntity;
 public interface ShopOrderService extends IService<ShopOrderEntity> {
 
     DataResult updateShopOrderEntityById(ShopOrderEntity shopOrder);
+
+    DataResult uploadFreeBill(MultipartFile file);
 
 }
 

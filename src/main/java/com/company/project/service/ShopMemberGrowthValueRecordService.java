@@ -22,5 +22,7 @@ public interface ShopMemberGrowthValueRecordService extends IService<ShopMemberG
 
     DataResult saveShopMemberGrowthValueRecordEntity(ShopMemberGrowthValueRecordEntity shopMemberGrowthValueRecord);
 
+    void computingUpgrade(ShopMemberGrowthValueRecordEntity shopMemberGrowthValueRecord);
+
 }
 

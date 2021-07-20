@@ -245,6 +245,7 @@ public class ShopMemberController extends BaseController {
     @ApiOperation(value = "导入模板")
     @PostMapping("shopMember/upload")
     @RequiresPermissions("shopMember:add")
+    @LogAnnotation(title = "会员", action = "导入模板")
     @ResponseBody
     public DataResult batchImport(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "type") Integer type) {
         return shopMemberService.saveFile(file, type);

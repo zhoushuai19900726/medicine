@@ -61,33 +61,41 @@ public class ShopMemberGrowthValueRecordServiceImpl extends ServiceImpl<ShopMemb
 
     @Override
     public DataResult saveShopMemberGrowthValueRecordEntity(ShopMemberGrowthValueRecordEntity shopMemberGrowthValueRecord) {
+        // 升级校验
+        computingUpgrade(shopMemberGrowthValueRecord);
+        return DataResult.success(shopMemberGrowthValueRecordMapper.insert(shopMemberGrowthValueRecord));
+    }
+
+    @Override
+    public void computingUpgrade(ShopMemberGrowthValueRecordEntity shopMemberGrowthValueRecord) {
         // 查询会员
         ShopMemberEntity shopMemberEntity = shopMemberMapper.findOneByMemberId(shopMemberGrowthValueRecord.getMemberId());
         if (Objects.nonNull(shopMemberEntity)) {
             // 成长值
             ShopMemberGrowthValueEntity shopMemberGrowthValueEntity = shopMemberGrowthValueMapper.selectOne(Wrappers.<ShopMemberGrowthValueEntity>lambdaQuery().eq(ShopMemberGrowthValueEntity::getMemberId, shopMemberEntity.getMemberId()));
-            if (Objects.nonNull(shopMemberGrowthValueEntity)) {
-                // 类型：管理员修改
-                shopMemberGrowthValueRecord.setType(NumberConstants.NINE_HUNDRED_AND_NINETY_NINE);
-                // 计算余额
-                BigDecimal balance = shopMemberGrowthValueEntity.getGrowthValue().add(shopMemberGrowthValueRecord.getGrowthValue()).setScale(NumberConstants.TWO, BigDecimal.ROUND_HALF_UP);
-                shopMemberGrowthValueEntity.setGrowthValue(balance);
-                shopMemberGrowthValueMapper.updateById(shopMemberGrowthValueEntity);
-                shopMemberGrowthValueRecord.setBalance(balance);
-                // VIP升级
-                ShopMemberGradeEntity shopMemberGradeEntity = shopMemberGradeService.calculationMemberGradeByGrowthValue(shopMemberGrowthValueEntity);
-                if(!StringUtils.equals(shopMemberGradeEntity.getId(), shopMemberEntity.getMemberGradeId())){
-                    ShopMemberEntity updShopMemberEntity = new ShopMemberEntity();
-                    updShopMemberEntity.setMemberId(shopMemberEntity.getMemberId());
-                    updShopMemberEntity.setMemberGradeId(shopMemberGradeEntity.getId());
-                    updShopMemberEntity.setMemberGradeName(shopMemberGradeEntity.getName());
-                    updShopMemberEntity.setGradeTime(new Date());
-                    shopMemberMapper.updateById(updShopMemberEntity);
-                }
-                return DataResult.success(shopMemberGrowthValueRecordMapper.insert(shopMemberGrowthValueRecord));
+            if (Objects.isNull(shopMemberGrowthValueEntity)) {
+                shopMemberGrowthValueEntity = new ShopMemberGrowthValueEntity();
+                shopMemberGrowthValueEntity.setMemberId(shopMemberGrowthValueRecord.getMemberId());
+                shopMemberGrowthValueEntity.setGrowthValue(BigDecimal.ZERO);
+                shopMemberGrowthValueMapper.insert(shopMemberGrowthValueEntity);
             }
+            // 计算余额
+            BigDecimal balance = shopMemberGrowthValueEntity.getGrowthValue().add(shopMemberGrowthValueRecord.getGrowthValue()).setScale(NumberConstants.TWO, BigDecimal.ROUND_HALF_UP);
+            shopMemberGrowthValueEntity.setGrowthValue(balance);
+            shopMemberGrowthValueMapper.updateById(shopMemberGrowthValueEntity);
+            shopMemberGrowthValueRecord.setBalance(balance);
+            // VIP升级
+            ShopMemberGradeEntity shopMemberGradeEntity = shopMemberGradeService.calculationMemberGradeByGrowthValue(shopMemberGrowthValueEntity);
+            if (!StringUtils.equals(shopMemberGradeEntity.getId(), shopMemberEntity.getMemberGradeId())) {
+                ShopMemberEntity updShopMemberEntity = new ShopMemberEntity();
+                updShopMemberEntity.setMemberId(shopMemberEntity.getMemberId());
+                updShopMemberEntity.setMemberGradeId(shopMemberGradeEntity.getId());
+                updShopMemberEntity.setMemberGradeName(shopMemberGradeEntity.getName());
+                updShopMemberEntity.setGradeTime(new Date());
+                shopMemberMapper.updateById(updShopMemberEntity);
+            }
+
         }
-        return DataResult.fail(BusinessResponseCode.INVALID_ACCOUNT.getMsg());
     }
 
     private IPage<ShopMemberGrowthValueRecordEntity> encapsulatingFieldName(IPage<ShopMemberGrowthValueRecordEntity> iPage) {

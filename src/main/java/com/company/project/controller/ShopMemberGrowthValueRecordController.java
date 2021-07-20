@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.company.project.common.aop.annotation.DataScope;
 import com.company.project.common.aop.annotation.LogAnnotation;
+import com.company.project.common.enums.GrowthValueDetailsTypeEnum;
+import com.company.project.common.utils.NumberConstants;
 import io.swagger.annotations.Api;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.commons.lang.StringUtils;
@@ -44,6 +46,8 @@ public class ShopMemberGrowthValueRecordController extends BaseController {
     @LogAnnotation(title = "会员成长值记录", action = "新增")
     @ResponseBody
     public DataResult add(@RequestBody ShopMemberGrowthValueRecordEntity shopMemberGrowthValueRecord) {
+        // 类型：管理员修改
+        shopMemberGrowthValueRecord.setType(GrowthValueDetailsTypeEnum.ADMIN_UPDATE.getType());
         return shopMemberGrowthValueRecordService.saveShopMemberGrowthValueRecordEntity(shopMemberGrowthValueRecord);
     }
 
@@ -77,7 +81,7 @@ public class ShopMemberGrowthValueRecordController extends BaseController {
         queryWrapper
                 .eq(ShopMemberGrowthValueRecordEntity::getMemberId, shopMemberGrowthValueRecord.getMemberId())
                 .like(StringUtils.isNotBlank(shopMemberGrowthValueRecord.getRemark()), ShopMemberGrowthValueRecordEntity::getRemark, shopMemberGrowthValueRecord.getRemark())
-                .orderByDesc(ShopMemberGrowthValueRecordEntity::getCreateTime);
+                .orderByDesc(ShopMemberGrowthValueRecordEntity::getCreateTime, ShopMemberGrowthValueRecordEntity::getId);
         return DataResult.success(shopMemberGrowthValueRecordService.listByPage(new Page<>(shopMemberGrowthValueRecord.getPage(), shopMemberGrowthValueRecord.getLimit()), queryWrapper));
     }
 
