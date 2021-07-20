@@ -483,21 +483,6 @@
                         tipDialogForDelete(ids);
                     }
                     break;
-                case 'add':
-                    layer.open({
-                        id: 'shopOrder_add', //设定一个id，防止重复弹出
-                        title: '<i class="layui-icon">&#xe653;</i> 新增订单表',
-                        type: 2,
-                        content: '../index/shopOrder/addOrUpdate',
-                        btn: ['提交保存', '取消'],
-                        area: ['60%', '85%'],
-                        scrollbar: false,
-                        yes: function (index, layero) {
-                            // 得到iframe页的窗口对象并调用子页面方法
-                            window[layero.find('iframe')[0]['name']].saveShopOrder("submitBtnForAdd");
-                        }
-                    });
-                    break;
                 case 'downloadFreeBillTemplate':
                     window.open("../shopOrder/downloadFreeBillTemplate?authorization=" + tokenQuery, "_blank");
                     break;
