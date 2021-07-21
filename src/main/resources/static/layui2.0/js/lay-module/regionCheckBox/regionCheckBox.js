@@ -161,35 +161,24 @@ layui.define('form', function (exports) {
         var name = options.name,
             id = options.elem.attr('id'),
             skin = 'primary';
-
-        var boxs = '<div class="layui-form-item" style="margin-left:15px;">' +
-            '<input type="checkbox" name="' + name + '" value="所有地域" title="所有地域" lay-skin="' + skin + '" lay-filter="regionCheckBox-' + id + '">' +
-            '</div>';
-
+        var boxs = '<div class="layui-form-item" style="margin-left:15px;"><input type="checkbox" parent="-1" name="' + name + '" value="所有地域" title="所有地域" lay-skin="' + skin + '" lay-filter="regionCheckBox-' + id + '"></div>';
         for (var area in regionList) {
-            boxs += '<div class="layui-form-item" style="margin-bottom:0;">' +
-                '<label class="layui-form-label area">' + area + '：</label>' +
-                '<div class="layui-input-block province">' +
-                '<ul>';
+            boxs += '<div class="layui-form-item" style="margin-bottom:0;">' + '<label class="layui-form-label area">' + area + '：</label><div class="layui-input-block province"><ul>';
             for (var province in regionList[area]) {
                 var city_num = regionList[area][province].length;
-                boxs += '<li' + (city_num > 0 ? ' class="parent"' : '') + '>' +
-                    '<input type="checkbox" name="' + name + '" value="' + province + '" title="' + province + '" lay-skin="' + skin + '" lay-filter="regionCheckBox-' + id + '">';
-
+                boxs += '<li' + (city_num > 0 ? ' class="parent"' : '') + '>' + '<input type="checkbox" parent="0" name="' + name + '" value="' + province.split('-')[0] + '" title="' + province.split('-')[1] + '" lay-skin="' + skin + '" lay-filter="regionCheckBox-' + id + '">';
                 if (city_num > 0) {
                     boxs += '<div class="city">';
                     for (var i = 0; i < city_num; i++) {
                         var city = regionList[area][province][i];
-                        boxs += '<input type="checkbox" name="' + name + '" value="' + province + '-' + city + '" title="' + city + '" lay-skin="' + skin + '" lay-filter="regionCheckBox-' + id + '">';
+                        boxs += '<input type="checkbox" parent="' + province.split('-')[0] + '" parentTitle="' + province.split('-')[1] + '" name="' + name + '" value="' + city.id + '" title="' + city.name + '" lay-skin="' + skin + '" lay-filter="regionCheckBox-' + id + '">';
                     }
                     boxs += '</div>';
                 }
-
                 boxs += '</li>';
             }
             boxs += '</div></div>';
         }
-
         return boxs;
     }
 

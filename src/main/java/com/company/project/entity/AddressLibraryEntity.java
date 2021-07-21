@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -102,6 +103,4 @@ public class AddressLibraryEntity extends BaseEntity implements Serializable {
     @TableField(fill = FieldFill.INSERT)
     @TableLogic // 注释后进行物理删除
     private Integer deleted;
-
-
 }

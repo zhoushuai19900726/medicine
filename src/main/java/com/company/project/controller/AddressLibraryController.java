@@ -69,6 +69,15 @@ public class AddressLibraryController extends BaseController {
         return addressLibraryService.updateAddressLibraryEntityById(addressLibrary);
     }
 
+    @ApiOperation(value = "查询全部省市(不包含区)")
+    @GetMapping("addressLibrary/findAllProvinceAndCity")
+    @RequiresPermissions("addressLibrary:update")
+    @LogAnnotation(title = "地址库", action = "查询全部省市(不包含区)")
+    @ResponseBody
+    public DataResult findAllProvinceAndCity() {
+        return addressLibraryService.findAllProvinceAndCity();
+    }
+
     @ApiOperation(value = "查询分页数据")
     @PostMapping("addressLibrary/listByPage")
     @RequiresPermissions("addressLibrary:list")

@@ -21,5 +21,7 @@ public interface AddressLibraryService extends IService<AddressLibraryEntity> {
 
     DataResult removeByIdlist(List<String> idList);
 
+    DataResult findAllProvinceAndCity();
+
 }
 
