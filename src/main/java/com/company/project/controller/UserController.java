@@ -49,6 +49,7 @@ public class UserController {
 
     @PostMapping(value = "/user/login")
     @ApiOperation(value = "用户登录接口")
+    @LogAnnotation(title = "用户登录接口", action = "用户登录接口")
     public DataResult login(@RequestBody @Valid SysUser vo, HttpServletRequest request) {
         // 判断验证码
         if (!CaptchaUtil.ver(vo.getCaptcha(), request)) {

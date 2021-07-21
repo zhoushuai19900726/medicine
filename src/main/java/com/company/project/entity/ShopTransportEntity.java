@@ -52,6 +52,15 @@ public class ShopTransportEntity extends BaseEntity implements Serializable {
     @TableField("pricing_method")
     private Integer pricingMethod;
 
+    @TableField("province")
+    private String province;
+
+    @TableField("city")
+    private String city;
+
+    @TableField("county")
+    private String county;
+
     /**
      * 是否默认
      */

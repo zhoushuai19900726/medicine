@@ -7,6 +7,22 @@
     <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
     <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
     <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <style>
+        .layui-table .layui-input {
+            height: 25px !important;
+        }
+
+        .layui-table .layui-input2 {
+            height: 25px !important;
+            width: 60px !important;
+            display: inline !important;
+        }
+
+        .layui-table .layui-form-checkbox[lay-skin=primary] {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+    </style>
 </head>
 <body>
 <div class="layuimini-container">
@@ -29,12 +45,26 @@
                 </div>
             </div>
 
-            <div class="layui-form-item">
-                <label class="layui-form-label required">宝贝地址</label>
-                <div class="layui-input-block">
-                    <input type="text" name="" lay-verify="required" placeholder="请输入宝贝地址" autocomplete="off" class="layui-input">
+            <div class="layui-form-item" id="area-picker">
+                <div class="layui-form-label required">宝贝地址</div>
+                <div class="layui-input-inline" style="width: 28%;">
+                    <select name="province" lay-filter="province" lay-verify="required" lay-search th:with="addressLibraryList=${@commonController.findAllSubordinateAddressLibrary('0').data}">
+                        <option value="">请选择省</option>
+                        <option th:each="addressLibrary : ${addressLibraryList}" th:text="${addressLibrary.name}" th:value="${addressLibrary.id}"></option>
+                    </select>
+                </div>
+                <div class="layui-input-inline" style="width: 28%;">
+                    <select name="city" lay-filter="city" lay-verify="required" lay-search>
+                        <option value="">请选择市</option>
+                    </select>
+                </div>
+                <div class="layui-input-inline" style="width: 28%;">
+                    <select name="county" lay-filter="county" lay-verify="required" lay-search>
+                        <option value="">请选择区</option>
+                    </select>
                 </div>
             </div>
+
 
             <div class="layui-form-item">
                 <label class="layui-form-label required">计价方式</label>
@@ -48,158 +78,257 @@
                 <label class="layui-form-label required">配送方式</label>
                 <div class="layui-input-block">
                     <span th:with="dataResult=${@commonController.findAllShippingMethod()}">
-                        <input type="checkbox" name="shippingMethod" th:each="map, mapStat : ${dataResult.getData()}" th:title="${map.get('name')}" th:checked="${mapStat.index == 0}"/>
+                        <input type="checkbox" name="shippingMethod" lay-filter="shippingMethod" th:each="map, mapStat : ${dataResult.getData()}" th:value="${map.get('id')}"
+                               th:title="${map.get('name')}" th:checked="${mapStat.index == 0}"/>
                     </span>
+                    <i class="fa fa-exclamation-circle"></i> <em>除指定地区外, 其余地区的运费采用"默认运费"</em>
                 </div>
             </div>
-            <div class="layui-form-item">
+
+
+
+
+
+            <!-- ====================================================================================== 快递 ====================================================================================== -->
+            <div class="layui-form-item" id="express">
                 <div class="layui-input-block">
-
-                    <div class="layui-card">
-                        <div class="layui-card-header">快递</div>
-                        <div class="layui-card-body">
-                            <table class="layui-table" lay-size="sm">
-                                <colgroup>
-                                    <col width="150">
-                                    <col width="200">
-                                    <col>
-                                </colgroup>
-                                <thead>
-                                <tr>
-                                    <th>昵称</th>
-                                    <th>加入时间</th>
-                                    <th>签名</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>贤心</td>
-                                    <td>2016-11-29</td>
-                                    <td>人生就像是一场修行</td>
-                                </tr>
-                                <tr>
-                                    <td>许闲心</td>
-                                    <td>2016-11-28</td>
-                                    <td>于千万人之中遇见你所遇见的人，于千万年之中，时间的无涯的荒野里…</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="layui-card">
-                        <div class="layui-card-header">EMS</div>
-                        <div class="layui-card-body">
-                            <table class="layui-table" lay-size="sm">
-                                <colgroup>
-                                    <col width="150">
-                                    <col width="200">
-                                    <col>
-                                </colgroup>
-                                <thead>
-                                <tr>
-                                    <th>昵称</th>
-                                    <th>加入时间</th>
-                                    <th>签名</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>贤心</td>
-                                    <td>2016-11-29</td>
-                                    <td>人生就像是一场修行</td>
-                                </tr>
-                                <tr>
-                                    <td>许闲心</td>
-                                    <td>2016-11-28</td>
-                                    <td>于千万人之中遇见你所遇见的人，于千万年之中，时间的无涯的荒野里…</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-
-                    <div class="layui-card">
-                        <div class="layui-card-header">平邮</div>
-                        <div class="layui-card-body">
-                            <table class="layui-table" lay-size="sm">
-                                <colgroup>
-                                    <col width="150">
-                                    <col width="200">
-                                    <col>
-                                </colgroup>
-                                <thead>
-                                <tr>
-                                    <th>昵称</th>
-                                    <th>加入时间</th>
-                                    <th>签名</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>贤心</td>
-                                    <td>2016-11-29</td>
-                                    <td>人生就像是一场修行</td>
-                                </tr>
-                                <tr>
-                                    <td>许闲心</td>
-                                    <td>2016-11-28</td>
-                                    <td>于千万人之中遇见你所遇见的人，于千万年之中，时间的无涯的荒野里…</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-
-
+                    <table class="layui-table" lay-size="sm">
+                        <colgroup>
+                            <col width="20">
+                            <col width="250">
+                            <col width="50">
+                            <col width="100">
+                            <col width="100">
+                            <col width="100">
+                            <col width="100">
+                            <col>
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th colspan="2" style="text-align: center; font-weight: bold; font-size: 16px; color: #2b9eb9;"><i class="fa fa-truck"></i> 快递</th>
+                            <th>默认运费:</th>
+                            <th colspan="5">
+                                <input type="number" name="" autocomplete="off" class="layui-input layui-input2">件内
+                                <input type="number" name="" autocomplete="off" class="layui-input layui-input2">元, 每增加
+                                <input type="number" name="" autocomplete="off" class="layui-input layui-input2">件, 增加运费
+                                <input type="number" name="" autocomplete="off" class="layui-input layui-input2">元
+                            </th>
+                        </tr>
+                        <tr>
+                            <th><input type="checkbox" name="" lay-skin="primary"/></th>
+                            <th colspan="2">运送到</th>
+                            <th>首件数(件)</th>
+                            <th>首费(元)</th>
+                            <th>续件数(件)</th>
+                            <th>续费(元)</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td style="text-align: center; line-height: 25px;"><input type="checkbox" name="" lay-skin="primary"/></td>
+                            <td>
+                                <input type="hidden" name=""/>
+                                <span>点击"编辑"选择指定地区</span>
+                            </td>
+                            <td><a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" onclick="specifiedRegion(this)"><i class="layui-icon">&#xe642;</i>编辑</a></td>
+                            <td><input type="number" name="" autocomplete="off" class="layui-input"></td>
+                            <td><input type="number" name="" autocomplete="off" class="layui-input"></td>
+                            <td><input type="number" name="" autocomplete="off" class="layui-input"></td>
+                            <td><input type="number" name="" autocomplete="off" class="layui-input"></td>
+                            <td><a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs"><i class="layui-icon">&#xe640;</i>删除</a></td>
+                        </tr>
+                        <tr>
+                            <td colspan="8">
+                                <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs"><i class="layui-icon">&#xe61f;</i>新增指定地区</a>
+                                <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs"><i class="layui-icon">&#xe642;</i>批量设置</a>
+                                <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs"><i class="layui-icon">&#xe640;</i>批量删除</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
+
+
+
+
+
+            <!-- ====================================================================================== EMS ====================================================================================== -->
+            <div class="layui-form-item" id="ems" hidden>
+                <div class="layui-input-block">
+                    <table class="layui-table" lay-size="sm">
+                        <colgroup>
+                            <col width="20">
+                            <col width="250">
+                            <col width="50">
+                            <col width="100">
+                            <col width="100">
+                            <col width="100">
+                            <col width="100">
+                            <col>
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th colspan="2" style="text-align: center; font-weight: bold; font-size: 16px; color: #2b9eb9;"><i class="fa fa-truck"></i> EMS</th>
+                            <th>默认运费:</th>
+                            <th colspan="5">
+                                <input type="number" name="" autocomplete="off" placeholder="" class="layui-input layui-input2">件内
+                                <input type="number" name="" autocomplete="off" placeholder="" class="layui-input layui-input2">元, 每增加
+                                <input type="number" name="" autocomplete="off" placeholder="" class="layui-input layui-input2">件, 增加运费
+                                <input type="number" name="" autocomplete="off" placeholder="" class="layui-input layui-input2">元
+                            </th>
+                        </tr>
+                        <tr>
+                            <th><input type="checkbox" name="" lay-skin="primary"/></th>
+                            <th colspan="2">运送到</th>
+                            <th>首件数(件)</th>
+                            <th>首费(元)</th>
+                            <th>续件数(件)</th>
+                            <th>续费(元)</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td style="text-align: center; line-height: 25px;"><input type="checkbox" name="" lay-skin="primary"/></td>
+                            <td>
+                                <input type="hidden" name=""/>
+                                <span>点击"编辑"选择指定地区</span>
+                            </td>
+                            <td><a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑</a></td>
+                            <td><input type="number" name="" autocomplete="off" class="layui-input"></td>
+                            <td><input type="number" name="" autocomplete="off" class="layui-input"></td>
+                            <td><input type="number" name="" autocomplete="off" class="layui-input"></td>
+                            <td><input type="number" name="" autocomplete="off" class="layui-input"></td>
+                            <td><a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe640;</i>删除</a></td>
+                        </tr>
+                        <tr>
+                            <td colspan="8">
+                                <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe61f;</i>新增指定地区</a>
+                                <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>批量设置</a>
+                                <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe640;</i>批量删除</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+
+
+
+
+
+            <!-- ====================================================================================== 平邮 ====================================================================================== -->
+            <div class="layui-form-item" id="surfaceMail" hidden>
+                <div class="layui-input-block">
+                    <table class="layui-table" lay-size="sm">
+                        <colgroup>
+                            <col width="20">
+                            <col width="250">
+                            <col width="50">
+                            <col width="100">
+                            <col width="100">
+                            <col width="100">
+                            <col width="100">
+                            <col>
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th colspan="2" style="text-align: center; font-weight: bold; font-size: 16px; color: #2b9eb9;"><i class="fa fa-truck"></i> 平邮</th>
+                            <th>默认运费:</th>
+                            <th colspan="5">
+                                <input type="number" name="" autocomplete="off" placeholder="" class="layui-input layui-input2">件内
+                                <input type="number" name="" autocomplete="off" placeholder="" class="layui-input layui-input2">元, 每增加
+                                <input type="number" name="" autocomplete="off" placeholder="" class="layui-input layui-input2">件, 增加运费
+                                <input type="number" name="" autocomplete="off" placeholder="" class="layui-input layui-input2">元
+                            </th>
+                        </tr>
+                        <tr>
+                            <th><input type="checkbox" name="" lay-skin="primary"/></th>
+                            <th colspan="2">运送到</th>
+                            <th>首件数(件)</th>
+                            <th>首费(元)</th>
+                            <th>续件数(件)</th>
+                            <th>续费(元)</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td style="text-align: center; line-height: 25px;"><input type="checkbox" name="" lay-skin="primary"/></td>
+                            <td>
+                                <input type="hidden" name=""/>
+                                <span>点击"编辑"选择指定地区</span>
+                            </td>
+                            <td><a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑</a></td>
+                            <td><input type="number" name="" autocomplete="off" class="layui-input"></td>
+                            <td><input type="number" name="" autocomplete="off" class="layui-input"></td>
+                            <td><input type="number" name="" autocomplete="off" class="layui-input"></td>
+                            <td><input type="number" name="" autocomplete="off" class="layui-input"></td>
+                            <td><a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe640;</i>删除</a></td>
+                        </tr>
+                        <tr>
+                            <td colspan="8">
+                                <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe61f;</i>新增指定地区</a>
+                                <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>批量设置</a>
+                                <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe640;</i>批量删除</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
 
             <input type="submit" lay-filter="submitBtnForAdd" id="submitBtnForAdd" lay-submit="" hidden/>
             <input type="submit" lay-filter="submitBtnForUpdate" id="submitBtnForUpdate" lay-submit="" hidden/>
         </form>
-
-
-
-
-
     </div>
 
     <div class="layui-container">
-        <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe653;</i> 特殊地区不配送</blockquote>
-        <div class="layui-row">
-            <div class="layui-col-md4">
-                <div id="regionTest" style="margin-top: 10px; margin-left: -5px;"></div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe702;</i> 特殊地区不配送</blockquote>
             </div>
-            <div class="layui-col-md8">
-                <table class="layui-table" lay-size="sm">
-                    <colgroup>
-                        <col width="150">
-                        <col width="200">
-                        <col>
-                    </colgroup>
-                    <thead>
-                    <tr>
-                        <th>昵称</th>
-                        <th>加入时间</th>
-                        <th>签名</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>贤心</td>
-                        <td>2016-11-29</td>
-                        <td>人生就像是一场修行</td>
-                    </tr>
-                    <tr>
-                        <td>许闲心</td>
-                        <td>2016-11-28</td>
-                        <td>于千万人之中遇见你所遇见的人，于千万年之中，时间的无涯的荒野里…</td>
-                    </tr>
-                    </tbody>
-                </table>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <div class="layui-row">
+                    <div class="layui-col-md4">
+                        <div id="regionTest" style="margin-top: 10px; margin-left: -5px;"></div>
+                    </div>
+                    <div class="layui-col-md8">
+                        <table class="layui-table" lay-size="sm">
+                            <colgroup>
+                                <col width="150">
+                                <col width="200">
+                                <col>
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>昵称</th>
+                                <th>加入时间</th>
+                                <th>签名</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>贤心</td>
+                                <td>2016-11-29</td>
+                                <td>人生就像是一场修行</td>
+                            </tr>
+                            <tr>
+                                <td>许闲心</td>
+                                <td>2016-11-28</td>
+                                <td>于千万人之中遇见你所遇见的人，于千万年之中，时间的无涯的荒野里…</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -221,6 +350,49 @@
         var form = layui.form;
         var layer = layui.layer;
         var regionCheckBox = layui.regionCheckBox;
+
+        form.on('select(province)', function (data) {
+            loadCity(data.value, null);
+        });
+
+        form.on('select(city)', function (data) {
+            loadCounty(data.value, null);
+        });
+
+        form.on('checkbox(shippingMethod)', function (data) {
+            <!-- express快递/surfaceMail平邮/ems -->
+            switch (parseInt(data.value)) {
+                case 1:
+                    // 快递
+                    if (data.elem.checked) {
+                        $("#express").show();
+                    } else {
+                        $("#express").hide();
+                    }
+                    break;
+                case 2:
+                    // EMS
+                    if (data.elem.checked) {
+                        $("#ems").show();
+                    } else {
+                        $("#ems").hide();
+                    }
+                    break;
+                case 3:
+                    // 平邮
+                    if (data.elem.checked) {
+                        $("#surfaceMail").show();
+                    } else {
+                        $("#surfaceMail").hide();
+                    }
+                    break;
+            }
+        });
+
+
+
+
+
 
         var regionList = {
             '中国': {
@@ -267,19 +439,16 @@
             elem: '#regionTest',
             name: 'region', // 对应input name
             data: regionList,
-            value: ['北京', '内蒙古', '江西-九江'], // 赋初始值，'北京,内蒙古,江西-九江'也可以
+            // value: ['北京', '内蒙古', '江西-九江'], // 赋初始值，'北京,内蒙古,江西-九江'也可以
             width: '100%', // 默认550px
             border: true, // 默认true
             // 初始化完成时执行
             ready: function () {
                 //  做些什么
-                // form.render('checkbox');
             },
             // 点击复选框时执行
             change: function (result) {
                 //  做些什么
-                // form.render('checkbox');
-                console.log(result)
             }
         });
 
@@ -329,6 +498,77 @@
         });
     });
 
+    function loadCity(province, city) {
+        var form = layui.form;
+        $("select[name='city']").empty();
+        $("select[name='city']").append("<option value=''>请选择市</option>");
+        $("select[name='county']").empty();
+        $("select[name='county']").append("<option value=''>请选择区</option>");
+        if (province) {
+            CoreUtil.sendSyncGet("/common/findAllSubordinateAddressLibrary/" + province, null, function (res) {
+                if (res.data) {
+                    var selectObj = $("select[name='city']");
+                    $(selectObj).empty();
+                    $(selectObj).append("<option value=''>请选择市</option>");
+                    $(res.data).each(function (index, item) {
+                        if (city && city == item.id) {
+                            $(selectObj).append("<option value='" + item.id + "' selected>" + item.name + "</option>");
+                        } else {
+                            $(selectObj).append("<option value='" + item.id + "'>" + item.name + "</option>");
+                        }
+                    });
+                }
+            });
+        }
+        form.render('select');
+    }
+
+    function loadCounty(city, county) {
+        var form = layui.form;
+        $("select[name='county']").empty();
+        $("select[name='county']").append("<option value=''>请选择区</option>");
+        if (city) {
+            CoreUtil.sendSyncGet("/common/findAllSubordinateAddressLibrary/" + city, null, function (res) {
+                if (res.data) {
+                    var selectObj = $("select[name='county']");
+                    $(selectObj).empty();
+                    $(selectObj).append("<option value=''>请选择区</option>");
+                    $(res.data).each(function (index, item) {
+                        if (county && county == item.id) {
+                            $(selectObj).append("<option value='" + item.id + "' selected>" + item.name + "</option>");
+                        } else {
+                            $(selectObj).append("<option value='" + item.id + "'>" + item.name + "</option>");
+                        }
+                    });
+                }
+            });
+        }
+        form.render('select');
+    }
+
+    // 加载指定地区源数据
+    function specifiedRegion(ele) {
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * 父级页面控制子页面提交表单
      */
@@ -344,8 +584,15 @@
             layarea = layui.layarea;
         // 表单赋值
         form.val("shopTransportForm", {
-            "id": data.id
+            "id": data.id,
+            "sellerId": data.sellerId,
+            "name": data.name,
+            "province": data.province,
+            "pricingMethod": data.pricingMethod,
+            "shippingMethod": data.shippingMethod,
         });
+        loadCity(data.province, data.city);
+        loadCounty(data.city, data.county);
     }
 
 </script>
