@@ -283,7 +283,7 @@
     </div>
 
     <!-- ================================================================== 特殊地区不配送 ================================================================== -->
-    <div class="layui-container">
+    <!--<div class="layui-container">
         <div class="layui-form-item">
             <div class="layui-input-block">
                 <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe702;</i> 特殊地区不配送</blockquote>
@@ -313,9 +313,38 @@
                 </div>
             </div>
         </div>
+    </div>-->
 
-
+    <div class="layui-container">
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe702;</i> 特殊地区不配送</blockquote>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <div id="specialAreas" style="margin-top: 0; margin-left: 0;"></div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <table class="layui-table" lay-size="sm" id="specialAreasTable" hidden>
+                    <colgroup>
+                        <col width="100">
+                        <col width="300">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th colspan="2">特殊地区不配送</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
+
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
 <script th:src="@{/layui2.0/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
@@ -343,7 +372,7 @@
 
         form.on('checkbox(shippingMethod)', function (data) {
             var checkedCount = $("input[type='checkbox'][name='shippingMethod']:checked").length;
-            if (checkedCount < 1){
+            if (checkedCount < 1) {
                 data.elem.checked = !data.elem.checked;
                 form.render('checkbox');
                 layer.msg("至少保留一种配送方式");
@@ -386,7 +415,7 @@
                 elem: '#specialAreas',
                 name: 'region', // 对应input name
                 data: regionList,
-                value: ['130000000000-130100000000', '110000000000-110100000000', '320000000000'], // 赋初始值，'北京,内蒙古,江西-九江'也可以
+                // value: ['130000000000-130100000000', '110000000000-110100000000', '320000000000'], // 赋初始值，'北京,内蒙古,江西-九江'也可以
                 width: '100%', // 默认550px
                 border: true, // 默认true
                 // 初始化完成时执行
@@ -507,13 +536,12 @@
             type: 2,
             content: '../../index/shopTransport/specifiedRegion',
             btn: ['确定', '取消'],
-            area: ['80%', '550px'],
+            area: ['80%', '600px'],
             scrollbar: false,
             yes: function (index, layero) {
 
             }
         });
-
 
 
     }
@@ -628,7 +656,12 @@
                 tableHtml += "<tr><td>" + v.name + "</td><td>" + children.join(',') + "</td></tr>";
             }
         });
-        $("#specialAreasTable tbody").append(tableHtml);
+        if (tableHtml) {
+            $("#specialAreasTable tbody").append(tableHtml);
+            $("#specialAreasTable").show();
+        } else {
+            $("#specialAreasTable").hide();
+        }
     }
 
 

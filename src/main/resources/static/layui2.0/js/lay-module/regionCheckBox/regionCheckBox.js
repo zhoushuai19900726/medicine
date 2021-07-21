@@ -229,7 +229,7 @@ layui.define('form', function (exports) {
     }
 
     function renderParentDom(elem) {
-        elem.find('.parent').find(':checkbox:first:checked').each(function () {
+        elem.find('.parent').find(':checkbox:first').each(function () {
             var allCount = $(this).parent().find('.city :checkbox').length;
             var selectedCount = 0;
             $(this).parent().find('.city :checkbox').each(function (i, item) {
