@@ -138,21 +138,23 @@
                             <td><input type="number" name="" autocomplete="off" class="layui-input"></td>
                             <td><a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs"><i class="layui-icon">&#xe640;</i>删除</a></td>
                         </tr>
+                        </tbody>
+                        <thead>
                         <tr>
-                            <td colspan="8">
+                            <th colspan="8">
                                 <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs"><i class="layui-icon">&#xe61f;</i>新增指定地区</a>
                                 <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs"><i class="layui-icon">&#xe642;</i>批量设置</a>
                                 <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs"><i class="layui-icon">&#xe640;</i>批量删除</a>
-                            </td>
+                            </th>
                         </tr>
-                        </tbody>
+                        </thead>
                     </table>
                 </div>
             </div>
 
 
             <!-- ====================================================================================== EMS ====================================================================================== -->
-            <!--<div class="layui-form-item" id="ems" hidden>
+            <div class="layui-form-item" id="ems" hidden>
                 <div class="layui-input-block">
                     <table class="layui-table" lay-size="sm">
                         <colgroup>
@@ -210,11 +212,11 @@
                         </tbody>
                     </table>
                 </div>
-            </div>-->
+            </div>
 
 
             <!-- ====================================================================================== 平邮 ====================================================================================== -->
-            <!--<div class="layui-form-item" id="surfaceMail" hidden>
+            <div class="layui-form-item" id="surfaceMail" hidden>
                 <div class="layui-input-block">
                     <table class="layui-table" lay-size="sm">
                         <colgroup>
@@ -272,7 +274,7 @@
                         </tbody>
                     </table>
                 </div>
-            </div>-->
+            </div>
 
 
             <input type="submit" lay-filter="submitBtnForAdd" id="submitBtnForAdd" lay-submit="" hidden/>
@@ -340,7 +342,14 @@
         });
 
         form.on('checkbox(shippingMethod)', function (data) {
-            <!-- express快递/surfaceMail平邮/ems -->
+            var checkedCount = $("input[type='checkbox'][name='shippingMethod']:checked").length;
+            if (checkedCount < 1){
+                data.elem.checked = !data.elem.checked;
+                form.render('checkbox');
+                layer.msg("至少保留一种配送方式");
+                return;
+            }
+            // express快递/surfaceMail平邮/ems
             switch (parseInt(data.value)) {
                 case 1:
                     // 快递
@@ -377,7 +386,7 @@
                 elem: '#specialAreas',
                 name: 'region', // 对应input name
                 data: regionList,
-                // value: ['北京', '内蒙古', '江西-九江'], // 赋初始值，'北京,内蒙古,江西-九江'也可以
+                value: ['130000000000-130100000000', '110000000000-110100000000', '320000000000'], // 赋初始值，'北京,内蒙古,江西-九江'也可以
                 width: '100%', // 默认550px
                 border: true, // 默认true
                 // 初始化完成时执行
@@ -491,6 +500,21 @@
 
     // 加载指定地区源数据
     function specifiedRegion(ele) {
+        var layer = layui.layer;
+        layer.open({
+            id: 'specifiedRegion', //设定一个id，防止重复弹出
+            title: '<i class="layui-icon">&#xe66c;</i> 选择指定地区',
+            type: 2,
+            content: '../../index/shopTransport/specifiedRegion',
+            btn: ['确定', '取消'],
+            area: ['80%', '550px'],
+            scrollbar: false,
+            yes: function (index, layero) {
+
+            }
+        });
+
+
 
     }
 

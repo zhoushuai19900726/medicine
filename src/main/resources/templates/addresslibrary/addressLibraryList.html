@@ -44,6 +44,7 @@
     <div id="addTpl" hidden>
         <form class="layui-form layui-form-pane" id="addForm" lay-filter="addForm">
             <input type="hidden" name="parentId"/>
+            <input type="hidden" name="level"/>
             <blockquote class="layui-elem-quote">地区信息</blockquote>
             <blockquote class="layui-elem-quote layui-quote-nm">
                 <table class="layui-table" lay-size="sm">
@@ -150,6 +151,7 @@
                         , success: function (layero, index) {
                             form.val("addForm", {
                                 "parentId": '0',
+                                "level": 1,
                             });
                         }
                     });
@@ -268,6 +270,7 @@
                             var checkStatus = table.checkStatus('showTable1'); //idTest 即为基础参数 id 对应的值
                             form.val("addForm", {
                                 "parentId": checkStatus.data[0].id,
+                                "level": 2,
                             });
                         }
                     });
@@ -357,6 +360,7 @@
                             var checkStatus = table.checkStatus('showTable2'); //idTest 即为基础参数 id 对应的值
                             form.val("addForm", {
                                 "parentId": checkStatus.data[0].id,
+                                "level": 3,
                             });
                         }
                     });

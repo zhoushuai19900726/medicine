@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+</head>
+<body>
+<div id="specialAreas" style="margin-top: 10px; margin-left: -5px;"></div>
+<script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/js/lay-config.js(v=2.0.0)}" charset="utf-8"></script>
+</body>
+</html>
+<script>
+    //获取token
+    var token = CoreUtil.getData("access_token");
+    //地址栏转义token中的#号
+    var tokenQuery = token.replace("#", "%23");
+    var $ = jQuery = layui.jquery;
+    layui.use(['form', 'layer', 'regionCheckBox'], function () {
+        var form = layui.form;
+        var layer = layui.layer;
+        var regionCheckBox = layui.regionCheckBox;
+
+        CoreUtil.sendSyncGet("/addressLibrary/findAllProvinceAndCity", null, function (res) {
+            var regionList = res.data;
+            //执行实例
+            var specialAreas = regionCheckBox.render({
+                elem: '#specialAreas',
+                name: 'region', // 对应input name
+                data: regionList,
+                // value: ['北京', '内蒙古', '江西-九江'], // 赋初始值，'北京,内蒙古,江西-九江'也可以
+                width: '100%', // 默认550px
+                border: true, // 默认true
+                // 初始化完成时执行
+                ready: function () {
+                    //  做些什么
+                },
+                // 点击复选框时执行
+                change: function (result) {
+                    //  做些什么
+                }
+            });
+        });
+
+
+    });
+
+</script>

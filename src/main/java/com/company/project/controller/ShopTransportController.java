@@ -53,6 +53,12 @@ public class ShopTransportController extends BaseController {
         return "transport/addOrUpdate";
     }
 
+    @ApiOperation(value = "跳转进入选择指定地区页面")
+    @GetMapping("/index/shopTransport/specifiedRegion")
+    public String specifiedRegion() {
+        return "transport/specifiedRegion";
+    }
+
     @ApiOperation(value = "新增")
     @PostMapping("shopTransport/add")
     @RequiresPermissions("shopTransport:add")

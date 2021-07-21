@@ -191,20 +191,27 @@ layui.define('form', function (exports) {
                 valueArr = valueArr.split(',');
             }
             for (var i = 0; i < valueArr.length; i++) {
-                var value = valueArr[i]
-                    , $elem = options.elem.find(':checkbox[value="' + value + '"]');
-
-                $elem.prop('checked', true);
+                var value = valueArr[i];
 
                 if (value.indexOf('-') < 0) { //省
+                    var $elem = options.elem.find(':checkbox[value="' + value + '"]');
+                    $elem.prop('checked', true);
                     $elem.parent().find('.city :checkbox').prop('checked', true);
+                } else {
+                    var $elem1 = options.elem.find(':checkbox[value="' + value.split('-')[0] + '"]');
+                    var $elem2 = options.elem.find(':checkbox[value="' + value.split('-')[1] + '"]');
+                    $elem1.prop('checked', true);
+                    $elem2.prop('checked', true);
                 }
             }
         }
+
         form.render('checkbox', options.elem.attr('lay-filter'));
 
         renderParentDom(options.elem);
         initName(options);
+
+
     }
 
     function initName(options) {
@@ -222,17 +229,15 @@ layui.define('form', function (exports) {
     }
 
     function renderParentDom(elem) {
-        elem.find('.parent').find(':checkbox:first').not(':checked').each(function () {
-            var is_yes_all = true;
-            var is_no_all = true;
+        elem.find('.parent').find(':checkbox:first:checked').each(function () {
+            var allCount = $(this).parent().find('.city :checkbox').length;
+            var selectedCount = 0;
             $(this).parent().find('.city :checkbox').each(function (i, item) {
                 if (item.checked) {
-                    is_no_all = false;
-                } else {
-                    is_yes_all = false;
+                    selectedCount++;
                 }
             });
-            if (!is_yes_all && !is_no_all) {
+            if(selectedCount > 0 && selectedCount < allCount){
                 $(this).parent().find('.layui-icon:first').removeClass('layui-icon-ok');
                 $(this).parent().find('.layui-icon:first').css('border-color', '#5FB878');
                 $(this).parent().find('.layui-icon:first').css('background-color', '#5FB878');
