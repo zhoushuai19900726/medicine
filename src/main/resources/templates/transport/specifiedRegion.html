@@ -67,13 +67,13 @@
         if (selectedSpecialAreas) {
             var selectedSpecialAreasMap = CoreUtil.jsonChangeMap(selectedSpecialAreas);
             selectedSpecialAreasMap.forEach(function (v, k, map) {
+                specialAreasMap.set(k, v);
                 var children = v.children;
                 if (children && children.length > 0) {
                     $(children).each(function (index, item) {
                         value.push(k + "-" + item.id)
                     });
                 }
-                specialAreasMap.set(k, v);
             });
         }
         loadRegionCheckBox(value);
@@ -146,6 +146,13 @@
                 } else {
                     var parentTitle = $(result.elem).attr("parentTitle");
                     specialAreasMap.set(parent, {name: parentTitle, children: [{id: value, name: title}]});
+                }
+            }
+            if (specialAreasMap.has(parent)) {
+                var parentObj = specialAreasMap.get(parent);
+                var children = parentObj.children;
+                if(!children || children.length < 1){
+                    specialAreasMap.delete(parent);
                 }
             }
         }
