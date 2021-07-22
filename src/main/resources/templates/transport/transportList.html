@@ -55,8 +55,9 @@
         </div>
     </script>
     <script type="text/html" id="tool">
-        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit" shiro:hasPermission="shopTransport:update"><i class="layui-icon">&#xe642;</i>编辑</a>
-        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" shiro:hasPermission="shopTransport:delete"><i class="layui-icon">&#xe640;</i>删除</a>
+        <a class="layui-btn layui-btn-xs" lay-event="query" shiro:hasPermission="shopTransport:update"><i class="layui-icon">&#xe615;</i>查看模板</a>
+        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit" shiro:hasPermission="shopTransport:update"><i class="layui-icon">&#xe642;</i>编辑模板</a>
+        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" shiro:hasPermission="shopTransport:delete"><i class="layui-icon">&#xe640;</i>删除模板</a>
     </script>
     <script type="text/html" id="isDefaultTpl">
         <input type="checkbox" name="isDefault" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isDefault" {{ d.isDefault == 1 ? 'checked' : '' }}>
@@ -132,7 +133,7 @@
                     {field: 'createTime', title: '创建时间', sort: true},
                     {width: 100, field: 'updateName', title: '修改人'},
                     {field: 'updateTime', title: '修改时间', sort: true},
-                    {width: 150, toolbar: "#tool", title: '操作'}
+                    {width: 300, toolbar: "#tool", title: '操作'}
                 ]
             ]
             , toolbar: '#toolbar'

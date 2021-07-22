@@ -128,8 +128,8 @@
                         <tr>
                             <td style="text-align: center; line-height: 25px;"><input type="checkbox" name="" lay-skin="primary"/></td>
                             <td>
-                                <input type="hidden" name=""/>
-                                <span>点击"编辑"选择指定地区</span>
+                                <input type="hidden" name="areaInfo"/>
+                                <pre name="showAreaName">点击"编辑"选择指定地区</pre>
                             </td>
                             <td><a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" onclick="specifiedRegion(this)"><i class="layui-icon">&#xe642;</i>编辑</a></td>
                             <td><input type="number" name="" autocomplete="off" class="layui-input"></td>
@@ -539,11 +539,29 @@
             area: ['80%', '600px'],
             scrollbar: false,
             yes: function (index, layero) {
-
+                var selectedSpecialAreasMap = window[layero.find('iframe')[0]['name']].getSpecialAreasMap();
+                var areaName = "";
+                selectedSpecialAreasMap.forEach(function (v, k, map) {
+                    var children = v.children;
+                    if (children && children.length > 0) {
+                        let cityNameArr = [];
+                        children.forEach(item => {
+                            cityNameArr.push(item.name)
+                        });
+                        areaName += "【" + v.name + "】" + cityNameArr.join(',') + ";\n";
+                    }
+                });
+                var p = $(ele).parent().prev();
+                $(p).find("input[name='areaInfo']").val(CoreUtil.mapChangeJson(selectedSpecialAreasMap));
+                $(p).find("pre[name='showAreaName']").text(areaName || "点击\"编辑\"选择指定地区");
+                layer.close(index);
+            }
+            , success: function (layero, index) {
+                var p = $(ele).parent().prev();
+                var selectedSpecialAreas = $(p).find("input[name='areaInfo']").val();
+                window[layero.find('iframe')[0]['name']].setSpecialAreasMap(selectedSpecialAreas);
             }
         });
-
-
     }
 
     var specialAreasMap = new Map();
@@ -565,20 +583,10 @@
                         if (specialAreasMap.has(currParent)) {
                             var parentObj = specialAreasMap.get(currParent);
                             var children = parentObj.children;
-                            children.push({
-                                id: currValue, name: currTitle, toString: function () {
-                                    return this.name;
-                                }
-                            });
+                            children.push({id: currValue, name: currTitle});
                             parentObj.children = children;
                         } else {
-                            specialAreasMap.set(currParent, {
-                                name: currParentTitle, children: [{
-                                    id: currValue, name: currTitle, toString: function () {
-                                        return this.name;
-                                    }
-                                }]
-                            });
+                            specialAreasMap.set(currParent, {name: currParentTitle, children: [{id: currValue, name: currTitle}]});
                         }
                     }
 
@@ -594,20 +602,10 @@
                     if (specialAreasMap.has(value)) {
                         var parentObj = specialAreasMap.get(value);
                         var children = parentObj.children;
-                        children.push({
-                            id: currValue, name: currTitle, toString: function () {
-                                return this.name;
-                            }
-                        });
+                        children.push({id: currValue, name: currTitle});
                         parentObj.children = children;
                     } else {
-                        specialAreasMap.set(value, {
-                            name: currParentTitle, children: [{
-                                id: currValue, name: currTitle, toString: function () {
-                                    return this.name;
-                                }
-                            }]
-                        });
+                        specialAreasMap.set(value, {name: currParentTitle, children: [{id: currValue, name: currTitle}]});
                     }
                 });
             }
@@ -627,21 +625,11 @@
                 if (specialAreasMap.has(parent)) {
                     var parentObj = specialAreasMap.get(parent);
                     var children = parentObj.children;
-                    children.push({
-                        id: value, name: title, toString: function () {
-                            return this.name;
-                        }
-                    });
+                    children.push({id: value, name: title});
                     parentObj.children = children;
                 } else {
                     var parentTitle = $(result.elem).attr("parentTitle");
-                    specialAreasMap.set(parent, {
-                        name: parentTitle, children: [{
-                            id: value, name: title, toString: function () {
-                                return this.name;
-                            }
-                        }]
-                    });
+                    specialAreasMap.set(parent, {name: parentTitle, children: [{id: value, name: title}]});
                 }
             }
         }

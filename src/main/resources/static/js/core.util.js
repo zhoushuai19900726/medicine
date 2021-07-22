@@ -237,15 +237,38 @@ var CoreUtil = (function () {
         return last === last_no && format;
     };
 
-    coreUtil.checkPone  = function (telephone) {
+    coreUtil.checkPone = function (telephone) {
         var myreg = /^1[0-9]{10}$/;
         return myreg.test(telephone);
     };
-    coreUtil.checkEmail  = function (email) {
+    coreUtil.checkEmail = function (email) {
         var strRegex = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/;
         return strRegex.test(email);
     };
 
+    // Map 转为对象
+    coreUtil.mapChangeObj = (map) => {
+        let obj = {};
+        for (let [k, v] of map) {
+            obj[k] = v;
+        }
+        return obj;
+    };
+
+    // 对象转为 Map
+    coreUtil.objChangeMap = (obj) => {
+        let map = new Map();
+        for (let key in obj) {
+            map.set(key, obj[key]);
+        }
+        return map;
+    };
+
+    // Map 转为 JSON
+    coreUtil.mapChangeJson = (map) => JSON.stringify(CoreUtil.mapChangeObj(map));
+
+    // JSON 转为 Map
+    coreUtil.jsonChangeMap = (json) => CoreUtil.objChangeMap(JSON.parse(json));
 
     return coreUtil;
 })(CoreUtil, window);
