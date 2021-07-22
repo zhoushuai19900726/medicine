@@ -4,26 +4,26 @@ import com.company.project.entity.BaseEntity;
 import com.baomidou.mybatisplus.annotation.*;
 
 
+import java.math.BigDecimal;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
- * 运费模板
+ * 运费模板扩展
  *
  * @author zhoushuai
  * @email zhoushuai_0726@163.com
- * @date 2021-07-20 15:42:47
+ * @date 2021-07-22 16:41:53
  */
 @Accessors(chain = true)
 @NoArgsConstructor
 @Data
-@TableName("shop_transport")
-public class ShopTransportEntity extends BaseEntity implements Serializable {
+@TableName("shop_transport_extend")
+public class ShopTransportExtendEntity extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -34,45 +34,52 @@ public class ShopTransportEntity extends BaseEntity implements Serializable {
     private String id;
 
     /**
-     * 名称
+     * 运费模板ID
      */
-    @TableField("name")
-    private String name;
+    @TableField("transport_id")
+    private String transportId;
 
     /**
-     * 店铺ID
+     * 配送方式
      */
-    @TableField("seller_id")
-    private String sellerId;
-    @TableField(exist = false)
-    private String sellerName;
+    @TableField("shipping_method")
+    private String shippingMethod;
 
     /**
-     * 计价方式
+     * 市级地区信息
      */
-    @TableField("pricing_method")
-    private Integer pricingMethod;
+    @TableField("area_info")
+    private String areaInfo;
 
-    @TableField("province")
-    private String province;
+    /**
+     * 首件/kg/m³数量
+     */
+    @TableField("snum")
+    private BigDecimal snum;
 
-    @TableField("city")
-    private String city;
+    /**
+     * 首件/kg/m³运费
+     */
+    @TableField("sprice")
+    private BigDecimal sprice;
 
-    @TableField("county")
-    private String county;
+    /**
+     * 续件/kg/m³数量
+     */
+    @TableField("xnum")
+    private BigDecimal xnum;
+
+    /**
+     * 续件/kg/m³运费
+     */
+    @TableField("xprice")
+    private BigDecimal xprice;
 
     /**
      * 是否默认
      */
     @TableField("is_default")
     private Integer isDefault;
-
-    /**
-     * 特殊地区不配送, 市级地区ID组成的串，以，隔开
-     */
-    @TableField("special_areas")
-    private String specialAreas;
 
     /**
      *
@@ -114,9 +121,6 @@ public class ShopTransportEntity extends BaseEntity implements Serializable {
     @TableField(fill = FieldFill.INSERT)
     @TableLogic // 注释后进行物理删除
     private Integer deleted;
-
-    @TableField(exist = false)
-    private List<ShopTransportExtendEntity> shopTransportExtendEntityList;
 
 
 }

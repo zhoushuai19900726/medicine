@@ -9,6 +9,7 @@ import com.company.project.common.utils.DelimiterConstants;
 import com.company.project.common.utils.NumberConstants;
 import com.company.project.entity.ShopSellerEntity;
 import com.company.project.mapper.ShopSellerMapper;
+import com.company.project.mapper.ShopTransportExtendMapper;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -18,6 +19,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.company.project.mapper.ShopTransportMapper;
 import com.company.project.entity.ShopTransportEntity;
 import com.company.project.service.ShopTransportService;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -25,12 +27,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-
+@Transactional
 @Service("shopTransportService")
 public class ShopTransportServiceImpl extends ServiceImpl<ShopTransportMapper, ShopTransportEntity> implements ShopTransportService {
 
     @Resource
     private ShopTransportMapper shopTransportMapper;
+    @Resource
+    private ShopTransportExtendMapper shopTransportExtendMapper;
 
     @Resource
     private ShopSellerMapper shopSellerMapper;
@@ -72,5 +76,14 @@ public class ShopTransportServiceImpl extends ServiceImpl<ShopTransportMapper, S
             }
         }
         return DataResult.success(shopTransportMapper.updateById(shopTransport));
+    }
+
+    @Override
+    public DataResult saveShopTransportEntity(ShopTransportEntity shopTransportEntity) {
+        shopTransportMapper.insert(shopTransportEntity);
+        if(CollectionUtils.isNotEmpty(shopTransportEntity.getShopTransportExtendEntityList())){
+            shopTransportEntity.getShopTransportExtendEntityList().forEach(shopTransportExtendEntity -> shopTransportExtendMapper.insert(shopTransportExtendEntity.setTransportId(shopTransportEntity.getId())));
+        }
+        return DataResult.success();
     }
 }

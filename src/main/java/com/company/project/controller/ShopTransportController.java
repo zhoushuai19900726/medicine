@@ -65,7 +65,7 @@ public class ShopTransportController extends BaseController {
     @LogAnnotation(title = "运费模板", action = "新增")
     @ResponseBody
     public DataResult add(@RequestBody ShopTransportEntity shopTransport) {
-        return DataResult.success(shopTransportService.save(shopTransport));
+        return shopTransportService.saveShopTransportEntity(shopTransport);
     }
 
     @ApiOperation(value = "删除")

@@ -100,7 +100,7 @@
                         <colgroup>
                             <col width="20">
                             <col width="250">
-                            <col width="80">
+                            <col width="100">
                             <col width="100">
                             <col width="100">
                             <col width="100">
@@ -108,23 +108,23 @@
                             <col width="80">
                         </colgroup>
                         <thead>
-                        <tr>
+                        <tr name="default">
                             <th colspan="2" style="text-align: center; font-weight: bold; font-size: 16px; color: #2b9eb9;"><i class="fa fa-truck"></i> 快递</th>
-                            <th>默认运费:</th>
+                            <th class="required">默认运费:</th>
                             <th colspan="5">
-                                <input type="number" name="" autocomplete="off" class="layui-input layui-input2"> <span name="unit">件</span>内
-                                <input type="number" name="" autocomplete="off" class="layui-input layui-input2"> 元, 每增加
-                                <input type="number" name="" autocomplete="off" class="layui-input layui-input2"> <span name="unit">件</span>, 增加运费
-                                <input type="number" name="" autocomplete="off" class="layui-input layui-input2"> 元
+                                <input type="number" name="snum" autocomplete="off" class="layui-input layui-input2"> <span name="unit">件</span>内
+                                <input type="number" name="sprice" autocomplete="off" class="layui-input layui-input2"> 元, 每增加
+                                <input type="number" name="xnum" autocomplete="off" class="layui-input layui-input2"> <span name="unit">件</span>, 增加运费
+                                <input type="number" name="xprice" autocomplete="off" class="layui-input layui-input2"> 元
                             </th>
                         </tr>
                         <tr>
                             <th><input type="checkbox" value="express" name="parentCheck" lay-filter="parentCheck" lay-skin="primary"/></th>
-                            <th colspan="2">运送到</th>
-                            <th>首<span name="unit">件</span>数 (<span name="unit">件</span>)</th>
-                            <th>首费 (元)</th>
-                            <th>续<span name="unit">件</span>数 (<span name="unit">件</span>)</th>
-                            <th>续费 (元)</th>
+                            <th class="required"colspan="2">运送到</th>
+                            <th class="required">首<span name="unit">件</span>数 (<span name="unit">件</span>)</th>
+                            <th class="required">首费 (元)</th>
+                            <th class="required">续<span name="unit">件</span>数 (<span name="unit">件</span>)</th>
+                            <th class="required">续费 (元)</th>
                             <th>操作</th>
                         </tr>
                         </thead>
@@ -162,7 +162,7 @@
                         <colgroup>
                             <col width="20">
                             <col width="250">
-                            <col width="80">
+                            <col width="100">
                             <col width="100">
                             <col width="100">
                             <col width="100">
@@ -170,23 +170,23 @@
                             <col width="80">
                         </colgroup>
                         <thead>
-                        <tr>
+                        <tr name="default">
                             <th colspan="2" style="text-align: center; font-weight: bold; font-size: 16px; color: #2b9eb9;"><i class="fa fa-truck"></i> EMS</th>
-                            <th>默认运费:</th>
+                            <th class="required">默认运费:</th>
                             <th colspan="5">
-                                <input type="number" name="" autocomplete="off" class="layui-input layui-input2"> <span name="unit">件</span>内
-                                <input type="number" name="" autocomplete="off" class="layui-input layui-input2"> 元, 每增加
-                                <input type="number" name="" autocomplete="off" class="layui-input layui-input2"> <span name="unit">件</span>, 增加运费
-                                <input type="number" name="" autocomplete="off" class="layui-input layui-input2"> 元
+                                <input type="number" name="snum" autocomplete="off" class="layui-input layui-input2"> <span name="unit">件</span>内
+                                <input type="number" name="sprice" autocomplete="off" class="layui-input layui-input2"> 元, 每增加
+                                <input type="number" name="xnum" autocomplete="off" class="layui-input layui-input2"> <span name="unit">件</span>, 增加运费
+                                <input type="number" name="xprice" autocomplete="off" class="layui-input layui-input2"> 元
                             </th>
                         </tr>
                         <tr>
                             <th><input type="checkbox" value="ems" name="parentCheck" lay-filter="parentCheck" lay-skin="primary"/></th>
-                            <th colspan="2">运送到</th>
-                            <th>首<span name="unit">件</span>数 (<span name="unit">件</span>)</th>
-                            <th>首费 (元)</th>
-                            <th>续<span name="unit">件</span>数 (<span name="unit">件</span>)</th>
-                            <th>续费 (元)</th>
+                            <th class="required" colspan="2">运送到</th>
+                            <th class="required">首<span name="unit">件</span>数 (<span name="unit">件</span>)</th>
+                            <th class="required">首费 (元)</th>
+                            <th class="required">续<span name="unit">件</span>数 (<span name="unit">件</span>)</th>
+                            <th class="required">续费 (元)</th>
                             <th>操作</th>
                         </tr>
                         </thead>
@@ -224,7 +224,7 @@
                         <colgroup>
                             <col width="20">
                             <col width="250">
-                            <col width="80">
+                            <col width="100">
                             <col width="100">
                             <col width="100">
                             <col width="100">
@@ -232,23 +232,23 @@
                             <col width="80">
                         </colgroup>
                         <thead>
-                        <tr>
+                        <tr name="default">
                             <th colspan="2" style="text-align: center; font-weight: bold; font-size: 16px; color: #2b9eb9;"><i class="fa fa-truck"></i> 平邮</th>
-                            <th>默认运费:</th>
+                            <th class="required">默认运费:</th>
                             <th colspan="5">
-                                <input type="number" name="" autocomplete="off" class="layui-input layui-input2"> <span name="unit">件</span>内
-                                <input type="number" name="" autocomplete="off" class="layui-input layui-input2"> 元, 每增加
-                                <input type="number" name="" autocomplete="off" class="layui-input layui-input2"> <span name="unit">件</span>, 增加运费
-                                <input type="number" name="" autocomplete="off" class="layui-input layui-input2"> 元
+                                <input type="number" name="snum" autocomplete="off" class="layui-input layui-input2"> <span name="unit">件</span>内
+                                <input type="number" name="sprice" autocomplete="off" class="layui-input layui-input2"> 元, 每增加
+                                <input type="number" name="xnum" autocomplete="off" class="layui-input layui-input2"> <span name="unit">件</span>, 增加运费
+                                <input type="number" name="xprice" autocomplete="off" class="layui-input layui-input2"> 元
                             </th>
                         </tr>
                         <tr>
                             <th><input type="checkbox" value="surfaceMail" name="parentCheck" lay-filter="parentCheck" lay-skin="primary"/></th>
-                            <th colspan="2">运送到</th>
-                            <th>首<span name="unit">件</span>数 (<span name="unit">件</span>)</th>
-                            <th>首费 (元)</th>
-                            <th>续<span name="unit">件</span>数 (<span name="unit">件</span>)</th>
-                            <th>续费 (元)</th>
+                            <th class="required" colspan="2">运送到</th>
+                            <th class="required">首<span name="unit">件</span>数 (<span name="unit">件</span>)</th>
+                            <th class="required">首费 (元)</th>
+                            <th class="required">续<span name="unit">件</span>数 (<span name="unit">件</span>)</th>
+                            <th class="required">续费 (元)</th>
                             <th>操作</th>
                         </tr>
                         </thead>
@@ -331,6 +331,94 @@
         var layer = layui.layer;
         var regionCheckBox = layui.regionCheckBox;
 
+        // 表单提交
+        form.on('submit(submitBtnForAdd)', function (data) {
+            var errorMsg = "";
+            // 运费模板扩展
+            var shopTransportExtendEntityList = [];
+            $("input[type='checkbox'][name='shippingMethod']:checked").each(function (index, item) {
+                var shippingMethod = parseInt($(item).attr('value'));
+                // express快递/surfaceMail平邮/ems
+                switch (shippingMethod) {
+                    case 1:
+                        // 快递
+                        // 默认运费
+                        var defaultShopTransportExtendEntity = getDefaultShopTransportExtendEntity("express", shippingMethod);
+                        if(defaultShopTransportExtendEntity){
+                            shopTransportExtendEntityList.push(defaultShopTransportExtendEntity);
+                        } else {
+                            errorMsg += "请填写【快递】默认运费!\n";
+                        }
+                        // 指定地区
+                        var appointShopTransportExtendEntityList = getAppointShopTransportExtendEntity("express", shippingMethod);
+                        if(appointShopTransportExtendEntityList && appointShopTransportExtendEntityList.length > 0){
+                            shopTransportExtendEntityList = shopTransportExtendEntityList.concat(appointShopTransportExtendEntityList);
+                        }
+                        break;
+                    case 2:
+                        // EMS
+                        // 默认运费
+                        var defaultShopTransportExtendEntity = getDefaultShopTransportExtendEntity("ems", shippingMethod);
+                        if(defaultShopTransportExtendEntity){
+                            shopTransportExtendEntityList.push(defaultShopTransportExtendEntity);
+                        } else {
+                            errorMsg += "请填写【EMS】默认运费!\n";
+                        }
+                        // 指定地区
+                        var appointShopTransportExtendEntityList = getAppointShopTransportExtendEntity("ems", shippingMethod);
+                        if(appointShopTransportExtendEntityList && appointShopTransportExtendEntityList.length > 0){
+                            shopTransportExtendEntityList = shopTransportExtendEntityList.concat(appointShopTransportExtendEntityList);
+                        }
+                        break;
+                    case 3:
+                        // 平邮
+                        // 默认运费
+                        var defaultShopTransportExtendEntity = getDefaultShopTransportExtendEntity("surfaceMail", shippingMethod);
+                        if(defaultShopTransportExtendEntity){
+                            shopTransportExtendEntityList.push(defaultShopTransportExtendEntity);
+                        } else {
+                            errorMsg += "请填写【平邮】默认运费!\n";
+                        }
+                        // 指定地区
+                        var appointShopTransportExtendEntityList = getAppointShopTransportExtendEntity("surfaceMail", shippingMethod);
+                        if(appointShopTransportExtendEntityList && appointShopTransportExtendEntityList.length > 0){
+                            shopTransportExtendEntityList = shopTransportExtendEntityList.concat(appointShopTransportExtendEntityList);
+                        }
+                        break;
+                }
+            });
+            if(errorMsg != ""){
+                layer.msg(errorMsg);
+                return false;
+            }
+            data.field["shopTransportExtendEntityList"] = shopTransportExtendEntityList;
+            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
+            CoreUtil.sendPost("/shopTransport/add", data.field, function (res) {
+                // 刷新父页面列表
+                parent.layui.table.reload('showTable');
+                // 提示
+                layer.msg(res.msg, {time: 500}, function () {
+                    var parentIndex = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(parentIndex);
+                });
+            });
+            //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            return false;
+        });
+
+        form.on('submit(submitBtnForUpdate)', function (data) {
+            // // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
+            // CoreUtil.sendPut("/shopTransport/update", data.field, function (res) {
+            //     // 刷新父页面列表
+            //     parent.layui.table.reload('showTable');
+            //     parent.layer.msg("修改成功");
+            //     var parentIndex = parent.layer.getFrameIndex(window.name);
+            //     parent.layer.close(parentIndex);
+            // });
+            //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            return false;
+        });
+
         form.on('select(province)', function (data) {
             loadCity(data.value, null);
         });
@@ -395,11 +483,10 @@
         CoreUtil.sendSyncGet("/addressLibrary/findAllProvinceAndCity", null, function (res) {
             var regionList = res.data;
             //执行实例
-            var specialAreas = regionCheckBox.render({
+            regionCheckBox.render({
                 elem: '#specialAreas',
                 name: 'region', // 对应input name
                 data: regionList,
-                // value: ['130000000000-130100000000', '110000000000-110100000000', '320000000000'], // 赋初始值，'北京,内蒙古,江西-九江'也可以
                 width: '100%', // 默认550px
                 border: true, // 默认true
                 // 初始化完成时执行
@@ -416,51 +503,51 @@
             });
         });
 
-
-        // 表单提交
-        form.on('submit(submitBtnForAdd)', function (data) {
-            // // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
-            // CoreUtil.sendPost("/shopTransport/add", data.field, function (res) {
-            //     // 刷新父页面列表
-            //     parent.layui.table.reload('showTable');
-            //     // 提示
-            //     layer.open({
-            //         content: '<i class="layui-icon layui-icon-face-smile" style="color: green;"></i> 保存成功'
-            //         , btn: ['继续添加', '返回列表']
-            //         , yes: function (index, layero) {
-            //             // 清空表单 （“brandForm”是表单的id）
-            //             $("#shopTransportForm")[0].reset();
-            //             form.render();
-            //             layer.close(index);
-            //         }, btn2: function (index, layero) {
-            //             //按钮【按钮二】的回调
-            //             var parentIndex = parent.layer.getFrameIndex(window.name);
-            //             parent.layer.close(parentIndex);
-            //             //return false 开启该代码可禁止点击该按钮关闭
-            //         }, cancel: function () {
-            //             //右上角关闭回调
-            //             var parentIndex = parent.layer.getFrameIndex(window.name);
-            //             parent.layer.close(parentIndex);
-            //             //return false 开启该代码可禁止点击该按钮关闭
-            //         }
-            //     });
-            // });
-            //阻止表单跳转。如果需要表单跳转，去掉这段即可。
-            return false;
-        });
-        form.on('submit(submitBtnForUpdate)', function (data) {
-            // // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
-            // CoreUtil.sendPut("/shopTransport/update", data.field, function (res) {
-            //     // 刷新父页面列表
-            //     parent.layui.table.reload('showTable');
-            //     parent.layer.msg("修改成功");
-            //     var parentIndex = parent.layer.getFrameIndex(window.name);
-            //     parent.layer.close(parentIndex);
-            // });
-            //阻止表单跳转。如果需要表单跳转，去掉这段即可。
-            return false;
-        });
     });
+
+
+    function getDefaultShopTransportExtendEntity(id, shippingMethod) {
+        var defaultShopTransportExtendEntity = {};
+        var defaultTr = $("#" + id).find("table thead tr[name='default']");
+        var defaultSnum = $(defaultTr).find("input[name='snum']").val();
+        var defaultSprice = $(defaultTr).find("input[name='sprice']").val();
+        var defaultXnum = $(defaultTr).find("input[name='xnum']").val();
+        var defaultXprice = $(defaultTr).find("input[name='xprice']").val();
+        defaultShopTransportExtendEntity.shippingMethod = shippingMethod;
+        defaultShopTransportExtendEntity.isDefault = 1;
+        if(defaultSnum && defaultSprice && defaultXnum && defaultXprice){
+            defaultShopTransportExtendEntity.areaInfo = "全国";
+            defaultShopTransportExtendEntity.snum = defaultSnum;
+            defaultShopTransportExtendEntity.sprice = defaultSprice;
+            defaultShopTransportExtendEntity.xnum = defaultXnum;
+            defaultShopTransportExtendEntity.xprice = defaultXprice;
+            return defaultShopTransportExtendEntity;
+        }
+        return null;
+    }
+
+    function getAppointShopTransportExtendEntity(id, shippingMethod) {
+        var appointShopTransportExtendEntityList = [];
+        $("#" + id).find("table tbody tr").each(function (index, item) {
+            var appointShopTransportExtendEntity = {};
+            var areaInfo = $(item).find("input[name='areaInfo']").val();
+            var snum = $(item).find("input[name='snum']").val();
+            var sprice = $(item).find("input[name='sprice']").val();
+            var xnum = $(item).find("input[name='xnum']").val();
+            var xprice = $(item).find("input[name='xprice']").val();
+            appointShopTransportExtendEntity.shippingMethod = shippingMethod;
+            appointShopTransportExtendEntity.isDefault = 0;
+            if(areaInfo && snum && sprice && xnum && xprice){
+                appointShopTransportExtendEntity.areaInfo = areaInfo;
+                appointShopTransportExtendEntity.snum = snum;
+                appointShopTransportExtendEntity.sprice = sprice;
+                appointShopTransportExtendEntity.xnum = xnum;
+                appointShopTransportExtendEntity.xprice = xprice;
+                appointShopTransportExtendEntityList.push(appointShopTransportExtendEntity);
+            }
+        });
+        return appointShopTransportExtendEntityList;
+    }
 
     function loadCity(province, city) {
         var form = layui.form;

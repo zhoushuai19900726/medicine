@@ -20,5 +20,7 @@ public interface ShopTransportService extends IService<ShopTransportEntity> {
 
     DataResult updateShopTransportEntityById(ShopTransportEntity shopTransport);
 
+    DataResult saveShopTransportEntity(ShopTransportEntity shopTransport);
+
 }
 
