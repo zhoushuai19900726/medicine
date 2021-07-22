@@ -191,25 +191,29 @@
                     tipDialog(ids);
                     break;
                 case 'edit':
-                    // layer.open({
-                    //     id: 'shopTransport_update', //设定一个id，防止重复弹出
-                    //     title: '<i class="layui-icon">&#xe653;</i> 编辑运费模板',
-                    //     type: 2,
-                    //     content: '../index/shopTransport/addOrUpdate',
-                    //     btn: ['提交保存', '取消'],
-                    //     area: ['60%', '85%'],
-                    //     scrollbar: false,
-                    //     yes: function (index, layero) {
-                    //         // 得到iframe页的窗口对象并调用子页面方法
-                    //         window[layero.find('iframe')[0]['name']].saveShopTransport("submitBtnForUpdate");
-                    //     },
-                    //     success: function (layero, index) {
-                    //         // 置顶当前窗口
-                    //         layer.setTop(layero);
-                    //         // 得到iframe页的窗口对象并调用子页面方法
-                    //         window[layero.find('iframe')[0]['name']].assignment(data);
-                    //     }
-                    // });
+                    layer.open({
+                        id: 'shopTransport_update', //设定一个id，防止重复弹出
+                        title: '<i class="layui-icon">&#xe653;</i> 编辑运费模板',
+                        type: 2,
+                        offset: 'r',
+                        anim: 5,
+                        maxmin: true,
+                        content: '../index/shopTransport/addOrUpdate',
+                        btn: ['提交保存', '取消'],
+                        area: ['1000px', '100%'],
+                        scrollbar: false,
+                        zIndex: layer.zIndex,
+                        yes: function (index, layero) {
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            window[layero.find('iframe')[0]['name']].saveShopTransport("submitBtnForUpdate");
+                        },
+                        success: function (layero, index) {
+                            // 置顶当前窗口
+                            layer.setTop(layero);
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            window[layero.find('iframe')[0]['name']].assignment(data);
+                        }
+                    });
                     break;
             }
         });

@@ -238,7 +238,7 @@
             shopSpecEntity.templateId = $("#templateId").val();
             shopSpecEntity[field] = util.escape(value);
             CoreUtil.sendPut("/shopTemplate/updateSpec", shopSpecEntity, function (res) {
-
+                specTableIns.reload();
             });
         });
 
@@ -380,7 +380,7 @@
             shopParaEntity.templateId = $("#templateId").val();
             shopParaEntity[field] = util.escape(value);
             CoreUtil.sendPut("/shopTemplate/updatePara", shopParaEntity, function (res) {
-
+                paraTableIns.reload();
             });
         });
 
