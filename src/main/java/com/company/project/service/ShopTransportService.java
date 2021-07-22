@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.company.project.common.utils.DataResult;
 import com.company.project.entity.ShopTransportEntity;
 
+import java.util.List;
+
 /**
  * 运费模板
  *
@@ -21,6 +23,8 @@ public interface ShopTransportService extends IService<ShopTransportEntity> {
     DataResult updateShopTransportEntityById(ShopTransportEntity shopTransport);
 
     DataResult saveShopTransportEntity(ShopTransportEntity shopTransport);
+
+    DataResult removeShopTransportEntityByIds(List<String> ids);
 
 }
 

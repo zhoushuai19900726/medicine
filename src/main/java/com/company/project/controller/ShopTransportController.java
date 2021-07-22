@@ -74,7 +74,7 @@ public class ShopTransportController extends BaseController {
     @LogAnnotation(title = "运费模板", action = "删除")
     @ResponseBody
     public DataResult delete(@RequestBody @ApiParam(value = "id集合") List<String> ids) {
-        return DataResult.success(shopTransportService.removeByIds(ids));
+        return shopTransportService.removeShopTransportEntityByIds(ids);
     }
 
     @ApiOperation(value = "更新")

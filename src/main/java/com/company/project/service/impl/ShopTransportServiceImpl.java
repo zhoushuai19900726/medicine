@@ -8,6 +8,7 @@ import com.company.project.common.utils.DataResult;
 import com.company.project.common.utils.DelimiterConstants;
 import com.company.project.common.utils.NumberConstants;
 import com.company.project.entity.ShopSellerEntity;
+import com.company.project.entity.ShopTransportExtendEntity;
 import com.company.project.mapper.ShopSellerMapper;
 import com.company.project.mapper.ShopTransportExtendMapper;
 import com.google.common.collect.Maps;
@@ -91,6 +92,13 @@ public class ShopTransportServiceImpl extends ServiceImpl<ShopTransportMapper, S
         if(CollectionUtils.isNotEmpty(shopTransportEntity.getShopTransportExtendEntityList())){
             shopTransportEntity.getShopTransportExtendEntityList().forEach(shopTransportExtendEntity -> shopTransportExtendMapper.insert(shopTransportExtendEntity.setTransportId(shopTransportEntity.getId())));
         }
+        return DataResult.success();
+    }
+
+    @Override
+    public DataResult removeShopTransportEntityByIds(List<String> ids) {
+        shopTransportMapper.deleteBatchIds(ids);
+        shopTransportExtendMapper.delete(Wrappers.<ShopTransportExtendEntity>lambdaQuery().in(ShopTransportExtendEntity::getTransportId, ids));
         return DataResult.success();
     }
 }
