@@ -80,9 +80,11 @@
             CoreUtil.sendPut("/${classname}/update", data.field, function (res) {
                 // 刷新父页面列表
                 parent.layui.table.reload('showTable');
-                parent.layer.msg("修改成功");
-                var parentIndex = parent.layer.getFrameIndex(window.name);
-                parent.layer.close(parentIndex);
+                // 提示
+                layer.msg(res.msg, {time: 500}, function () {
+                    var parentIndex = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(parentIndex);
+                });
             });
             // 阻止表单跳转。如果需要表单跳转，去掉这段即可。
             return false;

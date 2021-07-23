@@ -76,13 +76,13 @@ public class ShopTransportServiceImpl extends ServiceImpl<ShopTransportMapper, S
                 shopTransportMapper.update(new ShopTransportEntity().setIsDefault(NumberConstants.ZERO_I), Wrappers.<ShopTransportEntity>lambdaQuery().eq(ShopTransportEntity::getSellerId, result.getSellerId()));
             }
         }
-        // TODO 修改扩展
+        // 修改扩展
         if(CollectionUtils.isNotEmpty(shopTransportEntity.getShopTransportExtendEntityList())){
-
+            // 删除旧扩展
+            shopTransportExtendMapper.delete(Wrappers.<ShopTransportExtendEntity>lambdaQuery().eq(ShopTransportExtendEntity::getTransportId, shopTransportEntity.getId()));
+            // 保存新扩展
+            shopTransportEntity.getShopTransportExtendEntityList().forEach(shopTransportExtendEntity -> shopTransportExtendMapper.insert(shopTransportExtendEntity.setTransportId(shopTransportEntity.getId())));
         }
-
-
-
         return DataResult.success(shopTransportMapper.updateById(shopTransportEntity));
     }
 

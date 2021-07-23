@@ -129,13 +129,13 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
+                        <tr name="first">
                             <td style="text-align: center; line-height: 25px;"><input type="checkbox" value="express" name="childCheck" lay-filter="childCheck" lay-skin="primary"/></td>
                             <td>
                                 <input type="hidden" name="areaInfo"/>
                                 <pre name="showAreaName">点击"编辑"选择指定地区</pre>
                             </td>
-                            <td><a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" onclick="specifiedRegion(this)"><i class="layui-icon">&#xe642;</i>编辑</a></td>
+                            <td><a style="width: 100%;" class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" onclick="specifiedRegion(this)"><i class="layui-icon">&#xe642;</i>编辑</a></td>
                             <td><input type="number" name="snum" autocomplete="off" class="layui-input"></td>
                             <td><input type="number" name="sprice" autocomplete="off" class="layui-input"></td>
                             <td><input type="number" name="xnum" autocomplete="off" class="layui-input"></td>
@@ -191,13 +191,13 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
+                        <tr name="first">
                             <td style="text-align: center; line-height: 25px;"><input type="checkbox" value="ems" name="childCheck" lay-filter="childCheck" lay-skin="primary"/></td>
                             <td>
                                 <input type="hidden" name="areaInfo"/>
                                 <pre name="showAreaName">点击"编辑"选择指定地区</pre>
                             </td>
-                            <td><a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" onclick="specifiedRegion(this)"><i class="layui-icon">&#xe642;</i>编辑</a></td>
+                            <td><a style="width: 100%;" class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" onclick="specifiedRegion(this)"><i class="layui-icon">&#xe642;</i>编辑</a></td>
                             <td><input type="number" name="snum" autocomplete="off" class="layui-input"></td>
                             <td><input type="number" name="sprice" autocomplete="off" class="layui-input"></td>
                             <td><input type="number" name="xnum" autocomplete="off" class="layui-input"></td>
@@ -253,13 +253,13 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
+                        <tr name="first">
                             <td style="text-align: center; line-height: 25px;"><input type="checkbox" value="surfaceMail" name="childCheck" lay-filter="childCheck" lay-skin="primary"/></td>
                             <td>
                                 <input type="hidden" name="areaInfo"/>
                                 <pre name="showAreaName">点击"编辑"选择指定地区</pre>
                             </td>
-                            <td><a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" onclick="specifiedRegion(this)"><i class="layui-icon">&#xe642;</i>编辑</a></td>
+                            <td><a style="width: 100%;" class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" onclick="specifiedRegion(this)"><i class="layui-icon">&#xe642;</i>编辑</a></td>
                             <td><input type="number" name="snum" autocomplete="off" class="layui-input"></td>
                             <td><input type="number" name="sprice" autocomplete="off" class="layui-input"></td>
                             <td><input type="number" name="xnum" autocomplete="off" class="layui-input"></td>
@@ -356,13 +356,15 @@
             if(shopTransportExtendEntityList){
                 data.field["shopTransportExtendEntityList"] = shopTransportExtendEntityList;
                 // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
-                // CoreUtil.sendPut("/shopTransport/update", data.field, function (res) {
-                //     // 刷新父页面列表
-                //     parent.layui.table.reload('showTable');
-                //     parent.layer.msg("修改成功");
-                //     var parentIndex = parent.layer.getFrameIndex(window.name);
-                //     parent.layer.close(parentIndex);
-                // });
+                CoreUtil.sendPut("/shopTransport/update", data.field, function (res) {
+                    // 刷新父页面列表
+                    parent.layui.table.reload('showTable');
+                    // 提示
+                    layer.msg(res.msg, {time: 500}, function () {
+                        var parentIndex = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(parentIndex);
+                    });
+                });
             }
             // 阻止表单跳转。如果需要表单跳转，去掉这段即可。
             return false;
@@ -514,12 +516,14 @@
 
 
     function getDefaultShopTransportExtendEntity(id, shippingMethod) {
+        var form = layui.form;
         var defaultShopTransportExtendEntity = {};
         var defaultTr = $("#" + id).find("table thead tr[name='default']");
         var defaultSnum = $(defaultTr).find("input[name='snum']").val();
         var defaultSprice = $(defaultTr).find("input[name='sprice']").val();
         var defaultXnum = $(defaultTr).find("input[name='xnum']").val();
         var defaultXprice = $(defaultTr).find("input[name='xprice']").val();
+        defaultShopTransportExtendEntity.transportId = form.val("shopTransportForm").id;
         defaultShopTransportExtendEntity.shippingMethod = shippingMethod;
         defaultShopTransportExtendEntity.isDefault = 1;
         if (defaultSnum && defaultSprice && defaultXnum && defaultXprice) {
@@ -542,6 +546,7 @@
     }
 
     function getAppointShopTransportExtendEntity(id, shippingMethod) {
+        var form = layui.form;
         var appointShopTransportExtendEntityList = [];
         $("#" + id).find("table tbody tr").each(function (index, item) {
             var appointShopTransportExtendEntity = {};
@@ -550,6 +555,7 @@
             var sprice = $(item).find("input[name='sprice']").val();
             var xnum = $(item).find("input[name='xnum']").val();
             var xprice = $(item).find("input[name='xprice']").val();
+            appointShopTransportExtendEntity.transportId = form.val("shopTransportForm").id;
             appointShopTransportExtendEntity.shippingMethod = shippingMethod;
             appointShopTransportExtendEntity.isDefault = 0;
             if (areaInfo && snum && sprice && xnum && xprice) {
@@ -562,6 +568,30 @@
             }
         });
         return appointShopTransportExtendEntityList;
+    }
+
+    function setAppointShopTransportExtendEntity(id, appointShopTransportExtendEntity) {
+        $("#" + id).find("table tbody tr[name='first']").remove();
+        addSpecifiedRegion(id);
+        var item = $("#" + id).find("table tbody tr:last");
+        var specifiedRegionMap = CoreUtil.jsonChangeMap(appointShopTransportExtendEntity.areaInfo);
+        var areaName = "";
+        specifiedRegionMap.forEach(function (v, k, map) {
+            var children = v.children;
+            if (children && children.length > 0) {
+                let cityNameArr = [];
+                children.forEach(item => {
+                    cityNameArr.push(item.name)
+                });
+                areaName += "【" + v.name + "】" + cityNameArr.join(',') + ";\n";
+            }
+        });
+        $(item).find("pre[name='showAreaName']").text(areaName || "点击\"编辑\"选择指定地区");
+        $(item).find("input[name='areaInfo']").val(appointShopTransportExtendEntity.areaInfo);
+        $(item).find("input[name='snum']").val(appointShopTransportExtendEntity.snum);
+        $(item).find("input[name='sprice']").val(appointShopTransportExtendEntity.sprice);
+        $(item).find("input[name='xnum']").val(appointShopTransportExtendEntity.xnum);
+        $(item).find("input[name='xprice']").val(appointShopTransportExtendEntity.xprice);
     }
 
     function loadCity(province, city) {
@@ -664,7 +694,7 @@
             "                                <input type=\"hidden\" name=\"areaInfo\"/>\n" +
             "                                <pre name=\"showAreaName\">点击\"编辑\"选择指定地区</pre>\n" +
             "                            </td>\n" +
-            "                            <td><a class=\"layui-btn layui-btn-primary layui-border-black layui-btn-xs\" onclick=\"specifiedRegion(this)\"><i class=\"layui-icon\">&#xe642;</i>编辑</a></td>\n" +
+            "                            <td><a style=\"width: 100%;\" class=\"layui-btn layui-btn-primary layui-border-black layui-btn-xs\" onclick=\"specifiedRegion(this)\"><i class=\"layui-icon\">&#xe642;</i>编辑</a></td>\n" +
             "                            <td><input type=\"number\" name=\"snum\" autocomplete=\"off\" class=\"layui-input\"></td>\n" +
             "                            <td><input type=\"number\" name=\"sprice\" autocomplete=\"off\" class=\"layui-input\"></td>\n" +
             "                            <td><input type=\"number\" name=\"xnum\" autocomplete=\"off\" class=\"layui-input\"></td>\n" +
@@ -920,7 +950,7 @@
                                 setDefaultShopTransportExtendEntity('express', item);
                             } else {
                                 // 指定地区Table创建并回显数据
-
+                                setAppointShopTransportExtendEntity('express', item);
                             }
                             break;
                         case 2:
@@ -933,7 +963,7 @@
                                 setDefaultShopTransportExtendEntity('ems', item);
                             } else {
                                 // 指定地区Table创建并回显数据
-
+                                setAppointShopTransportExtendEntity('ems', item);
                             }
                             break;
                         case 3:
@@ -946,7 +976,7 @@
                                 setDefaultShopTransportExtendEntity('surfaceMail', item);
                             } else {
                                 // 指定地区Table创建并回显数据
-
+                                setAppointShopTransportExtendEntity('surfaceMail', item);
                             }
                             break;
                     }
