@@ -124,6 +124,15 @@ public class ShopTransportController extends BaseController {
         return DataResult.success(shopTransportService.list());
     }
 
+    @ApiOperation(value = "根据商家查询全部")
+    @GetMapping("shopTransport/listBySeller/{sellerId}")
+    @RequiresPermissions("shopTransport:list")
+    @LogAnnotation(title = "运费模板", action = "根据商家查询全部")
+    @ResponseBody
+    public DataResult findListBySeller(@PathVariable("sellerId") String sellerId) {
+        return DataResult.success(shopTransportService.list(Wrappers.<ShopTransportEntity>lambdaQuery().eq(ShopTransportEntity::getSellerId, sellerId)));
+    }
+
     @ApiOperation(value = "查询分页数据")
     @PostMapping("shopTransport/listByPage")
     @RequiresPermissions("shopTransport:list")

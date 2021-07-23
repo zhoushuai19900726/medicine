@@ -62,6 +62,9 @@ public class ShopSpuController extends BaseController {
     @Resource
     private ShopSpuAuditRecordService shopSpuAuditRecordService;
 
+    @Resource
+    private ShopTransportService shopTransportService;
+
     @ApiOperation(value = "跳转到列表页面")
     @GetMapping("/index/shopSpu")
     public String shopSpu() {
@@ -77,8 +80,12 @@ public class ShopSpuController extends BaseController {
     @ApiOperation(value = "跳转到编辑商品页面")
     @GetMapping("/index/shopSpu/editProduct/{id}")
     public String editProduct(@PathVariable("id") String id, Model model) {
-        ShopSpuEntity shopSpuEntity = shopSpuService.getShopSpuEntityById(id);
+        // SPU
+        ShopSpuEntity shopSpuEntity = shopSpuService.getById(id);
         model.addAttribute("shopSpuEntity", shopSpuEntity);
+        // 运费模板
+        model.addAttribute("shopTransportEntityList", shopTransportService.list(Wrappers.<ShopTransportEntity>lambdaQuery().eq(ShopTransportEntity::getSellerId, shopSpuEntity.getSellerId())));
+        // SKU
         List<ShopSkuEntity> shopSkuEntityList = shopSkuService.listByCondition(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, id).orderByAsc(ShopSkuEntity::getId));
         model.addAttribute("skuSnList", Joiner.on(DelimiterConstants.COMMA).skipNulls().join(shopSkuEntityList.stream().map(ShopSkuEntity::getSn).collect(Collectors.toList())));
         // 未删除SKU
@@ -95,7 +102,9 @@ public class ShopSpuController extends BaseController {
     @ApiOperation(value = "跳转进入商品SPU详情页面")
     @GetMapping("/index/shopSpu/detail/{id}")
     public String spuDetail(@PathVariable("id") String id, Model model) {
-        model.addAttribute("shopSpuEntity", shopSpuService.getShopSpuEntityById(id));
+        ShopSpuEntity shopSpuEntity = shopSpuService.getShopSpuEntityById(id);
+        model.addAttribute("shopSpuEntity", shopSpuEntity);
+        model.addAttribute("shopTransportEntityList", shopTransportService.list(Wrappers.<ShopTransportEntity>lambdaQuery().eq(ShopTransportEntity::getSellerId, shopSpuEntity.getSellerId())));
         model.addAttribute("shopSkuEntityList", shopSkuService.list(Wrappers.<ShopSkuEntity>lambdaQuery().eq(ShopSkuEntity::getSpuId, id)));
         return "goods/goodsDetail";
     }

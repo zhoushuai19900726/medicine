@@ -149,6 +149,7 @@
                                         <td>
                                             <select name="freightId" lay-search>
                                                 <option value="">请选择运费模板</option>
+                                                <option th:each="shopTransportEntity : ${shopTransportEntityList}" th:text="${shopTransportEntity.name}" th:value="${shopTransportEntity.id}" th:selected="${shopSpuEntity.freightId == shopTransportEntity.id}"></option>
                                             </select>
                                         </td>
                                     </tr>
@@ -893,6 +894,17 @@
         form.on('select(sellerId)', function (data) {
             var serialNo;
             if (data.value) {
+                // 运费模板
+                $("select[name='freightId']").empty();
+                $("select[name='freightId']").append("<option value=''>请选择运费模板</option>");
+                CoreUtil.sendSyncGet("/shopTransport/listBySeller/" + data.value, null, function (res) {
+                    if (res.data) {
+                        $(res.data).each(function (index, item) {
+                            $("select[name='freightId']").append("<option value='" + item.id + "'>" + item.name + "</option>");
+                        });
+                    }
+                });
+                // 商品货号
                 CoreUtil.sendSyncGet("/goods/getUniqueSnBySeller/" + data.value, null, function (res) {
                     serialNo = res.data;
                 });

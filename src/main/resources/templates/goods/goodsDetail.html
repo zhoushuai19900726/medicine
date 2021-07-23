@@ -93,7 +93,11 @@
                                 <td>运费模板</td>
                                 <td>
                                     <select>
-                                        <option value="-1" disabled></option>
+                                        <option th:each="shopTransportEntity : ${shopTransportEntityList}"
+                                                th:text="${shopTransportEntity.name}"
+                                                th:value="${shopTransportEntity.id}"
+                                                th:selected="${shopTransportEntity.id == shopSpuEntity.freightId}"
+                                                th:disabled="${shopTransportEntity.id != shopSpuEntity.freightId}"></option>
                                     </select>
                                 </td>
                             </tr>
