@@ -55,9 +55,9 @@
         </div>
     </script>
     <script type="text/html" id="tool">
-        <a class="layui-btn layui-btn-xs" lay-event="query" shiro:hasPermission="shopTransport:update"><i class="layui-icon">&#xe615;</i>查看模板</a>
-        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit" shiro:hasPermission="shopTransport:update"><i class="layui-icon">&#xe642;</i>编辑模板</a>
-        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" shiro:hasPermission="shopTransport:delete"><i class="layui-icon">&#xe640;</i>删除模板</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" shiro:hasPermission="shopTransport:update"><i class="layui-icon">&#xe615;</i>查看模板</a>
+        <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="edit" shiro:hasPermission="shopTransport:update"><i class="layui-icon">&#xe642;</i>编辑模板</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" shiro:hasPermission="shopTransport:delete"><i class="layui-icon">&#xe640;</i>删除模板</a>
     </script>
     <script type="text/html" id="isDefaultTpl">
         <input type="checkbox" name="isDefault" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="isDefault" {{ d.isDefault == 1 ? 'checked' : '' }}>
@@ -213,6 +213,20 @@
                             // 得到iframe页的窗口对象并调用子页面方法
                             window[layero.find('iframe')[0]['name']].assignment(data);
                         }
+                    });
+                    break;
+                case 'detail':
+                    layer.open({
+                        id: 'shopTransport_detail', //设定一个id，防止重复弹出
+                        title: '<i class="layui-icon">&#xe653;</i> 运费模板详情',
+                        type: 2,
+                        offset: 'r',
+                        anim: 5,
+                        maxmin: true,
+                        content: '../index/shopTransport/detail/' + data.id,
+                        area: ['1000px', '100%'],
+                        scrollbar: false,
+                        zIndex: layer.zIndex
                     });
                     break;
             }

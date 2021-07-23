@@ -1,5 +1,7 @@
 package com.company.project.entity;
 
+import com.alibaba.fastjson.JSON;
+import com.company.project.common.utils.CommonUtils;
 import com.company.project.entity.BaseEntity;
 import com.baomidou.mybatisplus.annotation.*;
 
@@ -7,10 +9,12 @@ import com.baomidou.mybatisplus.annotation.*;
 import java.math.BigDecimal;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * 运费模板扩展
@@ -50,6 +54,16 @@ public class ShopTransportExtendEntity extends BaseEntity implements Serializabl
      */
     @TableField("area_info")
     private String areaInfo;
+
+    @TableField(exist = false)
+    private Map<String, Map<String, Object>> areaInfoMap;
+
+    public void setAreaInfo(String areaInfo) {
+        this.areaInfo = areaInfo;
+        if(StringUtils.isNotBlank(areaInfo) && CommonUtils.isJson(areaInfo)){
+            this.areaInfoMap = (Map<String, Map<String, Object>>) JSON.parse(areaInfo);
+        }
+    }
 
     /**
      * 首件/kg/m³数量

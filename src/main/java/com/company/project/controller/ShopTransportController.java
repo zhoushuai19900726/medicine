@@ -4,9 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.company.project.common.aop.annotation.DataScope;
 import com.company.project.common.aop.annotation.LogAnnotation;
+import com.company.project.entity.ShopSellerEntity;
+import com.company.project.entity.ShopTransportExtendEntity;
+import com.company.project.service.ShopSellerService;
+import com.company.project.service.ShopTransportExtendService;
 import io.swagger.annotations.Api;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -16,6 +21,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.company.project.common.utils.DataResult;
 
@@ -40,11 +46,34 @@ public class ShopTransportController extends BaseController {
     @Resource
     private ShopTransportService shopTransportService;
 
+    @Resource
+    private ShopSellerService shopSellerService;
+
+    @Resource
+    private ShopTransportExtendService shopTransportExtendService;
+
 
     @ApiOperation(value = "跳转到运费模板列表页面")
     @GetMapping("/index/shopTransport")
     public String shopTransport() {
         return "transport/transportList";
+    }
+
+    @ApiOperation(value = "跳转进入详情页面")
+    @GetMapping("/index/shopTransport/detail/{id}")
+    public String detail(@PathVariable("id") String id, Model model) {
+        ShopTransportEntity shopTransportEntity = shopTransportService.getById(id);
+        if (Objects.nonNull(shopTransportEntity)) {
+            if(StringUtils.isNotBlank(shopTransportEntity.getSellerId())){
+                ShopSellerEntity shopSellerEntity = shopSellerService.getById(shopTransportEntity.getSellerId());
+                if (Objects.nonNull(shopSellerEntity)) {
+                    shopTransportEntity.setSellerName(shopSellerEntity.getSellerName());
+                }
+            }
+            model.addAttribute("shopTransportEntity", shopTransportEntity);
+            model.addAttribute("shopTransportExtendEntityList", shopTransportExtendService.list(Wrappers.<ShopTransportExtendEntity>lambdaQuery().eq(ShopTransportExtendEntity::getTransportId, shopTransportEntity.getId())));
+        }
+        return "transport/transportDetail";
     }
 
     @ApiOperation(value = "跳转进入新增/编辑页面")

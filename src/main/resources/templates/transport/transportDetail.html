@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <style>
+        .layui-table .layui-input {
+            height: 25px !important;
+        }
+
+        .layui-table .layui-input2 {
+            height: 25px !important;
+            width: 60px !important;
+            display: inline !important;
+        }
+    </style>
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main" shiro:hasPermission="shopTransport:add">
+        <blockquote class="layui-elem-quote">模板信息</blockquote>
+        <blockquote class="layui-elem-quote layui-quote-nm">
+            <table class="layui-table" lay-size="sm">
+                <thead>
+                <tr>
+                    <th>经营店铺</th>
+                    <th>模板名称</th>
+                    <th>宝贝地址</th>
+                    <th>计价方式</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${shopTransportEntity.sellerName}"></td>
+                    <td th:text="${shopTransportEntity.name}"></td>
+                    <td th:text="${@commonController.getNameById2(shopTransportEntity.province).data + @commonController.getNameById2(shopTransportEntity.city).data + @commonController.getNameById2(shopTransportEntity.county).data}"></td>
+                    <td th:text="${@commonController.getLabelByValue('dict-key-pricing_method', shopTransportEntity.pricingMethod).data}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </blockquote>
+        <blockquote class="layui-elem-quote">配送信息</blockquote>
+        <blockquote class="layui-elem-quote layui-quote-nm">
+            <table class="layui-table" lay-size="sm">
+                <colgroup>
+                    <col width="250">
+                    <col width="100">
+                    <col width="100">
+                    <col width="100">
+                    <col width="100">
+                </colgroup>
+                <thead>
+                <tr th:each="shopTransportExtendEntity : ${shopTransportExtendEntityList}"  th:if="${shopTransportExtendEntity.shippingMethod == '1' && shopTransportExtendEntity.isDefault == 1}">
+                    <th colspan="2" style="text-align: center; font-weight: bold; font-size: 16px; color: #2b9eb9;"><i class="fa fa-truck"></i> 快递</th>
+                    <th class="required">默认运费:</th>
+                    <th colspan="5">
+                        <input class="layui-input layui-input2" th:value="${shopTransportExtendEntity.snum}" disabled/> <span th:text="${@commonController.getLabelByValue('dict-key-pricing_method', shopTransportEntity.pricingMethod).data.split('（')[1].split('）')[0]}"></span>内
+                        <input class="layui-input layui-input2" th:value="${shopTransportExtendEntity.sprice}" disabled/> 元, 每增加
+                        <input class="layui-input layui-input2" th:value="${shopTransportExtendEntity.xnum}" disabled/> <span th:text="${@commonController.getLabelByValue('dict-key-pricing_method', shopTransportEntity.pricingMethod).data.split('（')[1].split('）')[0]}"></span>, 增加运费
+                        <input class="layui-input layui-input2" th:value="${shopTransportExtendEntity.xprice}" disabled/> 元
+                    </th>
+                </tr>
+                <tr th:each="shopTransportExtendEntity : ${shopTransportExtendEntityList}"  th:if="${shopTransportExtendEntity.shippingMethod == '1' && shopTransportExtendEntity.isDefault == 1}">
+                    <th class="required">运送到</th>
+                    <th class="required">首<span th:text="${@commonController.getLabelByValue('dict-key-pricing_method', shopTransportEntity.pricingMethod).data.split('（')[1].split('）')[0]}"></span>数 (<span th:text="${@commonController.getLabelByValue('dict-key-pricing_method', shopTransportEntity.pricingMethod).data.split('（')[1].split('）')[0]}"></span>)</th>
+                    <th class="required">首费 (元)</th>
+                    <th class="required">续<span th:text="${@commonController.getLabelByValue('dict-key-pricing_method', shopTransportEntity.pricingMethod).data.split('（')[1].split('）')[0]}"></span>数 (<span th:text="${@commonController.getLabelByValue('dict-key-pricing_method', shopTransportEntity.pricingMethod).data.split('（')[1].split('）')[0]}"></span>)</th>
+                    <th class="required">续费 (元)</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="shopTransportExtendEntity : ${shopTransportExtendEntityList}"  th:if="${shopTransportExtendEntity.shippingMethod == '1' && shopTransportExtendEntity.isDefault != 1}">
+                    <td>
+                        <pre th:if="${shopTransportExtendEntity.areaInfoMap != null}" th:each="areaInfo : ${shopTransportExtendEntity.areaInfoMap.values()}"><span th:text="${'【' + areaInfo.name + '】'}"></span><span th:each="city : ${areaInfo.children}"><span th:text="${city.name + ','}" th:if="${cityStat.index < cityStat.size - 1}"></span><span th:text="${city.name}" th:if="${cityStat.last}"></span></span>;</pre>
+                    </td>
+                    <td><input class="layui-input" th:value="${shopTransportExtendEntity.snum}" disabled/></td>
+                    <td><input class="layui-input" th:value="${shopTransportExtendEntity.sprice}" disabled/></td>
+                    <td><input class="layui-input" th:value="${shopTransportExtendEntity.xnum}" disabled/></td>
+                    <td><input class="layui-input" th:value="${shopTransportExtendEntity.xprice}" disabled/></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <table class="layui-table" lay-size="sm">
+                <colgroup>
+                    <col width="250">
+                    <col width="100">
+                    <col width="100">
+                    <col width="100">
+                    <col width="100">
+                </colgroup>
+                <thead>
+                <tr th:each="shopTransportExtendEntity : ${shopTransportExtendEntityList}"  th:if="${shopTransportExtendEntity.shippingMethod == '2' && shopTransportExtendEntity.isDefault == 1}">
+                    <th colspan="2" style="text-align: center; font-weight: bold; font-size: 16px; color: #2b9eb9;"><i class="fa fa-truck"></i> EMS</th>
+                    <th class="required">默认运费:</th>
+                    <th colspan="5">
+                        <input class="layui-input layui-input2" th:value="${shopTransportExtendEntity.snum}" disabled/> <span th:text="${@commonController.getLabelByValue('dict-key-pricing_method', shopTransportEntity.pricingMethod).data.split('（')[1].split('）')[0]}"></span>内
+                        <input class="layui-input layui-input2" th:value="${shopTransportExtendEntity.sprice}" disabled/> 元, 每增加
+                        <input class="layui-input layui-input2" th:value="${shopTransportExtendEntity.xnum}" disabled/> <span th:text="${@commonController.getLabelByValue('dict-key-pricing_method', shopTransportEntity.pricingMethod).data.split('（')[1].split('）')[0]}"></span>, 增加运费
+                        <input class="layui-input layui-input2" th:value="${shopTransportExtendEntity.xprice}" disabled/> 元
+                    </th>
+                </tr>
+                <tr th:each="shopTransportExtendEntity : ${shopTransportExtendEntityList}"  th:if="${shopTransportExtendEntity.shippingMethod == '2' && shopTransportExtendEntity.isDefault == 1}">
+                    <th class="required">运送到</th>
+                    <th class="required">首<span th:text="${@commonController.getLabelByValue('dict-key-pricing_method', shopTransportEntity.pricingMethod).data.split('（')[1].split('）')[0]}"></span>数 (<span th:text="${@commonController.getLabelByValue('dict-key-pricing_method', shopTransportEntity.pricingMethod).data.split('（')[1].split('）')[0]}"></span>)</th>
+                    <th class="required">首费 (元)</th>
+                    <th class="required">续<span th:text="${@commonController.getLabelByValue('dict-key-pricing_method', shopTransportEntity.pricingMethod).data.split('（')[1].split('）')[0]}"></span>数 (<span th:text="${@commonController.getLabelByValue('dict-key-pricing_method', shopTransportEntity.pricingMethod).data.split('（')[1].split('）')[0]}"></span>)</th>
+                    <th class="required">续费 (元)</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="shopTransportExtendEntity : ${shopTransportExtendEntityList}"  th:if="${shopTransportExtendEntity.shippingMethod == '2' && shopTransportExtendEntity.isDefault != 1}">
+                    <td>
+                        <pre th:if="${shopTransportExtendEntity.areaInfoMap != null}" th:each="areaInfo : ${shopTransportExtendEntity.areaInfoMap.values()}"><span th:text="${'【' + areaInfo.name + '】'}"></span><span th:each="city : ${areaInfo.children}"><span th:text="${city.name + ','}" th:if="${cityStat.index < cityStat.size - 1}"></span><span th:text="${city.name}" th:if="${cityStat.last}"></span></span>;</pre>
+                    </td>
+                    <td><input class="layui-input" th:value="${shopTransportExtendEntity.snum}" disabled/></td>
+                    <td><input class="layui-input" th:value="${shopTransportExtendEntity.sprice}" disabled/></td>
+                    <td><input class="layui-input" th:value="${shopTransportExtendEntity.xnum}" disabled/></td>
+                    <td><input class="layui-input" th:value="${shopTransportExtendEntity.xprice}" disabled/></td>
+                </tr>
+                </tbody>
+            </table>
+
+
+            <table class="layui-table" lay-size="sm">
+                <colgroup>
+                    <col width="250">
+                    <col width="100">
+                    <col width="100">
+                    <col width="100">
+                    <col width="100">
+                </colgroup>
+                <thead>
+                <tr th:each="shopTransportExtendEntity : ${shopTransportExtendEntityList}"  th:if="${shopTransportExtendEntity.shippingMethod == '3' && shopTransportExtendEntity.isDefault == 1}">
+                    <th colspan="2" style="text-align: center; font-weight: bold; font-size: 16px; color: #2b9eb9;"><i class="fa fa-truck"></i> 平邮</th>
+                    <th class="required">默认运费:</th>
+                    <th colspan="5">
+                        <input class="layui-input layui-input2" th:value="${shopTransportExtendEntity.snum}" disabled/> <span th:text="${@commonController.getLabelByValue('dict-key-pricing_method', shopTransportEntity.pricingMethod).data.split('（')[1].split('）')[0]}"></span>内
+                        <input class="layui-input layui-input2" th:value="${shopTransportExtendEntity.sprice}" disabled/> 元, 每增加
+                        <input class="layui-input layui-input2" th:value="${shopTransportExtendEntity.xnum}" disabled/> <span th:text="${@commonController.getLabelByValue('dict-key-pricing_method', shopTransportEntity.pricingMethod).data.split('（')[1].split('）')[0]}"></span>, 增加运费
+                        <input class="layui-input layui-input2" th:value="${shopTransportExtendEntity.xprice}" disabled/> 元
+                    </th>
+                </tr>
+                <tr th:each="shopTransportExtendEntity : ${shopTransportExtendEntityList}"  th:if="${shopTransportExtendEntity.shippingMethod == '3' && shopTransportExtendEntity.isDefault == 1}">
+                    <th class="required">运送到</th>
+                    <th class="required">首<span th:text="${@commonController.getLabelByValue('dict-key-pricing_method', shopTransportEntity.pricingMethod).data.split('（')[1].split('）')[0]}"></span>数 (<span th:text="${@commonController.getLabelByValue('dict-key-pricing_method', shopTransportEntity.pricingMethod).data.split('（')[1].split('）')[0]}"></span>)</th>
+                    <th class="required">首费 (元)</th>
+                    <th class="required">续<span th:text="${@commonController.getLabelByValue('dict-key-pricing_method', shopTransportEntity.pricingMethod).data.split('（')[1].split('）')[0]}"></span>数 (<span th:text="${@commonController.getLabelByValue('dict-key-pricing_method', shopTransportEntity.pricingMethod).data.split('（')[1].split('）')[0]}"></span>)</th>
+                    <th class="required">续费 (元)</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="shopTransportExtendEntity : ${shopTransportExtendEntityList}"  th:if="${shopTransportExtendEntity.shippingMethod == '3' && shopTransportExtendEntity.isDefault != 1}">
+                    <td>
+                        <pre th:if="${shopTransportExtendEntity.areaInfoMap != null}" th:each="areaInfo : ${shopTransportExtendEntity.areaInfoMap.values()}"><span th:text="${'【' + areaInfo.name + '】'}"></span><span th:each="city : ${areaInfo.children}"><span th:text="${city.name + ','}" th:if="${cityStat.index < cityStat.size - 1}"></span><span th:text="${city.name}" th:if="${cityStat.last}"></span></span>;</pre>
+                    </td>
+                    <td><input class="layui-input" th:value="${shopTransportExtendEntity.snum}" disabled/></td>
+                    <td><input class="layui-input" th:value="${shopTransportExtendEntity.sprice}" disabled/></td>
+                    <td><input class="layui-input" th:value="${shopTransportExtendEntity.xnum}" disabled/></td>
+                    <td><input class="layui-input" th:value="${shopTransportExtendEntity.xprice}" disabled/></td>
+                </tr>
+                </tbody>
+            </table>
+
+
+        </blockquote>
+        <blockquote class="layui-elem-quote"><i class="layui-icon">&#xe702;</i> 特殊地区不配送</blockquote>
+        <blockquote class="layui-elem-quote layui-quote-nm">
+            <table class="layui-table" lay-size="sm" id="specialAreasTable" th:if="${shopTransportEntity.specialAreasMap != null}">
+                <colgroup>
+                    <col width="100">
+                    <col width="300">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th colspan="2">特殊地区不配送</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="specialAreas : ${shopTransportEntity.specialAreasMap.values()}">
+                    <td style="text-align: center;" th:text="${specialAreas.name}"></td>
+                    <td>
+                        <span th:each="city : ${specialAreas.children}"><span th:text="${city.name + ','}" th:if="${cityStat.index < cityStat.size - 1}"></span><span th:text="${city.name}" th:if="${cityStat.last}"></span></span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </blockquote>
+    </div>
+</div>
+<script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
+</body>
+</html>
+<script>
+    //获取token
+    var token = CoreUtil.getData("access_token");
+    //地址栏转义token中的#号
+    var tokenQuery = token.replace("#", "%23");
+    var $ = jQuery = layui.jquery;
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form;
+        var layer = layui.layer;
+
+
+
+    });
+
+
+
+</script>
