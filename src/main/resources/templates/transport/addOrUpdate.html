@@ -120,7 +120,7 @@
                         </tr>
                         <tr>
                             <th><input type="checkbox" value="express" name="parentCheck" lay-filter="parentCheck" lay-skin="primary"/></th>
-                            <th class="required"colspan="2">运送到</th>
+                            <th class="required" colspan="2">运送到</th>
                             <th class="required">首<span name="unit">件</span>数 (<span name="unit">件</span>)</th>
                             <th class="required">首费 (元)</th>
                             <th class="required">续<span name="unit">件</span>数 (<span name="unit">件</span>)</th>
@@ -333,89 +333,38 @@
 
         // 表单提交
         form.on('submit(submitBtnForAdd)', function (data) {
-            var errorMsg = "";
-            // 运费模板扩展
-            var shopTransportExtendEntityList = [];
-            $("input[type='checkbox'][name='shippingMethod']:checked").each(function (index, item) {
-                var shippingMethod = parseInt($(item).attr('value'));
-                // express快递/surfaceMail平邮/ems
-                switch (shippingMethod) {
-                    case 1:
-                        // 快递
-                        // 默认运费
-                        var defaultShopTransportExtendEntity = getDefaultShopTransportExtendEntity("express", shippingMethod);
-                        if(defaultShopTransportExtendEntity){
-                            shopTransportExtendEntityList.push(defaultShopTransportExtendEntity);
-                        } else {
-                            errorMsg += "请填写【快递】默认运费!\n";
-                        }
-                        // 指定地区
-                        var appointShopTransportExtendEntityList = getAppointShopTransportExtendEntity("express", shippingMethod);
-                        if(appointShopTransportExtendEntityList && appointShopTransportExtendEntityList.length > 0){
-                            shopTransportExtendEntityList = shopTransportExtendEntityList.concat(appointShopTransportExtendEntityList);
-                        }
-                        break;
-                    case 2:
-                        // EMS
-                        // 默认运费
-                        var defaultShopTransportExtendEntity = getDefaultShopTransportExtendEntity("ems", shippingMethod);
-                        if(defaultShopTransportExtendEntity){
-                            shopTransportExtendEntityList.push(defaultShopTransportExtendEntity);
-                        } else {
-                            errorMsg += "请填写【EMS】默认运费!\n";
-                        }
-                        // 指定地区
-                        var appointShopTransportExtendEntityList = getAppointShopTransportExtendEntity("ems", shippingMethod);
-                        if(appointShopTransportExtendEntityList && appointShopTransportExtendEntityList.length > 0){
-                            shopTransportExtendEntityList = shopTransportExtendEntityList.concat(appointShopTransportExtendEntityList);
-                        }
-                        break;
-                    case 3:
-                        // 平邮
-                        // 默认运费
-                        var defaultShopTransportExtendEntity = getDefaultShopTransportExtendEntity("surfaceMail", shippingMethod);
-                        if(defaultShopTransportExtendEntity){
-                            shopTransportExtendEntityList.push(defaultShopTransportExtendEntity);
-                        } else {
-                            errorMsg += "请填写【平邮】默认运费!\n";
-                        }
-                        // 指定地区
-                        var appointShopTransportExtendEntityList = getAppointShopTransportExtendEntity("surfaceMail", shippingMethod);
-                        if(appointShopTransportExtendEntityList && appointShopTransportExtendEntityList.length > 0){
-                            shopTransportExtendEntityList = shopTransportExtendEntityList.concat(appointShopTransportExtendEntityList);
-                        }
-                        break;
-                }
-            });
-            if(errorMsg != ""){
-                layer.msg(errorMsg);
-                return false;
-            }
-            data.field["shopTransportExtendEntityList"] = shopTransportExtendEntityList;
-            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
-            CoreUtil.sendPost("/shopTransport/add", data.field, function (res) {
-                // 刷新父页面列表
-                parent.layui.table.reload('showTable');
-                // 提示
-                layer.msg(res.msg, {time: 500}, function () {
-                    var parentIndex = parent.layer.getFrameIndex(window.name);
-                    parent.layer.close(parentIndex);
+            var shopTransportExtendEntityList = getShopTransportExtendEntityList();
+            if(shopTransportExtendEntityList){
+                data.field["shopTransportExtendEntityList"] = shopTransportExtendEntityList;
+                // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
+                CoreUtil.sendPost("/shopTransport/add", data.field, function (res) {
+                    // 刷新父页面列表
+                    parent.layui.table.reload('showTable');
+                    // 提示
+                    layer.msg(res.msg, {time: 500}, function () {
+                        var parentIndex = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(parentIndex);
+                    });
                 });
-            });
-            //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            }
+            // 阻止表单跳转。如果需要表单跳转，去掉这段即可。
             return false;
         });
 
         form.on('submit(submitBtnForUpdate)', function (data) {
-            // // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
-            // CoreUtil.sendPut("/shopTransport/update", data.field, function (res) {
-            //     // 刷新父页面列表
-            //     parent.layui.table.reload('showTable');
-            //     parent.layer.msg("修改成功");
-            //     var parentIndex = parent.layer.getFrameIndex(window.name);
-            //     parent.layer.close(parentIndex);
-            // });
-            //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            var shopTransportExtendEntityList = getShopTransportExtendEntityList();
+            if(shopTransportExtendEntityList){
+                data.field["shopTransportExtendEntityList"] = shopTransportExtendEntityList;
+                // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
+                // CoreUtil.sendPut("/shopTransport/update", data.field, function (res) {
+                //     // 刷新父页面列表
+                //     parent.layui.table.reload('showTable');
+                //     parent.layer.msg("修改成功");
+                //     var parentIndex = parent.layer.getFrameIndex(window.name);
+                //     parent.layer.close(parentIndex);
+                // });
+            }
+            // 阻止表单跳转。如果需要表单跳转，去掉这段即可。
             return false;
         });
 
@@ -505,6 +454,64 @@
 
     });
 
+    function getShopTransportExtendEntityList() {
+        // 运费模板扩展
+        var shopTransportExtendEntityList = [];
+        $("input[type='checkbox'][name='shippingMethod']:checked").each(function (index, item) {
+            var shippingMethod = parseInt($(item).attr('value'));
+            // express快递/surfaceMail平邮/ems
+            switch (shippingMethod) {
+                case 1:
+                    // 快递
+                    // 默认运费
+                    var defaultShopTransportExtendEntity = getDefaultShopTransportExtendEntity("express", shippingMethod);
+                    if (defaultShopTransportExtendEntity) {
+                        shopTransportExtendEntityList.push(defaultShopTransportExtendEntity);
+                    } else {
+                        layer.msg("请填写【快递】默认运费!");
+                        return false;
+                    }
+                    // 指定地区
+                    var appointShopTransportExtendEntityList = getAppointShopTransportExtendEntity("express", shippingMethod);
+                    if (appointShopTransportExtendEntityList && appointShopTransportExtendEntityList.length > 0) {
+                        shopTransportExtendEntityList = shopTransportExtendEntityList.concat(appointShopTransportExtendEntityList);
+                    }
+                    break;
+                case 2:
+                    // EMS
+                    // 默认运费
+                    var defaultShopTransportExtendEntity = getDefaultShopTransportExtendEntity("ems", shippingMethod);
+                    if (defaultShopTransportExtendEntity) {
+                        shopTransportExtendEntityList.push(defaultShopTransportExtendEntity);
+                    } else {
+                        layer.msg("请填写【EMS】默认运费!");
+                    }
+                    // 指定地区
+                    var appointShopTransportExtendEntityList = getAppointShopTransportExtendEntity("ems", shippingMethod);
+                    if (appointShopTransportExtendEntityList && appointShopTransportExtendEntityList.length > 0) {
+                        shopTransportExtendEntityList = shopTransportExtendEntityList.concat(appointShopTransportExtendEntityList);
+                    }
+                    break;
+                case 3:
+                    // 平邮
+                    // 默认运费
+                    var defaultShopTransportExtendEntity = getDefaultShopTransportExtendEntity("surfaceMail", shippingMethod);
+                    if (defaultShopTransportExtendEntity) {
+                        shopTransportExtendEntityList.push(defaultShopTransportExtendEntity);
+                    } else {
+                        layer.msg("请填写【平邮】默认运费!");
+                    }
+                    // 指定地区
+                    var appointShopTransportExtendEntityList = getAppointShopTransportExtendEntity("surfaceMail", shippingMethod);
+                    if (appointShopTransportExtendEntityList && appointShopTransportExtendEntityList.length > 0) {
+                        shopTransportExtendEntityList = shopTransportExtendEntityList.concat(appointShopTransportExtendEntityList);
+                    }
+                    break;
+            }
+        });
+        return shopTransportExtendEntityList;
+    }
+
 
     function getDefaultShopTransportExtendEntity(id, shippingMethod) {
         var defaultShopTransportExtendEntity = {};
@@ -515,7 +522,7 @@
         var defaultXprice = $(defaultTr).find("input[name='xprice']").val();
         defaultShopTransportExtendEntity.shippingMethod = shippingMethod;
         defaultShopTransportExtendEntity.isDefault = 1;
-        if(defaultSnum && defaultSprice && defaultXnum && defaultXprice){
+        if (defaultSnum && defaultSprice && defaultXnum && defaultXprice) {
             defaultShopTransportExtendEntity.areaInfo = "全国";
             defaultShopTransportExtendEntity.snum = defaultSnum;
             defaultShopTransportExtendEntity.sprice = defaultSprice;
@@ -524,6 +531,14 @@
             return defaultShopTransportExtendEntity;
         }
         return null;
+    }
+
+    function setDefaultShopTransportExtendEntity(id, defaultShopTransportExtendEntity) {
+        var defaultTr = $("#" + id).find("table thead tr[name='default']");
+        $(defaultTr).find("input[name='snum']").val(defaultShopTransportExtendEntity.snum);
+        $(defaultTr).find("input[name='sprice']").val(defaultShopTransportExtendEntity.sprice);
+        $(defaultTr).find("input[name='xnum']").val(defaultShopTransportExtendEntity.xnum);
+        $(defaultTr).find("input[name='xprice']").val(defaultShopTransportExtendEntity.xprice);
     }
 
     function getAppointShopTransportExtendEntity(id, shippingMethod) {
@@ -537,7 +552,7 @@
             var xprice = $(item).find("input[name='xprice']").val();
             appointShopTransportExtendEntity.shippingMethod = shippingMethod;
             appointShopTransportExtendEntity.isDefault = 0;
-            if(areaInfo && snum && sprice && xnum && xprice){
+            if (areaInfo && snum && sprice && xnum && xprice) {
                 appointShopTransportExtendEntity.areaInfo = areaInfo;
                 appointShopTransportExtendEntity.snum = snum;
                 appointShopTransportExtendEntity.sprice = sprice;
@@ -782,7 +797,7 @@
             if (specialAreasMap.has(parent)) {
                 var parentObj = specialAreasMap.get(parent);
                 var children = parentObj.children;
-                if(!children || children.length < 1){
+                if (!children || children.length < 1) {
                     specialAreasMap.delete(parent);
                 }
             }
@@ -823,7 +838,7 @@
     /**
      * 父级页面控制子页面填充
      */
-     function assignment(data) {
+    function assignment(data) {
         var form = layui.form,
             layarea = layui.layarea;
         // 表单赋值
@@ -833,15 +848,112 @@
             "name": data.name,
             "province": data.province,
             "pricingMethod": data.pricingMethod,
-            "shippingMethod": data.shippingMethod,
         });
         loadCity(data.province, data.city);
         loadCounty(data.city, data.county);
-        // TODO 配送方式及指定地区、特殊地区回显
+        // 配送方式及指定地区回显
+        loadSpecifiedRegion(data.id);
+        // 特殊地区回显
+        loadSpecialAreas(data.specialAreas);
+    }
 
+    function loadSpecialAreas(specialAreas) {
+        var value = [];
+        if (specialAreas) {
+            // 封装数据
+            specialAreasMap = CoreUtil.jsonChangeMap(specialAreas);
+            specialAreasMap.forEach(function (v, k, map) {
+                var children = v.children;
+                if (children && children.length > 0) {
+                    $(children).each(function (index, item) {
+                        value.push(k + "-" + item.id)
+                    });
+                }
+            });
+        }
+        // 加载特殊地区checkbox
+        loadRegionCheckBox(value);
+        // 加载特殊地区table
+        loadSpecialAreasTable();
+    }
 
+    function loadRegionCheckBox(value) {
+        var regionCheckBox = layui.regionCheckBox;
+        CoreUtil.sendSyncGet("/addressLibrary/findAllProvinceAndCity", null, function (res) {
+            var regionList = res.data;
+            //执行实例
+            regionCheckBox.render({
+                elem: '#specialAreas',
+                name: 'region', // 对应input name
+                data: regionList,
+                value: value, // 赋初始值，'北京,内蒙古,江西-九江'也可以 ['北京', '内蒙古', '江西-九江']
+                width: '100%', // 默认550px
+                border: true, // 默认true
+                // 初始化完成时执行
+                ready: function () {
+                    //  做些什么
+                },
+                // 点击复选框时执行
+                change: function (result) {
+                    //  封装数据
+                    encapsulationSpecialAreasMap(result);
+                    // 加载特殊地区table
+                    loadSpecialAreasTable();
+                }
+            });
+        });
+    }
 
+    function loadSpecifiedRegion(transportId) {
+        var form = layui.form;
+        CoreUtil.sendGet("/shopTransportExtend/listByAll/" + transportId, null, function (res) {
+            if (res.data) {
+                $(res.data).each(function (index, item) {
+                    switch (parseInt(item.shippingMethod)) {
+                        case 1:
+                            // 快递
+                            $("#express").show();
+                            // 配送方式选中
+                            $("input[type='checkbox'][name='shippingMethod'][value='1']").prop('checked', true);
+                            if(item.isDefault == 1){
+                                // 默认地区Table创建并回显数据
+                                setDefaultShopTransportExtendEntity('express', item);
+                            } else {
+                                // 指定地区Table创建并回显数据
 
+                            }
+                            break;
+                        case 2:
+                            // EMS
+                            $("#ems").show();
+                            // 配送方式选中
+                            $("input[type='checkbox'][name='shippingMethod'][value='2']").prop('checked', true);
+                            if(item.isDefault == 1){
+                                // 默认地区Table创建并回显数据
+                                setDefaultShopTransportExtendEntity('ems', item);
+                            } else {
+                                // 指定地区Table创建并回显数据
+
+                            }
+                            break;
+                        case 3:
+                            // 平邮
+                            $("#surfaceMail").show();
+                            // 配送方式选中
+                            $("input[type='checkbox'][name='shippingMethod'][value='3']").prop('checked', true);
+                            if(item.isDefault == 1){
+                                // 默认地区Table创建并回显数据
+                                setDefaultShopTransportExtendEntity('surfaceMail', item);
+                            } else {
+                                // 指定地区Table创建并回显数据
+
+                            }
+                            break;
+                    }
+                });
+                form.render('checkbox');
+            }
+        });
     }
 
 </script>

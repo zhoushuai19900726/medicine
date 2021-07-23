@@ -65,9 +65,8 @@
     function setSpecialAreasMap(selectedSpecialAreas) {
         var value = [];
         if (selectedSpecialAreas) {
-            var selectedSpecialAreasMap = CoreUtil.jsonChangeMap(selectedSpecialAreas);
-            selectedSpecialAreasMap.forEach(function (v, k, map) {
-                specialAreasMap.set(k, v);
+            specialAreasMap = CoreUtil.jsonChangeMap(selectedSpecialAreas);
+            specialAreasMap.forEach(function (v, k, map) {
                 var children = v.children;
                 if (children && children.length > 0) {
                     $(children).each(function (index, item) {

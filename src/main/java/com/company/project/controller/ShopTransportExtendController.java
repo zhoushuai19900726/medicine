@@ -53,7 +53,7 @@ public class ShopTransportExtendController extends BaseController {
 //
 //    @ApiOperation(value = "新增")
 //    @PostMapping("shopTransportExtend/add")
-//    @RequiresPermissions("shopTransportExtend:add")
+//    @RequiresPermissions("shopTransport:add")
 //    @LogAnnotation(title = "运费模板扩展", action = "新增")
 //    @ResponseBody
 //    public DataResult add(@RequestBody ShopTransportExtendEntity shopTransportExtend){
@@ -62,7 +62,7 @@ public class ShopTransportExtendController extends BaseController {
 //
 //    @ApiOperation(value = "删除")
 //    @DeleteMapping("shopTransportExtend/delete")
-//    @RequiresPermissions("shopTransportExtend:delete")
+//    @RequiresPermissions("shopTransport:delete")
 //    @LogAnnotation(title = "运费模板扩展", action = "删除")
 //    @ResponseBody
 //    public DataResult delete(@RequestBody @ApiParam(value = "id集合") List<String> ids){
@@ -71,25 +71,25 @@ public class ShopTransportExtendController extends BaseController {
 //
 //    @ApiOperation(value = "更新")
 //    @PutMapping("shopTransportExtend/update")
-//    @RequiresPermissions("shopTransportExtend:update")
+//    @RequiresPermissions("shopTransport:update")
 //    @LogAnnotation(title = "运费模板扩展", action = "更新")
 //    @ResponseBody
 //    public DataResult update(@RequestBody ShopTransportExtendEntity shopTransportExtend){
 //        return DataResult.success(shopTransportExtendService.updateById(shopTransportExtend));
 //    }
-//
-//    @ApiOperation(value = "查询全部")
-//    @GetMapping("shopTransportExtend/listByAll")
-//    @RequiresPermissions("shopTransportExtend:list")
-//    @LogAnnotation(title = "运费模板扩展", action = "查询全部")
-//    @ResponseBody
-//    public DataResult findListByAll() {
-//        return DataResult.success(shopTransportExtendService.list());
-//    }
-//
+
+    @ApiOperation(value = "查询全部")
+    @GetMapping("shopTransportExtend/listByAll/{transportId}")
+    @RequiresPermissions("shopTransport:list")
+    @LogAnnotation(title = "运费模板扩展", action = "查询全部")
+    @ResponseBody
+    public DataResult findListByAll(@PathVariable("transportId") String transportId) {
+        return DataResult.success(shopTransportExtendService.list(Wrappers.<ShopTransportExtendEntity>lambdaQuery().eq(ShopTransportExtendEntity::getTransportId, transportId)));
+    }
+
 //    @ApiOperation(value = "查询分页数据")
 //    @PostMapping("shopTransportExtend/listByPage")
-//    @RequiresPermissions("shopTransportExtend:list")
+//    @RequiresPermissions("shopTransport:list")
 //    @LogAnnotation(title = "运费模板扩展", action = "查询分页数据")
 //    @DataScope
 //    @ResponseBody
