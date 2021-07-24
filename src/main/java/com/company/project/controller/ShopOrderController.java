@@ -67,22 +67,6 @@ public class ShopOrderController extends BaseController {
         return "order/orderChange";
     }
 
-
-//    @ApiOperation(value = "跳转进入新增/编辑页面")
-//    @GetMapping("/index/shopOrder/addOrUpdate")
-//    public String addOrUpdate() {
-//        return "shoporder/addOrUpdate";
-//    }
-
-//    @ApiOperation(value = "新增")
-//    @PostMapping("shopOrder/add")
-//    @RequiresPermissions("shopOrder:add")
-//    @LogAnnotation(title = "订单", action = "新增")
-//    @ResponseBody
-//    public DataResult add(@RequestBody ShopOrderEntity shopOrder){
-//        return DataResult.success(shopOrderService.save(shopOrder));
-//    }
-
     @ApiOperation(value = "删除")
     @DeleteMapping("shopOrder/delete")
     @RequiresPermissions("shopOrder:delete")

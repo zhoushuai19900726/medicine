@@ -119,7 +119,6 @@
     <table class="layui-table" id="showTable" lay-filter="showTable"></table>
     <script type="text/html" id="toolbar">
         <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-sm layui-btn-warm" lay-event="batchRefund" shiro:hasPermission="shopOrder:manager"><i class="fa fa-exclamation-triangle"></i> 批量退款退货</button>
             <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchClosed" shiro:hasPermission="shopOrder:manager"><i class="fa fa-times-circle"></i> 批量关闭</button>
             <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe640;</i>批量删除</button>
 
@@ -376,12 +375,12 @@
                     {
                         width: 220, field: 'shippingName', title: '物流信息', templet: function (item) {
                             var logisticsCompany = "";
-                            if(item.shippingId){
+                            if (item.shippingId) {
                                 CoreUtil.sendSyncGet("/common/getLogisticsNameById", {id: item.shippingId}, function (res) {
                                     logisticsCompany = res.data;
                                 });
                             }
-                            if(logisticsCompany){
+                            if (logisticsCompany) {
                                 return "<div class=\"layui-row\">\n" +
                                     "            <span class=\"layui-badge-rim\">\n" +
                                     "                <span class=\"layui-badge layui-bg-cyan2\" style=\"margin-left: -6px;\">\n" +
@@ -489,10 +488,6 @@
                 case 'importFreeBill':
                     $("#uploadBtn").click();
                     break;
-                case 'batchRefund':
-                    // TODO 批量退款退货
-
-                    break;
             }
         });
         //列操作
@@ -572,31 +567,31 @@
                     break;
                 case 'orderTracking':
                     // TODO 订单跟踪
-                    break;
-                case 'refund':
-                    // TODO 退款退货
 
                     break;
-                case 'edit':
-                    // layer.open({
-                    //     id: 'shopOrder_update', //设定一个id，防止重复弹出
-                    //     title: '<i class="layui-icon">&#xe653;</i> 编辑订单表',
-                    //     type: 2,
-                    //     content: '../index/shopOrder/addOrUpdate',
-                    //     btn: ['提交保存', '取消'],
-                    //     area: ['60%', '85%'],
-                    //     scrollbar: false,
-                    //     yes: function (index, layero) {
-                    //         // 得到iframe页的窗口对象并调用子页面方法
-                    //         window[layero.find('iframe')[0]['name']].saveShopOrder("submitBtnForUpdate");
-                    //     },
-                    //     success: function (layero, index) {
-                    //         // 置顶当前窗口
-                    //         layer.setTop(layero);
-                    //         // 得到iframe页的窗口对象并调用子页面方法
-                    //         window[layero.find('iframe')[0]['name']].assignment(data);
-                    //     }
-                    // });
+                case 'refund':
+                    // 退款退货
+                    layer.open({
+                        type: 2,
+                        title: '<i class="layui-icon">&#xe615;</i> 退款退货申请',
+                        id: 'order_change',
+                        scrollbar: false,
+                        offset: 'r',
+                        anim: 5,
+                        maxmin: true,
+                        area: ['1200px', '100%'],//宽高不影响最大化
+                        content: "../index/shopReturnOrder/returnOrder/" + data.id,//地址
+                        btn: ['提交申请', '返回订单列表'],
+                        zIndex: layer.zIndex,
+                        yes: function (index, layero) {
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            window[layero.find('iframe')[0]['name']].saveShopReturnOrder();
+                        },
+                        success: function (layero, index) {
+                            // 置顶当前窗口
+                            layer.setTop(layero);
+                        }
+                    });
                     break;
             }
         });
