@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.*;
 
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -73,7 +74,7 @@ public class ShopReturnOrderEntity extends BaseEntity implements Serializable {
      * 退款金额
      */
     @TableField("return_money")
-    private Integer returnMoney;
+    private BigDecimal returnMoney;
 
     /**
      * 是否退运费

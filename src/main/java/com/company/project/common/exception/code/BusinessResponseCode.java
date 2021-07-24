@@ -51,6 +51,10 @@ public enum BusinessResponseCode implements ResponseCodeInterface {
      * 错误码 - 订单模块
      */
     NO_ORDERS_TO_CLOSE(950001, "没有找到需要关闭的订单"),
+    INVALID_ORDER(950002, "无效的订单"),
+    NOT_SUPPORTED_REFUND(950003, "未支付的订单不支持退单"),
+    CHARGEBACK_AMOUNT_OVERRUN(950004, "退单金额超出订单可退额度上限"),
+    NOT_REFUND_SKU(950005, "没有需要退单的商品"),
 
     ;
     /**

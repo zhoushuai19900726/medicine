@@ -245,6 +245,20 @@
 
                 <thead>
                 <tr>
+                    <th colspan="3">问题描述</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td colspan="3">
+                        <textarea name="description" placeholder="请输入" class="layui-textarea"></textarea>
+                    </td>
+                </tr>
+                </tbody>
+
+
+                <thead>
+                <tr>
                     <th colspan="3">凭证图片</th>
                 </tr>
                 </thead>
@@ -258,18 +272,7 @@
                 </tbody>
 
 
-                <thead>
-                <tr>
-                    <th colspan="3">问题描述</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td colspan="3">
-                        <textarea name="description" placeholder="请输入" class="layui-textarea"></textarea>
-                    </td>
-                </tr>
-                </tbody>
+
 
 
             </table>
@@ -386,21 +389,20 @@
             }
             // TODO 退款明细
             var shopReturnOrderDetailEntityList = [];
-
-
-
+            $("input[type='checkbox'][name='returnOrderDetail']").each(function (index, item) {
+                var shopReturnOrderDetailEntity = {};
+                shopReturnOrderDetailEntity.orderDetailId = $(item).attr("value");
+                shopReturnOrderDetailEntityList.push(shopReturnOrderDetailEntity);
+            });
             data.field["shopReturnOrderDetailEntityList"] = shopReturnOrderDetailEntityList;
-
-
-
-
             // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
             CoreUtil.sendPost("/shopReturnOrder/add", data.field, function (res) {
                 // 刷新父页面列表
                 parent.layui.table.reload('showTable');
-                parent.layer.msg("申请成功");
-                var parentIndex = parent.layer.getFrameIndex(window.name);
-                parent.layer.close(parentIndex);
+                layer.msg("申请成功", {time: 500}, function () {
+                    var parentIndex = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(parentIndex);
+                });
             });
             //阻止表单跳转。如果需要表单跳转，去掉这段即可。
             return false;
@@ -423,7 +425,7 @@
             var paymoney = $(item).attr("paymoney");
             var postfee = $(item).attr("postfee");
             returnMoney += parseFloat(paymoney);
-            if (isReturnFreight) returnMoney += parseFloat(postfee);
+            if (!isReturnFreight) returnMoney -= parseFloat(postfee);
         });
         $("input[name='returnMoney']").val(returnMoney.toFixed(2));
     }
