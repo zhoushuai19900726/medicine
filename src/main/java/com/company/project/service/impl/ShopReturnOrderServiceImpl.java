@@ -123,4 +123,27 @@ public class ShopReturnOrderServiceImpl extends ServiceImpl<ShopReturnOrderMappe
         }
         return DataResult.success();
     }
+
+    @Override
+    public DataResult auditSuccess(ShopReturnOrderEntity shopReturnOrderEntity) {
+
+
+
+
+
+
+        return DataResult.success();
+    }
+
+    @Override
+    public DataResult auditFailed(ShopReturnOrderEntity shopReturnOrderEntity) {
+
+
+
+
+
+
+
+        return DataResult.success();
+    }
 }

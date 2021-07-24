@@ -84,6 +84,21 @@ public class ShopReturnOrderController extends BaseController {
         return "returnorder/returnOrderDetail";
     }
 
+    @ApiOperation(value = "跳转进入处理退货退款详情页面")
+    @GetMapping("/index/shopReturnOrder/handleReturnOrder/{returnOrderId}")
+    public String handleReturnOrder(@PathVariable("returnOrderId") String returnOrderId, Model model) {
+        // 退单信息
+        ShopReturnOrderEntity shopReturnOrderEntity = shopReturnOrderService.getById(returnOrderId);
+        model.addAttribute("shopReturnOrderEntity", shopReturnOrderEntity);
+        // 订单信息
+        ShopOrderEntity shopOrderEntity = shopOrderService.getById(shopReturnOrderEntity.getOrderId());
+        model.addAttribute("shopOrderEntity", shopOrderEntity);
+        // 退单商品信息
+        List<ShopReturnOrderDetailEntity> shopReturnOrderDetailEntityList = shopReturnOrderDetailService.list(Wrappers.<ShopReturnOrderDetailEntity>lambdaQuery().in(ShopReturnOrderDetailEntity::getReturnOrderId, returnOrderId));
+        model.addAttribute("shopReturnOrderDetailEntityList", shopReturnOrderDetailEntityList);
+        return "returnorder/handleReturnOrder";
+    }
+
 
     @ApiOperation(value = "跳转到退款申请列表页面")
     @GetMapping("/index/shopReturnOrder")
@@ -138,6 +153,24 @@ public class ShopReturnOrderController extends BaseController {
 //    public DataResult findListByAll() {
 //        return DataResult.success(shopReturnOrderService.list());
 //    }
+
+    @ApiOperation(value = "审核通过")
+    @PutMapping("shopReturnOrder/auditSuccess")
+    @RequiresPermissions("shopReturnOrder:update")
+    @LogAnnotation(title = "退款申请", action = "审核通过")
+    @ResponseBody
+    public DataResult auditSuccess(@RequestBody ShopReturnOrderEntity shopReturnOrderEntity) {
+        return shopReturnOrderService.auditSuccess(shopReturnOrderEntity);
+    }
+
+    @ApiOperation(value = "审核拒绝")
+    @PutMapping("shopReturnOrder/auditFailed")
+    @RequiresPermissions("shopReturnOrder:update")
+    @LogAnnotation(title = "退款申请", action = "审核拒绝")
+    @ResponseBody
+    public DataResult auditFailed(@RequestBody ShopReturnOrderEntity shopReturnOrderEntity) {
+        return shopReturnOrderService.auditFailed(shopReturnOrderEntity);
+    }
 
     @ApiOperation(value = "查询分页数据")
     @PostMapping("shopReturnOrder/listByPage")

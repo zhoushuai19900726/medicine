@@ -15,5 +15,9 @@ public interface ShopReturnOrderService extends IService<ShopReturnOrderEntity> 
 
     DataResult saveShopReturnOrderEntity(ShopReturnOrderEntity shopReturnOrder);
 
+    DataResult auditSuccess(ShopReturnOrderEntity shopReturnOrderEntity);
+
+    DataResult auditFailed(ShopReturnOrderEntity shopReturnOrderEntity);
+
 }
 

@@ -7,6 +7,13 @@
     <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
     <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
     <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <style>
+        body .demo-class .layui-layer-btn1 {
+            border-color: #ff9e8b;
+            background-color: #ff97a2;
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
 <div class="layuimini-container">
@@ -151,36 +158,62 @@
                     layer.open({
                         type: 2,
                         title: '<i class="layui-icon">&#xe615;</i> 退单申请详情',
-                        id: 'order_change',
+                        id: 'shopReturnOrder_detail',
                         scrollbar: false,
                         offset: 'r',
                         anim: 5,
                         maxmin: true,
-                        area: ['1200px', '100%'],//宽高不影响最大化
+                        area: ['1000px', '100%'],//宽高不影响最大化
                         content: "../index/shopReturnOrder/returnOrderDetail/" + data.id,//地址
                         zIndex: layer.zIndex,
                     });
                     break;
                 case 'handle':
-                    // layer.open({
-                    //     id: 'shopReturnOrder_update', //设定一个id，防止重复弹出
-                    //     title: '<i class="layui-icon">&#xe653;</i> 编辑退款申请',
-                    //     type: 2,
-                    //     content: '../index/shopReturnOrder/addOrUpdate',
-                    //     btn: ['提交保存', '取消'],
-                    //     area: ['60%', '85%'],
-                    //     scrollbar: false,
-                    //     yes: function (index, layero) {
-                    //         // 得到iframe页的窗口对象并调用子页面方法
-                    //         window[layero.find('iframe')[0]['name']].saveShopReturnOrder("submitBtnForUpdate");
-                    //     },
-                    //     success: function (layero, index) {
-                    //         // 置顶当前窗口
-                    //         layer.setTop(layero);
-                    //         // 得到iframe页的窗口对象并调用子页面方法
-                    //         window[layero.find('iframe')[0]['name']].assignment(data);
-                    //     }
-                    // });
+                    layer.open({
+                        id: 'shopReturnOrder_handle', //设定一个id，防止重复弹出
+                        title: '<i class="layui-icon">&#xe653;</i> 处理退款申请',
+                        type: 2,
+                        content: "../index/shopReturnOrder/handleReturnOrder/" + data.id,//地址
+                        btn: ['审核通过', '审核拒绝', '返回列表'],
+                        skin: 'demo-class',
+                        scrollbar: false,
+                        offset: 'r',
+                        anim: 5,
+                        maxmin: true,
+                        area: ['1000px', '100%']//宽高不影响最大化
+                        , yes: function (pIndex, layero) {
+                            // 审核通过
+                            var childLayer = window[layero.find('iframe')[0]['name']].layer;
+                            childLayer.confirm('确定要同意当前退款申请吗?', {icon: 3, title: '提示'}, function (index) {
+                                CoreUtil.sendPut("/shopReturnOrder/auditSuccess", {id: data.id}, function (res) {
+                                    childLayer.msg("同意申请处理成功", {time: 500}, function () {
+                                        // 刷新父页面列表
+                                        table.reload('showTable');
+                                        layer.close(pIndex);
+                                    });
+                                });
+                            });
+                            return false; // 开启该代码可禁止点击该按钮关闭
+                        }
+                        , btn2: function (pIndex, layero) {
+                            // 审核拒绝
+                            var childLayer = window[layero.find('iframe')[0]['name']].layer;
+                            childLayer.confirm('确定要拒绝当前退款申请吗?', {icon: 3, title: '提示'}, function (index) {
+                                CoreUtil.sendPut("/shopReturnOrder/auditFailed", {id: data.id}, function (res) {
+                                    childLayer.msg("拒绝申请处理成功", {time: 500}, function () {
+                                        // 刷新父页面列表
+                                        table.reload('showTable');
+                                        layer.close(pIndex);
+                                    });
+                                });
+                            });
+                            return false; // 开启该代码可禁止点击该按钮关闭
+                        }
+                        , btn3: function (index, layero) {
+                        }
+                        , cancel: function () {
+                        }
+                    });
                     break;
             }
         });
