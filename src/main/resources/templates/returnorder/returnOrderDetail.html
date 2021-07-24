@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/jq-module/zyupload/zyupload-1.0.0.min.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <style>
+        .lay-step {
+            padding-left: 100px !important;
+        }
+
+        .layui-form-switch {
+            margin-top: 0 !important;
+        }
+    </style>
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main" shiro:hasPermission="shopReturnOrder:add">
+        <form class="layui-form" action="" style="width: 100%;">
+            <input id="createTime" th:value="${#dates.format(shopOrderEntity.createTime,'yyyy-MM-dd HH:mm:ss')}" hidden/>
+            <input id="payTime" th:value="${#dates.format(shopOrderEntity.payTime,'yyyy-MM-dd HH:mm:ss')}" hidden/>
+            <input id="consignTime" th:value="${#dates.format(shopOrderEntity.consignTime,'yyyy-MM-dd HH:mm:ss')}" hidden/>
+            <input id="endTime" th:value="${#dates.format(shopOrderEntity.endTime,'yyyy-MM-dd HH:mm:ss')}" hidden/>
+            <input id="closeTime" th:value="${#dates.format(shopOrderEntity.closeTime,'yyyy-MM-dd HH:mm:ss')}" hidden/>
+
+            <div class="layui-carousel" id="stepForm" lay-filter="stepForm" style="margin: 0 auto;"></div>
+
+            <blockquote class="layui-elem-quote">订单信息</blockquote>
+            <table class="layui-table" lay-size="sm">
+                <thead>
+                <tr>
+                    <th>商家店铺</th>
+                    <th>订单编号</th>
+                    <th>支付单号</th>
+                    <th>流水单号</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${shopOrderEntity.sellerName}"></td>
+                    <td th:text="${shopOrderEntity.id}"></td>
+                    <td th:text="${shopOrderEntity.transactionId}"></td>
+                    <td th:text="${shopOrderEntity.serialNumber}"></td>
+                </tr>
+                </tbody>
+
+
+                <thead>
+                <tr>
+                    <th>订单金额</th>
+                    <th>优惠金额</th>
+                    <th>商品运费</th>
+                    <th><b style="color: red;">实付金额</b></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${shopOrderEntity.totalMoney}"></td>
+                    <td th:text="${shopOrderEntity.preMoney}"></td>
+                    <td th:text="${shopOrderEntity.postFee}"></td>
+                    <td th:text="${shopOrderEntity.payMoney}" style="color: red; font-weight: bold;"></td>
+                </tr>
+                </tbody>
+
+
+                <thead>
+                <tr>
+                    <th>会员账号</th>
+                    <th>支付方式</th>
+                    <th>下单时间</th>
+                    <th>付款时间</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${shopOrderEntity.buyerName}"></td>
+                    <td th:utext="${@commonController.getLabelByValue('dict-key-pay_type', shopOrderEntity.payType).data}"></td>
+                    <td th:text="${#dates.format(shopOrderEntity.createTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                    <td th:text="${#dates.format(shopOrderEntity.payTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                </tr>
+                </tbody>
+
+
+                <thead>
+                <tr>
+                    <th colspan="4">买家留言</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td colspan="4" th:text="${shopOrderEntity.buyerMessage}" th:if="${shopOrderEntity.buyerMessage != null && shopOrderEntity.buyerMessage != ''}"></td>
+                    <td colspan="4" th:if="${shopOrderEntity.buyerMessage == null || shopOrderEntity.buyerMessage == ''}"> -</td>
+                </tr>
+                </tbody>
+
+
+                <thead>
+                <tr>
+                    <th>关闭时间</th>
+                    <th>订单状态</th>
+                    <th>支付状态</th>
+                    <th>发货状态</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${#dates.format(shopOrderEntity.closeTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                    <td th:utext="${@commonController.getLabelByValue('dict-key-order_status', shopOrderEntity.orderStatus).data}"></td>
+                    <td th:utext="${@commonController.getLabelByValue('dict-key-pay_status', shopOrderEntity.payStatus).data}"></td>
+                    <td th:utext="${@commonController.getLabelByValue('dict-key-consign_status', shopOrderEntity.consignStatus).data}"></td>
+                </tr>
+                </tbody>
+
+
+            </table>
+
+
+            <blockquote class="layui-elem-quote">物流信息</blockquote>
+            <table class="layui-table" lay-size="sm">
+
+                <thead>
+                <tr>
+                    <th>物流名称</th>
+                    <th>物流单号</th>
+                    <th>发货时间</th>
+                    <th>完成时间</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${@commonController.getLogisticsNameById(shopOrderEntity.shippingId).data}"></td>
+                    <td th:text="${shopOrderEntity.shippingCode}"></td>
+                    <td th:text="${#dates.format(shopOrderEntity.consignTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                    <td th:text="${#dates.format(shopOrderEntity.endTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                </tr>
+                </tbody>
+
+                <thead>
+                <tr>
+                    <th>收货人</th>
+                    <th>收货人手机</th>
+                    <th colspan="2">收货人地址</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${shopOrderEntity.receiverContact}"></td>
+                    <td th:text="${shopOrderEntity.receiverMobile}"></td>
+                    <td colspan="2" th:text="${shopOrderEntity.receiverAddress}"></td>
+                </tr>
+                </tbody>
+
+            </table>
+
+
+            <blockquote class="layui-elem-quote">退单商品</blockquote>
+            <table class="layui-table" lay-size="sm">
+                <colgroup>
+                    <col width="100">
+                    <col>
+                    <col width="100">
+                    <col width="100">
+                    <col width="100">
+                    <col width="100">
+                    <col width="100">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th colspan="2" style="text-align: center;">商品信息</th>
+                    <th>单价</th>
+                    <th>数量</th>
+                    <th>总金额</th>
+                    <th>运费</th>
+                    <th>实付金额</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="shopReturnOrderDetailEntity : ${shopReturnOrderDetailEntityList}">
+                    <td style="border-right: none;"><img th:src="${shopReturnOrderDetailEntity.image}"/></td>
+                    <td style="border-left: none;" th:text="${shopReturnOrderDetailEntity.name}"></td>
+                    <td th:text="${shopReturnOrderDetailEntity.price}"></td>
+                    <td th:text="${shopReturnOrderDetailEntity.num}"></td>
+                    <td th:text="${shopReturnOrderDetailEntity.money}"></td>
+                    <td th:text="${shopReturnOrderDetailEntity.postFee}"></td>
+                    <td th:text="${shopReturnOrderDetailEntity.payMoney}"></td>
+                </tr>
+                </tbody>
+            </table>
+
+
+            <blockquote class="layui-elem-quote" th:if="${shopOrderEntity.consignStatus == 1 || shopOrderEntity.consignStatus == 2}">退货退款申请</blockquote>
+            <blockquote class="layui-elem-quote" th:if="${shopOrderEntity.consignStatus == 0}">退款申请</blockquote>
+            <table class="layui-table" lay-size="sm">
+                <colgroup>
+                    <col width="100">
+                    <col width="100">
+                    <col width="500">
+                    <col width="500">
+                </colgroup>
+
+
+                <thead>
+                <tr>
+                    <th class="required">申请状态</th>
+                    <th class="required">是否退运费</th>
+                    <th class="required">退款金额</th>
+                    <th class="required" th:if="${shopOrderEntity.consignStatus == 1 || shopOrderEntity.consignStatus == 2}">退货退款原因</th>
+                    <th class="required" th:if="${shopOrderEntity.consignStatus == 0}">退款原因</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td style="text-align: center;" th:utext="${@commonController.getLabelByValue('dict-key-return_apply_status', shopReturnOrderEntity.status).data}"></td></td>
+                    <td style="text-align: center;">
+                        <input type="checkbox" lay-skin="switch" lay-text="是|否" th:checked="${shopReturnOrderEntity.isReturnFreight == 1}" disabled/>
+                    </td>
+                    <td>
+                        <input type="number" class="layui-input" th:value="${shopReturnOrderEntity.returnMoney}" disabled/>
+                    </td>
+                    <td>
+                        <select name="returnCause" lay-search lay-verify="required" th:with="returnCauseList=${@shopReturnCauseService.list()}">
+                            <option value="">请选择原因</option>
+                            <option th:each="returnCause : ${returnCauseList}"
+                                    th:text="${returnCause.cause}"
+                                    th:value="${returnCause.cause}"
+                                    th:selected="${returnCause.cause == shopReturnOrderEntity.returnCause}"
+                                    th:disabled="${returnCause.cause != shopReturnOrderEntity.returnCause}"></option>
+                        </select>
+                    </td>
+                </tr>
+                </tbody>
+
+
+                <thead>
+                <tr>
+                    <th colspan="4">问题描述</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td colspan="4">
+                        <textarea th:text="${shopReturnOrderEntity.description}" placeholder="请输入" class="layui-textarea" disabled></textarea>
+                    </td>
+                </tr>
+                </tbody>
+
+
+                <thead>
+                <tr>
+                    <th colspan="4">凭证图片</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td colspan="4">
+                        <img th:src="${shopReturnOrderEntity.evidence}" />
+                    </td>
+                </tr>
+                </tbody>
+
+
+
+
+
+            </table>
+
+            <input type="submit" lay-filter="submitBtnForAdd" id="submitBtnForAdd" lay-submit="" hidden/>
+        </form>
+    </div>
+</div>
+<script th:src="@{/layui2.0/lib/jq-module/zyupload/jquery.min.js}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/lib/jq-module/zyupload/jquery-migrate.js}" charset="utf-8"></script>
+<script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/js/lay-config.js(v=2.0.0)}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/lib/jq-module/zyupload/zyupload-1.0.0.min.js}" charset="utf-8"></script>
+</body>
+</html>
+<script>
+    //获取token
+    var token = CoreUtil.getData("access_token");
+    //地址栏转义token中的#号
+    var tokenQuery = token.replace("#", "%23");
+
+    layui.use(['form', 'layer', 'step'], function () {
+        var form = layui.form;
+        var layer = layui.layer;
+        var step = layui.step;
+
+        loadStep();
+
+
+
+    });
+
+    function loadStep() {
+        var step = layui.step;
+        var initStep = 0;
+        var createTime = $("#createTime").val();
+        var payTime = $("#payTime").val();
+        var consignTime = $("#consignTime").val();
+        var endTime = $("#endTime").val();
+        var closeTime = $("#closeTime").val();
+        if (createTime) {
+            initStep = 1;
+        }
+        if (payTime) {
+            initStep = 2;
+        }
+        if (consignTime) {
+            initStep = 3;
+        }
+        if (endTime) {
+            initStep = 4;
+        }
+        if (closeTime) {
+            initStep = 5;
+        }
+        step.render({
+            elem: '#stepForm',
+            filter: 'stepForm',
+            width: '100%', //设置容器宽度
+            stepWidth: '800px',
+            height: '80px',
+            initStep: initStep,// 初始化显示索引
+            stepItems: [{
+                title: '买家已下单',
+                desc: createTime || '-'
+            }, {
+                title: '买家已付款',
+                desc: payTime || '-'
+            }, {
+                title: '卖家已发货',
+                desc: consignTime || '-'
+            }, {
+                title: '买家已收货',
+                desc: endTime || '-'
+            }, {
+                title: '交易关闭',
+                desc: closeTime || '-'
+            }]
+        });
+    }
+
+</script>

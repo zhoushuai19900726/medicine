@@ -103,6 +103,7 @@ public class ShopReturnOrderServiceImpl extends ServiceImpl<ShopReturnOrderMappe
                         shopReturnOrderDetailEntity.setPayMoney(shopOrderDetailEntity.getPayMoney());
                         shopReturnOrderDetailEntity.setImage(shopOrderDetailEntity.getImage());
                         shopReturnOrderDetailEntity.setWeight(shopOrderDetailEntity.getWeight());
+                        shopReturnOrderDetailEntity.setPostFee(shopOrderDetailEntity.getPostFee());
                         shopReturnOrderDetailMapper.insert(shopReturnOrderDetailEntity);
                         finalOrderDetailIdList.add(shopOrderDetailEntity.getId());
                     }

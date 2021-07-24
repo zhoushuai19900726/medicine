@@ -6,8 +6,10 @@ import com.company.project.common.aop.annotation.DataScope;
 import com.company.project.common.aop.annotation.LogAnnotation;
 import com.company.project.entity.ShopOrderDetailEntity;
 import com.company.project.entity.ShopOrderEntity;
+import com.company.project.entity.ShopReturnOrderDetailEntity;
 import com.company.project.service.ShopOrderDetailService;
 import com.company.project.service.ShopOrderService;
+import com.company.project.service.ShopReturnOrderDetailService;
 import io.swagger.annotations.Api;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.commons.lang.StringUtils;
@@ -19,7 +21,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+
 import java.util.List;
+
 import com.company.project.common.utils.DataResult;
 
 import com.company.project.entity.ShopReturnOrderEntity;
@@ -44,6 +48,9 @@ public class ShopReturnOrderController extends BaseController {
     private ShopReturnOrderService shopReturnOrderService;
 
     @Resource
+    private ShopReturnOrderDetailService shopReturnOrderDetailService;
+
+    @Resource
     private ShopOrderDetailService shopOrderDetailService;
 
     @Resource
@@ -62,13 +69,34 @@ public class ShopReturnOrderController extends BaseController {
         return "returnorder/returnOrder";
     }
 
+    @ApiOperation(value = "跳转进入退货退款详情页面")
+    @GetMapping("/index/shopReturnOrder/returnOrderDetail/{returnOrderId}")
+    public String returnOrderDetail(@PathVariable("returnOrderId") String returnOrderId, Model model) {
+        // 退单信息
+        ShopReturnOrderEntity shopReturnOrderEntity = shopReturnOrderService.getById(returnOrderId);
+        model.addAttribute("shopReturnOrderEntity", shopReturnOrderEntity);
+        // 订单信息
+        ShopOrderEntity shopOrderEntity = shopOrderService.getById(shopReturnOrderEntity.getOrderId());
+        model.addAttribute("shopOrderEntity", shopOrderEntity);
+        // 退单商品信息
+        List<ShopReturnOrderDetailEntity> shopReturnOrderDetailEntityList = shopReturnOrderDetailService.list(Wrappers.<ShopReturnOrderDetailEntity>lambdaQuery().in(ShopReturnOrderDetailEntity::getReturnOrderId, returnOrderId));
+        model.addAttribute("shopReturnOrderDetailEntityList", shopReturnOrderDetailEntityList);
+        return "returnorder/returnOrderDetail";
+    }
 
-//    @ApiOperation(value = "跳转到退款申请列表页面")
-//    @GetMapping("/index/shopReturnOrder")
-//    public String shopReturnOrder() {
-//        return "shopreturnorder/list";
-//        }
-//
+
+    @ApiOperation(value = "跳转到退款申请列表页面")
+    @GetMapping("/index/shopReturnOrder")
+    public String shopReturnOrder() {
+        return "returnorder/returnOrderList";
+    }
+
+    @ApiOperation(value = "跳转到退款退货申请列表页面")
+    @GetMapping("/index/shopReturnRefundOrder")
+    public String shopReturnRefundOrder() {
+        return "returnorder/returnRefundOrderList";
+    }
+
 //    @ApiOperation(value = "跳转进入新增/编辑页面")
 //    @GetMapping("/index/shopReturnOrder/addOrUpdate")
 //    public String addOrUpdate() {
@@ -80,7 +108,7 @@ public class ShopReturnOrderController extends BaseController {
     @RequiresPermissions("shopReturnOrder:add")
     @LogAnnotation(title = "退款申请", action = "新增")
     @ResponseBody
-    public DataResult add(@RequestBody ShopReturnOrderEntity shopReturnOrder){
+    public DataResult add(@RequestBody ShopReturnOrderEntity shopReturnOrder) {
         return shopReturnOrderService.saveShopReturnOrderEntity(shopReturnOrder);
     }
 
@@ -110,23 +138,24 @@ public class ShopReturnOrderController extends BaseController {
 //    public DataResult findListByAll() {
 //        return DataResult.success(shopReturnOrderService.list());
 //    }
-//
-//    @ApiOperation(value = "查询分页数据")
-//    @PostMapping("shopReturnOrder/listByPage")
-//    @RequiresPermissions("shopReturnOrder:list")
-//    @LogAnnotation(title = "退款申请", action = "查询分页数据")
-//    @DataScope
-//    @ResponseBody
-//    public DataResult findListByPage(@RequestBody ShopReturnOrderEntity shopReturnOrder){
-//        // 查询条件
-//        LambdaQueryWrapper<ShopReturnOrderEntity> queryWrapper = Wrappers.lambdaQuery();
-//        queryWrapper
-//                .eq(StringUtils.isNotBlank(shopReturnOrder.getId()), ShopReturnOrderEntity::getId, shopReturnOrder.getId())
-//        // .apply(StringUtils.isNotBlank(shopReturnOrder.getCreateStartTime()), "UNIX_TIMESTAMP(create_time) >= UNIX_TIMESTAMP('" + shopReturnOrder.getCreateStartTime() + "')")
-//        // .apply(StringUtils.isNotBlank(shopReturnOrder.getCreateEndTime()), "UNIX_TIMESTAMP(create_time) <= UNIX_TIMESTAMP('" + shopReturnOrder.getCreateEndTime() + "')")
-//                .orderByDesc(ShopReturnOrderEntity::getCreateTime);
-//        // 封装数据权限 - 执行查询 - 封装用户 - 响应前端
-//        return DataResult.success(encapsulationUser(shopReturnOrderService.page(new Page<>(shopReturnOrder.getPage(), shopReturnOrder.getLimit()), encapsulationDataRights(shopReturnOrder, queryWrapper, ShopReturnOrderEntity::getCreateId))));
-//    }
+
+    @ApiOperation(value = "查询分页数据")
+    @PostMapping("shopReturnOrder/listByPage")
+    @RequiresPermissions("shopReturnOrder:list")
+    @LogAnnotation(title = "退款申请", action = "查询分页数据")
+    @DataScope
+    @ResponseBody
+    public DataResult findListByPage(@RequestBody ShopReturnOrderEntity shopReturnOrder) {
+        // 查询条件
+        LambdaQueryWrapper<ShopReturnOrderEntity> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper
+                .eq(StringUtils.isNotBlank(shopReturnOrder.getId()), ShopReturnOrderEntity::getId, shopReturnOrder.getId())
+                .eq(ShopReturnOrderEntity::getType, shopReturnOrder.getType())
+                .apply(StringUtils.isNotBlank(shopReturnOrder.getCreateStartTime()), "UNIX_TIMESTAMP(create_time) >= UNIX_TIMESTAMP('" + shopReturnOrder.getCreateStartTime() + "')")
+                .apply(StringUtils.isNotBlank(shopReturnOrder.getCreateEndTime()), "UNIX_TIMESTAMP(create_time) <= UNIX_TIMESTAMP('" + shopReturnOrder.getCreateEndTime() + "')")
+                .orderByDesc(ShopReturnOrderEntity::getCreateTime);
+        // 封装数据权限 - 执行查询 - 封装用户 - 响应前端
+        return DataResult.success(encapsulationUser(shopReturnOrderService.page(new Page<>(shopReturnOrder.getPage(), shopReturnOrder.getLimit()), encapsulationDataRights(shopReturnOrder, queryWrapper, ShopReturnOrderEntity::getCreateId))));
+    }
 
 }

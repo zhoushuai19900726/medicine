@@ -139,7 +139,7 @@
         {{# } }}
         <br/>
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="orderChange" shiro:hasPermission="shopMember:manager"><i class="fa fa-edit"></i> 订单变更</a>
-        {{#  if((d.orderStatus == 0 || d.orderStatus == 1) && d.payStatus == 1){ }}
+        {{#  if(d.orderStatus != -1 && d.orderStatus != 4 && d.payStatus == 1){ }}
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="" shiro:hasPermission="shopMember:manager"><i class="fa fa-recycle"></i> 订单换货</a>
         <a class="layui-btn layui-btn-primary layui-border-orange layui-btn-xs" lay-event="refund" shiro:hasPermission="shopOrder:delete"><i class="fa fa-exclamation-triangle"></i> 退款退货</a>
         {{# } }}

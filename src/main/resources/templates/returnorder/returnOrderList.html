@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main" shiro:hasPermission="shopReturnOrder:list">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 5px 5px 5px 5px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">退款申请ID</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="id" autocomplete="off" placeholder="请输入退款申请ID" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">创建日期</label>
+                            <div class="layui-input-inline">
+                                <input type="text" readonly class="layui-input" id="createStartTime" name="createStartTime" placeholder="开始时间">
+                            </div>
+                            <div class="layui-input-inline">
+                                <input type="text" readonly class="layui-input" id="createEndTime" name="createEndTime" placeholder="结束时间">
+                            </div>
+                        </div>
+                        <div class="layui-inline" style="float: right;">
+                            <button class="layui-btn layui-btn-primary layui-border-blue" lay-submit lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
+                            <button class="layui-btn layui-btn-primary layui-border-green" id="export"><i class="layui-icon">&#xe67d;</i> 导 出</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+    </div>
+    <table class="layui-table" id="showTable" lay-filter="showTable"></table>
+    <script type="text/html" id="tool">
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" shiro:hasPermission="shopReturnOrder:list"><i class="layui-icon">&#xe615;</i>查看申请</a>
+        {{#  if(d.status == 0){ }}
+        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="handle" shiro:hasPermission="shopReturnOrder:update"><i class="layui-icon">&#xe626;</i>处理申请</a>
+        {{# } }}
+    </script>
+</div>
+<script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/layui/layui.all.js}" charset="utf-8"></script>
+</body>
+</html>
+<script>
+    //获取token
+    var token = CoreUtil.getData("access_token");
+    //地址栏转义token中的#号
+    var tokenQuery = token.replace("#", "%23");
+    var tableIns1;
+    var $ = jQuery = layui.jquery;
+    layui.use(['table', 'layer', 'laydate', 'util'], function () {
+        var table = layui.table;
+        var form = layui.form;
+        var layer = layui.layer;
+        var laydate = layui.laydate;
+        var util = layui.util;
+        /**
+         * 日期时间选择器
+         */
+        laydate.render({
+            elem: '#createStartTime'
+            , type: 'datetime'
+        });
+        /**
+         * 日期时间选择器
+         */
+        laydate.render({
+            elem: '#createEndTime'
+            , type: 'datetime'
+        });
+        //加载table
+        tableIns1 = table.render({
+            elem: '#showTable'
+            , contentType: 'application/json'
+            , headers: {"authorization": token}
+            , page: true //开启分页
+            , url: '/shopReturnOrder/listByPage' //数据接口
+            , where: {
+                type: 1
+            }
+            , method: 'POST'
+            , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": CoreUtil.isEmpty(res.data) ? 0 : res.data.total, //解析数据长度
+                    "data": CoreUtil.isEmpty(res.data) ? null : res.data.records //解析数据列表
+                }
+            }
+            , cols: [
+                [
+                    {type: 'checkbox', fixed: 'left'},
+                    {width: 100, field: 'id', title: 'ID', sort: true},
+                    {width: 280, field: 'orderId', title: '订单号'},
+                    {width: 120, field: 'memberName', title: '用户账号'},
+                    {
+                        width: 60, field: 'type', title: '类型', templet: function (item) {
+                            return "<b style='color: #eb7350;'>退款</b>";
+                        }
+                    },
+                    {
+                        width: 120, field: 'returnMoney', title: '退款金额', templet: function (item) {
+                            return item.returnMoney.toFixed(2);
+                        }
+                    },
+                    {
+                        width: 100, field: 'isReturnFreight', title: '是否退运费', templet: function (item) {
+                            return item.isReturnFreight == 1 ? "是" : "否";
+                        }
+                    },
+                    {
+                        width: 90, field: 'status', title: '申请状态', templet: function (item) {
+                            var returnApplyStatus = "";
+                            CoreUtil.sendSyncGet("/common/getLabelByValue", {dictionariesKey: 'dict-key-return_apply_status', value: item.status}, function (res) {
+                                returnApplyStatus = res.data;
+                            });
+                            return returnApplyStatus;
+                        }
+                    },
+                    {
+                        width: 100, field: 'createName', title: '申请人', templet: function (item) {
+                            return item.createName || item.memberName
+                        }
+                    },
+                    {width: 150, field: 'createTime', title: '申请时间', sort: true},
+                    {width: 100, field: 'updateName', title: '审核人'},
+                    {width: 150, field: 'updateTime', title: '审核时间', sort: true},
+                    {width: 250, toolbar: "#tool", title: '操作', fixed: 'right'}
+                ]
+            ]
+        });
+
+
+        //列操作
+        table.on('tool(showTable)', function (obj) {
+            var data = obj.data;
+            switch (obj.event) {
+                case 'detail':
+                    layer.open({
+                        type: 2,
+                        title: '<i class="layui-icon">&#xe615;</i> 退单申请详情',
+                        id: 'order_change',
+                        scrollbar: false,
+                        offset: 'r',
+                        anim: 5,
+                        maxmin: true,
+                        area: ['1200px', '100%'],//宽高不影响最大化
+                        content: "../index/shopReturnOrder/returnOrderDetail/" + data.id,//地址
+                        zIndex: layer.zIndex,
+                    });
+                    break;
+                case 'handle':
+                    // layer.open({
+                    //     id: 'shopReturnOrder_update', //设定一个id，防止重复弹出
+                    //     title: '<i class="layui-icon">&#xe653;</i> 编辑退款申请',
+                    //     type: 2,
+                    //     content: '../index/shopReturnOrder/addOrUpdate',
+                    //     btn: ['提交保存', '取消'],
+                    //     area: ['60%', '85%'],
+                    //     scrollbar: false,
+                    //     yes: function (index, layero) {
+                    //         // 得到iframe页的窗口对象并调用子页面方法
+                    //         window[layero.find('iframe')[0]['name']].saveShopReturnOrder("submitBtnForUpdate");
+                    //     },
+                    //     success: function (layero, index) {
+                    //         // 置顶当前窗口
+                    //         layer.setTop(layero);
+                    //         // 得到iframe页的窗口对象并调用子页面方法
+                    //         window[layero.find('iframe')[0]['name']].assignment(data);
+                    //     }
+                    // });
+                    break;
+            }
+        });
+
+
+        //导出
+        $('#export').on('click', function () {
+            //原先分页limit
+            var exportParams = {
+                limit: Number.MAX_VALUE,
+                key: $("#key").val()
+            };
+            CoreUtil.sendPost("/shopReturnOrder/listByPage", exportParams, function (res) {
+                //初始化渲染数据
+                if (res.data != null && res.data.records != null) {
+                    table.exportFile(tableIns1.config.id, res.data.records, 'xls');
+                }
+            });
+        });
+
+        /**
+         * 执行查询
+         */
+        form.on('submit(data-search-btn)', function (data) {
+            // 查询条件
+            var where = data.field;
+            where.type = 1;
+            // 刷新table
+            tableIns1.reload({
+                where: where,
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                done: function () {
+                    // 清空查询条件缓存
+                    this.where = {};
+                }
+            });
+            return false;
+        });
+
+    });
+</script>

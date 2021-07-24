@@ -112,6 +112,12 @@ public class ShopReturnOrderDetailEntity extends BaseEntity implements Serializa
     private BigDecimal weight;
 
     /**
+     * 运费
+     */
+    @TableField("post_fee")
+    private BigDecimal postFee;
+
+    /**
      *
      */
     @TableField(fill = FieldFill.INSERT)
