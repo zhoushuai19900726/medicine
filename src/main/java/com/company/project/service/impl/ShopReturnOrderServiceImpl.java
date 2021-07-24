@@ -1,10 +1,7 @@
 package com.company.project.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.company.project.common.enums.ConsignStatusEnum;
-import com.company.project.common.enums.OrderStatusEnum;
-import com.company.project.common.enums.PayStatusEnum;
-import com.company.project.common.enums.ReturnOrderTypeEnum;
+import com.company.project.common.enums.*;
 import com.company.project.common.exception.BusinessException;
 import com.company.project.common.exception.code.BusinessResponseCode;
 import com.company.project.common.utils.DataResult;
@@ -126,24 +123,46 @@ public class ShopReturnOrderServiceImpl extends ServiceImpl<ShopReturnOrderMappe
 
     @Override
     public DataResult auditSuccess(ShopReturnOrderEntity shopReturnOrderEntity) {
+        // 查询申请
+        ShopReturnOrderEntity result = shopReturnOrderMapper.selectById(shopReturnOrderEntity.getId());
+        if(Objects.nonNull(result)){
+            // 修改申请状态
+            shopReturnOrderEntity.setStatus(ReturnApplyStatusEnum.APPROVED.getType());
+            shopReturnOrderMapper.updateById(shopReturnOrderEntity);
+            // TODO 执行退款流程
 
-
-
-
-
-
+        }
         return DataResult.success();
     }
 
     @Override
     public DataResult auditFailed(ShopReturnOrderEntity shopReturnOrderEntity) {
-
-
-
-
-
-
-
+        // 查询申请
+        ShopReturnOrderEntity result = shopReturnOrderMapper.selectById(shopReturnOrderEntity.getId());
+        if(Objects.nonNull(result)){
+            // 修改申请状态
+            shopReturnOrderEntity.setStatus(ReturnApplyStatusEnum.REJECT.getType());
+            shopReturnOrderMapper.updateById(shopReturnOrderEntity);
+            // 查询订单
+            ShopOrderEntity shopOrderEntity = shopOrdeMapper.selectById(result.getOrderId());
+            if(Objects.nonNull(shopOrderEntity)){
+                // 修改订单状态
+                ShopOrderEntity updShopOrderEntity = new ShopOrderEntity();
+                updShopOrderEntity.setId(shopOrderEntity.getId());
+                updShopOrderEntity.setOrderStatus(Objects.nonNull(shopOrderEntity.getEndTime()) ? OrderStatusEnum.FINISHED.getType() : OrderStatusEnum.NOT_FINISHED.getType());
+                shopOrdeMapper.updateById(updShopOrderEntity);
+                // 修改订单明细状态
+                List<ShopReturnOrderDetailEntity> shopReturnOrderDetailEntityList = shopReturnOrderDetailMapper.selectList(Wrappers.<ShopReturnOrderDetailEntity>lambdaQuery().in(ShopReturnOrderDetailEntity::getReturnOrderId, result.getId()));
+                if(CollectionUtils.isNotEmpty(shopReturnOrderDetailEntityList)){
+                    List<String> orderDetailIdList = shopReturnOrderDetailEntityList.stream().map(ShopReturnOrderDetailEntity::getOrderDetailId).collect(Collectors.toList());
+                    if(CollectionUtils.isNotEmpty(orderDetailIdList)){
+                        ShopOrderDetailEntity updShopOrderDetailEntity = new ShopOrderDetailEntity();
+                        updShopOrderDetailEntity.setIsReturn(NumberConstants.ZERO_I);
+                        shopOrderDetailMapper.update(updShopOrderDetailEntity, Wrappers.<ShopOrderDetailEntity>lambdaQuery().in(ShopOrderDetailEntity::getId, orderDetailIdList));
+                    }
+                }
+            }
+        }
         return DataResult.success();
     }
 }
