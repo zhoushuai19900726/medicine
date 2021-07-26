@@ -16,7 +16,7 @@
 <body>
 <div class="layuimini-container">
     <div class="layuimini-main" shiro:hasPermission="shopOrder:list">
-        <form class="layui-form" action="" style="width: 100%;">
+        <form class="layui-form" action="" style="width: 100%;" lay-filter="shopOrderForm">
             <input type="hidden" name="id" th:value="${shopOrderEntity.id}" />
             <blockquote class="layui-elem-quote">订单信息</blockquote>
             <table class="layui-table" lay-size="sm">
@@ -166,12 +166,34 @@
 
                 <thead>
                 <tr>
-                    <th colspan="4"><b style="color: red;">收货人地址</b></th>
+                    <th colspan="3"><b style="color: red;">收货人地址</b></th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <td colspan="4">
+                    <td colspan="3">
+                        <div  id="area-picker" class="layui-row">
+                            <div class="layui-col-xs4">
+                                <select name="receiverProvince" lay-filter="province" lay-search th:with="addressLibraryList=${@commonController.findAllSubordinateAddressLibrary('0').data}">
+                                    <option value="">请选择省</option>
+                                    <option th:each="addressLibrary : ${addressLibraryList}" th:text="${addressLibrary.name}" th:value="${addressLibrary.id}"></option>
+                                </select>
+                            </div>
+                            <div class="layui-col-xs4">
+                                <select name="receiverCity" lay-filter="city" lay-search>
+                                    <option value="">请选择市</option>
+                                </select>
+                            </div>
+                            <div class="layui-col-xs4">
+                                <select name="receiverCounty" lay-filter="county" lay-search>
+                                    <option value="">请选择区</option>
+                                </select>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
                         <textarea name="receiverAddress" placeholder="请输入" class="layui-textarea" th:text="${shopOrderEntity.receiverAddress}"></textarea>
                     </td>
                 </tr>
@@ -210,6 +232,14 @@
             , type: 'datetime'
         });
 
+        form.on('select(province)', function (data) {
+            loadCity(data.value, null);
+        });
+
+        form.on('select(city)', function (data) {
+            loadCounty(data.value, null);
+        });
+
         form.on('submit(submitBtnForUpdate)', function (data) {
             // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
             CoreUtil.sendPut("/shopOrder/update", data.field, function (res) {
@@ -226,11 +256,67 @@
 
     });
 
+    function loadCity(province, city) {
+        var form = layui.form;
+        $("select[name='receiverCity']").empty();
+        $("select[name='receiverCity']").append("<option value=''>请选择市</option>");
+        $("select[name='receiverCounty']").empty();
+        $("select[name='receiverCounty']").append("<option value=''>请选择区</option>");
+        if (province) {
+            CoreUtil.sendSyncGet("/common/findAllSubordinateAddressLibrary/" + province, null, function (res) {
+                if (res.data) {
+                    var selectObj = $("select[name='receiverCity']");
+                    $(selectObj).empty();
+                    $(selectObj).append("<option value=''>请选择市</option>");
+                    $(res.data).each(function (index, item) {
+                        if (city && city == item.id) {
+                            $(selectObj).append("<option value='" + item.id + "' selected>" + item.name + "</option>");
+                        } else {
+                            $(selectObj).append("<option value='" + item.id + "'>" + item.name + "</option>");
+                        }
+                    });
+                }
+            });
+        }
+        form.render('select');
+    }
+
+    function loadCounty(city, county) {
+        var form = layui.form;
+        $("select[name='receiverCounty']").empty();
+        $("select[name='receiverCounty']").append("<option value=''>请选择区</option>");
+        if (city) {
+            CoreUtil.sendSyncGet("/common/findAllSubordinateAddressLibrary/" + city, null, function (res) {
+                if (res.data) {
+                    var selectObj = $("select[name='receiverCounty']");
+                    $(selectObj).empty();
+                    $(selectObj).append("<option value=''>请选择区</option>");
+                    $(res.data).each(function (index, item) {
+                        if (county && county == item.id) {
+                            $(selectObj).append("<option value='" + item.id + "' selected>" + item.name + "</option>");
+                        } else {
+                            $(selectObj).append("<option value='" + item.id + "'>" + item.name + "</option>");
+                        }
+                    });
+                }
+            });
+        }
+        form.render('select');
+    }
+
     function saveShopOrder() {
         $("#submitBtnForUpdate").click();
     }
 
-
+    function assignment(data) {
+        var form = layui.form;
+        // 表单赋值
+        form.val("shopOrderForm", {
+            "receiverProvince": data.receiverProvince,
+        });
+        loadCity(data.receiverProvince, data.receiverCity);
+        loadCounty(data.receiverCity, data.receiverCounty);
+    }
 
 
 </script>

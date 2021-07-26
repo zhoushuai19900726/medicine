@@ -25,6 +25,7 @@ import io.swagger.annotations.ApiParam;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.company.project.common.utils.DataResult;
@@ -56,6 +57,12 @@ public class ShopOrderController extends BaseController {
     @GetMapping("/index/shopOrder")
     public String shopOrder() {
         return "order/orderList";
+    }
+
+    @ApiOperation(value = "跳转到待发货订单表列表页面")
+    @GetMapping("/index/shopOrder/shipped")
+    public String shipped() {
+        return "logistics/shippedOrderList";
     }
 
     @ApiOperation(value = "跳转进入订单变更页面")
@@ -111,11 +118,19 @@ public class ShopOrderController extends BaseController {
                 .eq(StringUtils.isNotBlank(shopOrder.getId()), ShopOrderEntity::getId, shopOrder.getId())
                 .eq(StringUtils.isNotBlank(shopOrder.getTransactionId()), ShopOrderEntity::getTransactionId, shopOrder.getTransactionId())
                 .eq(StringUtils.isNotBlank(shopOrder.getBuyerName()), ShopOrderEntity::getBuyerName, shopOrder.getBuyerName())
+
+                .eq(Objects.nonNull(shopOrder.getOrderStatus()), ShopOrderEntity::getOrderStatus, shopOrder.getOrderStatus())
+                .eq(Objects.nonNull(shopOrder.getPayStatus()), ShopOrderEntity::getPayStatus, shopOrder.getPayStatus())
+                .eq(Objects.nonNull(shopOrder.getConsignStatus()), ShopOrderEntity::getConsignStatus, shopOrder.getConsignStatus())
+
 //                .apply(StringUtils.isNotBlank(shopOrder.getCreateStartTime()), "UNIX_TIMESTAMP(create_time) >= UNIX_TIMESTAMP('" + shopOrder.getCreateStartTime() + "')")
 //                .apply(StringUtils.isNotBlank(shopOrder.getCreateEndTime()), "UNIX_TIMESTAMP(create_time) <= UNIX_TIMESTAMP('" + shopOrder.getCreateEndTime() + "')")
                 .apply(StringUtils.isNotBlank(shopOrder.getPayStartTime()), "UNIX_TIMESTAMP(pay_time) >= UNIX_TIMESTAMP('" + shopOrder.getPayStartTime() + "')")
-                .apply(StringUtils.isNotBlank(shopOrder.getPayEndTime()), "UNIX_TIMESTAMP(pay_time) <= UNIX_TIMESTAMP('" + shopOrder.getPayEndTime() + "')")
-                .orderByDesc(ShopOrderEntity::getCreateTime);
+                .apply(StringUtils.isNotBlank(shopOrder.getPayEndTime()), "UNIX_TIMESTAMP(pay_time) <= UNIX_TIMESTAMP('" + shopOrder.getPayEndTime() + "')");
+        if(Objects.nonNull(shopOrder.getUrgentDelivery()) && NumberConstants.ONE_I.equals(shopOrder.getUrgentDelivery())){
+            queryWrapper.orderByDesc(ShopOrderEntity::getUrgentDelivery);
+        }
+        queryWrapper.orderByDesc(ShopOrderEntity::getCreateTime);
         return DataResult.success(shopOrderService.page(new Page<>(shopOrder.getPage(), shopOrder.getLimit()), queryWrapper));
     }
 

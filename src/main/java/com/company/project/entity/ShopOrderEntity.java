@@ -189,11 +189,29 @@ public class ShopOrderEntity extends BaseEntity implements Serializable {
     @TableField("receiver_mobile")
     private String receiverMobile;
 
+
+
     /**
      * 收货人地址
      */
     @TableField("receiver_address")
     private String receiverAddress;
+
+    /**
+     * 收货人地址-省
+     */
+    @TableField("receiver_province")
+    private String receiverProvince;
+    /**
+     * 收货人地址-市
+     */
+    @TableField("receiver_city")
+    private String receiverCity;
+    /**
+     * 收货人地址-区
+     */
+    @TableField("receiver_county")
+    private String receiverCounty;
 
     /**
      * 订单来源：1:web，2：app，3：微信公众号，4：微信小程序  5 H5手机页面

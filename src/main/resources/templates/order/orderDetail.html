@@ -146,7 +146,7 @@
                 <tr>
                     <td th:text="${shopOrderEntity.receiverContact}"></td>
                     <td th:text="${shopOrderEntity.receiverMobile}"></td>
-                    <td colspan="2" th:text="${shopOrderEntity.receiverAddress}"></td>
+                    <td colspan="2" th:text="${@commonController.getNameById2(shopOrderEntity.receiverProvince).data + @commonController.getNameById2(shopOrderEntity.receiverCity).data + @commonController.getNameById2(shopOrderEntity.receiverCounty).data + shopOrderEntity.receiverAddress}"></td>
                 </tr>
                 </tbody>
 
