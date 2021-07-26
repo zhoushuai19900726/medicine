@@ -129,7 +129,7 @@ public class ShopReturnOrderServiceImpl extends ServiceImpl<ShopReturnOrderMappe
             // 修改申请状态
             shopReturnOrderEntity.setStatus(ReturnApplyStatusEnum.APPROVED.getType());
             shopReturnOrderMapper.updateById(shopReturnOrderEntity);
-            // TODO 执行退款流程
+            // TODO 根据支付方式执行退款流程
 
         }
         return DataResult.success();
