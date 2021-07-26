@@ -146,6 +146,9 @@
 
     <script type="text/html" id="orderInfo">
         <div class="layui-row">
+            {{#  if(d.urgentDelivery == 1){ }}
+            <i class="fa fa-fire" style="color: red; position: absolute; left: 2px; top: 0;" title="十万火急"></i>
+            {{# } }}
             <span class="layui-badge-rim">
                 <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
                     <i class="fa fa-shirtsinbulk"></i> 流水单号
@@ -262,6 +265,51 @@
             </blockquote>
         </form>
     </div>
+
+
+
+    <div id="orderShipmentTpl" hidden>
+        <form class="layui-form layui-form-pane" id="orderShipmentForm" lay-filter="orderShipmentForm">
+            <input type="submit" lay-filter="submitBtnForOrderShipment" id="submitBtnForOrderShipment" lay-submit="" hidden/>
+            <input type="hidden" name="id"/>
+            <input type="hidden" name="consignStatus"/>
+            <blockquote class="layui-elem-quote">发货信息</blockquote>
+            <blockquote class="layui-elem-quote layui-quote-nm">
+                <table class="layui-table" lay-size="sm">
+                    <colgroup>
+                        <col width="100">
+                        <col width="500">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="required">物流名称</td>
+                        <td>
+                            <select name="shippingId" lay-search th:with="dataResult=${@shopLogisticsCompanyController.findListByAll()}">
+                                <option value="">请选择</option>
+                                <option th:each="shopLogisticsCompany : ${dataResult.getData()}" th:text="${shopLogisticsCompany.name}" th:value="${shopLogisticsCompany.id}"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="required">物流单号</td>
+                        <td>
+                            <input type="text" name="shippingCode" lay-verify="required" autocomplete="off" placeholder="请输入物流单号" class="layui-input"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="required">发货时间</td>
+                        <td>
+                            <input type="text" readonly class="layui-input" id="consignTime" name="consignTime" placeholder="发货时间">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </blockquote>
+        </form>
+    </div>
+
+
+
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
 <script th:src="@{/layui/layui.all.js}" charset="utf-8"></script>
@@ -310,6 +358,14 @@
             elem: '#payEndTime'
             , type: 'datetime'
         });
+        /**
+         * 日期时间选择器
+         */
+        laydate.render({
+            elem: '#consignTime'
+            , type: 'datetime'
+            , value: new Date()
+        });
 
         upload.render({
             elem: '#uploadBtn' //绑定元素
@@ -342,6 +398,19 @@
             // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
             CoreUtil.sendPut("/shopOrder/update", data.field, function (res) {
                 layer.msg("变更成功", {time: 500}, function () {
+                    // 刷新父页面列表
+                    table.reload('showTable');
+                    layer.closeAll();
+                });
+            });
+            // //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            return false;
+        });
+
+        form.on('submit(submitBtnForOrderShipment)', function (data) {
+            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
+            CoreUtil.sendPut("/shopOrder/update", data.field, function (res) {
+                layer.msg("发货成功", {time: 500}, function () {
                     // 刷新父页面列表
                     table.reload('showTable');
                     layer.closeAll();
@@ -594,7 +663,23 @@
                     });
                     break;
                 case 'orderShipment':
-
+                    layer.open({
+                        id: 'orderShipment'
+                        , type: 1
+                        , title: '<i class="layui-icon">&#xe639;</i> 订单发货'
+                        , content: $('#orderShipmentTpl')
+                        , area: ['800px', '600px']//宽高不影响最大化
+                        , btn: ['提交发货', '取消']
+                        , yes: function (index, layero) {
+                            $("#submitBtnForOrderShipment").click();
+                        },
+                        success: function (layero, index) {
+                            form.val("orderShipmentForm", {
+                                "id": data.id,
+                                "consignStatus": 1,
+                            });
+                        }
+                    });
                     break;
             }
         });

@@ -48,7 +48,7 @@ public class ShopOrderServiceImpl extends ServiceImpl<ShopOrderMapper, ShopOrder
     @Override
     public DataResult updateShopOrderEntityById(ShopOrderEntity shopOrder) {
         ShopOrderEntity result = shopOrderMapper.selectById(shopOrder.getId());
-        if(Objects.isNull(result)){
+        if (Objects.isNull(result)) {
             return DataResult.fail(BusinessResponseCode.INVALID_ORDER.getMsg());
         }
         // 订单状态
@@ -62,18 +62,18 @@ public class ShopOrderServiceImpl extends ServiceImpl<ShopOrderMapper, ShopOrder
         // 发货状态
         if (Objects.nonNull(shopOrder.getConsignStatus()) && !shopOrder.getConsignStatus().equals(result.getConsignStatus())) {
             // 发货
-            if(ConsignStatusEnum.DELIVERED.getType().equals(shopOrder.getConsignStatus())){
-                shopOrder.setConsignTime(new Date());
+            if (ConsignStatusEnum.DELIVERED.getType().equals(shopOrder.getConsignStatus())) {
+                shopOrder.setConsignTime(Objects.nonNull(shopOrder.getConsignTime()) ? shopOrder.getConsignTime() : new Date());
             }
             // 收货
-            if(ConsignStatusEnum.RECEIVED.getType().equals(shopOrder.getConsignStatus())){
+            if (ConsignStatusEnum.RECEIVED.getType().equals(shopOrder.getConsignStatus())) {
                 shopOrder.setEndTime(new Date());
             }
         }
         // 订单明细状态
         List<Integer> orderStatusListA = Lists.newArrayList(OrderStatusEnum.REFUND.getType(), OrderStatusEnum.REFUND_AND_RETURN.getType());
         List<Integer> orderStatusListB = Lists.newArrayList(OrderStatusEnum.NOT_FINISHED.getType());
-        if(orderStatusListA.contains(result.getOrderStatus()) && orderStatusListB.contains(shopOrder.getOrderStatus())){
+        if (orderStatusListA.contains(result.getOrderStatus()) && orderStatusListB.contains(shopOrder.getOrderStatus())) {
             ShopOrderDetailEntity shopOrderDetailEntity = new ShopOrderDetailEntity();
             shopOrderDetailEntity.setIsReturn(NumberConstants.ZERO_I);
             shopOrderDetailMapper.update(shopOrderDetailEntity, Wrappers.<ShopOrderDetailEntity>lambdaQuery().eq(ShopOrderDetailEntity::getOrderId, result.getId()));
