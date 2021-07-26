@@ -46,9 +46,28 @@ public class ShopOrderServiceImpl extends ServiceImpl<ShopOrderMapper, ShopOrder
 
     @Override
     public DataResult updateShopOrderEntityById(ShopOrderEntity shopOrder) {
+        ShopOrderEntity result = shopOrderMapper.selectById(shopOrder.getId());
+        if(Objects.isNull(result)){
+            return DataResult.fail(BusinessResponseCode.INVALID_ORDER.getMsg());
+        }
         // 订单状态
-        if (OrderStatusEnum.CLOSED.getType().equals(shopOrder.getOrderStatus())) {
+        if (Objects.nonNull(shopOrder.getOrderStatus()) && !shopOrder.getOrderStatus().equals(result.getOrderStatus()) && OrderStatusEnum.CLOSED.getType().equals(shopOrder.getOrderStatus())) {
             shopOrder.setCloseTime(new Date());
+        }
+        // 支付状态
+        if (Objects.nonNull(shopOrder.getPayStatus()) && !shopOrder.getPayStatus().equals(result.getPayStatus()) && PayStatusEnum.PAYMENT_SUCCESSFUL.getType().equals(shopOrder.getPayStatus())) {
+            shopOrder.setPayTime(new Date());
+        }
+        // 发货状态
+        if (Objects.nonNull(shopOrder.getConsignStatus()) && !shopOrder.getConsignStatus().equals(result.getConsignStatus())) {
+            // 发货
+            if(ConsignStatusEnum.DELIVERED.getType().equals(shopOrder.getConsignStatus())){
+                shopOrder.setConsignTime(new Date());
+            }
+            // 收货
+            if(ConsignStatusEnum.RECEIVED.getType().equals(shopOrder.getConsignStatus())){
+                shopOrder.setEndTime(new Date());
+            }
         }
         return DataResult.success(shopOrderMapper.updateById(shopOrder));
     }

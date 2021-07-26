@@ -7,6 +7,13 @@
     <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
     <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
     <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <style>
+        body .demo-class .layui-layer-btn1 {
+            border-color: #ff9e8b;
+            background-color: #ff97a2;
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
 <div class="layuimini-container">
@@ -42,15 +49,11 @@
         </fieldset>
     </div>
     <table class="layui-table" id="showTable" lay-filter="showTable"></table>
-    <script type="text/html" id="toolbar">
-        <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add" shiro:hasPermission="shopReturnOrder:add"><i class="layui-icon">&#xe61f;</i>新增退款申请</button>
-            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopReturnOrder:delete"><i class="layui-icon">&#xe640;</i>批量删除</button>
-        </div>
-    </script>
     <script type="text/html" id="tool">
-        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit" shiro:hasPermission="shopReturnOrder:update"><i class="layui-icon">&#xe642;</i>编辑</a>
-        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" shiro:hasPermission="shopReturnOrder:delete"><i class="layui-icon">&#xe640;</i>删除</a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" shiro:hasPermission="shopReturnOrder:list"><i class="layui-icon">&#xe615;</i>查看申请</a>
+        {{#  if(d.status == 0){ }}
+        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="handle" shiro:hasPermission="shopReturnOrder:update"><i class="layui-icon">&#xe626;</i>处理申请</a>
+        {{# } }}
     </script>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
@@ -106,111 +109,115 @@
             , cols: [
                 [
                     {type: 'checkbox', fixed: 'left'},
-                    {field: 'id', title: 'ID', sort: true},
-                    {field: 'orderId', title: '订单号', sort: true},
-                    {field: 'memberId', title: '用户ID', sort: true},
-                    {field: 'memberName', title: '用户账号', sort: true},
-                    {field: 'linkman', title: '联系人', sort: true},
-                    {field: 'linkmanMobile', title: '联系人手机', sort: true},
-                    {field: 'type', title: '类型', sort: true},
-                    {field: 'returnMoney', title: '退款金额', sort: true},
-                    {field: 'isReturnFreight', title: '是否退运费', sort: true},
-                    {field: 'status', title: '申请状态', sort: true},
-                    {field: 'returnCause', title: '退货退款原因', sort: true},
-                    {field: 'evidence', title: '凭证图片', sort: true},
-                    {field: 'description', title: '问题描述', sort: true},
-                    {field: 'remark', title: '处理备注', sort: true},
-                    {width: 100, field: 'createName', title: '创建人'},
-                    {field: 'createTime', title: '申请时间', sort: true},
-                    {width: 100, field: 'updateName', title: '修改人'},
-                    {field: 'updateTime', title: '处理时间', sort: true},
-                    {width: 150, toolbar: "#tool", title: '操作'}
+                    {width: 100, field: 'id', title: 'ID', sort: true},
+                    {width: 280, field: 'orderId', title: '订单号'},
+                    {width: 120, field: 'memberName', title: '用户账号'},
+                    {
+                        width: 100, field: 'type', title: '类型', templet: function (item) {
+                            return "<b style='color: #eb7350;'>退货退款</b>";
+                        }
+                    },
+                    {
+                        width: 100, field: 'returnMoney', title: '退款金额', templet: function (item) {
+                            return item.returnMoney.toFixed(2);
+                        }
+                    },
+                    {
+                        width: 100, field: 'isReturnFreight', title: '是否退运费', templet: function (item) {
+                            return item.isReturnFreight == 1 ? "是" : "否";
+                        }
+                    },
+                    {
+                        width: 90, field: 'status', title: '申请状态', templet: function (item) {
+                            var returnApplyStatus = "";
+                            CoreUtil.sendSyncGet("/common/getLabelByValue", {dictionariesKey: 'dict-key-return_apply_status', value: item.status}, function (res) {
+                                returnApplyStatus = res.data;
+                            });
+                            return returnApplyStatus;
+                        }
+                    },
+                    {
+                        width: 90, field: 'createName', title: '申请人', templet: function (item) {
+                            return item.createName || item.memberName
+                        }
+                    },
+                    {width: 150, field: 'createTime', title: '申请时间', sort: true},
+                    {width: 90, field: 'updateName', title: '审核人'},
+                    {width: 150, field: 'updateTime', title: '审核时间', sort: true},
+                    {width: 250, toolbar: "#tool", title: '操作', fixed: 'right'}
                 ]
             ]
-            , toolbar: '#toolbar'
         });
 
 
-        //表头工具
-        table.on('toolbar(showTable)', function (obj) {
-            switch (obj.event) {
-                case 'batchDeleted':
-                    var checkStatus = table.checkStatus(obj.config.id);
-                    var data = checkStatus.data;
-                    if (data.length == 0) {
-                        layer.msg("请选择要批量删除的列");
-                    } else {
-                        var ids = [];
-                        $(data).each(function (index, item) {
-                            ids.push(item.id);
-                        });
-                        tipDialog(ids);
-                    }
-                    break;
-                case 'add':
-                    layer.open({
-                        id: 'shopReturnOrder_add', //设定一个id，防止重复弹出
-                        title: '<i class="layui-icon">&#xe653;</i> 新增退款申请',
-                        type: 2,
-                        content: '../index/shopReturnOrder/addOrUpdate',
-                        btn: ['提交保存', '取消'],
-                        area: ['60%', '85%'],
-                        scrollbar: false,
-                        yes: function (index, layero) {
-                            // 得到iframe页的窗口对象并调用子页面方法
-                            window[layero.find('iframe')[0]['name']].saveShopReturnOrder("submitBtnForAdd");
-                        }
-                    });
-                    break;
-            }
-        });
         //列操作
         table.on('tool(showTable)', function (obj) {
             var data = obj.data;
             switch (obj.event) {
-                case 'del':
-                    var ids = [];
-                    ids.push(data.id);
-                    tipDialog(ids);
-                    break;
-                case 'edit':
+                case 'detail':
                     layer.open({
-                        id: 'shopReturnOrder_update', //设定一个id，防止重复弹出
-                        title: '<i class="layui-icon">&#xe653;</i> 编辑退款申请',
                         type: 2,
-                        content: '../index/shopReturnOrder/addOrUpdate',
-                        btn: ['提交保存', '取消'],
-                        area: ['60%', '85%'],
+                        title: '<i class="layui-icon">&#xe615;</i> 退单申请详情',
+                        id: 'shopReturnOrder_detail',
                         scrollbar: false,
-                        yes: function (index, layero) {
-                            // 得到iframe页的窗口对象并调用子页面方法
-                            window[layero.find('iframe')[0]['name']].saveShopReturnOrder("submitBtnForUpdate");
-                        },
-                        success: function (layero, index) {
-                            // 置顶当前窗口
-                            layer.setTop(layero);
-                            // 得到iframe页的窗口对象并调用子页面方法
-                            window[layero.find('iframe')[0]['name']].assignment(data);
+                        offset: 'r',
+                        anim: 5,
+                        maxmin: true,
+                        area: ['1000px', '100%'],//宽高不影响最大化
+                        content: "../index/shopReturnOrder/returnOrderDetail/" + data.id,//地址
+                        zIndex: layer.zIndex,
+                    });
+                    break;
+                case 'handle':
+                    layer.open({
+                        id: 'shopReturnOrder_handle', //设定一个id，防止重复弹出
+                        title: '<i class="layui-icon">&#xe653;</i> 处理退款申请',
+                        type: 2,
+                        content: "../index/shopReturnOrder/handleReturnOrder/" + data.id,//地址
+                        btn: ['审核通过', '审核拒绝', '返回列表'],
+                        skin: 'demo-class',
+                        scrollbar: false,
+                        offset: 'r',
+                        anim: 5,
+                        maxmin: true,
+                        area: ['1000px', '100%']//宽高不影响最大化
+                        , yes: function (pIndex, layero) {
+                            // 审核通过
+                            var childLayer = window[layero.find('iframe')[0]['name']].layer;
+                            childLayer.confirm('确定要同意当前退货退款申请吗?', {icon: 3, title: '提示'}, function (index) {
+                                CoreUtil.sendPut("/shopReturnOrder/auditSuccess", {id: data.id}, function (res) {
+                                    childLayer.msg("同意申请处理成功", {time: 500}, function () {
+                                        // 刷新父页面列表
+                                        table.reload('showTable');
+                                        layer.close(pIndex);
+                                    });
+                                });
+                            });
+                            return false; // 开启该代码可禁止点击该按钮关闭
+                        }
+                        , btn2: function (pIndex, layero) {
+                            // 审核拒绝
+                            var childLayer = window[layero.find('iframe')[0]['name']].layer;
+                            childLayer.confirm('确定要拒绝当前退货退款申请吗?', {icon: 3, title: '提示'}, function (index) {
+                                CoreUtil.sendPut("/shopReturnOrder/auditFailed", {id: data.id}, function (res) {
+                                    childLayer.msg("拒绝申请处理成功", {time: 500}, function () {
+                                        // 刷新父页面列表
+                                        table.reload('showTable');
+                                        layer.close(pIndex);
+                                    });
+                                });
+                            });
+                            return false; // 开启该代码可禁止点击该按钮关闭
+                        }
+                        , btn3: function (index, layero) {
+                        }
+                        , cancel: function () {
                         }
                     });
                     break;
             }
         });
 
-        /**
-         * 监听单元格编辑
-         */
-        table.on('edit(showTable)', function (obj) {
-            var value = obj.value //得到修改后的值
-                , data = obj.data //得到所在行所有键值
-                , field = obj.field; //得到字段
-            var para = {};
-            para.id = data.id;
-            para[field] = util.escape(value);
-            CoreUtil.sendPut("/shopReturnOrder/update", para, function (res) {
-                tableIns1.reload();
-            });
-        });
 
         //导出
         $('#export').on('click', function () {
@@ -226,17 +233,6 @@
                 }
             });
         });
-
-        //删除
-        var tipDialog = function (ids) {
-            layer.confirm('确定要删除么?', {icon: 3, title: '提示'}, function (index) {
-                CoreUtil.sendDelete("/shopReturnOrder/delete", ids, function (res) {
-                    layer.msg(res.msg, {time: 500}, function () {
-                        tableIns1.reload();
-                    });
-                });
-            });
-        };
 
         /**
          * 执行查询
