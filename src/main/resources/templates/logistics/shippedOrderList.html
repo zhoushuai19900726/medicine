@@ -117,16 +117,19 @@
         </fieldset>
     </div>
     <table class="layui-table" id="showTable" lay-filter="showTable"></table>
-    <!--<script type="text/html" id="toolbar">
+    <script type="text/html" id="toolbar">
         <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchClosed" shiro:hasPermission="shopOrder:manager"><i class="fa fa-times-circle"></i> 批量关闭</button>
-            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe640;</i>批量删除</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchClosed" shiro:hasPermission="shopOrder:manager"><i class="fa fa-times-circle"></i> 消耗品统计</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe640;</i>批量顺丰出库</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe640;</i>批量京东出库</button>
 
-            <button class="layui-btn layui-btn-sm" id="export" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe67d;</i> 导出订单</button>
-            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="downloadFreeBillTemplate" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe67d;</i> 导出赠单模板</button>
-            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="importFreeBill" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe681;</i> 导入赠送订单</button>
+            <button class="layui-btn layui-btn-sm" id="export" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe67d;</i> 导出查询订单</button>
+            <button class="layui-btn layui-btn-sm" id="export" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe67d;</i> 导出发货订单</button>
+
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="downloadFreeBillTemplate" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe67d;</i> 导出运单模板</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="importFreeBill" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe681;</i> 批量导入运单</button>
         </div>
-    </script>-->
+    </script>
     <script type="text/html" id="tool">
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="detail" shiro:hasPermission="shopOrder:list"><i class="layui-icon">&#xe615;</i>订单详情</a>
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="detail" shiro:hasPermission="shopOrder:list"><i class="layui-icon">&#xe615;</i>打印订单</a>
