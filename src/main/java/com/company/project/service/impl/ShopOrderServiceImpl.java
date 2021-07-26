@@ -52,8 +52,8 @@ public class ShopOrderServiceImpl extends ServiceImpl<ShopOrderMapper, ShopOrder
             return DataResult.fail(BusinessResponseCode.INVALID_ORDER.getMsg());
         }
         // 订单状态
-        if (Objects.nonNull(shopOrder.getOrderStatus()) && !shopOrder.getOrderStatus().equals(result.getOrderStatus()) && OrderStatusEnum.CLOSED.getType().equals(shopOrder.getOrderStatus())) {
-            shopOrder.setCloseTime(new Date());
+        if (Objects.nonNull(shopOrder.getOrderStatus()) && OrderStatusEnum.CLOSED.getType().equals(shopOrder.getOrderStatus())) {
+            shopOrder.setCloseTime(shopOrder.getOrderStatus().equals(result.getOrderStatus()) ? result.getCloseTime() : new Date());
         }
         // 支付状态
         if (Objects.nonNull(shopOrder.getPayStatus()) && !shopOrder.getPayStatus().equals(result.getPayStatus()) && PayStatusEnum.PAYMENT_SUCCESSFUL.getType().equals(shopOrder.getPayStatus())) {

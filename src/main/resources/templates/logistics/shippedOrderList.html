@@ -119,26 +119,28 @@
     <table class="layui-table" id="showTable" lay-filter="showTable"></table>
     <script type="text/html" id="toolbar">
         <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchClosed" shiro:hasPermission="shopOrder:manager"><i class="fa fa-times-circle"></i> 消耗品统计</button>
-            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe640;</i>批量顺丰出库</button>
-            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe640;</i>批量京东出库</button>
+            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="consumableStatistics" shiro:hasPermission="shopOrder:list"><i class="fa fa-bar-chart"></i> 消耗品统计</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="" style="background: #000000;" shiro:hasPermission="shopOrder:update"><i class="fa fa-truck"></i> 顺丰批量出库</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="" shiro:hasPermission="shopOrder:update"><i class="fa fa-truck"></i> 京东批量出库</button>
 
-            <button class="layui-btn layui-btn-sm" id="export" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe67d;</i> 导出查询订单</button>
-            <button class="layui-btn layui-btn-sm" id="export" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe67d;</i> 导出发货订单</button>
+            <button class="layui-btn layui-btn-sm" lay-event="" shiro:hasPermission="shopOrder:list"><i class="fa fa-cloud-download"></i> 导出查询订单</button>
+            <button class="layui-btn layui-btn-sm" lay-event="" shiro:hasPermission="shopOrder:list"><i class="fa fa-cloud-download"></i> 导出发货订单</button>
 
-            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="downloadFreeBillTemplate" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe67d;</i> 导出运单模板</button>
-            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="importFreeBill" shiro:hasPermission="shopOrder:manager"><i class="layui-icon">&#xe681;</i> 批量导入运单</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="" shiro:hasPermission="shopOrder:update"><i class="fa fa-cloud-download"></i> 导出运单模板</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="" shiro:hasPermission="shopOrder:update"><i class="fa fa-cloud-upload"></i> 批量导入运单</button>
         </div>
     </script>
     <script type="text/html" id="tool">
-        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="detail" shiro:hasPermission="shopOrder:list"><i class="layui-icon">&#xe615;</i>订单详情</a>
-        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="detail" shiro:hasPermission="shopOrder:list"><i class="layui-icon">&#xe615;</i>打印订单</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="detail" shiro:hasPermission="shopOrder:list"><i class="fa fa-newspaper-o"></i> 订单详情</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="" shiro:hasPermission="shopOrder:list"><i class="fa fa-print"></i> 打印订单</a>
         <br/>
-        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="orderChange" shiro:hasPermission="shopMember:manager"><i class="fa fa-edit"></i> 地址变更</a>
-        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="orderChange" shiro:hasPermission="shopMember:manager"><i class="fa fa-edit"></i> 订单发货</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="addressChange" shiro:hasPermission="shopMember:update"><i class="fa fa-pencil-square-o"></i> 收货变更</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="orderShipment" shiro:hasPermission="shopMember:update"><i class="fa fa-paper-plane-o"></i> 订单发货</a>
         <br/>
-        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="orderChange" shiro:hasPermission="shopMember:manager"><i class="fa fa-edit"></i> 顺丰出库</a>
-        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="orderChange" shiro:hasPermission="shopMember:manager"><i class="fa fa-edit"></i> 京东出库</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" style="border-color: #000000 !important; color: #000000 !important;" lay-event=""
+           shiro:hasPermission="shopMember:update"><i class="fa fa-truck"></i> 顺丰出库</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" style="border-color: #FF5722 !important; color: #FF5722 !important;" lay-event=""
+           shiro:hasPermission="shopMember:update"><i class="fa fa-truck"></i> 京东出库</a>
     </script>
 
 
@@ -202,6 +204,64 @@
         {{#  } }}
     </script>
 
+
+    <div id="addressChangeTpl" hidden>
+        <form class="layui-form layui-form-pane" id="addressChangeForm" lay-filter="addressChangeForm">
+            <input type="submit" lay-filter="submitBtnForAddressChange" id="submitBtnForAddressChange" lay-submit="" hidden/>
+            <input type="hidden" name="id"/>
+            <blockquote class="layui-elem-quote">收货信息</blockquote>
+            <blockquote class="layui-elem-quote layui-quote-nm">
+                <table class="layui-table" lay-size="sm">
+                    <colgroup>
+                        <col width="100">
+                        <col width="500">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="required">收货人</td>
+                        <td>
+                            <input type="text" name="receiverContact" lay-verify="required" autocomplete="off" placeholder="请输入收货人" class="layui-input"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="required">联系方式</td>
+                        <td>
+                            <input type="text" name="receiverMobile" lay-verify="required" autocomplete="off" placeholder="请输入联系方式" class="layui-input"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="required">收货地址</td>
+                        <td>
+                            <div id="area-picker" class="layui-row">
+                                <div class="layui-col-xs4">
+                                    <select name="receiverProvince" lay-verify="required" lay-filter="province" lay-search
+                                            th:with="addressLibraryList=${@commonController.findAllSubordinateAddressLibrary('0').data}">
+                                        <option value="">请选择省</option>
+                                        <option th:each="addressLibrary : ${addressLibraryList}" th:text="${addressLibrary.name}" th:value="${addressLibrary.id}"></option>
+                                    </select>
+                                </div>
+                                <div class="layui-col-xs4">
+                                    <select name="receiverCity" lay-verify="required" lay-filter="city" lay-search>
+                                        <option value="">请选择市</option>
+                                    </select>
+                                </div>
+                                <div class="layui-col-xs4">
+                                    <select name="receiverCounty" lay-verify="required" lay-filter="county" lay-search>
+                                        <option value="">请选择区</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="required">详细地址</td>
+                        <td><textarea name="receiverAddress" lay-verify="required" placeholder="请输入" class="layui-textarea"></textarea></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </blockquote>
+        </form>
+    </div>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
 <script th:src="@{/layui/layui.all.js}" charset="utf-8"></script>
@@ -276,6 +336,19 @@
                     layer.closeAll();
                 });
             }
+        });
+
+        form.on('submit(submitBtnForAddressChange)', function (data) {
+            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
+            CoreUtil.sendPut("/shopOrder/update", data.field, function (res) {
+                layer.msg("变更成功", {time: 500}, function () {
+                    // 刷新父页面列表
+                    table.reload('showTable');
+                    layer.closeAll();
+                });
+            });
+            // //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            return false;
         });
 
         //加载table
@@ -370,7 +443,7 @@
                     },
                     {width: 220, field: 'createTime', title: '订单时间', templet: '#timeInfo'},
                     {
-                        width: 350, field: 'shippingName', title: '物流信息', templet: function (item) {
+                        width: 350, field: 'shippingName', title: '收货人信息', templet: function (item) {
                             var receiverProvince = "";
                             CoreUtil.sendSyncGet("/common/getNameById2", {id: item.receiverProvince}, function (res) {
                                 receiverProvince = res.data;
@@ -455,40 +528,24 @@
 
         //表头工具
         table.on('toolbar(showTable)', function (obj) {
-            // switch (obj.event) {
-            //     case 'batchClosed':
-            //         var checkStatus = table.checkStatus(obj.config.id);
-            //         var data = checkStatus.data;
-            //         if (data.length == 0) {
-            //             layer.msg("请选择要批量关闭的列");
-            //         } else {
-            //             var ids = [];
-            //             $(data).each(function (index, item) {
-            //                 ids.push(item.id);
-            //             });
-            //             tipDialogForClose(ids);
-            //         }
-            //         break;
-            //     case 'batchDeleted':
-            //         var checkStatus = table.checkStatus(obj.config.id);
-            //         var data = checkStatus.data;
-            //         if (data.length == 0) {
-            //             layer.msg("请选择要批量删除的列");
-            //         } else {
-            //             var ids = [];
-            //             $(data).each(function (index, item) {
-            //                 ids.push(item.id);
-            //             });
-            //             tipDialogForDelete(ids);
-            //         }
-            //         break;
-            //     case 'downloadFreeBillTemplate':
-            //         window.open("../shopOrder/downloadFreeBillTemplate?authorization=" + tokenQuery, "_blank");
-            //         break;
-            //     case 'importFreeBill':
-            //         $("#uploadBtn").click();
-            //         break;
-            // }
+            switch (obj.event) {
+                case 'consumableStatistics':
+
+                    break;
+                // case 'batchClosed':
+                //     var checkStatus = table.checkStatus(obj.config.id);
+                //     var data = checkStatus.data;
+                //     if (data.length == 0) {
+                //         layer.msg("请选择要批量关闭的列");
+                //     } else {
+                //         var ids = [];
+                //         $(data).each(function (index, item) {
+                //             ids.push(item.id);
+                //         });
+                //         tipDialogForClose(ids);
+                //     }
+                //     break;
+            }
         });
         //列操作
         table.on('tool(showTable)', function (obj) {
@@ -512,8 +569,83 @@
                         }
                     });
                     break;
+                case 'addressChange':
+                    layer.open({
+                        id: 'addressChange'
+                        , type: 1
+                        , title: '<i class="layui-icon">&#xe639;</i> 收货信息'
+                        , content: $('#addressChangeTpl')
+                        , area: ['800px', '700px']//宽高不影响最大化
+                        , btn: ['提交变更', '取消']
+                        , yes: function (index, layero) {
+                            $("#submitBtnForAddressChange").click();
+                        },
+                        success: function (layero, index) {
+                            form.val("addressChangeForm", {
+                                "id": data.id,
+                                "receiverContact": data.receiverContact,
+                                "receiverMobile": data.receiverMobile,
+                                "receiverAddress": data.receiverAddress,
+                                "receiverProvince": data.receiverProvince,
+                            });
+                            loadCity(data.receiverProvince, data.receiverCity);
+                            loadCounty(data.receiverCity, data.receiverCounty);
+                        }
+                    });
+                    break;
+                case 'orderShipment':
+
+                    break;
             }
         });
+
+        function loadCity(province, city) {
+            var form = layui.form;
+            $("select[name='receiverCity']").empty();
+            $("select[name='receiverCity']").append("<option value=''>请选择市</option>");
+            $("select[name='receiverCounty']").empty();
+            $("select[name='receiverCounty']").append("<option value=''>请选择区</option>");
+            if (province) {
+                CoreUtil.sendSyncGet("/common/findAllSubordinateAddressLibrary/" + province, null, function (res) {
+                    if (res.data) {
+                        var selectObj = $("select[name='receiverCity']");
+                        $(selectObj).empty();
+                        $(selectObj).append("<option value=''>请选择市</option>");
+                        $(res.data).each(function (index, item) {
+                            if (city && city == item.id) {
+                                $(selectObj).append("<option value='" + item.id + "' selected>" + item.name + "</option>");
+                            } else {
+                                $(selectObj).append("<option value='" + item.id + "'>" + item.name + "</option>");
+                            }
+                        });
+                    }
+                });
+            }
+            form.render('select');
+        }
+
+        function loadCounty(city, county) {
+            var form = layui.form;
+            $("select[name='receiverCounty']").empty();
+            $("select[name='receiverCounty']").append("<option value=''>请选择区</option>");
+            if (city) {
+                CoreUtil.sendSyncGet("/common/findAllSubordinateAddressLibrary/" + city, null, function (res) {
+                    if (res.data) {
+                        var selectObj = $("select[name='receiverCounty']");
+                        $(selectObj).empty();
+                        $(selectObj).append("<option value=''>请选择区</option>");
+                        $(res.data).each(function (index, item) {
+                            if (county && county == item.id) {
+                                $(selectObj).append("<option value='" + item.id + "' selected>" + item.name + "</option>");
+                            } else {
+                                $(selectObj).append("<option value='" + item.id + "'>" + item.name + "</option>");
+                            }
+                        });
+                    }
+                });
+            }
+            form.render('select');
+        }
 
         //导出
         $('#export').on('click', function () {
