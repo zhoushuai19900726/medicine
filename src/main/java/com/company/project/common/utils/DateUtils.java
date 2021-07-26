@@ -1,5 +1,9 @@
 package com.company.project.common.utils;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -26,5 +30,15 @@ public class DateUtils {
             return df.format(date);
         }
         return null;
+    }
+
+    /**
+     * String 日期转DATE
+     *
+     * @return DATE
+     */
+    public static Date parse(String strDate) {
+        DateTimeFormatter format = DateTimeFormat.forPattern(DATE_TIME_PATTERN);
+        return DateTime.parse(strDate, format).toDate();
     }
 }

@@ -18,5 +18,7 @@ public interface ShopOrderService extends IService<ShopOrderEntity> {
 
     DataResult uploadFreeBill(MultipartFile file);
 
+    DataResult uploadWaybill(MultipartFile file, String shippingId, String consignTime);
+
 }
 

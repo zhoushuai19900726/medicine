@@ -60,14 +60,18 @@ public class ShopOrderServiceImpl extends ServiceImpl<ShopOrderMapper, ShopOrder
             shopOrder.setPayTime(new Date());
         }
         // 发货状态
-        if (Objects.nonNull(shopOrder.getConsignStatus()) && !shopOrder.getConsignStatus().equals(result.getConsignStatus())) {
+        if (Objects.nonNull(shopOrder.getConsignStatus())) {
+            // 未发货
+            if (ConsignStatusEnum.UNDELIVERED.getType().equals(shopOrder.getConsignStatus())) {
+                shopOrderMapper.resetConsignTime(shopOrder.getId());
+            }
             // 发货
             if (ConsignStatusEnum.DELIVERED.getType().equals(shopOrder.getConsignStatus())) {
                 shopOrder.setConsignTime(Objects.nonNull(shopOrder.getConsignTime()) ? shopOrder.getConsignTime() : new Date());
             }
             // 收货
             if (ConsignStatusEnum.RECEIVED.getType().equals(shopOrder.getConsignStatus())) {
-                shopOrder.setEndTime(new Date());
+                shopOrder.setEndTime(Objects.nonNull(shopOrder.getEndTime()) ? shopOrder.getEndTime() : new Date());
             }
         }
         // 订单明细状态
@@ -193,6 +197,62 @@ public class ShopOrderServiceImpl extends ServiceImpl<ShopOrderMapper, ShopOrder
         shopOrderEntity.setPayStatus(PayStatusEnum.PAYMENT_SUCCESSFUL.getType());
         shopOrderEntity.setConsignStatus(ConsignStatusEnum.UNDELIVERED.getType());
         shopOrderMapper.insert(shopOrderEntity);
+    }
+
+
+    @Override
+    public DataResult uploadWaybill(MultipartFile file, String shippingId, String consignTime) {
+        try {
+            // 文件
+            if (Objects.isNull(file) || StringUtils.isBlank(file.getOriginalFilename()) || StringUtils.equalsIgnoreCase(DelimiterConstants.EMPTY_STR, file.getOriginalFilename().trim())) {
+                return DataResult.fail(BusinessResponseCode.FILE_EMPTY.getMsg());
+            }
+            //获取文件名
+            String name = file.getOriginalFilename();
+            // 进一步判断文件是否为空（即判断其大小是否为0或其名称是否为null）验证文件名是否合格
+            if (file.getSize() == NumberConstants.ZERO || !CommonUtils.validateExcel(name)) {
+                return DataResult.fail(BusinessResponseCode.FILE_FORMAT_ERROR.getMsg());
+            }
+            // 1.获取Excel标题-->校对表头
+            List<String> excelTitle = ExcelExportUtil.readExcelTitle(file.getInputStream(), name);
+            List<String> systemTitle = TitleAndCodeEnum.IMPORT_WAY_BILL.getTitle();
+            if (Objects.isNull(excelTitle) || excelTitle.size() != systemTitle.size()) {
+                return DataResult.fail(BusinessResponseCode.FILE_TITLE_ERROR.getMsg());
+            }
+            // 标题校验
+            StringBuilder sb = new StringBuilder();
+            AtomicInteger i = new AtomicInteger();
+            systemTitle.forEach(title -> {
+                if (!StringUtils.equals(title, ExcelExportUtil.getTitle(excelTitle.get(i.get())))) {
+                    sb.append(BusinessResponseCode.FILE_TITLE_CONTENT_ERROR_FRONT.getMsg()).append(i.get() + NumberConstants.ONE).append(BusinessResponseCode.FILE_TITLE_CONTENT_ERROR_AFTER.getMsg()).append(title).append("<br/>");
+                }
+                i.getAndIncrement();
+            });
+            if (StringUtils.isNotBlank(sb.toString())) {
+                return DataResult.fail(sb.toString());
+            }
+            // 2.读取Excel数据信息
+            List<String> systemCode = TitleAndCodeEnum.IMPORT_WAY_BILL.getCode();
+            List<LinkedHashMap<String, Object>> data = ExcelExportUtil.readExcelContent(file.getInputStream(), name, systemCode);
+            if (CollectionUtils.isEmpty(data)) {
+                return DataResult.fail(BusinessResponseCode.FILE_DATA_EMPTY.getMsg());
+            }
+            // 保存运单
+            data.forEach(map -> {
+                String orderId = String.valueOf(map.get(TitleAndCodeEnum.IMPORT_WAY_BILL.getCode().get(NumberConstants.ZERO)));
+                String shippingCode = String.valueOf(map.get(TitleAndCodeEnum.IMPORT_WAY_BILL.getCode().get(NumberConstants.ONE)));
+                ShopOrderEntity shopOrderEntity = new ShopOrderEntity();
+                shopOrderEntity.setId(orderId);
+                shopOrderEntity.setShippingId(shippingId);
+                shopOrderEntity.setShippingCode(shippingCode);
+                shopOrderEntity.setConsignTime(DateUtils.parse(consignTime));
+                shopOrderEntity.setConsignStatus(ConsignStatusEnum.DELIVERED.getType());
+                shopOrderMapper.updateById(shopOrderEntity);
+            });
+            return DataResult.success(data);
+        } catch (Exception e) {
+            return DataResult.fail(e.getMessage());
+        }
     }
 
 }

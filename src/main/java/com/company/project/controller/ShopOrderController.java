@@ -90,7 +90,7 @@ public class ShopOrderController extends BaseController {
     @ResponseBody
     public DataResult close(@RequestBody @ApiParam(value = "id集合") List<String> ids) {
         List<ShopOrderEntity> shopOrderEntityList = shopOrderService.list(Wrappers.<ShopOrderEntity>lambdaQuery().in(ShopOrderEntity::getId, ids).ne(ShopOrderEntity::getOrderStatus, OrderStatusEnum.CLOSED.getType()));
-        if(CollectionUtils.isNotEmpty(shopOrderEntityList)){
+        if (CollectionUtils.isNotEmpty(shopOrderEntityList)) {
             return DataResult.success(shopOrderService.update(new ShopOrderEntity(new Date(), OrderStatusEnum.CLOSED.getType()), Wrappers.<ShopOrderEntity>lambdaQuery().in(ShopOrderEntity::getId, shopOrderEntityList.stream().map(ShopOrderEntity::getId).collect(Collectors.toList()))));
         }
         return DataResult.fail(BusinessResponseCode.NO_ORDERS_TO_CLOSE.getMsg());
@@ -127,7 +127,7 @@ public class ShopOrderController extends BaseController {
 //                .apply(StringUtils.isNotBlank(shopOrder.getCreateEndTime()), "UNIX_TIMESTAMP(create_time) <= UNIX_TIMESTAMP('" + shopOrder.getCreateEndTime() + "')")
                 .apply(StringUtils.isNotBlank(shopOrder.getPayStartTime()), "UNIX_TIMESTAMP(pay_time) >= UNIX_TIMESTAMP('" + shopOrder.getPayStartTime() + "')")
                 .apply(StringUtils.isNotBlank(shopOrder.getPayEndTime()), "UNIX_TIMESTAMP(pay_time) <= UNIX_TIMESTAMP('" + shopOrder.getPayEndTime() + "')");
-        if(Objects.nonNull(shopOrder.getUrgentDelivery()) && NumberConstants.ONE_I.equals(shopOrder.getUrgentDelivery())){
+        if (Objects.nonNull(shopOrder.getUrgentDelivery()) && NumberConstants.ONE_I.equals(shopOrder.getUrgentDelivery())) {
             queryWrapper.orderByDesc(ShopOrderEntity::getUrgentDelivery);
         }
         queryWrapper.orderByDesc(ShopOrderEntity::getCreateTime);
@@ -148,6 +148,22 @@ public class ShopOrderController extends BaseController {
     @ResponseBody
     public DataResult uploadFreeBill(@RequestParam(value = "file") MultipartFile file) {
         return shopOrderService.uploadFreeBill(file);
+    }
+
+    @ApiOperation(value = "下载运单模板")
+    @GetMapping(value = "shopOrder/downloadWaybillTemplate")
+    @LogAnnotation(title = "订单", action = "下载运单模板")
+    public void downloadWaybillTemplate(HttpServletResponse response) {
+        DownFileUtil.downFileByPath(response, SystemConstants.importExport + "/运单模板.xlsx");
+    }
+
+    @ApiOperation(value = "导入运单")
+    @PostMapping("shopOrder/uploadWaybill")
+    @RequiresPermissions("shopOrder:update")
+    @LogAnnotation(title = "订单", action = "导入运单")
+    @ResponseBody
+    public DataResult uploadWaybill(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "shippingId") String shippingId, @RequestParam(value = "consignTime") String consignTime) {
+        return shopOrderService.uploadWaybill(file, shippingId, consignTime);
     }
 
 

@@ -59,6 +59,15 @@ public enum TitleAndCodeEnum {
             Lists.newArrayList("memberName", "amount")
     ),
 
+    /**
+     * 导入运单
+     * 订单编号、运单编号
+     */
+    IMPORT_WAY_BILL(
+            Lists.newArrayList("订单编号", "运单编号"),
+            Lists.newArrayList("orderId", "shippingCode")
+    ),
+
 
     ;
 

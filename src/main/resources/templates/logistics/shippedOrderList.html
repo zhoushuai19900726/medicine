@@ -25,7 +25,6 @@
 <body>
 <div class="layuimini-container">
     <div class="layuimini-main" shiro:hasPermission="shopOrder:list">
-        <input type="hidden" id="uploadBtn"/>
         <fieldset class="table-search-fieldset">
             <legend>搜索信息</legend>
             <div style="margin: 5px 5px 5px 5px">
@@ -126,8 +125,8 @@
             <button class="layui-btn layui-btn-sm" lay-event="" shiro:hasPermission="shopOrder:list"><i class="fa fa-cloud-download"></i> 导出查询订单</button>
             <button class="layui-btn layui-btn-sm" lay-event="" shiro:hasPermission="shopOrder:list"><i class="fa fa-cloud-download"></i> 导出发货订单</button>
 
-            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="" shiro:hasPermission="shopOrder:update"><i class="fa fa-cloud-download"></i> 导出运单模板</button>
-            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="" shiro:hasPermission="shopOrder:update"><i class="fa fa-cloud-upload"></i> 批量导入运单</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="downloadWaybillTemplate" shiro:hasPermission="shopOrder:update"><i class="fa fa-cloud-download"></i> 导出运单模板</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="importWaybill" shiro:hasPermission="shopOrder:update"><i class="fa fa-cloud-upload"></i> 批量导入运单</button>
         </div>
     </script>
     <script type="text/html" id="tool">
@@ -146,7 +145,7 @@
 
     <script type="text/html" id="orderInfo">
         <div class="layui-row">
-            {{#  if(d.urgentDelivery == 1){ }}
+            {{# if(d.urgentDelivery == 1){ }}
             <i class="fa fa-fire" style="color: red; position: absolute; left: 2px; top: 0;" title="十万火急"></i>
             {{# } }}
             <span class="layui-badge-rim">
@@ -267,7 +266,6 @@
     </div>
 
 
-
     <div id="orderShipmentTpl" hidden>
         <form class="layui-form layui-form-pane" id="orderShipmentForm" lay-filter="orderShipmentForm">
             <input type="submit" lay-filter="submitBtnForOrderShipment" id="submitBtnForOrderShipment" lay-submit="" hidden/>
@@ -309,6 +307,65 @@
     </div>
 
 
+    <div id="importWaybillTpl" hidden>
+        <form class="layui-form layui-form-pane" id="importWaybillForm" lay-filter="importWaybillForm">
+            <blockquote class="layui-elem-quote">运单信息</blockquote>
+            <blockquote class="layui-elem-quote layui-quote-nm">
+                <table class="layui-table" lay-size="sm">
+                    <colgroup>
+                        <col width="100">
+                        <col width="500">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="required">物流名称</td>
+                        <td>
+                            <select name="shippingId" lay-verify="required" lay-search th:with="dataResult=${@shopLogisticsCompanyController.findListByAll()}">
+                                <option value="">请选择</option>
+                                <option th:each="shopLogisticsCompany : ${dataResult.getData()}" th:text="${shopLogisticsCompany.name}" th:value="${shopLogisticsCompany.id}"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="required">发货时间</td>
+                        <td>
+                            <input type="text" readonly lay-verify="required" class="layui-input" id="consignTime2" name="consignTime" placeholder="发货时间">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="required">物流单号</td>
+                        <td>
+                            <div class="layui-upload">
+                                <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" id="importWaybillUpload"><i class="fa fa-cloud-upload"></i> 选择多文件</button>
+                                <div class="layui-upload-list" style="max-width: 1000px;">
+                                    <table class="layui-table">
+                                        <colgroup>
+                                            <col>
+                                            <col width="100">
+                                            <col width="100">
+                                            <col width="150">
+                                        </colgroup>
+                                        <thead>
+                                        <tr>
+                                            <th>文件名</th>
+                                            <th>大小</th>
+                                            <th>上传进度</th>
+                                            <th>操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="importWaybillTable"></tbody>
+                                    </table>
+                                </div>
+                                <button type="button" id="exeUpload" lay-submit="" hidden></button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </blockquote>
+        </form>
+    </div>
+
 
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
@@ -322,13 +379,14 @@
     var tokenQuery = token.replace("#", "%23");
     var tableIns1;
     var $ = jQuery = layui.jquery;
-    layui.use(['table', 'layer', 'laydate', 'util', 'upload'], function () {
+    layui.use(['table', 'layer', 'laydate', 'util', 'upload', 'element'], function () {
         var table = layui.table;
         var form = layui.form;
         var layer = layui.layer;
         var laydate = layui.laydate;
         var util = layui.util;
         var upload = layui.upload;
+        var element = layui.element;
 
         /**
          * 日期时间选择器
@@ -366,31 +424,85 @@
             , type: 'datetime'
             , value: new Date()
         });
+        /**
+         * 日期时间选择器
+         */
+        laydate.render({
+            elem: '#consignTime2'
+            , type: 'datetime'
+            , value: new Date()
+        });
 
-        upload.render({
-            elem: '#uploadBtn' //绑定元素
-            , accept: 'file' //允许上传的文件类型
-            , url: '/shopOrder/uploadFreeBill?authorization=' + tokenQuery // 上传文件的路径
-            , before: function () {
-                layer.load(2);
+        var loading;
+        var uploadListIns = upload.render({
+            elem: '#importWaybillUpload'
+            , elemList: $('#importWaybillTable') //列表元素对象
+            , url: '/shopOrder/uploadWaybill?authorization=' + tokenQuery // 上传文件的路径
+            , accept: 'file'
+            , multiple: true
+            , number: 5
+            , auto: false
+            , bindAction: '#exeUpload'
+            , before: function (obj) {
+                loading = layer.load(0, {shade: false, time: 0});
+                this.data = form.val("importWaybillForm");///携带额外的数据
             }
-            , done: function (res, index, upload) {
-                if (res.code == 0) {
-                    layer.msg("上传成功", {time: 500}, function () {
-                        // 刷新父页面列表
-                        table.reload('showTable');
-                        layer.closeAll();
+            , choose: function (obj) {
+                var that = this;
+                var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+                // 读取本地文件
+                obj.preview(function (index, file, result) {
+                    var tr = $(['<tr id="upload-' + index + '">'
+                        , '<td>' + file.name + '<br/><span name="errorInfo"></span></td>'
+                        , '<td>' + (file.size / 1014).toFixed(1) + 'kb</td>'
+                        , '<td>待上传...</td><td>'
+                        , '<button type="button" class="layui-btn layui-btn-xs demo-reload layui-hide">重传</button>'
+                        , '<button type="button" class="layui-btn layui-btn-xs layui-btn-danger demo-delete">删除</button>'
+                        , '</td>'
+                        , '</tr>'].join(''));
+                    // 单个重传
+                    tr.find('.demo-reload').on('click', function () {
+                        obj.upload(index, file);
                     });
-                } else {
-                    layer.msg("上传失败, " + res.msg, {time: 5000, icon: 5}, function () {
-                        layer.closeAll();
+                    // 删除
+                    tr.find('.demo-delete').on('click', function () {
+                        delete files[index]; //删除对应的文件
+                        tr.remove();
+                        uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
                     });
+                    that.elemList.append(tr);
+                    element.render('importWaybillTable'); //渲染新加的进度条组件
+                });
+            }
+            , done: function (res, index, upload) { //成功的回调
+                var that = this;
+                var tr = that.elemList.find('tr#upload-' + index), tds = tr.children();
+                tds.eq(0).find("span[name='errorInfo']").empty();
+                if (res.code == 0) { //上传成功
+                    tds.eq(2).html('上传成功'); //清空操作
+                    tds.eq(3).html(''); //清空操作
+                    delete this.files[index]; //删除文件队列已经上传成功的文件
+                    return;
                 }
+                tds.eq(0).find("span[name='errorInfo']").html("<em style='color: #eb7350;'>" + res.msg + "</em>");
+                this.error(index, upload);
             }
-            , error: function (index, upload) {
-                layer.msg("上传失败", {time: 5000, icon: 5}, function () {
+            , allDone: function (obj) { //多文件上传完毕后的状态回调
+                layer.close(loading);
+                layer.msg("导入成功", {time: 500}, function () {
+                    tableIns1.reload();
                     layer.closeAll();
                 });
+            }
+            , error: function (index, upload) { //错误回调
+                var that = this;
+                var tr = that.elemList.find('tr#upload-' + index), tds = tr.children();
+                tds.eq(3).find('.demo-reload').removeClass('layui-hide'); //显示重传
+                layer.close(loading);
+            }
+            , progress: function (n, elem, e, index) { //注意：index 参数为 layui 2.6.6 新增
+                // TODO 执行进度条。n 即为返回的进度百分比
+                element.progress('importWaybillTable', n + '%');
             }
         });
 
@@ -614,6 +726,22 @@
                 //         tipDialogForClose(ids);
                 //     }
                 //     break;
+                case 'downloadWaybillTemplate':
+                    window.open("../../shopOrder/downloadWaybillTemplate?authorization=" + tokenQuery, "_blank");
+                    break;
+                case 'importWaybill':
+                    layer.open({
+                        id: 'importWaybill'
+                        , type: 1
+                        , title: '<i class="layui-icon">&#xe639;</i> 导入运单'
+                        , content: $('#importWaybillTpl')
+                        , area: ['900px', '700px']//宽高不影响最大化
+                        , btn: ['提交运单', '取消']
+                        , yes: function (index, layero) {
+                            $("#exeUpload").click();
+                        }
+                    });
+                    break;
             }
         });
         //列操作
