@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+    <style>
+        table tbody tr td .layui-table-cell {
+            height: 90px;
+            white-space: nowrap;
+        }
+
+        table tbody tr td .laytable-cell-checkbox {
+            line-height: 90px;
+        }
+
+        table tbody tr td .laytable-cell-numbers {
+            line-height: 90px;
+        }
+    </style>
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main" shiro:hasPermission="shopOrder:list">
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 5px 5px 5px 5px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">订单编号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="id" autocomplete="off" placeholder="请输入订单编号" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">支付单号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="transactionId" autocomplete="off" placeholder="请输入支付单号" class="layui-input">
+                            </div>
+                        </div>
+                        <!--<div class="layui-inline">
+                            <label class="layui-form-label">流水单号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="serialNumber" autocomplete="off" placeholder="请输入流水号" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">下单日期</label>
+                            <div class="layui-input-inline">
+                                <input type="text" readonly class="layui-input" id="createStartTime" name="createStartTime" placeholder="开始时间">
+                            </div>
+                            <div class="layui-input-inline">
+                                <input type="text" readonly class="layui-input" id="createEndTime" name="createEndTime" placeholder="结束时间">
+                            </div>
+                        </div>-->
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label">会员账号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="serialNumber" autocomplete="off" placeholder="请输入会员账号" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">支付日期</label>
+                            <div class="layui-input-inline">
+                                <input type="text" readonly class="layui-input" id="payStartTime" name="payStartTime" placeholder="开始时间">
+                            </div>
+                            <div class="layui-input-inline">
+                                <input type="text" readonly class="layui-input" id="payEndTime" name="payEndTime" placeholder="结束时间">
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="data-search-btn" shiro:hasPermission="shopOrder:add"><i class="layui-icon">&#xe615;</i> 搜 索</button>
+                        </div>
+
+
+                    </div>
+                    <!-- TODO 更多筛选 -->
+                    <!--<div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">会员账号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="serialNumber" autocomplete="off" placeholder="请输入会员账号" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">支付方式</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="id" autocomplete="off" placeholder="请输入支付方式" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">订单状态</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="id" autocomplete="off" placeholder="请输入订单状态" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">支付日期</label>
+                            <div class="layui-input-inline">
+                                <input type="text" readonly class="layui-input" id="payStartTime" name="payStartTime" placeholder="开始时间">
+                            </div>
+                            <div class="layui-input-inline">
+                                <input type="text" readonly class="layui-input" id="payEndTime" name="payEndTime" placeholder="结束时间">
+                            </div>
+                        </div>
+                    </div>-->
+
+                </form>
+            </div>
+        </fieldset>
+    </div>
+    <table class="layui-table" id="showTable" lay-filter="showTable"></table>
+    <script type="text/html" id="toolbar">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="consumableStatistics" shiro:hasPermission="shopOrder:list"><i class="fa fa-bar-chart"></i> 消耗品统计</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="" style="background: #000000;" shiro:hasPermission="shopOrder:update"><i class="fa fa-truck"></i> 顺丰批量出库</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="" shiro:hasPermission="shopOrder:update"><i class="fa fa-truck"></i> 京东批量出库</button>
+
+            <button class="layui-btn layui-btn-sm" lay-event="" shiro:hasPermission="shopOrder:list"><i class="fa fa-cloud-download"></i> 导出查询订单</button>
+            <button class="layui-btn layui-btn-sm" lay-event="" shiro:hasPermission="shopOrder:list"><i class="fa fa-cloud-download"></i> 导出发货订单</button>
+
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="downloadWaybillTemplate" shiro:hasPermission="shopOrder:update"><i class="fa fa-cloud-download"></i> 导出运单模板</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="importWaybill" shiro:hasPermission="shopOrder:update"><i class="fa fa-cloud-upload"></i> 批量导入运单</button>
+        </div>
+    </script>
+    <script type="text/html" id="tool">
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="detail" shiro:hasPermission="shopOrder:list"><i class="fa fa-newspaper-o"></i> 订单详情</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="" shiro:hasPermission="shopOrder:list"><i class="fa fa-print"></i> 打印订单</a>
+        <br/>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="addressChange" shiro:hasPermission="shopMember:update"><i class="fa fa-pencil-square-o"></i> 收货变更</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="orderShipment" shiro:hasPermission="shopMember:update"><i class="fa fa-paper-plane-o"></i> 订单发货</a>
+        <br/>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" style="border-color: #000000 !important; color: #000000 !important;" lay-event=""
+           shiro:hasPermission="shopMember:update"><i class="fa fa-truck"></i> 顺丰出库</a>
+        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" style="border-color: #FF5722 !important; color: #FF5722 !important;" lay-event=""
+           shiro:hasPermission="shopMember:update"><i class="fa fa-truck"></i> 京东出库</a>
+    </script>
+
+
+    <script type="text/html" id="orderInfo">
+        <div class="layui-row">
+            {{# if(d.urgentDelivery == 1){ }}
+            <i class="fa fa-fire" style="color: red; position: absolute; left: 2px; top: 0;" title="十万火急"></i>
+            {{# } }}
+            <span class="layui-badge-rim">
+                <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
+                    <i class="fa fa-shirtsinbulk"></i> 流水单号
+                </span>
+                {{ d.serialNumber }}
+            </span>
+        </div>
+        <div class="layui-row">
+            <span class="layui-badge-rim">
+                <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
+                    <i class="fa fa-shirtsinbulk"></i> 订单编号
+                </span>
+                {{ d.id }}
+            </span>
+        </div>
+        <div class="layui-row">
+            <span class="layui-badge-rim">
+                <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
+                    <i class="fa fa-shirtsinbulk"></i> 支付单号
+                </span>
+                {{ d.transactionId }}
+            </span>
+        </div>
+    </script>
+
+    <script type="text/html" id="timeInfo">
+        {{#  if(d.createTime != null){ }}
+        <div class="layui-row">
+            <span class="layui-badge-rim">
+                <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
+                    <i class="fa fa-clock-o"></i> 下单时间
+                </span>
+                {{ d.createTime }}
+            </span>
+        </div>
+        {{#  } }}
+        {{#  if(d.payTime != null){ }}
+        <div class="layui-row">
+            <span class="layui-badge-rim">
+                <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
+                    <i class="fa fa-clock-o"></i> 付款时间
+                </span>
+                {{ d.payTime }}
+            </span>
+        </div>
+        {{#  } }}
+        {{#  if(d.closeTime != null){ }}
+        <div class="layui-row">
+            <span class="layui-badge-rim">
+                <span class="layui-badge layui-bg-cyan4" style="margin-left: -6px;">
+                    <i class="fa fa-clock-o"></i> 关闭时间
+                </span>
+                {{ d.closeTime }}
+            </span>
+        </div>
+        {{#  } }}
+    </script>
+
+
+    <div id="addressChangeTpl" hidden>
+        <form class="layui-form layui-form-pane" id="addressChangeForm" lay-filter="addressChangeForm">
+            <input type="submit" lay-filter="submitBtnForAddressChange" id="submitBtnForAddressChange" lay-submit="" hidden/>
+            <input type="hidden" name="id"/>
+            <blockquote class="layui-elem-quote">收货信息</blockquote>
+            <blockquote class="layui-elem-quote layui-quote-nm">
+                <table class="layui-table" lay-size="sm">
+                    <colgroup>
+                        <col width="100">
+                        <col width="500">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="required">收货人</td>
+                        <td>
+                            <input type="text" name="receiverContact" lay-verify="required" autocomplete="off" placeholder="请输入收货人" class="layui-input"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="required">联系方式</td>
+                        <td>
+                            <input type="text" name="receiverMobile" lay-verify="required" autocomplete="off" placeholder="请输入联系方式" class="layui-input"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="required">收货地址</td>
+                        <td>
+                            <div id="area-picker" class="layui-row">
+                                <div class="layui-col-xs4">
+                                    <select name="receiverProvince" lay-verify="required" lay-filter="province" lay-search
+                                            th:with="addressLibraryList=${@commonController.findAllSubordinateAddressLibrary('0').data}">
+                                        <option value="">请选择省</option>
+                                        <option th:each="addressLibrary : ${addressLibraryList}" th:text="${addressLibrary.name}" th:value="${addressLibrary.id}"></option>
+                                    </select>
+                                </div>
+                                <div class="layui-col-xs4">
+                                    <select name="receiverCity" lay-verify="required" lay-filter="city" lay-search>
+                                        <option value="">请选择市</option>
+                                    </select>
+                                </div>
+                                <div class="layui-col-xs4">
+                                    <select name="receiverCounty" lay-verify="required" lay-filter="county" lay-search>
+                                        <option value="">请选择区</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="required">详细地址</td>
+                        <td><textarea name="receiverAddress" lay-verify="required" placeholder="请输入" class="layui-textarea"></textarea></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </blockquote>
+        </form>
+    </div>
+
+
+    <div id="orderShipmentTpl" hidden>
+        <form class="layui-form layui-form-pane" id="orderShipmentForm" lay-filter="orderShipmentForm">
+            <input type="submit" lay-filter="submitBtnForOrderShipment" id="submitBtnForOrderShipment" lay-submit="" hidden/>
+            <input type="hidden" name="id"/>
+            <input type="hidden" name="consignStatus"/>
+            <blockquote class="layui-elem-quote">发货信息</blockquote>
+            <blockquote class="layui-elem-quote layui-quote-nm">
+                <table class="layui-table" lay-size="sm">
+                    <colgroup>
+                        <col width="100">
+                        <col width="500">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="required">物流名称</td>
+                        <td>
+                            <select name="shippingId" lay-search th:with="dataResult=${@shopLogisticsCompanyController.findListByAll()}">
+                                <option value="">请选择</option>
+                                <option th:each="shopLogisticsCompany : ${dataResult.getData()}" th:text="${shopLogisticsCompany.name}" th:value="${shopLogisticsCompany.id}"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="required">物流单号</td>
+                        <td>
+                            <input type="text" name="shippingCode" lay-verify="required" autocomplete="off" placeholder="请输入物流单号" class="layui-input"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="required">发货时间</td>
+                        <td>
+                            <input type="text" readonly class="layui-input" id="consignTime" name="consignTime" placeholder="发货时间">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </blockquote>
+        </form>
+    </div>
+
+
+    <div id="importWaybillTpl" hidden>
+        <form class="layui-form layui-form-pane" id="importWaybillForm" lay-filter="importWaybillForm">
+            <blockquote class="layui-elem-quote">运单信息</blockquote>
+            <blockquote class="layui-elem-quote layui-quote-nm">
+                <table class="layui-table" lay-size="sm">
+                    <colgroup>
+                        <col width="100">
+                        <col width="500">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="required">物流名称</td>
+                        <td>
+                            <select name="shippingId" lay-verify="required" lay-search th:with="dataResult=${@shopLogisticsCompanyController.findListByAll()}">
+                                <option value="">请选择</option>
+                                <option th:each="shopLogisticsCompany : ${dataResult.getData()}" th:text="${shopLogisticsCompany.name}" th:value="${shopLogisticsCompany.id}"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="required">发货时间</td>
+                        <td>
+                            <input type="text" readonly lay-verify="required" class="layui-input" id="consignTime2" name="consignTime" placeholder="发货时间">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="required">物流单号</td>
+                        <td>
+                            <div class="layui-upload">
+                                <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" id="importWaybillUpload"><i class="fa fa-cloud-upload"></i> 选择多文件</button>
+                                <div class="layui-upload-list" style="max-width: 1000px;">
+                                    <table class="layui-table">
+                                        <colgroup>
+                                            <col>
+                                            <col width="100">
+                                            <col width="100">
+                                            <col width="150">
+                                        </colgroup>
+                                        <thead>
+                                        <tr>
+                                            <th>文件名</th>
+                                            <th>大小</th>
+                                            <th>上传进度</th>
+                                            <th>操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="importWaybillTable"></tbody>
+                                    </table>
+                                </div>
+                                <button type="button" id="exeUpload" lay-submit="" hidden></button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </blockquote>
+        </form>
+    </div>
+
+
+</div>
+<script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/layui/layui.all.js}" charset="utf-8"></script>
+</body>
+</html>
+<script>
+    //获取token
+    var token = CoreUtil.getData("access_token");
+    //地址栏转义token中的#号
+    var tokenQuery = token.replace("#", "%23");
+    var tableIns1;
+    var $ = jQuery = layui.jquery;
+    layui.use(['table', 'layer', 'laydate', 'util', 'upload', 'element'], function () {
+        var table = layui.table;
+        var form = layui.form;
+        var layer = layui.layer;
+        var laydate = layui.laydate;
+        var util = layui.util;
+        var upload = layui.upload;
+        var element = layui.element;
+
+        /**
+         * 日期时间选择器
+         */
+        laydate.render({
+            elem: '#createStartTime'
+            , type: 'datetime'
+        });
+        /**
+         * 日期时间选择器
+         */
+        laydate.render({
+            elem: '#createEndTime'
+            , type: 'datetime'
+        });
+        /**
+         * 日期时间选择器
+         */
+        laydate.render({
+            elem: '#payStartTime'
+            , type: 'datetime'
+        });
+        /**
+         * 日期时间选择器
+         */
+        laydate.render({
+            elem: '#payEndTime'
+            , type: 'datetime'
+        });
+        /**
+         * 日期时间选择器
+         */
+        laydate.render({
+            elem: '#consignTime'
+            , type: 'datetime'
+            , value: new Date()
+        });
+        /**
+         * 日期时间选择器
+         */
+        laydate.render({
+            elem: '#consignTime2'
+            , type: 'datetime'
+            , value: new Date()
+        });
+
+        var loading;
+        var uploadListIns = upload.render({
+            elem: '#importWaybillUpload'
+            , elemList: $('#importWaybillTable') //列表元素对象
+            , url: '/shopOrder/uploadWaybill?authorization=' + tokenQuery // 上传文件的路径
+            , accept: 'file'
+            , multiple: true
+            , number: 5
+            , auto: false
+            , bindAction: '#exeUpload'
+            , before: function (obj) {
+                loading = layer.load(0, {shade: false, time: 0});
+                this.data = form.val("importWaybillForm");///携带额外的数据
+            }
+            , choose: function (obj) {
+                var that = this;
+                var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+                // 读取本地文件
+                obj.preview(function (index, file, result) {
+                    var tr = $(['<tr id="upload-' + index + '">'
+                        , '<td>' + file.name + '<br/><span name="errorInfo"></span></td>'
+                        , '<td>' + (file.size / 1014).toFixed(1) + 'kb</td>'
+                        , '<td>待上传...</td><td>'
+                        , '<button type="button" class="layui-btn layui-btn-xs demo-reload layui-hide">重传</button>'
+                        , '<button type="button" class="layui-btn layui-btn-xs layui-btn-danger demo-delete">删除</button>'
+                        , '</td>'
+                        , '</tr>'].join(''));
+                    // 单个重传
+                    tr.find('.demo-reload').on('click', function () {
+                        obj.upload(index, file);
+                    });
+                    // 删除
+                    tr.find('.demo-delete').on('click', function () {
+                        delete files[index]; //删除对应的文件
+                        tr.remove();
+                        uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+                    });
+                    that.elemList.append(tr);
+                    element.render('importWaybillTable'); //渲染新加的进度条组件
+                });
+            }
+            , done: function (res, index, upload) { //成功的回调
+                var that = this;
+                var tr = that.elemList.find('tr#upload-' + index), tds = tr.children();
+                tds.eq(0).find("span[name='errorInfo']").empty();
+                if (res.code == 0) { //上传成功
+                    tds.eq(2).html('上传成功'); //清空操作
+                    tds.eq(3).html(''); //清空操作
+                    delete this.files[index]; //删除文件队列已经上传成功的文件
+                    return;
+                }
+                tds.eq(0).find("span[name='errorInfo']").html("<em style='color: #eb7350;'>" + res.msg + "</em>");
+                this.error(index, upload);
+            }
+            , allDone: function (obj) { //多文件上传完毕后的状态回调
+                layer.close(loading);
+                layer.msg("导入成功", {time: 500}, function () {
+                    tableIns1.reload();
+                    layer.closeAll();
+                });
+            }
+            , error: function (index, upload) { //错误回调
+                var that = this;
+                var tr = that.elemList.find('tr#upload-' + index), tds = tr.children();
+                tds.eq(3).find('.demo-reload').removeClass('layui-hide'); //显示重传
+                layer.close(loading);
+            }
+            , progress: function (n, elem, e, index) { //注意：index 参数为 layui 2.6.6 新增
+                // TODO 执行进度条。n 即为返回的进度百分比
+                element.progress('importWaybillTable', n + '%');
+            }
+        });
+
+        form.on('submit(submitBtnForAddressChange)', function (data) {
+            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
+            CoreUtil.sendPut("/shopOrder/update", data.field, function (res) {
+                layer.msg("变更成功", {time: 500}, function () {
+                    // 刷新父页面列表
+                    table.reload('showTable');
+                    layer.closeAll();
+                });
+            });
+            // //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            return false;
+        });
+
+        form.on('submit(submitBtnForOrderShipment)', function (data) {
+            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
+            CoreUtil.sendPut("/shopOrder/update", data.field, function (res) {
+                layer.msg("发货成功", {time: 500}, function () {
+                    // 刷新父页面列表
+                    table.reload('showTable');
+                    layer.closeAll();
+                });
+            });
+            // //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            return false;
+        });
+
+        //加载table
+        tableIns1 = table.render({
+            elem: '#showTable'
+            , contentType: 'application/json'
+            , headers: {"authorization": token}
+            , page: true //开启分页
+            , url: '/shopOrder/listByPage' //数据接口
+            , where: {
+                orderStatus: 0,
+                payStatus: 1,
+                consignStatus: 0,
+                urgentDelivery: 1
+            }
+            , method: 'POST'
+            , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": CoreUtil.isEmpty(res.data) ? 0 : res.data.total, //解析数据长度
+                    "data": CoreUtil.isEmpty(res.data) ? null : res.data.records //解析数据列表
+                }
+            }
+            , cols: [
+                [
+                    {type: 'checkbox', fixed: 'left'},
+                    {type: 'numbers', title: '序号', fixed: 'left'},
+                    {width: 320, field: 'id', title: '订单信息', templet: '#orderInfo'},
+                    {
+                        width: 350, field: 'payType', title: '支付信息', templet: function (item) {
+                            var param = {};
+                            param.dictionariesKey = "dict-key-pay_type";
+                            param.value = item.payType;
+                            var payType = "";
+                            CoreUtil.sendSyncGet("/common/getLabelByValue", param, function (res) {
+                                payType = res.data;
+                            });
+                            return "<div class=\"layui-row\">\n" +
+                                "            <div class=\"layui-col-xs6\">\n" +
+                                "                <div class=\"layui-row\">\n" +
+                                "                    <span class=\"layui-badge-rim\">\n" +
+                                "                        <span class=\"layui-badge layui-bg-cyan2\" style=\"margin-left: -6px;\">\n" +
+                                "                            <i class=\"fa fa-cc-paypal\"></i> 订单金额\n" +
+                                "                        </span>\n" +
+                                "                        <i class=\"fa fa-jpy\"></i> " + item.totalMoney.toFixed(2) +
+                                "                    </span>\n" +
+                                "                </div>\n" +
+                                "                <div class=\"layui-row\">\n" +
+                                "                    <span class=\"layui-badge-rim\">\n" +
+                                "                        <span class=\"layui-badge layui-bg-cyan3\" style=\"margin-left: -6px;\">\n" +
+                                "                            <i class=\"fa fa-cc-paypal\"></i> 优惠金额\n" +
+                                "                        </span>\n" +
+                                "                        <i class=\"fa fa-jpy\"></i> " + item.preMoney.toFixed(2) +
+                                "                    </span>\n" +
+                                "                </div>\n" +
+                                "                <div class=\"layui-row\">\n" +
+                                "                    <span class=\"layui-badge-rim\">\n" +
+                                "                        <span class=\"layui-badge layui-bg-cyan2\" style=\"margin-left: -6px;\">\n" +
+                                "                            <i class=\"fa fa-cc-paypal\"></i> 商品运费\n" +
+                                "                        </span>\n" +
+                                "                        <i class=\"fa fa-jpy\"></i> " + item.postFee.toFixed(2) +
+                                "                    </span>\n" +
+                                "                </div>\n" +
+                                "            </div>\n" +
+                                "            <div class=\"layui-col-xs6\">\n" +
+                                "                <div class=\"layui-row\">\n" +
+                                "                    <span class=\"layui-badge-rim\">\n" +
+                                "                        <span class=\"layui-badge layui-bg-cyan2\" style=\"margin-left: -6px;\">\n" +
+                                "                            <i class=\"fa fa-cc-paypal\"></i> 实付金额\n" +
+                                "                        </span>\n" +
+                                "                        <i class=\"fa fa-jpy\"></i> " + item.payMoney.toFixed(2) +
+                                "                    </span>\n" +
+                                "                </div>\n" +
+                                "                <div class=\"layui-row\">\n" +
+                                "                    <span class=\"layui-badge-rim\">\n" +
+                                "                        <span class=\"layui-badge layui-bg-cyan\" style=\"margin-left: -6px;\">\n" +
+                                "                            <i class=\"fa fa-money\"></i> 会员账号\n" +
+                                "                        </span>\n" + item.buyerName +
+                                "                    </span>\n" +
+                                "                </div>\n" +
+                                "                <div class=\"layui-row\">\n" +
+                                "                    <span class=\"layui-badge-rim\">\n" +
+                                "                        <span class=\"layui-badge layui-bg-cyan\" style=\"margin-left: -6px;\">\n" +
+                                "                            <i class=\"fa fa-money\"></i> 支付方式\n" +
+                                "                        </span>\n" + payType +
+                                "                    </span>\n" +
+                                "                </div>\n" +
+                                "            </div>\n" +
+                                "        </div>";
+                        }
+                    },
+                    {width: 220, field: 'createTime', title: '订单时间', templet: '#timeInfo'},
+                    {
+                        width: 350, field: 'shippingName', title: '收货人信息', templet: function (item) {
+                            var receiverProvince = "";
+                            CoreUtil.sendSyncGet("/common/getNameById2", {id: item.receiverProvince}, function (res) {
+                                receiverProvince = res.data;
+                            });
+                            var receiverCity = "";
+                            CoreUtil.sendSyncGet("/common/getNameById2", {id: item.receiverCity}, function (res) {
+                                receiverCity = res.data;
+                            });
+                            var receiverCounty = "";
+                            CoreUtil.sendSyncGet("/common/getNameById2", {id: item.receiverCounty}, function (res) {
+                                receiverCounty = res.data;
+                            });
+                            return "<div class=\"layui-row\">\n" +
+                                "            <span class=\"layui-badge-rim\">\n" +
+                                "                <span class=\"layui-badge layui-bg-cyan2\" style=\"margin-left: -6px;\">\n" +
+                                "                    <i class=\"fa fa-user\"></i> 收货人\n" +
+                                "                </span>\n" + item.receiverContact +
+                                "            </span>\n" +
+                                "        </div>\n" +
+                                "        <div class=\"layui-row\">\n" +
+                                "            <span class=\"layui-badge-rim\">\n" +
+                                "                <span class=\"layui-badge layui-bg-cyan2\" style=\"margin-left: -6px;\">\n" +
+                                "                    <i class=\"fa fa-tablet\"></i> 联系方式\n" +
+                                "                </span> <a href='javascript:void;' onclick=''>" + item.receiverMobile + "</a>\n" +
+                                "            </span>\n" +
+                                "        </div>\n" +
+                                "        <div class=\"layui-row\">\n" +
+                                "            <span class=\"layui-badge-rim\">\n" +
+                                "                <span class=\"layui-badge layui-bg-cyan2\" style=\"margin-left: -6px;\">\n" +
+                                "                    <i class=\"fa fa-home\"></i> 收货地址\n" +
+                                "                </span>\n" + receiverProvince + receiverCity + receiverCounty + item.receiverAddress +
+                                "            </span>\n" +
+                                "        </div>";
+                        }
+                    },
+                    {
+                        width: 150, field: 'orderStatus', title: '状态信息', templet: function (item) {
+                            var orderStatus = "";
+                            var payStatus = "";
+                            var consignStatus = "";
+                            CoreUtil.sendSyncGet("/common/getLabelByValue", {dictionariesKey: 'dict-key-order_status', value: item.orderStatus}, function (res) {
+                                orderStatus = res.data;
+                            });
+                            CoreUtil.sendSyncGet("/common/getLabelByValue", {dictionariesKey: 'dict-key-pay_status', value: item.payStatus}, function (res) {
+                                payStatus = res.data;
+                            });
+                            CoreUtil.sendSyncGet("/common/getLabelByValue", {dictionariesKey: 'dict-key-consign_status', value: item.consignStatus}, function (res) {
+                                consignStatus = res.data;
+                            });
+                            return "<div class=\"layui-row\">\n" +
+                                "            <span class=\"layui-badge-rim\">\n" +
+                                "                <span class=\"layui-badge layui-bg-cyan2\" style=\"margin-left: -6px;\">\n" +
+                                "                    <i class=\"fa fa-bell-o\"></i> 订单状态\n" +
+                                "                </span>\n" +
+                                "                <b>" + orderStatus + "</b>\n" +
+                                "            </span>\n" +
+                                "        </div>\n" +
+                                "        <div class=\"layui-row\">\n" +
+                                "            <span class=\"layui-badge-rim\">\n" +
+                                "                <span class=\"layui-badge layui-bg-cyan2\" style=\"margin-left: -6px;\">\n" +
+                                "                    <i class=\"fa fa-bell-o\"></i> 支付状态\n" +
+                                "                </span>\n" +
+                                "                 <b>" + payStatus + "</b>\n" +
+                                "            </span>\n" +
+                                "        </div>\n" +
+                                "        <div class=\"layui-row\">\n" +
+                                "            <span class=\"layui-badge-rim\">\n" +
+                                "                <span class=\"layui-badge layui-bg-cyan2\" style=\"margin-left: -6px;\">\n" +
+                                "                    <i class=\"fa fa-bell-o\"></i> 发货状态\n" +
+                                "                </span>\n" +
+                                "                 <b>" + consignStatus + "</b>\n" +
+                                "            </span>\n" +
+                                "        </div>";
+                        }
+                    },
+                    {width: 200, toolbar: "#tool", title: '操作', fixed: 'right'}
+                ]
+            ]
+            , toolbar: '#toolbar'
+        });
+
+
+        //表头工具
+        table.on('toolbar(showTable)', function (obj) {
+            switch (obj.event) {
+                case 'consumableStatistics':
+
+                    break;
+                // case 'batchClosed':
+                //     var checkStatus = table.checkStatus(obj.config.id);
+                //     var data = checkStatus.data;
+                //     if (data.length == 0) {
+                //         layer.msg("请选择要批量关闭的列");
+                //     } else {
+                //         var ids = [];
+                //         $(data).each(function (index, item) {
+                //             ids.push(item.id);
+                //         });
+                //         tipDialogForClose(ids);
+                //     }
+                //     break;
+                case 'downloadWaybillTemplate':
+                    window.open("../../shopOrder/downloadWaybillTemplate?authorization=" + tokenQuery, "_blank");
+                    break;
+                case 'importWaybill':
+                    layer.open({
+                        id: 'importWaybill'
+                        , type: 1
+                        , title: '<i class="layui-icon">&#xe639;</i> 导入运单'
+                        , content: $('#importWaybillTpl')
+                        , area: ['900px', '700px']//宽高不影响最大化
+                        , btn: ['提交运单', '取消']
+                        , yes: function (index, layero) {
+                            $("#exeUpload").click();
+                        }
+                    });
+                    break;
+            }
+        });
+        //列操作
+        table.on('tool(showTable)', function (obj) {
+            var data = obj.data;
+            switch (obj.event) {
+                case 'detail':
+                    layer.open({
+                        type: 2,
+                        title: '<i class="layui-icon">&#xe615;</i> 订单信息',
+                        id: 'order_detail',
+                        scrollbar: false,
+                        offset: 'r',
+                        anim: 5,
+                        maxmin: true,
+                        area: ['1200px', '100%'],//宽高不影响最大化
+                        content: "../../index/shopOrderDetail/" + data.id,//地址
+                        zIndex: layer.zIndex,
+                        success: function (layero, index) {
+                            // 置顶当前窗口
+                            layer.setTop(layero);
+                        }
+                    });
+                    break;
+                case 'addressChange':
+                    layer.open({
+                        id: 'addressChange'
+                        , type: 1
+                        , title: '<i class="layui-icon">&#xe639;</i> 收货信息'
+                        , content: $('#addressChangeTpl')
+                        , area: ['800px', '700px']//宽高不影响最大化
+                        , btn: ['提交变更', '取消']
+                        , yes: function (index, layero) {
+                            $("#submitBtnForAddressChange").click();
+                        },
+                        success: function (layero, index) {
+                            form.val("addressChangeForm", {
+                                "id": data.id,
+                                "receiverContact": data.receiverContact,
+                                "receiverMobile": data.receiverMobile,
+                                "receiverAddress": data.receiverAddress,
+                                "receiverProvince": data.receiverProvince,
+                            });
+                            loadCity(data.receiverProvince, data.receiverCity);
+                            loadCounty(data.receiverCity, data.receiverCounty);
+                        }
+                    });
+                    break;
+                case 'orderShipment':
+                    layer.open({
+                        id: 'orderShipment'
+                        , type: 1
+                        , title: '<i class="layui-icon">&#xe639;</i> 订单发货'
+                        , content: $('#orderShipmentTpl')
+                        , area: ['800px', '600px']//宽高不影响最大化
+                        , btn: ['提交发货', '取消']
+                        , yes: function (index, layero) {
+                            $("#submitBtnForOrderShipment").click();
+                        },
+                        success: function (layero, index) {
+                            form.val("orderShipmentForm", {
+                                "id": data.id,
+                                "consignStatus": 1,
+                            });
+                        }
+                    });
+                    break;
+            }
+        });
+
+        function loadCity(province, city) {
+            var form = layui.form;
+            $("select[name='receiverCity']").empty();
+            $("select[name='receiverCity']").append("<option value=''>请选择市</option>");
+            $("select[name='receiverCounty']").empty();
+            $("select[name='receiverCounty']").append("<option value=''>请选择区</option>");
+            if (province) {
+                CoreUtil.sendSyncGet("/common/findAllSubordinateAddressLibrary/" + province, null, function (res) {
+                    if (res.data) {
+                        var selectObj = $("select[name='receiverCity']");
+                        $(selectObj).empty();
+                        $(selectObj).append("<option value=''>请选择市</option>");
+                        $(res.data).each(function (index, item) {
+                            if (city && city == item.id) {
+                                $(selectObj).append("<option value='" + item.id + "' selected>" + item.name + "</option>");
+                            } else {
+                                $(selectObj).append("<option value='" + item.id + "'>" + item.name + "</option>");
+                            }
+                        });
+                    }
+                });
+            }
+            form.render('select');
+        }
+
+        function loadCounty(city, county) {
+            var form = layui.form;
+            $("select[name='receiverCounty']").empty();
+            $("select[name='receiverCounty']").append("<option value=''>请选择区</option>");
+            if (city) {
+                CoreUtil.sendSyncGet("/common/findAllSubordinateAddressLibrary/" + city, null, function (res) {
+                    if (res.data) {
+                        var selectObj = $("select[name='receiverCounty']");
+                        $(selectObj).empty();
+                        $(selectObj).append("<option value=''>请选择区</option>");
+                        $(res.data).each(function (index, item) {
+                            if (county && county == item.id) {
+                                $(selectObj).append("<option value='" + item.id + "' selected>" + item.name + "</option>");
+                            } else {
+                                $(selectObj).append("<option value='" + item.id + "'>" + item.name + "</option>");
+                            }
+                        });
+                    }
+                });
+            }
+            form.render('select');
+        }
+
+        //导出
+        $('#export').on('click', function () {
+            //原先分页limit
+            var exportParams = {
+                limit: Number.MAX_VALUE,
+                key: $("#key").val()
+            };
+            CoreUtil.sendPost("/shopOrder/listByPage", exportParams, function (res) {
+                //初始化渲染数据
+                if (res.data != null && res.data.records != null) {
+                    table.exportFile(tableIns1.config.id, res.data.records, 'xls');
+                }
+            });
+        });
+
+        /**
+         * 执行查询
+         */
+        form.on('submit(data-search-btn)', function (data) {
+            // 查询条件
+            var where = data.field;
+            where.orderStatus = 0;
+            where.payStatus = 1;
+            where.consignStatus = 0;
+            where.urgentDelivery = 1;
+            // 刷新table
+            tableIns1.reload({
+                where: where,
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                done: function () {
+                    // 清空查询条件缓存
+                    this.where = {};
+                }
+            });
+            return false;
+        });
+
+    });
+</script>

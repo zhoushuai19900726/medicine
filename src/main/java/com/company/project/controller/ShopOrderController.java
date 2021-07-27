@@ -60,6 +60,12 @@ public class ShopOrderController extends BaseController {
     }
 
     @ApiOperation(value = "跳转到待发货订单表列表页面")
+    @GetMapping("/index/shopOrder/toBeShipped")
+    public String toBeShipped() {
+        return "logistics/toBeShippedOrderList";
+    }
+
+    @ApiOperation(value = "跳转到待发货订单表列表页面")
     @GetMapping("/index/shopOrder/shipped")
     public String shipped() {
         return "logistics/shippedOrderList";
