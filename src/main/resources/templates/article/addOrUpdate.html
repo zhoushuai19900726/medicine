@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main" shiro:hasPermission="shopArticle:add">
+        <form class="layui-form" action="" lay-filter="shopArticleForm" id="shopArticleForm" style="width: 100%;">
+            <input name="id" hidden/>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">栏目ID</label>
+                <div class="layui-input-block">
+                    <input type="text" name="columnId" lay-verify="required" placeholder="请输入栏目ID" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">标题</label>
+                <div class="layui-input-block">
+                    <input type="text" name="title" lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">副标题</label>
+                <div class="layui-input-block">
+                    <input type="text" name="subtitle" lay-verify="required" placeholder="请输入副标题" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">封面图</label>
+                <div class="layui-input-block">
+                    <input type="text" name="cover" lay-verify="required" placeholder="请输入封面图" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">作者</label>
+                <div class="layui-input-block">
+                    <input type="text" name="author" lay-verify="required" placeholder="请输入作者" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">来源</label>
+                <div class="layui-input-block">
+                    <input type="text" name="source" lay-verify="required" placeholder="请输入来源" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">摘要</label>
+                <div class="layui-input-block">
+                    <input type="text" name="digest" lay-verify="required" placeholder="请输入摘要" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">内容</label>
+                <div class="layui-input-block">
+                    <input type="text" name="content" lay-verify="required" placeholder="请输入内容" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">相关推荐文章</label>
+                <div class="layui-input-block">
+                    <input type="text" name="correlation)d" lay-verify="required" placeholder="请输入相关推荐文章" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">绑定商品</label>
+                <div class="layui-input-block">
+                    <input type="text" name="goods" lay-verify="required" placeholder="请输入绑定商品" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">是否头条</label>
+                <div class="layui-input-block">
+                    <input type="text" name="isHeadline" lay-verify="required" placeholder="请输入是否头条" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">是否置顶</label>
+                <div class="layui-input-block">
+                    <input type="text" name="isTop" lay-verify="required" placeholder="请输入是否置顶" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">是否显示</label>
+                <div class="layui-input-block">
+                    <input type="text" name="isShow" lay-verify="required" placeholder="请输入是否显示" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">是否允许评论</label>
+                <div class="layui-input-block">
+                    <input type="text" name="allowComment" lay-verify="required" placeholder="请输入是否允许评论" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">收藏数</label>
+                <div class="layui-input-block">
+                    <input type="text" name="collectNum" lay-verify="required" placeholder="请输入收藏数" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">浏览数</label>
+                <div class="layui-input-block">
+                    <input type="text" name="pv" lay-verify="required" placeholder="请输入浏览数" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">排序</label>
+                <div class="layui-input-block">
+                    <input type="text" name="seq" lay-verify="required" placeholder="请输入排序" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+
+            <input type="submit" lay-filter="submitBtnForAdd" id="submitBtnForAdd" lay-submit="" hidden/>
+            <input type="submit" lay-filter="submitBtnForUpdate" id="submitBtnForUpdate" lay-submit="" hidden/>
+        </form>
+    </div>
+</div>
+<script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
+</body>
+</html>
+<script>
+    //获取token
+    var token = CoreUtil.getData("access_token");
+    //地址栏转义token中的#号
+    var tokenQuery = token.replace("#", "%23");
+    var $ = jQuery = layui.jquery;
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form;
+        var layer = layui.layer;
+        // 表单提交
+        form.on('submit(submitBtnForAdd)', function (data) {
+            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
+            CoreUtil.sendPost("/shopArticle/add", data.field, function (res) {
+                // 刷新父页面列表
+                parent.layui.table.reload('showTable');
+                // 提示
+                layer.open({
+                    content: '<i class="layui-icon layui-icon-face-smile" style="color: green;"></i> 保存成功'
+                    , btn: ['继续添加', '返回列表']
+                    , yes: function (index, layero) {
+                        // 清空表单 （“brandForm”是表单的id）
+                        $("#shopArticleForm")[0].reset();
+                        form.render();
+                        layer.close(index);
+                    }, btn2: function (index, layero) {
+                        // 按钮【按钮二】的回调
+                        var parentIndex = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(parentIndex);
+                        //return false 开启该代码可禁止点击该按钮关闭
+                    }, cancel: function () {
+                        // 右上角关闭回调
+                        var parentIndex = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(parentIndex);
+                        //return false 开启该代码可禁止点击该按钮关闭
+                    }
+                });
+            });
+            // 阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            return false;
+        });
+        form.on('submit(submitBtnForUpdate)', function (data) {
+            // 当前容器的全部表单字段，名值对形式：{name: value}; 获取单个值data.field["title"]
+            CoreUtil.sendPut("/shopArticle/update", data.field, function (res) {
+                // 刷新父页面列表
+                parent.layui.table.reload('showTable');
+                // 提示
+                layer.msg(res.msg, {time: 500}, function () {
+                    var parentIndex = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(parentIndex);
+                });
+            });
+            // 阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            return false;
+        });
+    });
+
+    /**
+     * 父级页面控制子页面提交表单
+     */
+    function saveShopArticle(submitBtn) {
+        $("#" + submitBtn).click();
+    }
+
+    /**
+     * 父级页面控制子页面填充
+     */
+    function assignment(data) {
+        var form = layui.form,
+            layarea = layui.layarea;
+        // 表单赋值
+        form.val("shopArticleForm", {
+            "id": data.id
+        });
+    }
+
+</script>
