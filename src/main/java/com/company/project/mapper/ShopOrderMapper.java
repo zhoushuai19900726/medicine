@@ -15,7 +15,7 @@ import org.apache.ibatis.annotations.Update;
  */
 public interface ShopOrderMapper extends BaseMapper<ShopOrderEntity> {
 
-    @Update("UPDATE shop_order set consign_time = null WHERE id = #{id}")
+    @Update("UPDATE shop_order set consign_time = null, end_time = null, close_time = null WHERE id = #{id}")
     void resetConsignTime(@Param("id") String id);
 
 }

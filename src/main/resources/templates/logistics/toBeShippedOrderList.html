@@ -173,39 +173,6 @@
         </div>
     </script>
 
-    <script type="text/html" id="timeInfo">
-        {{#  if(d.createTime != null){ }}
-        <div class="layui-row">
-            <span class="layui-badge-rim">
-                <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
-                    <i class="fa fa-clock-o"></i> 下单时间
-                </span>
-                {{ d.createTime }}
-            </span>
-        </div>
-        {{#  } }}
-        {{#  if(d.payTime != null){ }}
-        <div class="layui-row">
-            <span class="layui-badge-rim">
-                <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
-                    <i class="fa fa-clock-o"></i> 付款时间
-                </span>
-                {{ d.payTime }}
-            </span>
-        </div>
-        {{#  } }}
-        {{#  if(d.closeTime != null){ }}
-        <div class="layui-row">
-            <span class="layui-badge-rim">
-                <span class="layui-badge layui-bg-cyan4" style="margin-left: -6px;">
-                    <i class="fa fa-clock-o"></i> 关闭时间
-                </span>
-                {{ d.closeTime }}
-            </span>
-        </div>
-        {{#  } }}
-    </script>
-
 
     <div id="addressChangeTpl" hidden>
         <form class="layui-form layui-form-pane" id="addressChangeForm" lay-filter="addressChangeForm">
@@ -622,7 +589,37 @@
                                 "        </div>";
                         }
                     },
-                    {width: 220, field: 'createTime', title: '订单时间', templet: '#timeInfo'},
+                    {
+                        width: 220, field: 'createTime', title: '订单时间', templet: function (item) {
+                            var timeInfo = "";
+                            if (item.createTime) {
+                                timeInfo += "<div class=\"layui-row\">\n" +
+                                    "                                <span class=\"layui-badge-rim\">\n" +
+                                    "                                <span class=\"layui-badge layui-bg-cyan2\" style=\"margin-left: -6px;\">\n" +
+                                    "                                <i class=\"fa fa-clock-o\"></i> 下单时间\n" +
+                                    "                                </span>\n" + item.createTime +
+                                    "                            </span>\n" +
+                                    "                            </div>";
+                            }
+                            if (item.payTime) {
+                                timeInfo += "<div class=\"layui-row\">\n" +
+                                    "                                <span class=\"layui-badge-rim\">\n" +
+                                    "                                <span class=\"layui-badge layui-bg-cyan2\" style=\"margin-left: -6px;\">\n" +
+                                    "                                <i class=\"fa fa-clock-o\"></i> 付款时间\n" +
+                                    "                                </span>\n" + item.payTime +
+                                    "                            </span>\n" +
+                                    "                            </div>";
+                                timeInfo += "<div class=\"layui-row\">\n" +
+                                    "                                <span class=\"layui-badge-rim\">\n" +
+                                    "                                <span class=\"layui-badge layui-bg-cyan4\" style=\"margin-left: -6px;\">\n" +
+                                    "                                <i class=\"fa fa-clock-o\"></i> 订单滞留\n" +
+                                    "                                </span>\n" + getDaysBetween(item.payTime, new Date()) + "天" +
+                                    "                            </span>\n" +
+                                    "                            </div>";
+                            }
+                            return timeInfo;
+                        }
+                    },
                     {
                         width: 350, field: 'shippingName', title: '收货人信息', templet: function (item) {
                             var receiverProvince = "";
@@ -811,6 +808,24 @@
                     break;
             }
         });
+
+        /**
+         * 计算两个日期之间的天数
+         * @param dateString1  开始日期 yyyy-MM-dd
+         * @param dateString2  结束日期 yyyy-MM-dd
+         * @returns {number} 如果日期相同 返回一天 开始日期大于结束日期，返回0
+         */
+        function getDaysBetween(dateString1, endDate) {
+            var startDate = Date.parse(dateString1);
+            if (startDate > endDate) {
+                return 0;
+            }
+            if (startDate == endDate) {
+                return 1;
+            }
+            var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000);
+            return days.toFixed(2);
+        }
 
         function loadCity(province, city) {
             var form = layui.form;

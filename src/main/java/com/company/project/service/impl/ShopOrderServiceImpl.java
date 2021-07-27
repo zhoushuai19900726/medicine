@@ -71,6 +71,7 @@ public class ShopOrderServiceImpl extends ServiceImpl<ShopOrderMapper, ShopOrder
             }
             // 收货
             if (ConsignStatusEnum.RECEIVED.getType().equals(shopOrder.getConsignStatus())) {
+                shopOrder.setOrderStatus(OrderStatusEnum.FINISHED.getType());
                 shopOrder.setEndTime(Objects.nonNull(shopOrder.getEndTime()) ? shopOrder.getEndTime() : new Date());
             }
         }

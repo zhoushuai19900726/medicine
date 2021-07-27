@@ -126,8 +126,6 @@
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="detail" shiro:hasPermission="shopOrder:list"><i class="fa fa-newspaper-o"></i> 订单详情</a>
         <br/>
         <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="" shiro:hasPermission="shopOrder:list"><i class="fa fa-print"></i> 打印订单</a>
-        <br/>
-        <a class="layui-btn layui-btn-primary layui-border-black layui-btn-xs" lay-event="confirmReceipt" shiro:hasPermission="shopOrder:update"><i class="fa fa-check-square-o"></i> 确认收货</a>
     </script>
 
 
@@ -164,10 +162,10 @@
     <script type="text/html" id="timeInfo">
         {{#  if(d.createTime != null){ }}
         <div class="layui-row">
-            <span class="layui-badge-rim" style="margin-top: 5px;">
-                <span class="layui-badge layui-bg-cyan2" style="width: 115%; margin-left: -10px;">
+            <span class="layui-badge-rim">
+                <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
                     <i class="fa fa-clock-o"></i> 下单时间
-                </span><br/>
+                </span>
                 {{ d.createTime }}
             </span>
         </div>
@@ -175,10 +173,20 @@
         {{#  if(d.payTime != null){ }}
         <div class="layui-row">
             <span class="layui-badge-rim">
-                <span class="layui-badge layui-bg-cyan2" style="width: 115%; margin-left: -10px;">
+                <span class="layui-badge layui-bg-cyan2" style="margin-left: -6px;">
                     <i class="fa fa-clock-o"></i> 付款时间
-                </span><br/>
+                </span>
                 {{ d.payTime }}
+            </span>
+        </div>
+        {{#  } }}
+        {{#  if(d.endTime != null){ }}
+        <div class="layui-row">
+            <span class="layui-badge-rim">
+                <span class="layui-badge layui-bg-cyan4" style="margin-left: -6px;">
+                    <i class="fa fa-clock-o"></i> 收货时间
+                </span>
+                {{ d.endTime }}
             </span>
         </div>
         {{#  } }}
@@ -240,9 +248,9 @@
             , page: true //开启分页
             , url: '/shopOrder/listByPage' //数据接口
             , where: {
-                orderStatus: 0,
+                orderStatus: 1,
                 payStatus: 1,
-                consignStatus: 1,
+                consignStatus: 2,
                 urgentDelivery: 1
             }
             , method: 'POST'
@@ -321,7 +329,7 @@
                                 "        </div>";
                         }
                     },
-                    {width: 150, field: 'createTime', title: '订单时间', templet: '#timeInfo'},
+                    {width: 220, field: 'createTime', title: '订单时间', templet: '#timeInfo'},
                     {
                         width: 340, field: 'shippingName', title: '收货人信息', templet: function (item) {
                             var receiverProvince = "";
@@ -483,15 +491,6 @@
                         }
                     });
                     break;
-                case 'confirmReceipt':
-                    layer.confirm('确定当前订单客户已收货吗?', {icon: 3, title: '提示'}, function (index) {
-                        CoreUtil.sendPut("/shopOrder/update", {id: data.id, consignStatus: 2}, function (res) {
-                            layer.msg(res.msg, {time: 500}, function () {
-                                tableIns1.reload();
-                            });
-                        });
-                    });
-                    break;
             }
         });
 
@@ -516,9 +515,9 @@
         form.on('submit(data-search-btn)', function (data) {
             // 查询条件
             var where = data.field;
-            where.orderStatus = 0;
+            where.orderStatus = 1;
             where.payStatus = 1;
-            where.consignStatus = 1;
+            where.consignStatus = 2;
             where.urgentDelivery = 1;
             // 刷新table
             tableIns1.reload({
