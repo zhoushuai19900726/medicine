@@ -104,7 +104,14 @@
                 </div>
             </div>
 
-            <input type="submit" lay-filter="submitBtnForAdd" id="submitBtnForAdd" lay-submit="" value="提交发布"/>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <input type="submit" class="layui-btn layui-btn-primary layui-border-blue" lay-filter="submitBtnForAdd" id="submitBtnForAdd" lay-submit="" value="提交发布"/>
+                    <input type="submit" class="layui-btn layui-btn-primary layui-border-black" lay-filter="goBack" id="goBack" lay-submit="" value="返回列表"/>
+                </div>
+            </div>
+
         </form>
 
     </div>
@@ -185,6 +192,21 @@
                     miniTab.delete(currOptionHref, true);
                 });
             });
+            // 阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            return false;
+        });
+
+        // 返回列表
+        form.on('submit(goBack)', function (data) {
+            var options = {};
+            options.href = "/index/shopArticle";
+            options.title = "文章列表";
+            miniTab.openNewTabByIframe(options);
+            var currOptionHref = "/index/shopArticle/addOrUpdate";
+            if(data.field["id"]){
+                currOptionHref += "?id=" + data.field["id"];
+            }
+            miniTab.delete(currOptionHref, true);
             // 阻止表单跳转。如果需要表单跳转，去掉这段即可。
             return false;
         });
