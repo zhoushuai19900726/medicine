@@ -94,14 +94,15 @@ layui.define(["element", "layer", "jquery"], function (exports) {
             var loading = parent.layer.load(0, {shade: false, time: 2 * 1000});
             if (options.href === null || options.href === undefined) options.href = new Date().getTime();
             var checkTab = miniTab.check(options.href, true);
-            if (!checkTab) {
-                miniTab.create({
-                    tabId: options.href,
-                    href: options.href,
-                    title: options.title,
-                    isIframe: true,
-                });
+            if (checkTab) {
+                miniTab.delete(options.href, true);
             }
+            miniTab.create({
+                tabId: options.href,
+                href: options.href,
+                title: options.title,
+                isIframe: true,
+            });
             parent.layui.element.tabChange('layuiminiTab', options.href);
             parent.layer.close(loading);
         },
@@ -404,10 +405,10 @@ layui.define(["element", "layer", "jquery"], function (exports) {
             options.menuList = options.menuList || [];
             if (!options.urlHashLocation) return false;
             var tabId = location.hash.replace(/^#\//, '');
-            if (tabId === null || tabId === undefined || tabId ==='') return false;
+            if (tabId === null || tabId === undefined || tabId === '') return false;
 
             // 判断是否为首页
-            if(tabId ===options.homeInfo.href) return false;
+            if (tabId === options.homeInfo.href) return false;
 
             // 判断是否为右侧菜单
             var menu = miniTab.searchMenu(tabId, options.menuList);

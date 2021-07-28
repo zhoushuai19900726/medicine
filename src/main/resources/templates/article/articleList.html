@@ -24,9 +24,9 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label">文章名称</label>
+                            <label class="layui-form-label">文章标题</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="name" autocomplete="off" placeholder="请输入文章名称" class="layui-input">
+                                <input type="text" name="title" autocomplete="off" placeholder="请输入文章标题" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline">
@@ -50,7 +50,7 @@
     <table class="layui-table" id="showTable" lay-filter="showTable"></table>
     <script type="text/html" id="toolbar">
         <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add" shiro:hasPermission="shopArticle:add"><i class="layui-icon">&#xe61f;</i>新增文章</button>
+            <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add" shiro:hasPermission="shopArticle:add"><i class="layui-icon">&#xe61f;</i>发布文章</button>
             <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopArticle:delete"><i class="layui-icon">&#xe640;</i>批量删除</button>
         </div>
     </script>
@@ -58,9 +58,25 @@
         <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit" shiro:hasPermission="shopArticle:update"><i class="layui-icon">&#xe642;</i>编辑</a>
         <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" shiro:hasPermission="shopArticle:delete"><i class="layui-icon">&#xe640;</i>删除</a>
     </script>
+    <script type="text/html" id="coverTpl">
+        <img src="{{ d.cover }}"/>
+    </script>
+    <script type="text/html" id="isShowSwitchTpl">
+        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="是|否" lay-filter="isShowSwitch" {{d.isShow== 1 ? 'checked' : ''}}/>
+    </script>
+    <script type="text/html" id="isHeadlineSwitchTpl">
+        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="是|否" lay-filter="isHeadlineSwitch" {{d.isHeadline== 1 ? 'checked' : ''}}/>
+    </script>
+    <script type="text/html" id="isTopSwitchTpl">
+        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="是|否" lay-filter="isTopSwitch" {{d.isTop== 1 ? 'checked' : ''}}/>
+    </script>
+    <script type="text/html" id="allowCommentSwitchTpl">
+        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="是|否" lay-filter="allowCommentSwitch" {{d.allowComment== 1 ? 'checked' : ''}}/>
+    </script>
 </div>
 <script th:src="@{/js/core.util.js}" charset="utf-8"></script>
 <script th:src="@{/layui/layui.all.js}" charset="utf-8"></script>
+<script th:src="@{/layui2.0/js/lay-config.js(v=2.0.0)}" charset="utf-8"></script>
 </body>
 </html>
 <script>
@@ -70,12 +86,13 @@
     var tokenQuery = token.replace("#", "%23");
     var tableIns1;
     var $ = jQuery = layui.jquery;
-    layui.use(['table', 'layer', 'laydate', 'util'], function () {
+    layui.use(['table', 'layer', 'laydate', 'util', 'miniTab'], function () {
         var table = layui.table;
         var form = layui.form;
         var layer = layui.layer;
         var laydate = layui.laydate;
         var util = layui.util;
+        var miniTab = layui.miniTab;
         /**
          * 日期时间选择器
          */
@@ -109,29 +126,24 @@
             , cols: [
                 [
                     {type: 'checkbox', fixed: 'left'},
-                    {field: 'id', title: 'ID', sort: true},
-                    {field: 'columnId', title: '栏目ID', sort: true},
-                    {field: 'title', title: '标题', sort: true},
-                    {field: 'subtitle', title: '副标题', sort: true},
-                    {field: 'cover', title: '封面图', sort: true},
-                    {field: 'author', title: '作者', sort: true},
-                    {field: 'source', title: '来源', sort: true},
-                    {field: 'digest', title: '摘要', sort: true},
-                    {field: 'content', title: '内容', sort: true},
-                    {field: 'correlation)d', title: '相关推荐文章', sort: true},
-                    {field: 'goods', title: '绑定商品', sort: true},
-                    {field: 'isHeadline', title: '是否头条', sort: true},
-                    {field: 'isTop', title: '是否置顶', sort: true},
-                    {field: 'isShow', title: '是否显示', sort: true},
-                    {field: 'allowComment', title: '是否允许评论', sort: true},
-                    {field: 'collectNum', title: '收藏数', sort: true},
-                    {field: 'pv', title: '浏览数', sort: true},
-                    {field: 'seq', title: '排序', sort: true},
+                    {width: 80, field: 'id', title: 'ID', sort: true},
+                    {width: 80, field: 'columnName', title: '栏目'},
+                    {width: 200, field: 'title', title: '标题', edit: 'text'},
+                    {width: 130, field: 'cover', title: '封面图', templet: '#coverTpl'},
+                    {width: 100, field: 'author', title: '作者', edit: 'text'},
+                    {width: 100, field: 'source', title: '来源', edit: 'text'},
+                    {width: 100, field: 'isHeadline', title: '是否头条', templet: '#isHeadlineSwitchTpl'},
+                    {width: 100, field: 'isTop', title: '是否置顶', templet: '#isTopSwitchTpl'},
+                    {width: 100, field: 'allowComment', title: '允许评论', templet: '#allowCommentSwitchTpl'},
+                    {width: 100, field: 'isShow', title: '是否显示', templet: '#isShowSwitchTpl'},
+                    {width: 100, field: 'collectNum', title: '收藏数', sort: true},
+                    {width: 100, field: 'pv', title: '浏览数', sort: true},
+                    {width: 80, field: 'seq', title: '排序', sort: true, edit: 'text'},
                     {width: 100, field: 'createName', title: '创建人'},
-                    {field: 'createTime', title: '', sort: true},
+                    {width: 100, field: 'createTime', title: '创建时间', sort: true},
                     {width: 100, field: 'updateName', title: '修改人'},
-                    {field: 'updateTime', title: '', sort: true},
-                    {width: 150, toolbar: "#tool", title: '操作'}
+                    {width: 100, field: 'updateTime', title: '修改时间', sort: true},
+                    {width: 150, toolbar: "#tool", title: '操作', fixed: 'right'}
                 ]
             ]
             , toolbar: '#toolbar'
@@ -155,19 +167,10 @@
                     }
                     break;
                 case 'add':
-                    layer.open({
-                        id: 'shopArticle_add', //设定一个id，防止重复弹出
-                        title: '<i class="layui-icon">&#xe653;</i> 新增文章',
-                        type: 2,
-                        content: '../index/shopArticle/addOrUpdate',
-                        btn: ['提交保存', '取消'],
-                        area: ['60%', '85%'],
-                        scrollbar: false,
-                        yes: function (index, layero) {
-                            // 得到iframe页的窗口对象并调用子页面方法
-                            window[layero.find('iframe')[0]['name']].saveShopArticle("submitBtnForAdd");
-                        }
-                    });
+                    var options = {};
+                    options.href = "/index/shopArticle/addOrUpdate";
+                    options.title = "发布文章";
+                    miniTab.openNewTabByIframe(options);
                     break;
             }
         });
@@ -181,25 +184,11 @@
                     tipDialog(ids);
                     break;
                 case 'edit':
-                    layer.open({
-                        id: 'shopArticle_update', //设定一个id，防止重复弹出
-                        title: '<i class="layui-icon">&#xe653;</i> 编辑文章',
-                        type: 2,
-                        content: '../index/shopArticle/addOrUpdate',
-                        btn: ['提交保存', '取消'],
-                        area: ['60%', '85%'],
-                        scrollbar: false,
-                        yes: function (index, layero) {
-                            // 得到iframe页的窗口对象并调用子页面方法
-                            window[layero.find('iframe')[0]['name']].saveShopArticle("submitBtnForUpdate");
-                        },
-                        success: function (layero, index) {
-                            // 置顶当前窗口
-                            layer.setTop(layero);
-                            // 得到iframe页的窗口对象并调用子页面方法
-                            window[layero.find('iframe')[0]['name']].assignment(data);
-                        }
-                    });
+                    miniTab.delete("/index/shopArticle/addOrUpdate", true);
+                    var options = {};
+                    options.href = "/index/shopArticle/addOrUpdate?id=" + data.id;
+                    options.title = "发布文章";
+                    miniTab.openNewTabByIframe(options);
                     break;
             }
         });
@@ -215,6 +204,62 @@
             para.id = data.id;
             para[field] = util.escape(value);
             CoreUtil.sendPut("/shopArticle/update", para, function (res) {
+                tableIns1.reload();
+            });
+        });
+
+        /**
+         * 监听table内开关操作
+         */
+        form.on('switch(isShowSwitch)', function (obj) {
+            // console.log(obj)
+            var param = {};
+            param.id = this.value;
+            param.isShow = obj.elem.checked ? 1 : 0;
+            CoreUtil.sendPut("/shopArticle/update", param, function (res) {
+                layer.tips(obj.elem.checked ? "开启成功" : "关闭成功", obj.othis);
+                tableIns1.reload();
+            });
+        });
+
+        /**
+         * 监听table内开关操作
+         */
+        form.on('switch(isHeadlineSwitch)', function (obj) {
+            // console.log(obj)
+            var param = {};
+            param.id = this.value;
+            param.isHeadline = obj.elem.checked ? 1 : 0;
+            CoreUtil.sendPut("/shopArticle/update", param, function (res) {
+                layer.tips(obj.elem.checked ? "开启成功" : "关闭成功", obj.othis);
+                tableIns1.reload();
+            });
+        });
+
+        /**
+         * 监听table内开关操作
+         */
+        form.on('switch(isTopSwitch)', function (obj) {
+            // console.log(obj)
+            var param = {};
+            param.id = this.value;
+            param.isTop = obj.elem.checked ? 1 : 0;
+            CoreUtil.sendPut("/shopArticle/update", param, function (res) {
+                layer.tips(obj.elem.checked ? "开启成功" : "关闭成功", obj.othis);
+                tableIns1.reload();
+            });
+        });
+
+        /**
+         * 监听table内开关操作
+         */
+        form.on('switch(allowCommentSwitch)', function (obj) {
+            // console.log(obj)
+            var param = {};
+            param.id = this.value;
+            param.allowComment = obj.elem.checked ? 1 : 0;
+            CoreUtil.sendPut("/shopArticle/update", param, function (res) {
+                layer.tips(obj.elem.checked ? "开启成功" : "关闭成功", obj.othis);
                 tableIns1.reload();
             });
         });

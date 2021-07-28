@@ -65,13 +65,16 @@ function setSelectData(objs) {
             if (res.code == 0 && res.data != null) {
                 demoSelect.update({
                     data: res.data,
-                })
+                });
+                if(obj.value){
+                    demoSelect.setValue(obj.value);
+                }
             }
         });
     });
 }
 
-// 多选
+// 级联下拉
 function setCascaderSelectData(objs) {
     $(objs).each(function (index, obj) {
         var demoSelect = getCascaderSelect(obj.demoId, obj.title);
@@ -81,11 +84,14 @@ function setCascaderSelectData(objs) {
                 demoSelect.update({
                     data: res.data,
                 })
+                if(obj.value){
+                    demoSelect.setValue(obj.value);
+                }
             }
         });
     });
 }
-// 多选
+
 function getCascaderSelect(demoId, title) {
     return xmSelect.render({
         el: "#" + demoId,

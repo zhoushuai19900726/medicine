@@ -1,12 +1,15 @@
 package com.company.project.common.utils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author catalpa
@@ -36,7 +39,6 @@ public class CommonUtils {
 //        }
 
         System.out.println(CommonUtils.generateShortUUID());
-
 
     }
 
