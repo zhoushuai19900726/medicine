@@ -1,80 +1,118 @@
 package com.company.project.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
 import com.company.project.common.utils.DelimiterConstants;
+import com.company.project.entity.BaseEntity;
+import com.baomidou.mybatisplus.annotation.*;
+
+
+import java.io.Serializable;
+import java.util.Date;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang.StringUtils;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
 /**
- * 商家管理
+ * 商家员工
  *
  * @author zhoushuai
- * @version V1.0
- * @date 2020年3月18日
+ * @email zhoushuai_0726@163.com
+ * @date 2021-08-06 10:48:30
  */
 @Accessors(chain = true)
 @NoArgsConstructor
 @Data
-@TableName("shop_seller")
-public class ShopSellerEntity extends BaseEntity implements Serializable {
+@TableName("shop_seller_staff")
+public class ShopSellerStaffEntity extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * ID
+     */
     @TableId("id")
     private String id;
 
-    @TableField("seller_name")
-    private String sellerName;
+    /**
+     * 所属商家
+     */
+    @TableField("seller_id")
+    private String sellerId;
     @TableField(exist = false)
+    private String sellerName;
+
+    /**
+     * 账号
+     */
+    @TableField("account")
+    private String account;
+
+    /**
+     * 密码
+     */
+    @TableField("password")
+    private String password;
+
+    @TableField("salt")
+    private String salt;
+
+    /**
+     * 员工姓名
+     */
+    @TableField("name")
     private String name;
 
-    // 前端下拉列表渲染数据使用
-    public void setSellerName(String sellerName) {
-        this.sellerName = sellerName;
-        this.name = sellerName;
-    }
-
-    @TableField("seller_address")
-    private String sellerAddress;
-
-    @TableField("short_code")
-    private String shortCode;
-
-    @TableField("province")
-    private String province;
-
-    @TableField("city")
-    private String city;
-
-    @TableField("county")
-    private String county;
-
-    @TableField("address")
-    private String address;
-
+    /**
+     * 联系电话
+     */
     @TableField("contact_number")
     private String contactNumber;
 
+    /**
+     * 省
+     */
+    @TableField("province")
+    private String province;
+
+    /**
+     * 市
+     */
+    @TableField("city")
+    private String city;
+
+    /**
+     * 区
+     */
+    @TableField("county")
+    private String county;
+
+    /**
+     * 详细地址
+     */
+    @TableField("address")
+    private String address;
+
+    /**
+     * 状态  1启用 0禁用
+     */
     @TableField("status")
     private Integer status;
     // 页面参数封装
     @TableField(exist = false)
     private String statusStr;
-    // 查询条件
-    @TableField(exist = false)
-    private List<String> statusList;
 
+    /**
+     * 创建人
+     */
     @TableField(fill = FieldFill.INSERT)
     private String createId;
     @TableField(exist = false)
     private String createName;
 
+    /**
+     * 创建时间
+     */
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;
     // 查询条件
@@ -84,14 +122,23 @@ public class ShopSellerEntity extends BaseEntity implements Serializable {
     @TableField(exist = false)
     private String createEndTime;
 
+    /**
+     * 修改人
+     */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private String updateId;
     @TableField(exist = false)
     private String updateName;
 
+    /**
+     * 修改时间
+     */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 
+    /**
+     * 删除标识
+     */
     @TableField(fill = FieldFill.INSERT)
     @TableLogic // 注释后进行物理删除
     private Integer deleted;

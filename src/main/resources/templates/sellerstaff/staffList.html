@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/css/public.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layui2.0/lib/font-awesome-4.7.0/css/font-awesome.min.css}" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main" shiro:hasPermission="shopSellerStaff:list">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 5px 5px 5px 5px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">员工账号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="account" autocomplete="off" placeholder="请输入员工账号" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">员工名称</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="name" autocomplete="off" placeholder="请输入商家员工名称" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">创建日期</label>
+                            <div class="layui-input-inline">
+                                <input type="text" readonly class="layui-input" id="createStartTime" name="createStartTime" placeholder="开始时间">
+                            </div>
+                            <div class="layui-input-inline">
+                                <input type="text" readonly class="layui-input" id="createEndTime" name="createEndTime" placeholder="结束时间">
+                            </div>
+                        </div>
+                        <div class="layui-inline" style="float: right;">
+                            <button class="layui-btn layui-btn-primary layui-border-blue" lay-submit lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
+                            <button class="layui-btn layui-btn-primary layui-border-green" id="export"><i class="layui-icon">&#xe67d;</i> 导 出</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+    </div>
+    <table class="layui-table" id="showTable" lay-filter="showTable"></table>
+    <script type="text/html" id="toolbar">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add" shiro:hasPermission="shopSellerStaff:add"><i class="layui-icon">&#xe61f;</i>新增员工</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="batchDeleted" shiro:hasPermission="shopSellerStaff:delete"><i class="layui-icon">&#xe640;</i>批量删除</button>
+        </div>
+    </script>
+    <script type="text/html" id="tool">
+        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit" shiro:hasPermission="shopSellerStaff:update"><i class="layui-icon">&#xe642;</i>编辑</a>
+        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" shiro:hasPermission="shopSellerStaff:delete"><i class="layui-icon">&#xe640;</i>删除</a>
+    </script>
+    <script type="text/html" id="switchTpl">
+        <input type="checkbox" lay-skin="switch" value="{{d.id}}" lay-text="开启|关闭" lay-filter="statusStr" {{d.status== 1 ? 'checked' : ''}}/>
+    </script>
+</div>
+<script th:src="@{/js/core.util.js}" charset="utf-8"></script>
+<script th:src="@{/layui/layui.all.js}" charset="utf-8"></script>
+</body>
+</html>
+<script>
+    //获取token
+    var token = CoreUtil.getData("access_token");
+    //地址栏转义token中的#号
+    var tokenQuery = token.replace("#", "%23");
+    var tableIns1;
+    var $ = jQuery = layui.jquery;
+    layui.use(['table', 'layer', 'laydate', 'util'], function () {
+        var table = layui.table;
+        var form = layui.form;
+        var layer = layui.layer;
+        var laydate = layui.laydate;
+        var util = layui.util;
+        /**
+         * 日期时间选择器
+         */
+        laydate.render({
+            elem: '#createStartTime'
+            , type: 'datetime'
+        });
+        /**
+         * 日期时间选择器
+         */
+        laydate.render({
+            elem: '#createEndTime'
+            , type: 'datetime'
+        });
+        //加载table
+        tableIns1 = table.render({
+            elem: '#showTable'
+            , contentType: 'application/json'
+            , headers: {"authorization": token}
+            , page: true //开启分页
+            , url: '/shopSellerStaff/listByPage' //数据接口
+            , method: 'POST'
+            , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": CoreUtil.isEmpty(res.data) ? 0 : res.data.total, //解析数据长度
+                    "data": CoreUtil.isEmpty(res.data) ? null : res.data.records //解析数据列表
+                }
+            }
+            , cols: [
+                [
+                    {type: 'checkbox', fixed: 'left'},
+                    {field: 'id', title: 'ID', sort: true},
+                    {field: 'sellerName', title: '分店'},
+                    {field: 'account', title: '账号'},
+                    {field: 'name', title: '员工姓名'},
+                    {field: 'contactNumber', title: '联系电话'},
+                    {
+                        field: 'address', title: '现居地址', templet: function (item) {
+                            var province = "";
+                            if(item.province){
+                                CoreUtil.sendSyncGet("/common/getNameById2", {id: item.province}, function (res) {
+                                    province = res.data;
+                                });
+                            }
+                            var city = "";
+                            if(item.city){
+                                CoreUtil.sendSyncGet("/common/getNameById2", {id: item.city}, function (res) {
+                                    city = res.data;
+                                });
+                            }
+                            var county = "";
+                            if(item.county){
+                                CoreUtil.sendSyncGet("/common/getNameById2", {id: item.county}, function (res) {
+                                    county = res.data;
+                                });
+                            }
+                            return province + city + county + (item.address || "");
+                        }
+                    },
+                    {field: 'status', title: '状态', templet: '#switchTpl'},
+                    {width: 100, field: 'createName', title: '创建人'},
+                    {field: 'createTime', title: '创建时间', sort: true},
+                    {width: 100, field: 'updateName', title: '修改人'},
+                    {field: 'updateTime', title: '修改时间', sort: true},
+                    {width: 150, toolbar: "#tool", title: '操作'}
+                ]
+            ]
+            , toolbar: '#toolbar'
+        });
+
+
+        //表头工具
+        table.on('toolbar(showTable)', function (obj) {
+            switch (obj.event) {
+                case 'batchDeleted':
+                    var checkStatus = table.checkStatus(obj.config.id);
+                    var data = checkStatus.data;
+                    if (data.length == 0) {
+                        layer.msg("请选择要批量删除的列");
+                    } else {
+                        var ids = [];
+                        $(data).each(function (index, item) {
+                            ids.push(item.id);
+                        });
+                        tipDialog(ids);
+                    }
+                    break;
+                case 'add':
+                    layer.open({
+                        id: 'shopSellerStaff_add', //设定一个id，防止重复弹出
+                        title: '<i class="layui-icon">&#xe653;</i> 新增员工',
+                        type: 2,
+                        content: '../index/shopSellerStaff/addOrUpdate',
+                        btn: ['提交保存', '取消'],
+                        area: ['60%', '85%'],
+                        scrollbar: false,
+                        yes: function (index, layero) {
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            window[layero.find('iframe')[0]['name']].saveShopSellerStaff("submitBtnForAdd");
+                        }
+                    });
+                    break;
+            }
+        });
+        //列操作
+        table.on('tool(showTable)', function (obj) {
+            var data = obj.data;
+            switch (obj.event) {
+                case 'del':
+                    var ids = [];
+                    ids.push(data.id);
+                    tipDialog(ids);
+                    break;
+                case 'edit':
+                    layer.open({
+                        id: 'shopSellerStaff_update', //设定一个id，防止重复弹出
+                        title: '<i class="layui-icon">&#xe653;</i> 编辑员工',
+                        type: 2,
+                        content: '../index/shopSellerStaff/addOrUpdate',
+                        btn: ['提交保存', '取消'],
+                        area: ['60%', '85%'],
+                        scrollbar: false,
+                        yes: function (index, layero) {
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            window[layero.find('iframe')[0]['name']].saveShopSellerStaff("submitBtnForUpdate");
+                        },
+                        success: function (layero, index) {
+                            // 置顶当前窗口
+                            layer.setTop(layero);
+                            // 得到iframe页的窗口对象并调用子页面方法
+                            window[layero.find('iframe')[0]['name']].assignment(data);
+                        }
+                    });
+                    break;
+            }
+        });
+
+        /**
+         * 监听单元格编辑
+         */
+        table.on('edit(showTable)', function (obj) {
+            var value = obj.value //得到修改后的值
+                , data = obj.data //得到所在行所有键值
+                , field = obj.field; //得到字段
+            var para = {};
+            para.id = data.id;
+            para[field] = util.escape(value);
+            CoreUtil.sendPut("/shopSellerStaff/update", para, function (res) {
+                tableIns1.reload();
+            });
+        });
+        /**
+         * 监听table内开关操作
+         */
+        form.on('switch(statusStr)', function (obj) {
+            // console.log(obj)
+            var seller = {};
+            seller.id = this.value;
+            seller.status = obj.elem.checked ? 1 : 0;
+            CoreUtil.sendPut("/shopSellerStaff/update", seller, function (res) {
+                layer.tips(obj.elem.checked ? "开馆成功" : "闭馆成功", obj.othis);
+                tableIns1.reload();
+            });
+        });
+
+        //导出
+        $('#export').on('click', function () {
+            //原先分页limit
+            var exportParams = {
+                limit: Number.MAX_VALUE,
+                key: $("#key").val()
+            };
+            CoreUtil.sendPost("/shopSellerStaff/listByPage", exportParams, function (res) {
+                //初始化渲染数据
+                if (res.data != null && res.data.records != null) {
+                    table.exportFile(tableIns1.config.id, res.data.records, 'xls');
+                }
+            });
+        });
+
+        //删除
+        var tipDialog = function (ids) {
+            layer.confirm('确定要删除么?', {icon: 3, title: '提示'}, function (index) {
+                CoreUtil.sendDelete("/shopSellerStaff/delete", ids, function (res) {
+                    layer.msg(res.msg, {time: 500}, function () {
+                        tableIns1.reload();
+                    });
+                });
+            });
+        };
+
+        /**
+         * 执行查询
+         */
+        form.on('submit(data-search-btn)', function (data) {
+            // 查询条件
+            var where = data.field;
+            // 刷新table
+            tableIns1.reload({
+                where: where,
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                done: function () {
+                    // 清空查询条件缓存
+                    this.where = {};
+                }
+            });
+            return false;
+        });
+
+    });
+</script>

@@ -59,36 +59,40 @@ function getSelect(demoId, title) {
 
 function setSelectData(objs) {
     $(objs).each(function (index, obj) {
-        var demoSelect = getSelect(obj.demoId, obj.title);
-        CoreUtil.sendGet(obj.url, null, function (res) {
-            //初始化渲染数据
-            if (res.code == 0 && res.data != null) {
-                demoSelect.update({
-                    data: res.data,
-                });
-                if(obj.value){
-                    demoSelect.setValue(obj.value);
+        if(document.getElementById(obj.demoId)){
+            var demoSelect = getSelect(obj.demoId, obj.title);
+            CoreUtil.sendGet(obj.url, null, function (res) {
+                //初始化渲染数据
+                if (res.code == 0 && res.data != null) {
+                    demoSelect.update({
+                        data: res.data,
+                    });
+                    if(obj.value){
+                        demoSelect.setValue(obj.value);
+                    }
                 }
-            }
-        });
+            });
+        }
     });
 }
 
 // 级联下拉
 function setCascaderSelectData(objs) {
     $(objs).each(function (index, obj) {
-        var demoSelect = getCascaderSelect(obj.demoId, obj.title);
-        CoreUtil.sendGet(obj.url, null, function (res) {
-            //初始化渲染数据
-            if (res.code == 0 && res.data != null) {
-                demoSelect.update({
-                    data: res.data,
-                })
-                if(obj.value){
-                    demoSelect.setValue(obj.value);
+        if(document.getElementById(obj.demoId)){
+            var demoSelect = getCascaderSelect(obj.demoId, obj.title);
+            CoreUtil.sendGet(obj.url, null, function (res) {
+                //初始化渲染数据
+                if (res.code == 0 && res.data != null) {
+                    demoSelect.update({
+                        data: res.data,
+                    })
+                    if(obj.value){
+                        demoSelect.setValue(obj.value);
+                    }
                 }
-            }
-        });
+            });
+        }
     });
 }
 

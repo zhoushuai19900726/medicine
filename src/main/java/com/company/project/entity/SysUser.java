@@ -92,4 +92,11 @@ public class SysUser extends BaseEntity implements Serializable {
 
     @TableField(exist = false)
     private Boolean rememberMe;
+
+    @TableField(exist = false)
+    private Integer rule;
+
+    @TableField(exist = false)
+    private String sellerId;
+
 }

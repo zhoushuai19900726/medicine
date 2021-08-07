@@ -115,7 +115,7 @@
                                         <td>
                                             <select name="sellerId" lay-filter="sellerId" lay-search lay-verify="required" th:with="sellerList=${@sellerService.list()}">
                                                 <option value="">请选择运营商家</option>
-                                                <option th:each="seller : ${sellerList}" th:text="${seller.sellerName}" th:value="${seller.id}"></option>
+                                                <option th:each="seller : ${sellerList}" th:text="${seller.sellerName}" th:value="${seller.id}" th:selected="${sellerId == seller.id}"></option>
                                             </select>
                                         </td>
                                         <td class="required">商品品牌</td>

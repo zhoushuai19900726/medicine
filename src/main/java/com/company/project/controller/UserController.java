@@ -8,6 +8,7 @@ import com.company.project.common.utils.DataResult;
 import com.company.project.entity.SysUser;
 import com.company.project.entity.SysUserRole;
 import com.company.project.service.HttpSessionService;
+import com.company.project.service.ShopSellerStaffService;
 import com.company.project.service.UserRoleService;
 import com.company.project.service.UserService;
 import com.company.project.vo.req.UserRoleOperationReqVO;
@@ -43,6 +44,8 @@ public class UserController {
     @Resource
     private UserService userService;
     @Resource
+    private ShopSellerStaffService shopSellerStaffService;
+    @Resource
     private UserRoleService userRoleService;
     @Resource
     private HttpSessionService httpSessionService;
@@ -57,7 +60,15 @@ public class UserController {
             CaptchaUtil.clear(request);
             return DataResult.fail("验证码错误！");
         }
-        return DataResult.success(userService.login(vo));
+        switch (vo.getRule()){
+            case 1:
+                // 管理员
+                return DataResult.success(userService.login(vo));
+            case 2:
+                // 商家员工
+                return DataResult.success(shopSellerStaffService.login(vo));
+        }
+        return DataResult.fail("无效的登录信息");
     }
 
     @PostMapping("/user/register")

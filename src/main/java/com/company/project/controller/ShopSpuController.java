@@ -7,6 +7,7 @@ import com.company.project.common.aop.annotation.LogAnnotation;
 import com.company.project.common.utils.DelimiterConstants;
 import com.company.project.common.utils.NumberConstants;
 import com.company.project.entity.*;
+import com.company.project.mapper.ShopSellerStaffMapper;
 import com.company.project.service.*;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -65,6 +66,12 @@ public class ShopSpuController extends BaseController {
     @Resource
     private ShopTransportService shopTransportService;
 
+    @Resource
+    private ShopSellerStaffMapper shopSellerStaffMapper;
+
+    @Resource
+    private HttpSessionService httpSessionService;
+
     @ApiOperation(value = "跳转到列表页面")
     @GetMapping("/index/shopSpu")
     public String shopSpu() {
@@ -73,7 +80,12 @@ public class ShopSpuController extends BaseController {
 
     @ApiOperation(value = "跳转到发布商品页面")
     @GetMapping("/index/shopSpu/releaseProduct")
-    public String releaseProduct() {
+    public String releaseProduct(Model model) {
+        // TODO 员工发布商品
+//        ShopSellerStaffEntity shopSellerStaffEntity = shopSellerStaffMapper.selectById(httpSessionService.getCurrentUserId());
+//        if(Objects.nonNull(shopSellerStaffEntity)){
+//            model.addAttribute("sellerId", shopSellerStaffEntity.getSellerId());
+//        }
         return "goods/releaseProduct";
     }
 

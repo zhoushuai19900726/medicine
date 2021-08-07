@@ -121,14 +121,24 @@
         <div class="layui-form login-form">
             <form class="layui-form" action="">
                 <div class="layui-form-item logo-title">
-                    <h1>LayuiMini后台登录</h1>
+                    <h1>易医堂 后台登录</h1>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-icon layui-icon-vercode" for="rule"></label>
+                    <select name="rule" id="rule" lay-filter="rule" lay-verify="required" th:with="sellerList=${@sellerService.list()}">
+                        <option value="1">管理员</option>
+                        <option value="2">商家员工</option>
+                    </select>
+                </div>
+                <div class="layui-form-item" id="seller" hidden>
+                    <label class="layui-icon layui-icon-vercode" for="sellerId"></label>
+                    <select name="sellerId" id="sellerId" lay-filter="sellerId" lay-search th:with="sellerList=${@sellerService.list()}">
+                        <option value="">请选择运营商家</option>
+                        <option th:each="seller : ${sellerList}" th:text="${seller.sellerName}" th:value="${seller.id}"></option>
+                    </select>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-icon layui-icon-username" for="username"></label>
-                    <!--<input type="text" name="username" id="username" lay-verify="required|account" placeholder="用户名或者邮箱" autocomplete="off" class="layui-input"
-                           th:each="cookie :${#httpServletRequest.getCookies()}"
-                           th:if="${cookie.getName()} eq 'username'"
-                           th:value="${cookie.getValue()}"/>-->
                     <input type="text" name="username" id="username" lay-verify="required|account" placeholder="用户名或者邮箱" autocomplete="off" class="layui-input"/>
                 </div>
                 <div class="layui-form-item">
@@ -173,8 +183,28 @@
             });
         });
         // cookie取值
+        $("#rule").val($.cookie('rule'));
+        $("#sellerId").val($.cookie('sellerId'));
+        if ($.cookie('rule') == 1) {
+            $("#seller").hide();
+        } else if ($.cookie('rule') == 2) {
+            $("#seller").show();
+        }
+        form.render("select");
+
         $("#username").val($.cookie('username'));
         $("#password").val($.cookie('password'));
+
+        /**
+         * 监听商家下拉列表
+         */
+        form.on('select(rule)', function (data) {
+            if (data.value == 1) {
+                $("#seller").hide();
+            } else if (data.value == 2) {
+                $("#seller").show();
+            }
+        });
 
         // 进行登录操作
         form.on('submit(login)', function (data) {
@@ -192,11 +222,13 @@
                 return false;
             }
             // 记住账号密码
+            $.cookie('rule', $("#rule").val());
+            $.cookie('sellerId', $("#sellerId").val());
             $.cookie('username', $("#username").val());
             var checked = $("#rememberMe").prop("checked");
-            if(checked){
+            if (checked) {
                 $.cookie('password', $("#password").val());
-            }else{
+            } else {
                 $.removeCookie('password');
             }
             // 提交

@@ -163,7 +163,8 @@ public class ShopCategoryController extends BaseController {
                 .like(StringUtils.isNotBlank(shopCategory.getName()), ShopCategoryEntity::getName, shopCategory.getName())
                 .orderByAsc(ShopCategoryEntity::getSeq);
         // 封装数据权限 - 封装用户 - 响应前端
-        return DataResult.success(encapsulationUser(shopCategoryService.listByPage(page, encapsulationDataRights(shopCategory, queryWrapper, ShopCategoryEntity::getCreateId))));
+        return DataResult.success(encapsulationUser(shopCategoryService.listByPage(page, queryWrapper)));
+//        return DataResult.success(encapsulationUser(shopCategoryService.listByPage(page, encapsulationDataRights(shopCategory, queryWrapper, ShopCategoryEntity::getCreateId))));
     }
 
 }

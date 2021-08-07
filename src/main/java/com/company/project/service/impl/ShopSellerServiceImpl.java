@@ -40,12 +40,6 @@ public class ShopSellerServiceImpl extends ServiceImpl<ShopSellerMapper, ShopSel
 
     @Override
     public DataResult saveShopSellerEntity(ShopSellerEntity shopSellerEntity) {
-        // 密码加密
-        if (StringUtils.isNotBlank(shopSellerEntity.getPassword())) {
-            shopSellerEntity.setPassword(PasswordUtils.encode(shopSellerEntity.getPassword(), PasswordUtils.getSalt()));
-        } else {
-            shopSellerEntity.setPassword(PasswordUtils.encode(DelimiterConstants.INIT_PASSWORD, PasswordUtils.getSalt()));
-        }
         // 商家地址
         if(StringUtils.isNotBlank(shopSellerEntity.getProvince()) && StringUtils.isNotBlank(shopSellerEntity.getCity()) && StringUtils.isNotBlank(shopSellerEntity.getCounty())){
             List<AddressLibraryEntity> addressLibraryEntityList = addressLibraryMapper.selectList(Wrappers.lambdaQuery());
@@ -60,11 +54,6 @@ public class ShopSellerServiceImpl extends ServiceImpl<ShopSellerMapper, ShopSel
 
     @Override
     public DataResult updateShopSellerEntityById(ShopSellerEntity shopSellerEntity) {
-        // 查询商家
-        ShopSellerEntity queryResult = shopSellerMapper.selectById(shopSellerEntity.getId());
-        if (StringUtils.isNotBlank(shopSellerEntity.getPassword()) && !StringUtils.equals(shopSellerEntity.getPassword(), queryResult.getPassword())) {
-            shopSellerEntity.setPassword(PasswordUtils.encode(shopSellerEntity.getPassword(), PasswordUtils.getSalt()));
-        }
         // 商家地址
         if(StringUtils.isNotBlank(shopSellerEntity.getProvince()) && StringUtils.isNotBlank(shopSellerEntity.getCity()) && StringUtils.isNotBlank(shopSellerEntity.getCounty())){
             List<AddressLibraryEntity> addressLibraryEntityList = addressLibraryMapper.selectList(Wrappers.lambdaQuery());

@@ -1,7 +1,10 @@
 package com.company.project.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.company.project.entity.ShopSellerStaffEntity;
 import com.company.project.entity.SysDept;
 import com.company.project.entity.SysUser;
+import com.company.project.mapper.ShopSellerStaffMapper;
 import com.company.project.mapper.SysDeptMapper;
 import com.company.project.mapper.SysPermissionMapper;
 import com.company.project.mapper.SysUserMapper;
@@ -32,6 +35,8 @@ public class HomeServiceImpl implements HomeService {
     @Resource
     private SysUserMapper sysUserMapper;
     @Resource
+    private ShopSellerStaffMapper shopSellerStaffMapper;
+    @Resource
     private SysDeptMapper sysDeptMapper;
     @Resource
     private PermissionService permissionService;
@@ -53,14 +58,22 @@ public class HomeServiceImpl implements HomeService {
         homeRespVO.setHomeInfo(homeInfoRespVO);
         // LOGO信息
         LogoInfoRespVO logoInfoRespVO = new LogoInfoRespVO();
-        logoInfoRespVO.setTitle("LAYUI MINI");
-        logoInfoRespVO.setImage("../layui2.0/images/logo.png");
+        logoInfoRespVO.setTitle("易 醫 堂");
+        logoInfoRespVO.setImage("../layui2.0/images/logo1.png");
         logoInfoRespVO.setHref("");
         homeRespVO.setLogoInfo(logoInfoRespVO);
         // 用户信息
         UserInfoRespVO userInfoRespVO = new UserInfoRespVO();
         SysUser sysUser = sysUserMapper.selectById(userId);
-        if (Objects.nonNull(sysUser)) {
+        if (Objects.isNull(sysUser)) {
+            ShopSellerStaffEntity shopSellerStaffEntity = shopSellerStaffMapper.selectById(userId);
+            sysUser = sysUserMapper.selectOne(Wrappers.<SysUser>lambdaQuery().eq(SysUser::getUsername, "common_staff"));
+            if(Objects.nonNull(sysUser)){
+                sysUser.setUsername(shopSellerStaffEntity.getName());
+                userId = sysUser.getId();
+            }
+        }
+        if(Objects.nonNull(sysUser)){
             BeanUtils.copyProperties(sysUser, userInfoRespVO);
             SysDept sysDept = sysDeptMapper.selectById(sysUser.getDeptId());
             if (Objects.nonNull(sysDept)) {

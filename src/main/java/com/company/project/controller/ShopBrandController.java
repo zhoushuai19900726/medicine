@@ -113,7 +113,8 @@ public class ShopBrandController extends BaseController {
                 .apply(StringUtils.isNotBlank(shopBrand.getCreateEndTime()), "UNIX_TIMESTAMP(create_time) <= UNIX_TIMESTAMP('" + shopBrand.getCreateEndTime() + "')")
                 .orderByDesc(ShopBrandEntity::getCreateTime);
         // 封装数据权限 - 执行查询 - 封装用户 - 响应前端
-        return DataResult.success(encapsulationUser(shopBrandService.page(page, encapsulationDataRights(shopBrand, queryWrapper, ShopBrandEntity::getCreateId))));
+        return DataResult.success(encapsulationUser(shopBrandService.page(page, queryWrapper)));
+//        return DataResult.success(encapsulationUser(shopBrandService.page(page, encapsulationDataRights(shopBrand, queryWrapper, ShopBrandEntity::getCreateId))));
     }
 
 }
